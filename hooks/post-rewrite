@@ -1,7 +1,18 @@
 #!/bin/sh
 # SPDX-License-Identifier: BSD-2-Clause
 
+## @file
+# @brief Reconcile submodules after rebase or amend rewrites commits.
+#
+# Git supplies the rewrite command and old/new object pairs, but the hook does
+# not need to replay that history. Only the gitlinks in the final checked-out
+# tree matter, so all rewrite forms can follow the same synchronization path.
+
+## @cond SHELL_IMPLEMENTATION
 set -eu
 
+# Resolve the root rather than relying on the caller's directory, then replace
+# the hook process so Git observes the synchronization helper's exact status.
 repo_root=$(git rev-parse --show-toplevel)
 exec "$repo_root/hooks/sync-submodules"
+## @endcond

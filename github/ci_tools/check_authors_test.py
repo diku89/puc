@@ -1,5 +1,13 @@
 # SPDX-License-Identifier: BSD-2-Clause
 
+"""Test author policy as pure data transformations and isolated Git boundaries.
+
+Filesystem fixtures use temporary repositories rather than the real checkout,
+while Git subprocess calls are mocked at the narrow functions that own them.
+This split keeps malformed-policy coverage deterministic and still verifies the
+exact Git commands and machine-readable delimiters used in production.
+"""
+
 import contextlib
 import io
 import subprocess
@@ -12,15 +20,20 @@ from github.ci_tools import check_authors
 
 
 class PolicyTestCase(unittest.TestCase):
+    """Provide a disposable AUTHORS/ALIASES root for policy-oriented tests."""
+
     def setUp(self) -> None:
+        """Create a temporary policy root that is removed even after failure."""
         temporary_directory = tempfile.TemporaryDirectory()
         self.addCleanup(temporary_directory.cleanup)
         self.repo_root = Path(temporary_directory.name)
 
     def write_file(self, name: str, contents: str) -> None:
+        """Write one UTF-8 fixture without coupling tests to repository files."""
         (self.repo_root / name).write_text(contents, encoding="utf-8")
 
     def write_valid_policy(self) -> None:
+        """Install the smallest cross-referenced policy accepted by the parser."""
         self.write_file("AUTHORS", "Alice Example <alice@example.com>\n")
         self.write_file(
             "ALIASES",
@@ -30,6 +43,8 @@ class PolicyTestCase(unittest.TestCase):
 
 
 class LoadEntriesTest(PolicyTestCase):
+    """Exercise the line-preserving layer independently from policy syntax."""
+
     def test_ignores_comments_blank_lines_and_outer_whitespace(self) -> None:
         path = self.repo_root / "ENTRIES"
         path.write_text(
@@ -52,6 +67,8 @@ class LoadEntriesTest(PolicyTestCase):
 
 
 class LoadPolicyTest(PolicyTestCase):
+    """Verify syntax and cross-file referential integrity are reported together."""
+
     def test_loads_a_valid_policy(self) -> None:
         self.write_valid_policy()
 
@@ -60,8 +77,7 @@ class LoadPolicyTest(PolicyTestCase):
         self.assertEqual({"Alice Example <alice@example.com>"}, authors)
         self.assertEqual(
             {
-                "Alice <alice@users.noreply.github.com>":
-                    "Alice Example <alice@example.com>"
+                "Alice <alice@users.noreply.github.com>": "Alice Example <alice@example.com>"
             },
             aliases,
         )
@@ -103,8 +119,7 @@ class LoadPolicyTest(PolicyTestCase):
             errors,
         )
         self.assertIn(
-            "duplicate identity on ALIASES line 3: "
-            "'Alice <alias@example.com>'",
+            "duplicate identity on ALIASES line 3: 'Alice <alias@example.com>'",
             errors,
         )
 
@@ -122,13 +137,14 @@ class LoadPolicyTest(PolicyTestCase):
             errors,
         )
         self.assertIn(
-            "malformed canonical entry on ALIASES line 1: "
-            "'invalid canonical'",
+            "malformed canonical entry on ALIASES line 1: 'invalid canonical'",
             errors,
         )
 
 
 class GitIdentityTest(unittest.TestCase):
+    """Pin the Git commands and delimiters used to recover stored identities."""
+
     def test_reads_the_pending_git_identity(self) -> None:
         with mock.patch.object(
             check_authors.subprocess,
@@ -195,6 +211,8 @@ class GitIdentityTest(unittest.TestCase):
 
 
 class CheckIdentitiesTest(unittest.TestCase):
+    """Cover batch validation without filesystem or subprocess dependencies."""
+
     def test_accepts_registered_identities(self) -> None:
         canonical = "Alice Example <alice@example.com>"
 
@@ -215,10 +233,7 @@ class CheckIdentitiesTest(unittest.TestCase):
                     ("def456", "Alice <alias@example.com>"),
                 ],
                 set(),
-                {
-                    "Alice <alias@example.com>":
-                        "Alice Example <alice@example.com>"
-                },
+                {"Alice <alias@example.com>": "Alice Example <alice@example.com>"},
             )
 
         self.assertEqual(1, status)
@@ -227,6 +242,8 @@ class CheckIdentitiesTest(unittest.TestCase):
 
 
 class MainTest(PolicyTestCase):
+    """Verify exit-status boundaries and ordering in the command entry point."""
+
     def test_checks_the_pending_identity_by_default(self) -> None:
         self.write_valid_policy()
         with mock.patch.object(
@@ -247,9 +264,7 @@ class MainTest(PolicyTestCase):
         with mock.patch.object(
             check_authors,
             "history_identities",
-            return_value=[
-                ("abc123", "Alice <alice@users.noreply.github.com>")
-            ],
+            return_value=[("abc123", "Alice <alice@users.noreply.github.com>")],
         ) as history_identities:
             status = check_authors.main(
                 ["--revision", "base..head"],

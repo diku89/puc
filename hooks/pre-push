@@ -1,9 +1,22 @@
 #!/bin/sh
 # SPDX-License-Identifier: BSD-2-Clause
 
+## @file
+# @brief Verify that every commit newly introduced by a push is signed.
+#
+# Git streams four-field ref updates on standard input and passes the remote as
+# an argument. The Python checker owns revision-set construction and raw commit
+# inspection; this hook only adapts Git's invocation to that shared policy.
+
+## @cond SHELL_IMPLEMENTATION
 set -eu
 
 repo_root=$(git rev-parse --show-toplevel)
+# Direct invocation without Git's remote argument remains useful for testing;
+# origin is the conventional reachability boundary in that case.
 remote_name=${1:-origin}
+# exec deliberately leaves standard input untouched so the checker receives
+# Git's ref-update stream verbatim and returns its status directly to Git.
 exec python3 "$repo_root/github/ci_tools/check_signatures.py" \
     --pre-push "$remote_name"
+## @endcond

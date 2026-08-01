@@ -1,10 +1,21 @@
 #!/bin/sh
 # SPDX-License-Identifier: BSD-2-Clause
 
+## @file
+# @brief Reject commits whose signing or author policy is not ready.
+#
+# A pre-commit hook runs before Git creates the commit object, so no signature
+# exists yet. It checks that repository signing is enabled and validates the
+# exact identity Git plans to record. The pre-push signature check remains the
+# backstop that inspects the completed object.
+
+## @cond SHELL_IMPLEMENTATION
 set -eu
 
 repo_root=$(git rev-parse --show-toplevel)
 
+# Missing configuration is distinct from Git failure here: either means the
+# safe repository default has not been installed by bootstrap.sh.
 sign_commits=$(git config --bool --get commit.gpgSign || true)
 if [ "$sign_commits" != "true" ]; then
     cat >&2 <<'EOF'
@@ -14,4 +25,7 @@ EOF
     exit 1
 fi
 
+# exec carries the policy check's exit status and diagnostics directly back to
+# Git, while the absolute script path keeps hook invocation directory-agnostic.
 exec python3 "$repo_root/github/ci_tools/check_authors.py"
+## @endcond

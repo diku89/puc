@@ -1,5 +1,13 @@
 # SPDX-License-Identifier: BSD-2-Clause
 
+"""Test signature-presence policy without requiring real signing keys.
+
+Fixtures model raw Git commit objects and the pre-push stdin protocol directly.
+Cryptographic verification is intentionally absent because production delegates
+that responsibility to GitHub; these tests guard the offline presence check and
+the revision ranges selected before a push.
+"""
+
 import contextlib
 import io
 import subprocess
@@ -10,6 +18,8 @@ from github.ci_tools import check_signatures
 
 
 class NullOidTest(unittest.TestCase):
+    """Keep hook sentinels independent of Git's configured hash length."""
+
     def test_recognizes_null_oids_of_any_length(self) -> None:
         self.assertTrue(check_signatures.is_null_oid("0" * 40))
         self.assertTrue(check_signatures.is_null_oid("0" * 64))
@@ -20,6 +30,8 @@ class NullOidTest(unittest.TestCase):
 
 
 class GitObjectTest(unittest.TestCase):
+    """Distinguish real signature headers from similar commit-message text."""
+
     def test_reads_commits_from_git_revisions(self) -> None:
         with mock.patch.object(
             check_signatures.subprocess,
@@ -77,6 +89,8 @@ class GitObjectTest(unittest.TestCase):
 
 
 class PrePushTest(unittest.TestCase):
+    """Verify ref updates select only commits newly introduced to the remote."""
+
     def test_builds_revision_sets_for_updated_and_new_refs(self) -> None:
         lines = io.StringIO(
             "refs/heads/main local1 refs/heads/main remote1\n"
@@ -103,6 +117,8 @@ class PrePushTest(unittest.TestCase):
 
 
 class CheckCommitsTest(unittest.TestCase):
+    """Ensure batch enforcement reports all repairable commits in one run."""
+
     def test_accepts_signed_commits(self) -> None:
         with mock.patch.object(
             check_signatures,
@@ -129,6 +145,8 @@ class CheckCommitsTest(unittest.TestCase):
 
 
 class MainTest(unittest.TestCase):
+    """Exercise direct and hook modes plus their operational failure status."""
+
     def test_checks_an_explicit_revision(self) -> None:
         with mock.patch.object(
             check_signatures,
@@ -146,9 +164,7 @@ class MainTest(unittest.TestCase):
         revision_commits.assert_called_once_with(["base..head"])
 
     def test_checks_refs_from_pre_push_input(self) -> None:
-        hook_input = io.StringIO(
-            "refs/heads/main local refs/heads/main remote\n"
-        )
+        hook_input = io.StringIO("refs/heads/main local refs/heads/main remote\n")
         with mock.patch.object(
             check_signatures,
             "revision_commits",

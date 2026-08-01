@@ -1,7 +1,18 @@
 #!/bin/sh
 # SPDX-License-Identifier: BSD-2-Clause
 
+## @file
+# @brief Reconcile submodules after a merge changes recorded gitlinks.
+#
+# The merge result already records every desired submodule commit. Delegating
+# to one helper keeps merge behavior identical to checkout and rewrite behavior
+# and avoids allowing nearly identical hook implementations to drift.
+
+## @cond SHELL_IMPLEMENTATION
 set -eu
 
+# Resolve the root rather than relying on Git's hook working directory. exec
+# makes a failed submodule update fail the hook with the original diagnostic.
 repo_root=$(git rev-parse --show-toplevel)
 exec "$repo_root/hooks/sync-submodules"
+## @endcond

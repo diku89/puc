@@ -12,6 +12,33 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  format:
+    name: Check formatting and lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Configure Bazelisk and caches
+        uses: bazel-contrib/setup-bazel@0.19.0
+        with:
+          bazelisk-cache: true
+          disk-cache: ${{ github.workflow }}-format
+          repository-cache: true
+          cache-save: ${{ github.event_name != 'pull_request' }}
+
+      - name: Install clang-format
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes clang-format
+
+      - name: Check all formatting and lint
+        run: utils/scripts/format.sh test --full
+
   commit-policy:
     name: Check authors and signatures
     runs-on: ubuntu-latest
@@ -41,6 +68,37 @@ jobs:
           python3 github/ci_tools/check_signatures.py \
             "$BASE_SHA..$HEAD_SHA"
 
+  docs:
+    name: Check generated code documentation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Configure Bazelisk and caches
+        uses: bazel-contrib/setup-bazel@0.19.0
+        with:
+          bazelisk-cache: true
+          disk-cache: ${{ github.workflow }}-docs
+          repository-cache: true
+          cache-save: ${{ github.event_name != 'pull_request' }}
+
+      - name: Regenerate code documentation
+        run: utils/scripts/update_docs.sh
+
+      - name: Check generated code documentation
+        run: |
+          if [[ -n "$(git status --porcelain -- docs/code)" ]]; then
+            git diff -- docs/code
+            git status --short -- docs/code
+            echo "docs/code is stale; run utils/scripts/update_docs.sh" >&2
+            exit 1
+          fi
+
   build-and-test:
     name: Build and test (${{ matrix.os }}, ${{ matrix.config }})
     runs-on: ${{ matrix.os }}
@@ -56,7 +114,7 @@ jobs:
           - os: ubuntu-latest
             config: tsan
           - os: ubuntu-latest
-            config: msan
+            config: valgrind
           - os: macos-latest
             config: prod
           - os: macos-latest
@@ -82,11 +140,31 @@ jobs:
           repository-cache: true
           cache-save: ${{ github.event_name != 'pull_request' }}
 
+      - name: Install Valgrind
+        if: matrix.config == 'valgrind'
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes valgrind
+
       - name: Build all targets
         run: bazelisk build --config=${{ matrix.config }} //...
 
       - name: Run all tests
+        if: matrix.config != 'valgrind'
         run: bazelisk test --config=${{ matrix.config }} //...
+
+      - name: Run native C++ tests under Valgrind
+        if: matrix.config == 'valgrind'
+        shell: bash
+        run: |
+          mapfile -t native_tests < <(
+            bazelisk query 'kind("cc_test rule", //...)'
+          )
+          if (( ${#native_tests[@]} == 0 )); then
+            echo "No native C++ tests found" >&2
+            exit 1
+          fi
+          bazelisk test --config=valgrind "${native_tests[@]}"
 
   freebsd:
     name: Build and test (FreeBSD 15.1)
