@@ -12,6 +12,9 @@ doxygen(
         "//utils/scripts:code_docs_srcs",
     ],
     outs = ["xml"],
+    # Doxygen's SYSTEM default follows filesystem case sensitivity, changing
+    # XML refids and Markdown filenames between macOS and Linux.
+    case_sense_names = False,
     # Shell is mapped to Python so its @file guide is recognized. Each script
     # hides its executable body from the symbol index because shell syntax is
     # not a Python API.

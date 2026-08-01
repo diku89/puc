@@ -33,8 +33,8 @@ build:tsan --config=sanitizer
 build:tsan --copt=-fsanitize=thread
 build:tsan --linkopt=-fsanitize=thread
 
-# MemorySanitizer is supported only by the Linux CI configuration.
-build:msan --config=sanitizer
-build:msan --copt=-fsanitize=memory
-build:msan --copt=-fsanitize-memory-track-origins=2
-build:msan --linkopt=-fsanitize=memory
+# Valgrind runs an ordinary debug build under Memcheck. Restrict this config to
+# native C++ test targets: Python and shell tests would otherwise run their
+# interpreters under Valgrind as well.
+build:valgrind --config=sanitizer
+test:valgrind --run_under=//utils/scripts:valgrind

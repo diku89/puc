@@ -114,7 +114,7 @@ jobs:
           - os: ubuntu-latest
             config: tsan
           - os: ubuntu-latest
-            config: msan
+            config: valgrind
           - os: macos-latest
             config: prod
           - os: macos-latest
@@ -140,11 +140,31 @@ jobs:
           repository-cache: true
           cache-save: ${{ github.event_name != 'pull_request' }}
 
+      - name: Install Valgrind
+        if: matrix.config == 'valgrind'
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes valgrind
+
       - name: Build all targets
         run: bazelisk build --config=${{ matrix.config }} //...
 
       - name: Run all tests
+        if: matrix.config != 'valgrind'
         run: bazelisk test --config=${{ matrix.config }} //...
+
+      - name: Run native C++ tests under Valgrind
+        if: matrix.config == 'valgrind'
+        shell: bash
+        run: |
+          mapfile -t native_tests < <(
+            bazelisk query 'kind("cc_test rule", //...)'
+          )
+          if (( ${#native_tests[@]} == 0 )); then
+            echo "No native C++ tests found" >&2
+            exit 1
+          fi
+          bazelisk test --config=valgrind "${native_tests[@]}"
 
   freebsd:
     name: Build and test (FreeBSD 15.1)

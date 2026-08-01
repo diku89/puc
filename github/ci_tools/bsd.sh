@@ -35,16 +35,24 @@ test_list="$ci_build_dir/tests"
 : >"$source_list"
 : >"$object_list"
 
-# The portable library convention keeps implementation files under src/. An
-# absent directory is valid for an early repository containing only the CLI.
-if [ -d src ]; then
-    find src -type f \( \
-        -name '*.c' -o \
-        -name '*.cc' -o \
-        -name '*.cpp' -o \
-        -name '*.cxx' \
-    \) -print | sort >"$source_list"
-fi
+# Discover production translation units across Bazel packages, not merely a
+# conventional src/ directory. The CLI and vendored C library have dedicated
+# build steps below; tests are collected separately so each gets its own main.
+find . -type f \( \
+    -name '*.c' -o \
+    -name '*.cc' -o \
+    -name '*.cpp' -o \
+    -name '*.cxx' \
+\) \
+    ! -name '*_test.c' \
+    ! -name '*_test.cc' \
+    ! -name '*_test.cpp' \
+    ! -name '*_test.cxx' \
+    ! -path './.git/*' \
+    ! -path './bazel-*/*' \
+    ! -path './puc-cli/*' \
+    ! -path './third_party/*' \
+    -print | sort >"$source_list"
 
 object_count=0
 # Compile language-by-language so a mixed C/C++ library receives the correct
@@ -54,11 +62,12 @@ while IFS= read -r source_file; do
     object_file="$ci_build_dir/source-$object_count.o"
     case "$source_file" in
         *.c)
-            "$cc_command" -std=c17 -O2 -Wall -Werror -Iinclude \
+            "$cc_command" -std=c17 -O2 -Wall -Werror -I. -Iinclude \
                 -c "$source_file" -o "$object_file"
             ;;
         *)
-            "$cxx_command" -std=c++23 -O2 -Wall -Werror -Iinclude \
+            "$cxx_command" -std=c++23 -O2 -Wall -Werror -pthread \
+                -I. -Iinclude \
                 -c "$source_file" -o "$object_file"
             ;;
     esac
@@ -102,8 +111,8 @@ if [ -n "$cli_source" ]; then
     # single argument and omits optional objects that were not built.
     cli_object="$ci_build_dir/puc-main.o"
     cli_binary="$ci_build_dir/puc"
-    "$cxx_command" -std=c++23 -O2 -Wall -Werror \
-        -Iinclude -Ithird_party/tomlc17/src \
+    "$cxx_command" -std=c++23 -O2 -Wall -Werror -pthread \
+        -I. -Iinclude -Ithird_party/tomlc17/src \
         -c "$cli_source" -o "$cli_object"
     set -- "$cli_object"
     if [ -n "$library" ]; then
@@ -112,20 +121,22 @@ if [ -n "$cli_source" ]; then
     if [ -n "$tomlc17_object" ]; then
         set -- "$@" "$tomlc17_object"
     fi
-    "$cxx_command" "$@" -o "$cli_binary"
+    "$cxx_command" -pthread "$@" -o "$cli_binary"
 fi
 
 : >"$test_list"
 # Native tests follow the *_test naming contract. They are separate executables
 # so one test cannot hide another's unresolved symbols or process-wide state.
-if [ -d tests ]; then
-    find tests -type f \( \
-        -name '*_test.c' -o \
-        -name '*_test.cc' -o \
-        -name '*_test.cpp' -o \
-        -name '*_test.cxx' \
-    \) -print | sort >"$test_list"
-fi
+find . -type f \( \
+    -name '*_test.c' -o \
+    -name '*_test.cc' -o \
+    -name '*_test.cpp' -o \
+    -name '*_test.cxx' \
+\) \
+    ! -path './.git/*' \
+    ! -path './bazel-*/*' \
+    ! -path './third_party/*' \
+    -print | sort >"$test_list"
 
 test_count=0
 # Compile tests with the same language standard and warning policy as production
@@ -138,12 +149,12 @@ while IFS= read -r test_source; do
     case "$test_source" in
         *.c)
             "$cc_command" -std=c17 -O2 -Wall -Werror \
-                -Iinclude -Ithird_party/tomlc17/src \
+                -I. -Iinclude -Ithird_party/tomlc17/src \
                 -c "$test_source" -o "$test_object"
             ;;
         *)
-            "$cxx_command" -std=c++23 -O2 -Wall -Werror \
-                -Iinclude -Ithird_party/tomlc17/src \
+            "$cxx_command" -std=c++23 -O2 -Wall -Werror -pthread \
+                -I. -Iinclude -Ithird_party/tomlc17/src \
                 -c "$test_source" -o "$test_object"
             ;;
     esac
@@ -154,8 +165,12 @@ while IFS= read -r test_source; do
     if [ -n "$tomlc17_object" ]; then
         set -- "$@" "$tomlc17_object"
     fi
-    "$cxx_command" "$@" -o "$test_binary"
-    "$test_binary"
+    "$cxx_command" -pthread "$@" -o "$test_binary"
+    # Match Bazel's test contract for code that needs a private writable
+    # directory, while keeping each test's files isolated from the next test.
+    test_tmp_dir="$ci_build_dir/test-tmp-$test_count"
+    mkdir "$test_tmp_dir"
+    TEST_TMPDIR="$test_tmp_dir" "$test_binary"
 done <"$test_list"
 
 if [ "$test_count" -eq 0 ]; then

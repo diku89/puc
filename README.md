@@ -25,12 +25,18 @@ bazelisk build --config=tsan //...
 bazelisk test --config=tsan //...
 ```
 
-MemorySanitizer is available on Linux with Clang:
+On Linux, install Valgrind and run the native C++ tests under Memcheck:
 
 ```sh
-CC=clang CXX=clang++ bazelisk build --config=msan //...
-CC=clang CXX=clang++ bazelisk test --config=msan //...
+sudo apt-get install valgrind
+bazelisk test --config=valgrind \
+  $(bazelisk query 'kind("cc_test rule", //...)')
 ```
+
+The Valgrind configuration enables origin tracking and full leak checking.
+Definite or indirect leaks and all other Memcheck errors fail the test. GitHub
+CI discovers `cc_test` targets with the same query, so newly added native tests
+are covered automatically without running Python interpreters under Valgrind.
 
 ## Formatting and linting
 

@@ -29,6 +29,7 @@
 - [`pre-push`](pre-push.md)
 - [`sync-submodules`](sync-submodules.md)
 - [`update\_docs.sh`](update__docs_8sh.md)
+- [`valgrind.sh`](valgrind_8sh.md)
 
 ## Namespace
 
