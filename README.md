@@ -1,6 +1,6 @@
 # puc
 
-A minimal C reimplementation of the Pi agentic harness for Unix-like operating systems.
+A minimal C++ reimplementation of the Pi agentic harness for Unix-like operating systems.
 
 ## Build and test
 
@@ -9,17 +9,38 @@ The project uses Bazel modules and resolves dependencies from the
 system-wide, then run:
 
 ```sh
+git submodule update --init --recursive
 bazelisk build //...
 bazelisk test //...
+```
+
+Project sources are compiled as C++23 with `-Wall -Werror`. Production is the
+default build mode. The same full build and test suite can be run under Clang's
+sanitizers with:
+
+```sh
+bazelisk build --config=asan //...
+bazelisk test --config=asan //...
+bazelisk build --config=tsan //...
+bazelisk test --config=tsan //...
+```
+
+MemorySanitizer is available on Linux with Clang:
+
+```sh
+CC=clang CXX=clang++ bazelisk build --config=msan //...
+CC=clang CXX=clang++ bazelisk test --config=msan //...
 ```
 
 ## Contributors
 
 GitHub requires signed commits. First configure a Git-supported GPG, SSH, or
 S/MIME signing key that GitHub recognizes. After cloning, run `./bootstrap.sh`
-once. It enables automatic commit signing and the repository's tracked hooks.
-A normal `git commit` will then be signed; `git commit -S` signs an individual
-commit explicitly.
+once. It initializes the pinned submodules, enables recursive Git operations,
+automatic commit signing, and the repository's tracked hooks. The hooks keep
+submodules synchronized after checkouts, merges, and rebases. A normal
+`git commit` will then be signed; `git commit -S` signs an individual commit
+explicitly.
 
 Add each contributor's canonical `Name <email>` entry to `AUTHORS`, then map
 every exact Git identity they use to that entry in `ALIASES`:

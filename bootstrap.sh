@@ -1,7 +1,7 @@
 #!/bin/sh
 # SPDX-License-Identifier: BSD-2-Clause
 
-# Configure the tracked Git hooks for a fresh clone. This is idempotent.
+# Configure a fresh clone for development. This is idempotent.
 
 set -eu
 
@@ -15,8 +15,14 @@ fi
 
 git config commit.gpgSign true
 git config core.hooksPath hooks
+git config submodule.recurse true
 printf 'Configured commit.gpgSign=%s\n' "$(git config --bool commit.gpgSign)"
 printf 'Configured core.hooksPath=%s\n' "$(git config core.hooksPath)"
+printf 'Configured submodule.recurse=%s\n' \
+    "$(git config --bool submodule.recurse)"
+
+echo "Synchronizing Git submodules..."
+"$repo_root/hooks/sync-submodules"
 
 if python3 github/ci_tools/check_authors.py; then
     echo "Current Git author identity is registered."

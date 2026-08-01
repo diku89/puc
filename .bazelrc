@@ -5,3 +5,36 @@ common --registry=https://bcr.bazel.build
 # Keep action environments reproducible and show failing test output in CI.
 build --incompatible_strict_action_env
 test --test_output=errors
+
+# Compile project C++ as C++23 and treat compiler warnings as errors.
+build --cxxopt=-std=c++23
+build --copt=-Wall
+build --copt=-Werror
+
+# Production is the default build mode. The named config makes it explicit in
+# CI and on developer command lines.
+build --compilation_mode=opt
+build:prod --compilation_mode=opt
+
+# Sanitizer builds retain symbols and use the optimization level recommended
+# by Clang for useful reports and stack traces.
+build:sanitizer --compilation_mode=dbg
+build:sanitizer --copt=-O1
+build:sanitizer --copt=-g
+build:sanitizer --copt=-fno-omit-frame-pointer
+build:sanitizer --copt=-fno-optimize-sibling-calls
+build:sanitizer --strip=never
+
+build:asan --config=sanitizer
+build:asan --copt=-fsanitize=address
+build:asan --linkopt=-fsanitize=address
+
+build:tsan --config=sanitizer
+build:tsan --copt=-fsanitize=thread
+build:tsan --linkopt=-fsanitize=thread
+
+# MemorySanitizer is supported only by the Linux CI configuration.
+build:msan --config=sanitizer
+build:msan --copt=-fsanitize=memory
+build:msan --copt=-fsanitize-memory-track-origins=2
+build:msan --linkopt=-fsanitize=memory
