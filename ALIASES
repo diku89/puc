@@ -1,0 +1,15 @@
+# ALIASES — collapse many git committer identities into one canonical AUTHORS entry.
+#
+# A single contributor may commit from several (name, email) pairs over time:
+# work laptop vs. personal laptop, "Jane Doe" vs. "jane", an old address that
+# still surfaces in some clones. List every variant on its own line, all
+# pointing at the same right-hand side. The pre-commit hook accepts a commit
+# only when its exact (name, email) appears on the LHS of a line here AND the
+# RHS exists verbatim in AUTHORS.
+#
+# Format (strict; both sides matched exactly):
+#   <git name> <<git email>> => <AUTHORS entry>
+#
+# Lines starting with '#' and blank lines are ignored.
+
+Dilip Kumar <57188424+diku89@users.noreply.github.com> => Dilip Kumar <57188424+diku89@users.noreply.github.com>

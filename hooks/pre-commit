@@ -1,0 +1,17 @@
+#!/bin/sh
+# SPDX-License-Identifier: BSD-2-Clause
+
+set -eu
+
+repo_root=$(git rev-parse --show-toplevel)
+
+sign_commits=$(git config --bool --get commit.gpgSign || true)
+if [ "$sign_commits" != "true" ]; then
+    cat >&2 <<'EOF'
+error: commit signing is not enabled for this repository.
+Run ./bootstrap.sh, then retry the commit.
+EOF
+    exit 1
+fi
+
+exec python3 "$repo_root/github/ci_tools/check_authors.py"
