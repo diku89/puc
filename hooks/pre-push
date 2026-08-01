@@ -1,0 +1,9 @@
+#!/bin/sh
+# SPDX-License-Identifier: BSD-2-Clause
+
+set -eu
+
+repo_root=$(git rev-parse --show-toplevel)
+remote_name=${1:-origin}
+exec python3 "$repo_root/github/ci_tools/check_signatures.py" \
+    --pre-push "$remote_name"

@@ -1,0 +1,7 @@
+# Resolve module dependencies from the Bazel Central Registry.
+common --enable_bzlmod
+common --registry=https://bcr.bazel.build
+
+# Keep action environments reproducible and show failing test output in CI.
+build --incompatible_strict_action_env
+test --test_output=errors
