@@ -9,6 +9,7 @@ The project uses Bazel modules and resolves dependencies from the
 system-wide, then run:
 
 ```sh
+git submodule update --init --recursive
 bazelisk build //...
 bazelisk test //...
 ```
@@ -17,9 +18,11 @@ bazelisk test //...
 
 GitHub requires signed commits. First configure a Git-supported GPG, SSH, or
 S/MIME signing key that GitHub recognizes. After cloning, run `./bootstrap.sh`
-once. It enables automatic commit signing and the repository's tracked hooks.
-A normal `git commit` will then be signed; `git commit -S` signs an individual
-commit explicitly.
+once. It initializes the pinned submodules, enables recursive Git operations,
+automatic commit signing, and the repository's tracked hooks. The hooks keep
+submodules synchronized after checkouts, merges, and rebases. A normal
+`git commit` will then be signed; `git commit -S` signs an individual commit
+explicitly.
 
 Add each contributor's canonical `Name <email>` entry to `AUTHORS`, then map
 every exact Git identity they use to that entry in `ALIASES`:

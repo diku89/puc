@@ -1,0 +1,7 @@
+#!/bin/sh
+# SPDX-License-Identifier: BSD-2-Clause
+
+set -eu
+
+repo_root=$(git rev-parse --show-toplevel)
+exec "$repo_root/hooks/sync-submodules"

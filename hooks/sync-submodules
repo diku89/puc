@@ -1,0 +1,17 @@
+#!/bin/sh
+# SPDX-License-Identifier: BSD-2-Clause
+
+# Keep initialized submodules at the exact revisions recorded by this checkout.
+
+set -eu
+
+repo_root=$(git rev-parse --show-toplevel)
+cd "$repo_root"
+
+# There is nothing to synchronize in revisions from before the first submodule.
+if [ ! -f .gitmodules ]; then
+    exit 0
+fi
+
+git submodule sync --quiet --recursive
+git submodule update --init --checkout --recursive

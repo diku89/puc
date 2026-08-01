@@ -23,6 +23,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          submodules: recursive
 
       - name: Validate commit policy
         env:
@@ -54,6 +55,8 @@ jobs:
     steps:
       - name: Check out source
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Configure Bazelisk and caches
         uses: bazel-contrib/setup-bazel@0.19.0
@@ -77,6 +80,8 @@ jobs:
     steps:
       - name: Check out source
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Build and test in FreeBSD
         uses: vmactions/freebsd-vm@v1.5.2
@@ -94,6 +99,8 @@ jobs:
     steps:
       - name: Check out source
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Build and test in OpenBSD
         uses: vmactions/openbsd-vm@v1.4.5
