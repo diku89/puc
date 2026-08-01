@@ -1,8 +1,15 @@
 #!/bin/sh
 # SPDX-License-Identifier: BSD-2-Clause
 
-# Keep initialized submodules at the exact revisions recorded by this checkout.
+## @file
+# @brief Materialize the recursive submodule state recorded by the current tree.
+#
+# Gitlink commits and .gitmodules URLs are versioned independently. Syncing the
+# URL configuration before updating commits handles both kinds of change while
+# moving through history. The update intentionally omits `--force`: local edits
+# inside a submodule cause a visible failure instead of being overwritten.
 
+## @cond SHELL_IMPLEMENTATION
 set -eu
 
 repo_root=$(git rev-parse --show-toplevel)
@@ -15,3 +22,4 @@ fi
 
 git submodule sync --quiet --recursive
 git submodule update --init --checkout --recursive
+## @endcond

@@ -32,6 +32,57 @@ CC=clang CXX=clang++ bazelisk build --config=msan //...
 CC=clang CXX=clang++ bazelisk test --config=msan //...
 ```
 
+## Formatting and linting
+
+Install `clang-format` and Bazelisk, then use the repository formatter to apply
+C/C++, Bazel, and Python formatting and automatic lint fixes:
+
+```sh
+utils/scripts/format.sh run
+```
+
+By default, the script processes only files changed since the last commit plus
+untracked files. Use `--full` to process the entire repository:
+
+```sh
+utils/scripts/format.sh run --full
+```
+
+Use `test` to check the same files without modifying them. This exits nonzero
+if formatting or lint fixes are required:
+
+```sh
+utils/scripts/format.sh test
+utils/scripts/format.sh test --full
+```
+
+`clang-format` formats C and C++ sources. Buildifier and Ruff are resolved
+through Bazel's pinned module dependencies and format/lint Bazel and Python
+sources respectively. GitHub CI runs `test --full` on every push and pull
+request, so all repository-owned source files must be clean before merging.
+
+## Code documentation
+
+API documentation is generated from Doxygen comments in the C++ sources. Run:
+
+```sh
+utils/scripts/update_docs.sh
+```
+
+Bazel downloads the pinned Doxygen toolchain, generates temporary XML, and
+converts it into linked Markdown pages under `docs/code/`. Commit those generated
+pages alongside the source changes that affect them. GitHub CI repeats the
+generation on Ubuntu and fails if the checked-in pages are stale.
+
+When the `Check generated code documentation` job fails, regenerate and review
+the pages, then stage them with the source change:
+
+```sh
+utils/scripts/update_docs.sh
+git diff -- docs/code
+git add docs/code
+```
+
 ## Contributors
 
 GitHub requires signed commits. First configure a Git-supported GPG, SSH, or

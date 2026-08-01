@@ -1,7 +1,18 @@
 #!/bin/sh
 # SPDX-License-Identifier: BSD-2-Clause
 
+## @file
+# @brief Reconcile submodules after Git changes the checked-out commit.
+#
+# Git calls this hook after checkout and switch. Its old/new HEAD arguments do
+# not need interpretation: the gitlinks in the newly checked-out tree are the
+# complete desired state, and sync-submodules owns the shared update policy.
+
+## @cond SHELL_IMPLEMENTATION
 set -eu
 
+# Resolve the work tree through Git because hooks may be invoked from any
+# directory. exec preserves the helper's status as the hook's own result.
 repo_root=$(git rev-parse --show-toplevel)
 exec "$repo_root/hooks/sync-submodules"
+## @endcond

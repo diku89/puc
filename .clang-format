@@ -1,0 +1,11 @@
+# SPDX-License-Identifier: BSD-2-Clause
+
+---
+BasedOnStyle: Google
+AlignAfterOpenBracket: Align
+AlignConsecutiveAssignments: 'true'
+AlignEscapedNewlines: Right
+AlignOperands: 'true'
+AlignTrailingComments: 'true'
+
+...
