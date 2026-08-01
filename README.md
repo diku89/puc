@@ -1,6 +1,6 @@
 # puc
 
-A minimal C reimplementation of the Pi agentic harness for Unix-like operating systems.
+A minimal C++ reimplementation of the Pi agentic harness for Unix-like operating systems.
 
 ## Build and test
 
@@ -12,6 +12,24 @@ system-wide, then run:
 git submodule update --init --recursive
 bazelisk build //...
 bazelisk test //...
+```
+
+Project sources are compiled as C++23 with `-Wall -Werror`. Production is the
+default build mode. The same full build and test suite can be run under Clang's
+sanitizers with:
+
+```sh
+bazelisk build --config=asan //...
+bazelisk test --config=asan //...
+bazelisk build --config=tsan //...
+bazelisk test --config=tsan //...
+```
+
+MemorySanitizer is available on Linux with Clang:
+
+```sh
+CC=clang CXX=clang++ bazelisk build --config=msan //...
+CC=clang CXX=clang++ bazelisk test --config=msan //...
 ```
 
 ## Contributors

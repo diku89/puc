@@ -42,15 +42,31 @@ jobs:
             "$BASE_SHA..$HEAD_SHA"
 
   build-and-test:
-    name: Build and test (${{ matrix.os }})
+    name: Build and test (${{ matrix.os }}, ${{ matrix.config }})
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
-        os:
-          - ubuntu-latest
-          - macos-latest
+        include:
+          - os: ubuntu-latest
+            config: prod
+          - os: ubuntu-latest
+            config: asan
+          - os: ubuntu-latest
+            config: tsan
+          - os: ubuntu-latest
+            config: msan
+          - os: macos-latest
+            config: prod
+          - os: macos-latest
+            config: asan
+          - os: macos-latest
+            config: tsan
+
+    env:
+      CC: clang
+      CXX: clang++
 
     steps:
       - name: Check out source
@@ -62,15 +78,15 @@ jobs:
         uses: bazel-contrib/setup-bazel@0.19.0
         with:
           bazelisk-cache: true
-          disk-cache: ${{ github.workflow }}-${{ runner.os }}
+          disk-cache: ${{ github.workflow }}-${{ runner.os }}-${{ matrix.config }}
           repository-cache: true
           cache-save: ${{ github.event_name != 'pull_request' }}
 
       - name: Build all targets
-        run: bazelisk build //...
+        run: bazelisk build --config=${{ matrix.config }} //...
 
       - name: Run all tests
-        run: bazelisk test //...
+        run: bazelisk test --config=${{ matrix.config }} //...
 
   freebsd:
     name: Build and test (FreeBSD 15.1)
