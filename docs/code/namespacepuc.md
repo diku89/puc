@@ -2,8 +2,9 @@
 
 # Namespace `puc`
 
-[Source](../../utils/logger/logger.cc#L10)
+[Source](../../puc-cli/tui/canvas.cpp#L17)
 
 ## Related symbols
 
 - [puc::logger](namespacepuc_1_1logger.md)
+- [puc::tui](namespacepuc_1_1tui.md)
