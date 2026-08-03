@@ -5,6 +5,7 @@ module(
 
 bazel_dep(name = "rules_cc", version = "0.2.22")
 
+bazel_dep(name = "googletest", version = "1.17.0.bcr.2", dev_dependency = True)
 bazel_dep(name = "platforms", version = "1.1.0", dev_dependency = True)
 bazel_dep(name = "rules_doxygen", version = "2.6.3", dev_dependency = True)
 bazel_dep(name = "rules_python", version = "2.2.0", dev_dependency = True)
@@ -15,6 +16,13 @@ bazel_dep(
     version = "0.15.19.1",
     dev_dependency = True,
     repo_name = "ruff",
+)
+
+single_version_override(
+    module_name = "googletest",
+    patch_strip = 1,
+    patches = ["//third_party:googletest_1_17_0_char8_t.patch"],
+    version = "1.17.0.bcr.2",
 )
 
 python = use_extension(
