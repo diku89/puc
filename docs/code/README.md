@@ -20,7 +20,6 @@
 ## File
 
 - [`bootstrap.sh`](bootstrap_8sh.md)
-- [`bsd.sh`](bsd_8sh.md)
 - [`canvas.cpp`](canvas_8cpp.md)
 - [`canvas.hpp`](canvas_8hpp.md)
 - [`check\_authors.py`](check__authors_8py.md)
