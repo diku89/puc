@@ -6,7 +6,7 @@ Relative physical dimensions of one terminal character cell.
 
 The values form a ratio rather than an absolute pixel size. For example, `{1, 2}` describes a cell twice as tall as it is wide. [Layout](classpuc_1_1tui_1_1_layout.md) uses this ratio to translate visual aspect ratios into integer columns and rows.
 
-[Source](../../puc-cli/tui/state.hpp#L20)
+[Source](../../puc-cli/tui/screen.hpp#L30)
 
 ## Public data members
 
@@ -20,7 +20,7 @@ size_t puc::tui::CellDimensions::width
 
 Relative physical width of a cell.
 
-[Source](../../puc-cli/tui/state.hpp#L21)
+[Source](../../puc-cli/tui/screen.hpp#L31)
 
 <a id="symbol-structpuc_1_1tui_1_1_cell_dimensions_1ae8c5f298259854edfa7f58c163e766fc"></a>
 
@@ -32,18 +32,18 @@ size_t puc::tui::CellDimensions::height
 
 Relative physical height of a cell.
 
-[Source](../../puc-cli/tui/state.hpp#L22)
+[Source](../../puc-cli/tui/screen.hpp#L32)
 
 ## Public functions
 
-<a id="symbol-structpuc_1_1tui_1_1_cell_dimensions_1a3b6b4da92c029f4498be869884df8167"></a>
+<a id="symbol-structpuc_1_1tui_1_1_cell_dimensions_1a9b4b1f0f0035a724dedb7b3fa46eca6f"></a>
 
 ### `operator==`
 
 ```cpp
-bool puc::tui::CellDimensions::operator==(const CellDimensions &) const =default
+bool puc::tui::CellDimensions::operator==(const CellDimensions &) const noexcept=default
 ```
 
-Compare both relative dimensions.
+Compare both relative dimensions at compile time when possible.
 
-[Source](../../puc-cli/tui/state.hpp#L25)
+[Source](../../puc-cli/tui/screen.hpp#L35)

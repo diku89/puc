@@ -8,7 +8,7 @@ Owns a POSIX terminal session and presents published [Canvas](classpuc_1_1tui_1_
 
 [Screen](#) renders the complete published [Canvas](classpuc_1_1tui_1_1_canvas.md) as UTF-8 and 24-bit ANSI color. It also detects terminal cell-count changes during `draw()` and queues resize events in a bounded, mutex-protected FIFO.
 
-[Source](../../puc-cli/tui/screen.hpp#L36)
+[Source](../../puc-cli/tui/screen.hpp#L53)
 
 ## Related symbols
 
@@ -32,7 +32,7 @@ Kinds of input or terminal events represented by [Event](structpuc_1_1tui_1_1_sc
 - <a id="symbol-classpuc_1_1tui_1_1_screen_1a3fb244e2d7391b11b5db60de1901a384affa443ed64dc5ee08ddd51ec6b0cf09e"></a>`KEY_PRESS` — Key press event.
 - <a id="symbol-classpuc_1_1tui_1_1_screen_1a3fb244e2d7391b11b5db60de1901a384a71574275cadb387a5082e87e9dd60c25"></a>`SCROLL` — Scroll event.
 
-[Source](../../puc-cli/tui/screen.hpp#L41)
+[Source](../../puc-cli/tui/screen.hpp#L58)
 
 ## Private data members
 
@@ -46,7 +46,7 @@ std::shared_ptr<EventBuffer> puc::tui::Screen::event_buffer_
 
 [Event](structpuc_1_1tui_1_1_screen_1_1_event.md) queue shared with producers and consumers.
 
-[Source](../../puc-cli/tui/screen.hpp#L225)
+[Source](../../puc-cli/tui/screen.hpp#L242)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1abf251a7b5248753c787dbddd26951bd8"></a>
 
@@ -58,7 +58,7 @@ std::shared_ptr<Canvas> puc::tui::Screen::canvas_
 
 Current canvas.
 
-[Source](../../puc-cli/tui/screen.hpp#L227)
+[Source](../../puc-cli/tui/screen.hpp#L244)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1ace3518f8c5323978c48fe931728a582e"></a>
 
@@ -70,7 +70,7 @@ int puc::tui::Screen::input_fd_
 
 Borrowed input terminal file descriptor.
 
-[Source](../../puc-cli/tui/screen.hpp#L229)
+[Source](../../puc-cli/tui/screen.hpp#L246)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a3fa9815bd20c940e2b2f375167cd2453"></a>
 
@@ -82,7 +82,7 @@ int puc::tui::Screen::output_fd_
 
 Borrowed output terminal file descriptor.
 
-[Source](../../puc-cli/tui/screen.hpp#L231)
+[Source](../../puc-cli/tui/screen.hpp#L248)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a57d9e1afa73813df808e3cb0da22514c"></a>
 
@@ -94,7 +94,7 @@ termios puc::tui::Screen::original_terminal_state_
 
 Terminal settings restored by [release()](#symbol-classpuc_1_1tui_1_1_screen_1a73f83169e01a31309c6daea74aa8903f).
 
-[Source](../../puc-cli/tui/screen.hpp#L233)
+[Source](../../puc-cli/tui/screen.hpp#L250)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a412b951b0cd19b81f6486a364ddd0d75"></a>
 
@@ -106,7 +106,7 @@ bool puc::tui::Screen::has_original_terminal_state_
 
 Whether original\_terminal\_state\_ contains valid settings.
 
-[Source](../../puc-cli/tui/screen.hpp#L235)
+[Source](../../puc-cli/tui/screen.hpp#L252)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a8293c7d147db49bb2791460e55852d3b"></a>
 
@@ -118,7 +118,7 @@ bool puc::tui::Screen::terminal_taken_
 
 Whether this screen currently owns the terminal.
 
-[Source](../../puc-cli/tui/screen.hpp#L237)
+[Source](../../puc-cli/tui/screen.hpp#L254)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a709a54fc720046b341710ec4534cb26e"></a>
 
@@ -130,7 +130,7 @@ size_t puc::tui::Screen::last_width_
 
 Last terminal column count observed by `take()` or `draw()`.
 
-[Source](../../puc-cli/tui/screen.hpp#L239)
+[Source](../../puc-cli/tui/screen.hpp#L256)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a879f9c4176d29f375f3e17268dcc3652"></a>
 
@@ -142,7 +142,7 @@ size_t puc::tui::Screen::last_height_
 
 Last terminal row count observed by `take()` or `draw()`.
 
-[Source](../../puc-cli/tui/screen.hpp#L241)
+[Source](../../puc-cli/tui/screen.hpp#L258)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1af0ed058d5a04fdf8bb00987a0491770e"></a>
 
@@ -154,7 +154,7 @@ uint64_t puc::tui::Screen::next_event_id_
 
 Identifier assigned to the next generated event.
 
-[Source](../../puc-cli/tui/screen.hpp#L243)
+[Source](../../puc-cli/tui/screen.hpp#L260)
 
 ## Public functions
 
@@ -172,7 +172,7 @@ Construct a [Screen](#) for standard input and standard output.
 
 - `buffer` (in) — The event buffer to use for screen events.
 
-[Source](../../puc-cli/tui/screen.hpp#L96)
+[Source](../../puc-cli/tui/screen.hpp#L113)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1ad8aa3054e2bfc000cf2d82d94e90276c"></a>
 
@@ -192,7 +192,7 @@ This overload supports tests and applications whose controlling terminal is not 
 - `input_fd` (in) — Descriptor used for terminal input and attributes.
 - `output_fd` (in) — Descriptor used for terminal queries and output.
 
-[Source](../../puc-cli/tui/screen.hpp#L109)
+[Source](../../puc-cli/tui/screen.hpp#L126)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a4f473e228ea0629f7efc80759ab37eed"></a>
 
@@ -204,7 +204,7 @@ puc::tui::Screen::~Screen()
 
 Release the terminal if this object currently owns it.
 
-[Source](../../puc-cli/tui/screen.hpp#L112)
+[Source](../../puc-cli/tui/screen.hpp#L129)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a487d1d32a4a874be2f069b6d191fbe2b"></a>
 
@@ -224,7 +224,7 @@ Calling `take()` again while already taken only replaces the event buffer. If te
 
 **Returns:** [Status::OK](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ae0aa021e21dddbd6d8cecec71e9cf564) on success; [Status::INVALID\_ARGUMENT](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270af295a0c3e37c94f078e1c5476479132d), [Status::TERMINAL\_NOT\_AVAILABLE](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ac4254265f0b2240a69dc040eb25d3fa0), [Status::TERMINAL\_QUERY\_FAILED](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270abd886bccf2b8f84ee788a149533fd623), [Status::INVALID\_DIMENSIONS](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270a85d5c1a701eb47300e4687b82001fac9), [Status::TERMINAL\_CONFIG\_FAILED](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270aea0a179066f996942bf50edd1b944c97), or [Status::TERMINAL\_WRITE\_FAILED](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ac96841a758410c9a6e5897eee3da9d99) otherwise.
 
-[Source](../../puc-cli/tui/screen.hpp#L127)
+[Source](../../puc-cli/tui/screen.hpp#L144)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a73f83169e01a31309c6daea74aa8903f"></a>
 
@@ -238,7 +238,7 @@ Restore the terminal attributes and leave the alternate screen.
 
 **Returns:** [Status::OK](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ae0aa021e21dddbd6d8cecec71e9cf564) when released or already idle; otherwise the first output or attribute-restoration failure.
 
-[Source](../../puc-cli/tui/screen.hpp#L135)
+[Source](../../puc-cli/tui/screen.hpp#L152)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1ac05b46c9b790eb221476cac930414b21"></a>
 
@@ -257,7 +257,7 @@ Query terminal dimensions in character cells.
 
 **Returns:** [Status::OK](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ae0aa021e21dddbd6d8cecec71e9cf564), [Status::TERMINAL\_QUERY\_FAILED](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270abd886bccf2b8f84ee788a149533fd623), or [Status::INVALID\_DIMENSIONS](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270a85d5c1a701eb47300e4687b82001fac9).
 
-[Source](../../puc-cli/tui/screen.hpp#L147)
+[Source](../../puc-cli/tui/screen.hpp#L164)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a3fa1d01ffbb4b520a7bd1a032ad989a7"></a>
 
@@ -279,7 +279,7 @@ When the terminal reports total pixel dimensions, this method reduces the averag
 
 **Returns:** [Status::OK](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ae0aa021e21dddbd6d8cecec71e9cf564), [Status::TERMINAL\_QUERY\_FAILED](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270abd886bccf2b8f84ee788a149533fd623), or [Status::INVALID\_DIMENSIONS](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270a85d5c1a701eb47300e4687b82001fac9).
 
-[Source](../../puc-cli/tui/screen.hpp#L162)
+[Source](../../puc-cli/tui/screen.hpp#L179)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a37f029de8d1d450474e5fae2a6b4def9"></a>
 
@@ -299,7 +299,7 @@ The canvas may be replaced when the terminal is resized.
 
 **Returns:** [Status::OK](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ae0aa021e21dddbd6d8cecec71e9cf564) on success, [Status::CANVAS\_NOT\_SET](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270afd6529724717ca6d2548efcf148f4c23) for null, or the construction status recorded by an invalid [Canvas](classpuc_1_1tui_1_1_canvas.md).
 
-[Source](../../puc-cli/tui/screen.hpp#L174)
+[Source](../../puc-cli/tui/screen.hpp#L191)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1ab650facd07045441193348d5fe1e0734"></a>
 
@@ -313,7 +313,7 @@ Pop an event from the event buffer.
 
 **Returns:** The oldest queued event, or `std::nullopt` when the queue is empty or this [Screen](#) has no event buffer.
 
-[Source](../../puc-cli/tui/screen.hpp#L193)
+[Source](../../puc-cli/tui/screen.hpp#L210)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a34000ecf3c44dc99824d4a72b8d7c0d9"></a>
 
@@ -327,7 +327,7 @@ Get the number of pending events in the event buffer.
 
 **Returns:** Number of queued events, or zero when no buffer is configured.
 
-[Source](../../puc-cli/tui/screen.hpp#L200)
+[Source](../../puc-cli/tui/screen.hpp#L217)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1aac9e8fb0ecbd2a415a501e965d347344"></a>
 
@@ -343,7 +343,7 @@ A resize event is queued before presentation when the current dimensions differ 
 
 **Returns:** [Status::OK](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ae0aa021e21dddbd6d8cecec71e9cf564) on success, [Status::TERMINAL\_NOT\_AVAILABLE](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ac4254265f0b2240a69dc040eb25d3fa0) or [Status::CANVAS\_NOT\_SET](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270afd6529724717ca6d2548efcf148f4c23) when not ready, or the first query, rendering, output, or event-buffer error.
 
-[Source](../../puc-cli/tui/screen.hpp#L214)
+[Source](../../puc-cli/tui/screen.hpp#L231)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a84b8042f09c2a77cb8f03b7704f64e31"></a>
 
@@ -357,7 +357,7 @@ Return whether this object currently owns the terminal session.
 
 **Returns:** `true` after successful `take()` and before `release()`.
 
-[Source](../../puc-cli/tui/screen.hpp#L221)
+[Source](../../puc-cli/tui/screen.hpp#L238)
 
 ## Public static functions
 
@@ -378,4 +378,4 @@ Append an event to a shared buffer without blocking on queue capacity.
 
 **Returns:** [Status::OK](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ae0aa021e21dddbd6d8cecec71e9cf564), [Status::INVALID\_ARGUMENT](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270af295a0c3e37c94f078e1c5476479132d) for a null buffer, or [Status::EVENT\_BUFFER\_FULL](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270a7359f2961f938fa1c253503f4d527b51) when every slot is occupied.
 
-[Source](../../puc-cli/tui/screen.hpp#L184)
+[Source](../../puc-cli/tui/screen.hpp#L201)

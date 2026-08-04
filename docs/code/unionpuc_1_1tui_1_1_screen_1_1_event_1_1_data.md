@@ -4,7 +4,7 @@
 
 Payload selected by [Event::type](structpuc_1_1tui_1_1_screen_1_1_event.md#symbol-structpuc_1_1tui_1_1_screen_1_1_event_1a545a5540f7e36527c8e407e77732c86a).
 
-[Source](../../puc-cli/tui/screen.hpp#L60)
+[Source](../../puc-cli/tui/screen.hpp#L77)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ uint32_t puc::tui::Screen::Event::Data::key
 
 Decoded key value for KEY\_PRESS.
 
-[Source](../../puc-cli/tui/screen.hpp#L61)
+[Source](../../puc-cli/tui/screen.hpp#L78)
 
 <a id="symbol-unionpuc_1_1tui_1_1_screen_1_1_event_1_1_data_1af1f58b372dc43ce69b805998b13e8911"></a>
 
@@ -30,7 +30,7 @@ int32_t puc::tui::Screen::Event::Data::x
 
 Horizontal scroll delta.
 
-[Source](../../puc-cli/tui/screen.hpp#L63)
+[Source](../../puc-cli/tui/screen.hpp#L80)
 
 <a id="symbol-unionpuc_1_1tui_1_1_screen_1_1_event_1_1_data_1a4bf3715e7c8f1572409eda59dd486054"></a>
 
@@ -42,7 +42,7 @@ int32_t puc::tui::Screen::Event::Data::y
 
 Vertical scroll delta.
 
-[Source](../../puc-cli/tui/screen.hpp#L64)
+[Source](../../puc-cli/tui/screen.hpp#L81)
 
 <a id="symbol-unionpuc_1_1tui_1_1_screen_1_1_event_1_1_data_1abace4580ed968f1910e0fd298a1a30cd"></a>
 
@@ -54,7 +54,7 @@ struct puc::tui::Screen::Event::Data::@26403033712215132016310504137314106027532
 
 Payload for SCROLL.
 
-[Source](../../puc-cli/tui/screen.hpp#L65)
+[Source](../../puc-cli/tui/screen.hpp#L82)
 
 <a id="symbol-unionpuc_1_1tui_1_1_screen_1_1_event_1_1_data_1a21b89932d0843d9a4e8c2398ab85c457"></a>
 
@@ -66,7 +66,7 @@ size_t puc::tui::Screen::Event::Data::width
 
 New terminal width in columns.
 
-[Source](../../puc-cli/tui/screen.hpp#L67)
+[Source](../../puc-cli/tui/screen.hpp#L84)
 
 <a id="symbol-unionpuc_1_1tui_1_1_screen_1_1_event_1_1_data_1afd62d83afef85b9c74ed50762658b2d2"></a>
 
@@ -78,7 +78,7 @@ size_t puc::tui::Screen::Event::Data::height
 
 New terminal height in rows.
 
-[Source](../../puc-cli/tui/screen.hpp#L68)
+[Source](../../puc-cli/tui/screen.hpp#L85)
 
 <a id="symbol-unionpuc_1_1tui_1_1_screen_1_1_event_1_1_data_1a61085fb7063cb648097589e1b626b9bd"></a>
 
@@ -90,7 +90,7 @@ struct puc::tui::Screen::Event::Data::@12417301616002620124502431005424314023135
 
 Payload for RESIZE.
 
-[Source](../../puc-cli/tui/screen.hpp#L69)
+[Source](../../puc-cli/tui/screen.hpp#L86)
 
 ## Public functions
 
@@ -104,4 +104,4 @@ puc::tui::Screen::Event::Data::Data()
 
 Value-initialize the union through the key member.
 
-[Source](../../puc-cli/tui/screen.hpp#L72)
+[Source](../../puc-cli/tui/screen.hpp#L89)

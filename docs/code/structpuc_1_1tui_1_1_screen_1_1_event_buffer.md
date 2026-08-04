@@ -6,7 +6,7 @@ Fixed-capacity, thread-safe FIFO shared by event producers and [Screen](classpuc
 
 All `kMaxEvents` array slots are usable. `read_index` and `write_index` wrap modulo capacity while `size` distinguishes empty from full.
 
-[Source](../../puc-cli/tui/screen.hpp#L82)
+[Source](../../puc-cli/tui/screen.hpp#L99)
 
 ## Public static data members
 
@@ -20,7 +20,7 @@ size_t puc::tui::Screen::EventBuffer::kMaxEvents
 
 Queue capacity.
 
-[Source](../../puc-cli/tui/screen.hpp#L83)
+[Source](../../puc-cli/tui/screen.hpp#L100)
 
 ## Public data members
 
@@ -34,7 +34,7 @@ std::mutex puc::tui::Screen::EventBuffer::lock
 
 Serializes every queue operation.
 
-[Source](../../puc-cli/tui/screen.hpp#L84)
+[Source](../../puc-cli/tui/screen.hpp#L101)
 
 <a id="symbol-structpuc_1_1tui_1_1_screen_1_1_event_buffer_1a46834eccd3fbe76add9e50c8e6e1d0fe"></a>
 
@@ -46,7 +46,7 @@ Event puc::tui::Screen::EventBuffer::events[kMaxEvents][kMaxEvents]
 
 Array of events in the buffer.
 
-[Source](../../puc-cli/tui/screen.hpp#L85)
+[Source](../../puc-cli/tui/screen.hpp#L102)
 
 <a id="symbol-structpuc_1_1tui_1_1_screen_1_1_event_buffer_1aaecda202c2c358457265f50e74228276"></a>
 
@@ -58,7 +58,7 @@ size_t puc::tui::Screen::EventBuffer::read_index
 
 Read index for the event buffer.
 
-[Source](../../puc-cli/tui/screen.hpp#L86)
+[Source](../../puc-cli/tui/screen.hpp#L103)
 
 <a id="symbol-structpuc_1_1tui_1_1_screen_1_1_event_buffer_1af7dfb8869afbc794178fa4d9801d6dda"></a>
 
@@ -70,7 +70,7 @@ size_t puc::tui::Screen::EventBuffer::write_index
 
 Write index for the event buffer.
 
-[Source](../../puc-cli/tui/screen.hpp#L87)
+[Source](../../puc-cli/tui/screen.hpp#L104)
 
 <a id="symbol-structpuc_1_1tui_1_1_screen_1_1_event_buffer_1adab263922e5ecc9473ba98381dddd4e6"></a>
 
@@ -82,4 +82,4 @@ size_t puc::tui::Screen::EventBuffer::size
 
 Number of queued events.
 
-[Source](../../puc-cli/tui/screen.hpp#L88)
+[Source](../../puc-cli/tui/screen.hpp#L105)

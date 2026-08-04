@@ -8,6 +8,7 @@ POSIX terminal ownership, presentation, and event buffering.
 
 ## Related symbols
 
+- [puc::tui::CellDimensions](structpuc_1_1tui_1_1_cell_dimensions.md)
 - [puc::tui::Screen](classpuc_1_1tui_1_1_screen.md)
 - [puc::tui::Screen::Event](structpuc_1_1tui_1_1_screen_1_1_event.md)
 - [puc::tui::Screen::Event::Data](unionpuc_1_1tui_1_1_screen_1_1_event_1_1_data.md)

@@ -2,6 +2,8 @@ name: Bazel CI
 
 on:
   push:
+    branches:
+      - main
   pull_request:
 
 permissions:

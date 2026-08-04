@@ -8,7 +8,6 @@ Shared per-frame terminal metrics and application rendering state.
 
 ## Related symbols
 
-- [puc::tui::CellDimensions](structpuc_1_1tui_1_1_cell_dimensions.md)
 - [puc::tui::State](structpuc_1_1tui_1_1_state.md)
 - [puc](namespacepuc.md)
 - [puc::tui](namespacepuc_1_1tui.md)
