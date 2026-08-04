@@ -6,7 +6,7 @@ One typed constraint and its unit-specific value.
 
 `CHARACTERS` stores `size_t`, `PERCENT` stores `float`, `RATIO` stores [AspectRatio](structpuc_1_1tui_1_1_layout_1_1_aspect_ratio.md), and `NAME` stores `std::string`. Invalid type/unit/value combinations are rejected when the constraint is added or solved.
 
-[Source](../../puc-cli/tui/layout.hpp#L99)
+[Source](../../puc-cli/tui/layout.hpp#L100)
 
 ## Public data members
 
@@ -20,7 +20,7 @@ ConstraintType puc::tui::Layout::Constraint::type
 
 Behavior controlled by this constraint.
 
-[Source](../../puc-cli/tui/layout.hpp#L100)
+[Source](../../puc-cli/tui/layout.hpp#L101)
 
 <a id="symbol-structpuc_1_1tui_1_1_layout_1_1_constraint_1a284d5c4d21dfcc9c4e33e742b83d4bcc"></a>
 
@@ -32,7 +32,7 @@ Unit puc::tui::Layout::Constraint::unit
 
 Representation selected in `value`.
 
-[Source](../../puc-cli/tui/layout.hpp#L101)
+[Source](../../puc-cli/tui/layout.hpp#L102)
 
 <a id="symbol-structpuc_1_1tui_1_1_layout_1_1_constraint_1a3a8ca1ee51f332b2728b9ba51a93c501"></a>
 
@@ -44,4 +44,4 @@ std::variant<float, size_t, AspectRatio, std::string> puc::tui::Layout::Constrai
 
 Value of the constraint.
 
-[Source](../../puc-cli/tui/layout.hpp#L103)
+[Source](../../puc-cli/tui/layout.hpp#L104)

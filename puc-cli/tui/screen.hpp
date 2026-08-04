@@ -15,11 +15,28 @@
 #include <utility>
 
 #include "puc-cli/tui/canvas.hpp"
-#include "puc-cli/tui/state.hpp"
 #include "puc-cli/tui/status.hpp"
 
 namespace puc {
 namespace tui {
+
+/**
+ * Relative physical dimensions of one terminal character cell.
+ *
+ * The values form a ratio rather than an absolute pixel size. For example,
+ * `{1, 2}` describes a cell twice as tall as it is wide. Layout uses this
+ * ratio to translate visual aspect ratios into integer columns and rows.
+ */
+struct CellDimensions {
+  size_t width  = 1; /**< Relative physical width of a cell. */
+  size_t height = 2; /**< Relative physical height of a cell. */
+
+  /** Compare both relative dimensions at compile time when possible. */
+  constexpr bool operator==(const CellDimensions&) const noexcept = default;
+};
+
+/** Conventional cell proportions used when a terminal omits pixel metrics. */
+inline constexpr CellDimensions kDefaultCellDimensions{};
 
 /**
  * Owns a POSIX terminal session and presents published Canvas images.

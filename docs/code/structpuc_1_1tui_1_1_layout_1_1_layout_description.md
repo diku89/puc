@@ -6,7 +6,7 @@ Declarative frame ownership, ordering, and constraints for one layout.
 
 Use [Layout](classpuc_1_1tui_1_1_layout.md) mutation methods to preserve the invariant that every frame id appears exactly once in `z_buffer` and has one entry in `constraints`.
 
-[Source](../../puc-cli/tui/layout.hpp#L112)
+[Source](../../puc-cli/tui/layout.hpp#L113)
 
 ## Public data members
 
@@ -20,7 +20,7 @@ std::string puc::tui::Layout::LayoutDescription::layout_name
 
 Human-readable layout name used in logs.
 
-[Source](../../puc-cli/tui/layout.hpp#L113)
+[Source](../../puc-cli/tui/layout.hpp#L114)
 
 <a id="symbol-structpuc_1_1tui_1_1_layout_1_1_layout_description_1ab2080d79061675a6ba4367ad79775d8e"></a>
 
@@ -32,7 +32,7 @@ ZBuffer puc::tui::Layout::LayoutDescription::z_buffer
 
 Frames in back-to-front drawing order.
 
-[Source](../../puc-cli/tui/layout.hpp#L114)
+[Source](../../puc-cli/tui/layout.hpp#L115)
 
 <a id="symbol-structpuc_1_1tui_1_1_layout_1_1_layout_description_1a0d26bedc338db3fe079322ffa836f88f"></a>
 
@@ -44,4 +44,4 @@ std::map<std::string, std::vector<Constraint> > puc::tui::Layout::LayoutDescript
 
 Constraints indexed by frame id.
 
-[Source](../../puc-cli/tui/layout.hpp#L116)
+[Source](../../puc-cli/tui/layout.hpp#L117)

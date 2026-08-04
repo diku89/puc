@@ -30,6 +30,9 @@
 namespace puc::tui {
 namespace {
 
+static_assert(kDefaultCellDimensions ==
+              CellDimensions{.width = 1, .height = 2});
+
 /**
  * RAII pseudo-terminal pair used to exercise real POSIX terminal behavior.
  *

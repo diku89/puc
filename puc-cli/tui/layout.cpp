@@ -1353,19 +1353,11 @@ Status Layout::compute_minimum_dimensions(
 
 Status Layout::draw(
     const std::shared_ptr<LayoutDescription>& layout_description,
-    const State& state, const Theme& theme, Canvas& canvas) const {
+    const AbsoluteLayout& absolute_layout, const State& state,
+    const Theme& theme, Canvas& canvas) const {
   if (!layout_description) {
     Logger<ERROR> << "Cannot draw a null layout description";
     return Status::INVALID_ARGUMENT;
-  }
-
-  const auto [canvas_width, canvas_height] = canvas.get_dimensions();
-  AbsoluteLayout absolute_layout;
-  Status status =
-      compute_absolute_layout(layout_description, canvas_width, canvas_height,
-                              state.cell_dimensions, absolute_layout);
-  if (!is_ok(status)) {
-    return status;
   }
 
   for (const ZBuffer::Entry& entry : layout_description->z_buffer.frames()) {
@@ -1381,7 +1373,7 @@ Status Layout::draw(
       return Status::FRAME_NOT_FOUND;
     }
 
-    status = entry.frame->draw(state, theme, canvas, rect->second);
+    const Status status = entry.frame->draw(state, theme, canvas, rect->second);
     if (!is_ok(status)) {
       Logger<ERROR> << "Frame '" << entry.frame_id
                     << "' failed to draw: " << status_message(status);

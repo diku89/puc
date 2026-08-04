@@ -4,7 +4,7 @@
 
 Solved rectangles for every frame in a [LayoutDescription](structpuc_1_1tui_1_1_layout_1_1_layout_description.md).
 
-[Source](../../puc-cli/tui/layout.hpp#L122)
+[Source](../../puc-cli/tui/layout.hpp#L123)
 
 ## Public data members
 
@@ -18,4 +18,4 @@ std::map<std::string, Canvas::Rect> puc::tui::Layout::AbsoluteLayout::frame_layo
 
 [Frame](classpuc_1_1tui_1_1_frame.md) ids mapped to half-open canvas rectangles.
 
-[Source](../../puc-cli/tui/layout.hpp#L124)
+[Source](../../puc-cli/tui/layout.hpp#L125)

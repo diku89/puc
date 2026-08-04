@@ -15,6 +15,7 @@
 #include <vector>
 
 #include "puc-cli/tui/canvas.hpp"
+#include "puc-cli/tui/screen.hpp"
 #include "puc-cli/tui/state.hpp"
 #include "puc-cli/tui/theme.hpp"
 #include "puc-cli/tui/zbuf.hpp"
@@ -254,13 +255,15 @@ class Layout {
       size_t& minimum_height) const;
 
   /**
-   * Compute and draw a layout in Z-buffer order.
+   * Draw an already-solved layout in Z-buffer order.
    *
    * The first Z-buffer entry is drawn first and the last is drawn last. Frames
    * whose `needs_update()` returns false are skipped. The canvas must have an
-   * active frame transaction and should match `state`'s terminal dimensions.
+   * active frame transaction. `absolute_layout` should have been produced by
+   * `compute_absolute_layout()` for the current Canvas and cell dimensions.
    *
    * @param[in] layout_description The layout and frames to draw.
+   * @param[in] absolute_layout     Solved rectangle for every frame.
    * @param[in] state              The current terminal UI state.
    * @param[in] theme              The active color theme.
    * @param[in,out] canvas         The canvas receiving frame output.
@@ -268,7 +271,8 @@ class Layout {
    * @return Status::OK on success, or the first frame error.
    */
   Status draw(const std::shared_ptr<LayoutDescription>& layout_description,
-              const State& state, const Theme& theme, Canvas& canvas) const;
+              const AbsoluteLayout& absolute_layout, const State& state,
+              const Theme& theme, Canvas& canvas) const;
 };
 
 }  // namespace tui
