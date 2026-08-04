@@ -114,10 +114,14 @@ std::unique_ptr<Screen> screen;
 std::shared_ptr<Canvas> canvas;
 /** Declarative description of every smoke-test frame. */
 std::shared_ptr<Layout::LayoutDescription> layout_description;
+/** Frame rectangles solved for the current screen geometry. */
+Layout::AbsoluteLayout absolute_layout;
 /** Constraint solver and compositor. */
 Layout layout;
 /** Per-frame terminal metrics shared with frames. */
 State state;
+/** Physical proportions reported for the current terminal cells. */
+CellDimensions cell_dimensions = puc::tui::kDefaultCellDimensions;
 /** Semantic palette used by smoke-test frames. */
 Theme theme;
 
@@ -556,7 +560,7 @@ Status draw_screen_too_small() {
  */
 Status update_minimum_screen_dimensions() {
   Status status = layout.compute_minimum_dimensions(
-      layout_description, state.cell_dimensions, minimum_screen_width,
+      layout_description, cell_dimensions, minimum_screen_width,
       minimum_screen_height);
   if (!puc::tui::is_ok(status)) {
     return status;
@@ -565,9 +569,20 @@ Status update_minimum_screen_dimensions() {
   minimum_screen_height = std::max(minimum_screen_height, size_t{1});
   Logger<INFO> << "Test app requires at least " << minimum_screen_width << 'x'
                << minimum_screen_height << " terminal cells with "
-               << state.cell_dimensions.width << ':'
-               << state.cell_dimensions.height << " cell dimensions";
+               << cell_dimensions.width << ':' << cell_dimensions.height
+               << " cell dimensions";
   return Status::OK;
+}
+
+/**
+ * Solve frame rectangles for the currently recorded terminal geometry.
+ *
+ * @return Status::OK or the first layout validation or resolution error.
+ */
+Status update_absolute_layout() {
+  return layout.compute_absolute_layout(layout_description, state.screen_width,
+                                        state.screen_height, cell_dimensions,
+                                        absolute_layout);
 }
 
 /**
@@ -594,7 +609,7 @@ Status setup() {
 
   size_t width  = 0;
   size_t height = 0;
-  status        = screen->get_dimensions(width, height, state.cell_dimensions);
+  status        = screen->get_dimensions(width, height, cell_dimensions);
   if (!puc::tui::is_ok(status)) {
     return status;
   }
@@ -609,6 +624,10 @@ Status setup() {
     return status;
   }
   status = update_minimum_screen_dimensions();
+  if (!puc::tui::is_ok(status)) {
+    return status;
+  }
+  status = update_absolute_layout();
   if (!puc::tui::is_ok(status)) {
     return status;
   }
@@ -633,23 +652,29 @@ Status draw() {
 
   size_t width  = 0;
   size_t height = 0;
-  CellDimensions cell_dimensions;
-  Status status = screen->get_dimensions(width, height, cell_dimensions);
+  CellDimensions current_cell_dimensions;
+  Status status =
+      screen->get_dimensions(width, height, current_cell_dimensions);
   if (!puc::tui::is_ok(status)) {
     return status;
   }
   const bool screen_dimensions_changed =
       width != state.screen_width || height != state.screen_height;
-  const bool cell_dimensions_changed = cell_dimensions != state.cell_dimensions;
+  const bool cell_dimensions_changed =
+      current_cell_dimensions != cell_dimensions;
   if (screen_dimensions_changed || cell_dimensions_changed) {
-    state.screen_width    = width;
-    state.screen_height   = height;
-    state.cell_dimensions = cell_dimensions;
+    state.screen_width  = width;
+    state.screen_height = height;
+    cell_dimensions     = current_cell_dimensions;
     if (screen_dimensions_changed) {
       status = attach_canvas(width, height);
       if (!puc::tui::is_ok(status)) {
         return status;
       }
+    }
+    status = update_absolute_layout();
+    if (!puc::tui::is_ok(status)) {
+      return status;
     }
     if (cell_dimensions_changed) {
       status = update_minimum_screen_dimensions();
@@ -679,7 +704,8 @@ Status draw() {
   if (puc::tui::is_ok(frame_status)) {
     frame_status = screen_too_small
                        ? draw_screen_too_small()
-                       : layout.draw(layout_description, state, theme, *canvas);
+                       : layout.draw(layout_description, absolute_layout, state,
+                                     theme, *canvas);
   }
   const Status end_status = canvas->end_frame();
   if (!puc::tui::is_ok(frame_status)) {

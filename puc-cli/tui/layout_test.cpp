@@ -545,8 +545,11 @@ TEST(LayoutTest, DrawsDirtyFramesInZBufferOrderAndSkipsCleanFrames) {
             Status::OK);
 
   Canvas canvas(10, 5);
+  Layout::AbsoluteLayout absolute;
+  ASSERT_EQ(layout.compute_absolute_layout(desc, 10, 5, kSquareCells, absolute),
+            Status::OK);
   ASSERT_EQ(canvas.begin_frame(), Status::OK);
-  ASSERT_EQ(layout.draw(desc, State{}, Theme{}, canvas), Status::OK);
+  ASSERT_EQ(layout.draw(desc, absolute, State{}, Theme{}, canvas), Status::OK);
   ASSERT_EQ(canvas.end_frame(), Status::OK);
 
   ASSERT_EQ(calls.size(), 2U);
@@ -569,13 +572,33 @@ TEST(LayoutTest, StopsDrawingAtTheFirstFrameError) {
             Status::OK);
 
   Canvas canvas(2, 2);
+  Layout::AbsoluteLayout absolute;
+  ASSERT_EQ(layout.compute_absolute_layout(desc, 2, 2, kSquareCells, absolute),
+            Status::OK);
   ASSERT_EQ(canvas.begin_frame(), Status::OK);
-  EXPECT_EQ(layout.draw(desc, State{}, Theme{}, canvas),
+  EXPECT_EQ(layout.draw(desc, absolute, State{}, Theme{}, canvas),
             Status::TERMINAL_WRITE_FAILED);
   ASSERT_EQ(canvas.end_frame(), Status::OK);
 
   ASSERT_EQ(calls.size(), 1U);
   EXPECT_EQ(calls.front().frame_id, "broken");
+}
+
+TEST(LayoutTest, DrawRequiresASolvedRectangleForEveryFrame) {
+  Layout layout;
+  const auto desc = layout.make_layout_description("test");
+  ASSERT_EQ(
+      layout.add_frame_to_layout_description(desc, "frame", frame("frame")),
+      Status::OK);
+
+  Canvas canvas(2, 2);
+  const Layout::AbsoluteLayout empty_absolute;
+  ASSERT_EQ(canvas.begin_frame(), Status::OK);
+  EXPECT_EQ(layout.draw(desc, empty_absolute, State{}, Theme{}, canvas),
+            Status::FRAME_NOT_FOUND);
+  EXPECT_EQ(layout.draw(nullptr, empty_absolute, State{}, Theme{}, canvas),
+            Status::INVALID_ARGUMENT);
+  ASSERT_EQ(canvas.end_frame(), Status::OK);
 }
 
 }  // namespace

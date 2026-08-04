@@ -43,4 +43,4 @@ Run the interactive TUI smoke test until signaled or an operation fails.
 
 **Returns:** Zero after successful setup, drawing, and terminal restoration; otherwise one.
 
-[Source](../../puc-cli/tui/test-app.cpp#L708)
+[Source](../../puc-cli/tui/test-app.cpp#L734)

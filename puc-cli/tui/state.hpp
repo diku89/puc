@@ -7,8 +7,6 @@
 
 #include <cstddef>
 
-#include "puc-cli/tui/screen.hpp"
-
 namespace puc {
 namespace tui {
 
@@ -20,10 +18,8 @@ namespace tui {
  * view of terminal dimensions and sampled application metrics.
  */
 struct State {
-  size_t screen_width  = 0; /**< Current terminal width in characters. */
-  size_t screen_height = 0; /**< Current terminal height in characters. */
-  CellDimensions cell_dimensions =
-      kDefaultCellDimensions;   /**< Physical character-cell proportions. */
+  size_t screen_width      = 0; /**< Current terminal width in characters. */
+  size_t screen_height     = 0; /**< Current terminal height in characters. */
   double frames_per_second = 0; /**< Recently measured frame rate. */
 };
 
