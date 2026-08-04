@@ -55,6 +55,20 @@ Result codes returned by expected TUI operations.
 
 [Source](../../puc-cli/tui/status.hpp#L23)
 
+## Variables
+
+<a id="symbol-namespacepuc_1_1tui_1ac35b2518a5f736a7fbb8b6cc54b9f89e"></a>
+
+### `kDefaultCellDimensions`
+
+```cpp
+CellDimensions puc::tui::kDefaultCellDimensions
+```
+
+Conventional cell proportions used when a terminal omits pixel metrics.
+
+[Source](../../puc-cli/tui/screen.hpp#L39)
+
 ## Functions
 
 <a id="symbol-namespacepuc_1_1tui_1a4f3c71d77afd613b8b9c3c8bce3bf68f"></a>

@@ -79,7 +79,7 @@ Status write_all(int file_descriptor, std::string_view bytes) noexcept {
  * terminal. If it fails and the descriptors differ, the input descriptor is
  * used as a fallback. Reported total pixel dimensions are converted to the
  * reduced ratio `(pixel_width / columns) : (pixel_height / rows)` without
- * integer division. Missing pixel dimensions leave CellDimensions at `{1, 2}`.
+ * integer division. Missing pixel dimensions use kDefaultCellDimensions.
  *
  * @param[in] output_fd Preferred terminal descriptor.
  * @param[in] input_fd Fallback terminal descriptor.
@@ -92,7 +92,7 @@ Status write_all(int file_descriptor, std::string_view bytes) noexcept {
 Status query_dimensions(int output_fd, int input_fd, size_t& width,
                         size_t& height,
                         CellDimensions& cell_dimensions) noexcept {
-  cell_dimensions = CellDimensions{};
+  cell_dimensions = kDefaultCellDimensions;
   struct winsize dimensions {};
   int result = ::ioctl(output_fd, TIOCGWINSZ, &dimensions);
   if (result != 0 && input_fd != output_fd) {

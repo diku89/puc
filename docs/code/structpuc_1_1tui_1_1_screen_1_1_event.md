@@ -6,7 +6,7 @@ One timestamped event delivered through [EventBuffer](structpuc_1_1tui_1_1_scree
 
 `timestamp` is a monotonic-clock nanosecond count suitable for ordering, not a wall-clock timestamp. Screen-generated events receive monotonically increasing ids for the lifetime of the [Screen](classpuc_1_1tui_1_1_screen.md).
 
-[Source](../../puc-cli/tui/screen.hpp#L54)
+[Source](../../puc-cli/tui/screen.hpp#L71)
 
 ## Related symbols
 
@@ -24,7 +24,7 @@ uint64_t puc::tui::Screen::Event::timestamp
 
 Monotonic timestamp in nanoseconds.
 
-[Source](../../puc-cli/tui/screen.hpp#L55)
+[Source](../../puc-cli/tui/screen.hpp#L72)
 
 <a id="symbol-structpuc_1_1tui_1_1_screen_1_1_event_1ac143a82817cb813a686ccec8bd27d6f9"></a>
 
@@ -36,7 +36,7 @@ uint64_t puc::tui::Screen::Event::id
 
 [Event](#) sequence identifier.
 
-[Source](../../puc-cli/tui/screen.hpp#L56)
+[Source](../../puc-cli/tui/screen.hpp#L73)
 
 <a id="symbol-structpuc_1_1tui_1_1_screen_1_1_event_1a545a5540f7e36527c8e407e77732c86a"></a>
 
@@ -48,7 +48,7 @@ EventType puc::tui::Screen::Event::type
 
 Active member of `data`.
 
-[Source](../../puc-cli/tui/screen.hpp#L57)
+[Source](../../puc-cli/tui/screen.hpp#L74)
 
 <a id="symbol-structpuc_1_1tui_1_1_screen_1_1_event_1ab1b228d36d5ee9416abf6e2df61f8683"></a>
 
@@ -60,4 +60,4 @@ union puc::tui::Screen::Event::Data puc::tui::Screen::Event::data
 
 Event-specific payload.
 
-[Source](../../puc-cli/tui/screen.hpp#L73)
+[Source](../../puc-cli/tui/screen.hpp#L90)

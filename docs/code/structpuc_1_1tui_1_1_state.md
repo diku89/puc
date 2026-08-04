@@ -6,7 +6,7 @@ Immutable-per-draw state shared with every [Frame](classpuc_1_1tui_1_1_frame.md)
 
 The application refreshes this structure before asking [Layout](classpuc_1_1tui_1_1_layout.md) to draw. Frames receive it by const reference, which gives every frame one consistent view of terminal dimensions and sampled application metrics.
 
-[Source](../../puc-cli/tui/state.hpp#L35)
+[Source](../../puc-cli/tui/state.hpp#L22)
 
 ## Public data members
 
@@ -20,7 +20,7 @@ size_t puc::tui::State::screen_width
 
 Current terminal width in characters.
 
-[Source](../../puc-cli/tui/state.hpp#L36)
+[Source](../../puc-cli/tui/state.hpp#L23)
 
 <a id="symbol-structpuc_1_1tui_1_1_state_1ad88b6c7309067469c6e46732dfbdbb98"></a>
 
@@ -32,7 +32,7 @@ size_t puc::tui::State::screen_height
 
 Current terminal height in characters.
 
-[Source](../../puc-cli/tui/state.hpp#L37)
+[Source](../../puc-cli/tui/state.hpp#L24)
 
 <a id="symbol-structpuc_1_1tui_1_1_state_1a495cd03b7b6f3e9730437c7fdb9bfb83"></a>
 
@@ -44,7 +44,7 @@ CellDimensions puc::tui::State::cell_dimensions
 
 Physical character-cell proportions.
 
-[Source](../../puc-cli/tui/state.hpp#L38)
+[Source](../../puc-cli/tui/state.hpp#L25)
 
 <a id="symbol-structpuc_1_1tui_1_1_state_1ad6e0f1f3e0c5438134478eb120f821d7"></a>
 
@@ -56,4 +56,4 @@ double puc::tui::State::frames_per_second
 
 Recently measured frame rate.
 
-[Source](../../puc-cli/tui/state.hpp#L39)
+[Source](../../puc-cli/tui/state.hpp#L27)
