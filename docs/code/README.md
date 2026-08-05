@@ -7,6 +7,7 @@
 - [`doxygen\_xml\_to\_markdown::Compound`](classdoxygen__xml__to__markdown_1_1_compound.md)
 - [`doxygen\_xml\_to\_markdown::LinkTarget`](classdoxygen__xml__to__markdown_1_1_link_target.md)
 - [`doxygen\_xml\_to\_markdown::MarkdownRenderer`](classdoxygen__xml__to__markdown_1_1_markdown_renderer.md)
+- [`puc::containers::Trie`](classpuc_1_1containers_1_1_trie.md)
 - [`puc::logger::Logger`](classpuc_1_1logger_1_1_logger.md)
 - [`puc::logger::LogLine`](classpuc_1_1logger_1_1_log_line.md)
 - [`puc::logger::LogStarter`](classpuc_1_1logger_1_1_log_starter.md)
@@ -16,6 +17,11 @@
 - [`puc::tui::Screen`](classpuc_1_1tui_1_1_screen.md)
 - [`puc::tui::Theme`](classpuc_1_1tui_1_1_theme.md)
 - [`puc::tui::ZBuffer`](classpuc_1_1tui_1_1_z_buffer.md)
+
+## Concept
+
+- [`puc::containers::TrieKey`](conceptpuc_1_1containers_1_1_trie_key.md)
+- [`puc::containers::TrieValue`](conceptpuc_1_1containers_1_1_trie_value.md)
 
 ## File
 
@@ -45,6 +51,7 @@
 - [`test-app.cpp`](test-app_8cpp.md)
 - [`theme.cpp`](theme_8cpp.md)
 - [`theme.hpp`](theme_8hpp.md)
+- [`trie.hpp`](trie_8hpp.md)
 - [`update\_docs.sh`](update__docs_8sh.md)
 - [`valgrind.sh`](valgrind_8sh.md)
 - [`zbuf.cpp`](zbuf_8cpp.md)
@@ -56,11 +63,13 @@
 - [`check\_signatures`](namespacecheck__signatures.md)
 - [`doxygen\_xml\_to\_markdown`](namespacedoxygen__xml__to__markdown.md)
 - [`puc`](namespacepuc.md)
+- [`puc::containers`](namespacepuc_1_1containers.md)
 - [`puc::logger`](namespacepuc_1_1logger.md)
 - [`puc::tui`](namespacepuc_1_1tui.md)
 
 ## Struct
 
+- [`puc::containers::TrieNode`](structpuc_1_1containers_1_1_trie_node.md)
 - [`puc::logger::LoggerConf`](structpuc_1_1logger_1_1_logger_conf.md)
 - [`puc::logger::ModuleConf`](structpuc_1_1logger_1_1_module_conf.md)
 - [`puc::tui::Canvas::Cell`](structpuc_1_1tui_1_1_canvas_1_1_cell.md)
