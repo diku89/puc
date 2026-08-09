@@ -12,6 +12,7 @@ doxygen(
         "//utils/config:code_docs_srcs",
         "//utils/containers:code_docs_srcs",
         "//utils/logger:code_docs_srcs",
+        "//utils/multithreading:code_docs_srcs",
         "//utils/scripts:code_docs_srcs",
     ],
     outs = ["xml"],
