@@ -8,6 +8,7 @@
 
 - [puc::config](namespacepuc_1_1config.md)
 - [puc::containers](namespacepuc_1_1containers.md)
+- [puc::execution\_graph](namespacepuc_1_1execution__graph.md)
 - [puc::logger](namespacepuc_1_1logger.md)
 - [puc::multithreading](namespacepuc_1_1multithreading.md)
 - [puc::tui](namespacepuc_1_1tui.md)

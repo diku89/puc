@@ -12,6 +12,9 @@
 - [`puc::config::Document`](classpuc_1_1config_1_1_document.md)
 - [`puc::config::Value`](classpuc_1_1config_1_1_value.md)
 - [`puc::containers::Trie`](classpuc_1_1containers_1_1_trie.md)
+- [`puc::execution\_graph::ExecutionGraph`](classpuc_1_1execution__graph_1_1_execution_graph.md)
+- [`puc::execution\_graph::ExecutionGraph::CompletionJob`](classpuc_1_1execution__graph_1_1_execution_graph_1_1_completion_job.md)
+- [`puc::execution\_graph::ExecutionGraph::Impl`](classpuc_1_1execution__graph_1_1_execution_graph_1_1_impl.md)
 - [`puc::logger::Logger`](classpuc_1_1logger_1_1_logger.md)
 - [`puc::logger::LogLine`](classpuc_1_1logger_1_1_log_line.md)
 - [`puc::logger::LogStarter`](classpuc_1_1logger_1_1_log_starter.md)
@@ -29,6 +32,8 @@
 
 - [`puc::containers::TrieKey`](conceptpuc_1_1containers_1_1_trie_key.md)
 - [`puc::containers::TrieValue`](conceptpuc_1_1containers_1_1_trie_value.md)
+- [`puc::execution\_graph::ExecutionGraphJob`](conceptpuc_1_1execution__graph_1_1_execution_graph_job.md)
+- [`puc::execution\_graph::ExecutionGraphNode`](conceptpuc_1_1execution__graph_1_1_execution_graph_node.md)
 
 ## File
 
@@ -40,6 +45,8 @@
 - [`config.cpp`](config_8cpp.md)
 - [`config.hpp`](config_8hpp.md)
 - [`doxygen\_xml\_to\_markdown.py`](doxygen__xml__to__markdown_8py.md)
+- [`execution\_graph.cpp`](execution__graph_8cpp.md)
+- [`execution\_graph.hpp`](execution__graph_8hpp.md)
 - [`format.sh`](format_8sh.md)
 - [`frame.hpp`](frame_8hpp.md)
 - [`job\_queue.cpp`](job__queue_8cpp.md)
@@ -59,6 +66,7 @@
 - [`screen.hpp`](screen_8hpp.md)
 - [`state.hpp`](state_8hpp.md)
 - [`status.hpp`](puc-cli_2tui_2status_8hpp.md)
+- [`status.hpp`](utils_2execution__graph_2status_8hpp.md)
 - [`status.hpp`](utils_2multithreading_2status_8hpp.md)
 - [`sync-submodules`](sync-submodules.md)
 - [`test-app.cpp`](test-app_8cpp.md)
@@ -79,6 +87,8 @@
 - [`puc::config`](namespacepuc_1_1config.md)
 - [`puc::config::detail`](namespacepuc_1_1config_1_1detail.md)
 - [`puc::containers`](namespacepuc_1_1containers.md)
+- [`puc::execution\_graph`](namespacepuc_1_1execution__graph.md)
+- [`puc::execution\_graph::detail`](namespacepuc_1_1execution__graph_1_1detail.md)
 - [`puc::logger`](namespacepuc_1_1logger.md)
 - [`puc::multithreading`](namespacepuc_1_1multithreading.md)
 - [`puc::multithreading::detail`](namespacepuc_1_1multithreading_1_1detail.md)
@@ -92,6 +102,7 @@
 - [`puc::config::SourceLocation`](structpuc_1_1config_1_1_source_location.md)
 - [`puc::config::Time`](structpuc_1_1config_1_1_time.md)
 - [`puc::containers::TrieNode`](structpuc_1_1containers_1_1_trie_node.md)
+- [`puc::execution\_graph::ExecutionGraph::Impl::Node`](structpuc_1_1execution__graph_1_1_execution_graph_1_1_impl_1_1_node.md)
 - [`puc::logger::LoggerConf`](structpuc_1_1logger_1_1_logger_conf.md)
 - [`puc::logger::ModuleConf`](structpuc_1_1logger_1_1_module_conf.md)
 - [`puc::multithreading::detail::PeriodicJobState`](structpuc_1_1multithreading_1_1detail_1_1_periodic_job_state.md)
