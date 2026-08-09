@@ -194,6 +194,57 @@ TEST(SmemChannelTest, ConcurrentTransmittersShareImmutableSubscriberSnapshot) {
             thread_count * calls_per_thread);
 }
 
+TEST(SmemChannelTest, ConcurrentSubscriptionAndDeliveryUseCompleteSnapshots) {
+  SmemChannel channel{"//events", 1U};
+  constexpr std::size_t subscriber_count   = 32U;
+  constexpr std::size_t transmission_count = 512U;
+  constexpr std::array payload             = {std::uint8_t{1}};
+  std::vector<Subscription> subscriptions(subscriber_count);
+  std::atomic<std::size_t> calls = 0U;
+  std::atomic<bool> start        = false;
+  std::atomic<bool> failed       = false;
+
+  std::thread subscriber([&] {
+    while (!start.load(std::memory_order_acquire)) {
+      std::this_thread::yield();
+    }
+    for (Subscription& subscription : subscriptions) {
+      const Status status = channel.subscribe(
+          [&calls](Channel::Bytes) noexcept {
+            calls.fetch_add(1U, std::memory_order_relaxed);
+          },
+          subscription);
+      if (!is_ok(status)) {
+        failed.store(true, std::memory_order_relaxed);
+        return;
+      }
+    }
+  });
+  std::thread transmitter([&] {
+    while (!start.load(std::memory_order_acquire)) {
+      std::this_thread::yield();
+    }
+    for (std::size_t index = 0U; index < transmission_count; ++index) {
+      if (!is_ok(channel.transmit(payload).status)) {
+        failed.store(true, std::memory_order_relaxed);
+        return;
+      }
+      static_cast<void>(channel.subscriber_count());
+    }
+  });
+
+  start.store(true, std::memory_order_release);
+  subscriber.join();
+  transmitter.join();
+  ASSERT_FALSE(failed.load(std::memory_order_relaxed));
+  ASSERT_EQ(channel.subscriber_count(), subscriber_count);
+
+  const std::size_t calls_before = calls.load(std::memory_order_relaxed);
+  ASSERT_EQ(channel.transmit(payload).status, Status::OK);
+  EXPECT_EQ(calls.load(std::memory_order_relaxed),
+            calls_before + subscriber_count);
+}
+
 TEST(SmemChannelTest, BoundedDeliveryRetainsNewestPendingMessagesInFifoOrder) {
   multithreading::JobQueue workers(2U);
   Directory directory(workers);

@@ -169,10 +169,11 @@ class Sha256 {
     state_[7] += h;
   }
 
+  /** Current digest state. */
   std::array<std::uint32_t, 8U> state_ = {
       0x6a09e667U, 0xbb67ae85U, 0x3c6ef372U, 0xa54ff53aU,
       0x510e527fU, 0x9b05688cU, 0x1f83d9abU, 0x5be0cd19U,
-  };                                       /**< Current digest state. */
+  };
   std::array<std::uint8_t, 64U> buffer_{}; /**< Partial input block. */
   std::size_t buffer_size_  = 0U;          /**< Meaningful bytes in buffer_. */
   std::uint64_t byte_count_ = 0U;          /**< Total unpadded input bytes. */

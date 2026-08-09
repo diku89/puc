@@ -13,6 +13,7 @@
 #include <memory>
 #include <mutex>
 #include <optional>
+#include <shared_mutex>
 #include <span>
 #include <string>
 #include <utility>
@@ -116,8 +117,11 @@ class Channel::Impl : public std::enable_shared_from_this<Channel::Impl> {
 
   /** Invoke the current immutable callback snapshot on this thread. */
   void invoke(Channel::Bytes data) noexcept {
-    const std::shared_ptr<const Snapshot> current =
-        std::atomic_load_explicit(&subscribers, std::memory_order_acquire);
+    std::shared_ptr<const Snapshot> current;
+    {
+      const std::shared_lock lock(subscription_mutex);
+      current = subscribers;
+    }
     for (const std::shared_ptr<State>& entry : *current) {
       if (entry->active.load(std::memory_order_acquire)) {
         entry->callback(data);
@@ -277,9 +281,10 @@ class Channel::Impl : public std::enable_shared_from_this<Channel::Impl> {
   std::string channel_name; /**< Immutable public channel path. */
   std::optional<std::size_t> maximum_depth; /**< Pending limit, if async. */
   std::atomic<Status> channel_status = Status::OK; /**< Persistent status. */
-  std::mutex subscription_mutex; /**< Serializes snapshot replacement. */
+  mutable std::shared_mutex
+      subscription_mutex; /**< Protects the brief subscriber snapshot copy. */
   std::shared_ptr<const Snapshot>
-      subscribers; /**< Atomically replaced read-side callback snapshot. */
+      subscribers; /**< Immutable read-side callback snapshot. */
   std::uint64_t next_subscription_id = 1U; /**< Next id, zero is reserved. */
   mutable std::mutex delivery_mutex; /**< Protects bounded delivery fields. */
   std::condition_variable delivery_changed; /**< Signals drain completion. */
@@ -360,8 +365,7 @@ Status Channel::subscribe(ReceiveCallback callback,
 
   auto state = std::make_shared<detail::SubscriptionState>(
       impl_->next_subscription_id++, std::move(callback));
-  const std::shared_ptr<const Impl::Snapshot> current =
-      std::atomic_load_explicit(&impl_->subscribers, std::memory_order_acquire);
+  const std::shared_ptr<const Impl::Snapshot> current = impl_->subscribers;
   auto next = std::make_shared<Impl::Snapshot>();
   next->reserve(current->size() + 1U);
   for (const std::shared_ptr<detail::SubscriptionState>& entry : *current) {
@@ -370,11 +374,8 @@ Status Channel::subscribe(ReceiveCallback callback,
     }
   }
   next->push_back(state);
-  std::atomic_store_explicit(
-      &impl_->subscribers,
-      std::shared_ptr<const Impl::Snapshot>{std::move(next)},
-      std::memory_order_release);
-  subscription = Subscription{std::move(state)};
+  impl_->subscribers = std::shared_ptr<const Impl::Snapshot>{std::move(next)};
+  subscription       = Subscription{std::move(state)};
   Logger<DEBUG> << "Registered subscriber " << subscription.id() << " on "
                 << name();
   return Status::OK;
@@ -389,8 +390,11 @@ Status Channel::status() const noexcept {
 }
 
 std::size_t Channel::subscriber_count() const noexcept {
-  const std::shared_ptr<const Impl::Snapshot> current =
-      std::atomic_load_explicit(&impl_->subscribers, std::memory_order_acquire);
+  std::shared_ptr<const Impl::Snapshot> current;
+  {
+    const std::shared_lock lock(impl_->subscription_mutex);
+    current = impl_->subscribers;
+  }
   std::size_t count = 0;
   for (const std::shared_ptr<detail::SubscriptionState>& entry : *current) {
     if (entry->active.load(std::memory_order_acquire)) {

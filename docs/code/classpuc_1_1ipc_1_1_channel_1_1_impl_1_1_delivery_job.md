@@ -4,7 +4,7 @@
 
 Job that delivers exactly one pending message for fairness.
 
-[Source](../../utils/ipc/channel.cpp#L94)
+[Source](../../utils/ipc/channel.cpp#L95)
 
 ## Private data members
 
@@ -18,7 +18,7 @@ std::shared_ptr<Impl> puc::ipc::Channel::Impl::DeliveryJob::implementation_
 
 [State](classpuc_1_1ipc_1_1_channel_1_1_impl.md#symbol-classpuc_1_1ipc_1_1_channel_1_1_impl_1ab5b8ce8503624c31c9b48ec9aad7e4d0) kept alive for delivery.
 
-[Source](../../utils/ipc/channel.cpp#L105)
+[Source](../../utils/ipc/channel.cpp#L106)
 
 ## Public functions
 
@@ -32,7 +32,7 @@ puc::ipc::Channel::Impl::DeliveryJob::DeliveryJob(std::shared_ptr< Impl > implem
 
 Retain the channel state until this delivery invocation completes.
 
-[Source](../../utils/ipc/channel.cpp#L97)
+[Source](../../utils/ipc/channel.cpp#L98)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1_1_impl_1_1_delivery_job_1ae057ae93e4edd3f394f3526eb8ab1f44"></a>
 
@@ -44,4 +44,4 @@ void puc::ipc::Channel::Impl::DeliveryJob::execute() noexcept override
 
 Deliver one pending message and arrange any required successor job.
 
-[Source](../../utils/ipc/channel.cpp#L101)
+[Source](../../utils/ipc/channel.cpp#L102)

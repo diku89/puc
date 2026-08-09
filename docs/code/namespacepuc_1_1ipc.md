@@ -6,7 +6,7 @@ Named event distribution, portable wire messages, and Unix transports.
 
 Include this header when an application needs several IPC components. Small consumers may include the individual component header they use instead.
 
-[Source](../../utils/ipc/channel.cpp#L28)
+[Source](../../utils/ipc/channel.cpp#L29)
 
 ## Related symbols
 
@@ -180,7 +180,7 @@ Test whether a name is a canonical absolute IPC path.
 
 Names begin with `//` and contain one or more slash-separated ASCII segments. Segment characters are letters, digits, `_`, `-`, and `.`; empty, `.` and `..` segments are rejected. Examples include `//screen/resize_events` and `//screen/trie_errors`.
 
-[Source](../../utils/ipc/channel.cpp#L57)
+[Source](../../utils/ipc/channel.cpp#L58)
 
 <a id="symbol-namespacepuc_1_1ipc_1ab36229bf7b43affe973b28d3595405f6"></a>
 
@@ -196,7 +196,7 @@ Output is cleared before validation and remains empty on failure. Multibyte inte
 
 **Returns:** [Status::OK](#symbol-namespacepuc_1_1ipc_1a2d9525a8274577936e23d73e7264f5e4ae0aa021e21dddbd6d8cecec71e9cf564), [Status::INVALID\_ARGUMENT](#symbol-namespacepuc_1_1ipc_1a2d9525a8274577936e23d73e7264f5e4af295a0c3e37c94f078e1c5476479132d) for inconsistent metadata, or [Status::MESSAGE\_TOO\_LARGE](#symbol-namespacepuc_1_1ipc_1a2d9525a8274577936e23d73e7264f5e4ae337ca1c290ecd699b696338c3310d6b) when a configured wire limit is exceeded.
 
-[Source](../../utils/ipc/msg.cpp#L200)
+[Source](../../utils/ipc/msg.cpp#L201)
 
 <a id="symbol-namespacepuc_1_1ipc_1aa60e90f232dde90ffa679f8ed566cc18"></a>
 
@@ -212,7 +212,7 @@ Trailing bytes are permitted so callers can decode concatenated messages; `consu
 
 **Returns:** [Status::OK](#symbol-namespacepuc_1_1ipc_1a2d9525a8274577936e23d73e7264f5e4ae0aa021e21dddbd6d8cecec71e9cf564) or a precise non-throwing wire error status.
 
-[Source](../../utils/ipc/msg.cpp#L277)
+[Source](../../utils/ipc/msg.cpp#L278)
 
 <a id="symbol-namespacepuc_1_1ipc_1af673ccdb590afbc386ed2e51b0dcceed"></a>
 

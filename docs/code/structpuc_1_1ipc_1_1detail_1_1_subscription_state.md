@@ -4,7 +4,7 @@
 
 One callback plus the flag controlled by its [Subscription](classpuc_1_1ipc_1_1_subscription.md) owner.
 
-[Source](../../utils/ipc/channel.cpp#L33)
+[Source](../../utils/ipc/channel.cpp#L34)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::uint64_t puc::ipc::detail::SubscriptionState::id
 
 Channel-local nonzero identifier.
 
-[Source](../../utils/ipc/channel.cpp#L39)
+[Source](../../utils/ipc/channel.cpp#L40)
 
 <a id="symbol-structpuc_1_1ipc_1_1detail_1_1_subscription_state_1a97cae6197210b4c36e59c1f496bbaddb"></a>
 
@@ -30,7 +30,7 @@ Channel::ReceiveCallback puc::ipc::detail::SubscriptionState::callback
 
 Immutable no-throw callback.
 
-[Source](../../utils/ipc/channel.cpp#L40)
+[Source](../../utils/ipc/channel.cpp#L41)
 
 <a id="symbol-structpuc_1_1ipc_1_1detail_1_1_subscription_state_1ae849b2426cc840ba1994d379c01b94e9"></a>
 
@@ -42,7 +42,7 @@ std::atomic<bool> puc::ipc::detail::SubscriptionState::active
 
 Whether delivery may invoke it.
 
-[Source](../../utils/ipc/channel.cpp#L41)
+[Source](../../utils/ipc/channel.cpp#L42)
 
 ## Public functions
 
@@ -56,4 +56,4 @@ puc::ipc::detail::SubscriptionState::SubscriptionState(std::uint64_t configured_
 
 Construct one enabled subscriber.
 
-[Source](../../utils/ipc/channel.cpp#L35)
+[Source](../../utils/ipc/channel.cpp#L36)

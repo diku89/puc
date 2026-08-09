@@ -4,7 +4,7 @@
 
 Name, subscribers, and optional bounded asynchronous delivery state.
 
-[Source](../../utils/ipc/channel.cpp#L87)
+[Source](../../utils/ipc/channel.cpp#L88)
 
 ## Related symbols
 
@@ -22,7 +22,7 @@ using puc::ipc::Channel::Impl::State = detail::SubscriptionState
 
 Stored callback state type.
 
-[Source](../../utils/ipc/channel.cpp#L89)
+[Source](../../utils/ipc/channel.cpp#L90)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1_1_impl_1ae439e7cdf57e13b8c1acb8dc5d02f156"></a>
 
@@ -34,7 +34,7 @@ using puc::ipc::Channel::Impl::Snapshot = std::vector<std::shared_ptr<State>>
 
 Immutable callback list.
 
-[Source](../../utils/ipc/channel.cpp#L90)
+[Source](../../utils/ipc/channel.cpp#L91)
 
 ## Public data members
 
@@ -48,7 +48,7 @@ std::string puc::ipc::Channel::Impl::channel_name
 
 Immutable public channel path.
 
-[Source](../../utils/ipc/channel.cpp#L277)
+[Source](../../utils/ipc/channel.cpp#L281)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1_1_impl_1a74410ac6b2de413cd3bbe8389dc6e2c3"></a>
 
@@ -60,7 +60,7 @@ std::optional<std::size_t> puc::ipc::Channel::Impl::maximum_depth
 
 Pending limit, if async.
 
-[Source](../../utils/ipc/channel.cpp#L278)
+[Source](../../utils/ipc/channel.cpp#L282)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1_1_impl_1addb710c61ba5a42d6d70b1b92d15afae"></a>
 
@@ -72,19 +72,19 @@ std::atomic<Status> puc::ipc::Channel::Impl::channel_status
 
 Persistent status.
 
-[Source](../../utils/ipc/channel.cpp#L279)
+[Source](../../utils/ipc/channel.cpp#L283)
 
-<a id="symbol-classpuc_1_1ipc_1_1_channel_1_1_impl_1a2db67af0ae3c5c98bd1eb9c08b11baf6"></a>
+<a id="symbol-classpuc_1_1ipc_1_1_channel_1_1_impl_1a486f62c1963296ba1285e1594c5abefc"></a>
 
 ### `subscription_mutex`
 
 ```cpp
-std::mutex puc::ipc::Channel::Impl::subscription_mutex
+std::shared_mutex puc::ipc::Channel::Impl::subscription_mutex
 ```
 
-Serializes snapshot replacement.
+Protects the brief subscriber snapshot copy.
 
-[Source](../../utils/ipc/channel.cpp#L280)
+[Source](../../utils/ipc/channel.cpp#L285)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1_1_impl_1add1914920d5debdef2cc6a9c1c4699b7"></a>
 
@@ -94,9 +94,9 @@ Serializes snapshot replacement.
 std::shared_ptr<const Snapshot> puc::ipc::Channel::Impl::subscribers
 ```
 
-Atomically replaced read-side callback snapshot.
+Immutable read-side callback snapshot.
 
-[Source](../../utils/ipc/channel.cpp#L282)
+[Source](../../utils/ipc/channel.cpp#L287)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1_1_impl_1af5d87c58f89a43576e1060afffa23c8a"></a>
 
@@ -108,7 +108,7 @@ std::uint64_t puc::ipc::Channel::Impl::next_subscription_id
 
 Next id, zero is reserved.
 
-[Source](../../utils/ipc/channel.cpp#L283)
+[Source](../../utils/ipc/channel.cpp#L288)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1_1_impl_1ae9fbea0f24ccaa10378c76ec111e8f89"></a>
 
@@ -120,7 +120,7 @@ std::mutex puc::ipc::Channel::Impl::delivery_mutex
 
 Protects bounded delivery fields.
 
-[Source](../../utils/ipc/channel.cpp#L284)
+[Source](../../utils/ipc/channel.cpp#L289)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1_1_impl_1a2f5f0b46075a69da62463ca9cbd06fa1"></a>
 
@@ -132,7 +132,7 @@ std::condition_variable puc::ipc::Channel::Impl::delivery_changed
 
 Signals drain completion.
 
-[Source](../../utils/ipc/channel.cpp#L285)
+[Source](../../utils/ipc/channel.cpp#L290)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1_1_impl_1abaf3606cd0a5e528a2d6830844c2d7f9"></a>
 
@@ -144,7 +144,7 @@ std::deque<std::vector<std::uint8_t> > puc::ipc::Channel::Impl::pending
 
 Retained FIFO payloads.
 
-[Source](../../utils/ipc/channel.cpp#L286)
+[Source](../../utils/ipc/channel.cpp#L291)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1_1_impl_1a29dbf970b65eb71548cdb67be4eb77d0"></a>
 
@@ -156,7 +156,7 @@ multithreading::JobQueue* puc::ipc::Channel::Impl::delivery_workers
 
 Borrowed pool while registered.
 
-[Source](../../utils/ipc/channel.cpp#L287)
+[Source](../../utils/ipc/channel.cpp#L292)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1_1_impl_1a83cf936110b45ed374f951f3090a9e9e"></a>
 
@@ -168,7 +168,7 @@ bool puc::ipc::Channel::Impl::delivery_attached
 
 A [Directory](classpuc_1_1ipc_1_1_directory.md) currently owns the queue.
 
-[Source](../../utils/ipc/channel.cpp#L289)
+[Source](../../utils/ipc/channel.cpp#L294)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1_1_impl_1a9a3419035143bb2354982bee047eb49e"></a>
 
@@ -180,7 +180,7 @@ bool puc::ipc::Channel::Impl::delivery_scheduled
 
 One delivery job is queued/running.
 
-[Source](../../utils/ipc/channel.cpp#L290)
+[Source](../../utils/ipc/channel.cpp#L295)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1_1_impl_1a472eccd49d6849eb8b1b55daad65ca3c"></a>
 
@@ -192,7 +192,7 @@ bool puc::ipc::Channel::Impl::destroying
 
 [Channel](classpuc_1_1ipc_1_1_channel.md) facade is being destroyed.
 
-[Source](../../utils/ipc/channel.cpp#L291)
+[Source](../../utils/ipc/channel.cpp#L296)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1_1_impl_1a2d8a69f268b83ed9aff767954013fd39"></a>
 
@@ -204,7 +204,7 @@ std::uint64_t puc::ipc::Channel::Impl::dropped_count
 
 Oldest-pending eviction count.
 
-[Source](../../utils/ipc/channel.cpp#L292)
+[Source](../../utils/ipc/channel.cpp#L297)
 
 ## Public functions
 
@@ -218,7 +218,7 @@ puc::ipc::Channel::Impl::Impl(std::string configured_name, ChannelOptions config
 
 Construct empty subscriber and delivery state for one immutable name.
 
-[Source](../../utils/ipc/channel.cpp#L109)
+[Source](../../utils/ipc/channel.cpp#L110)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1_1_impl_1a9d100c1d641dc345df0cd1a4f3a507b1"></a>
 
@@ -230,7 +230,7 @@ puc::ipc::Channel::Impl::~Impl()
 
 Prevent queued work from outliving the [Channel](classpuc_1_1ipc_1_1_channel.md) facade.
 
-[Source](../../utils/ipc/channel.cpp#L115)
+[Source](../../utils/ipc/channel.cpp#L116)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1_1_impl_1a7d95dbe6d40aace4102bd4748b21b08d"></a>
 
@@ -242,7 +242,7 @@ void puc::ipc::Channel::Impl::invoke(Channel::Bytes data) noexcept
 
 Invoke the current immutable callback snapshot on this thread.
 
-[Source](../../utils/ipc/channel.cpp#L118)
+[Source](../../utils/ipc/channel.cpp#L119)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1_1_impl_1ae0c58c789787c84fa7edb7971d4d9cb6"></a>
 
@@ -254,7 +254,7 @@ Status puc::ipc::Channel::Impl::attach_delivery(multithreading::JobQueue &worker
 
 Attach a bounded channel to the caller-owned shared worker pool.
 
-[Source](../../utils/ipc/channel.cpp#L129)
+[Source](../../utils/ipc/channel.cpp#L133)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1_1_impl_1a2fab90ac80f0d618683c82c2b90e5114"></a>
 
@@ -266,7 +266,7 @@ Status puc::ipc::Channel::Impl::enqueue(Channel::Bytes data)
 
 Enqueue one owned payload, retaining only the configured newest N.
 
-[Source](../../utils/ipc/channel.cpp#L146)
+[Source](../../utils/ipc/channel.cpp#L150)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1_1_impl_1af8cf413a02ea764761f04da4ba04ced4"></a>
 
@@ -278,7 +278,7 @@ void puc::ipc::Channel::Impl::deliver_one() noexcept
 
 Deliver one retained message, then fairly reschedule the next one.
 
-[Source](../../utils/ipc/channel.cpp#L188)
+[Source](../../utils/ipc/channel.cpp#L192)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1_1_impl_1a70394a2c8978a779e2614dedbbb6bb66"></a>
 
@@ -290,7 +290,7 @@ void puc::ipc::Channel::Impl::detach_delivery() noexcept
 
 Detach from a live [Directory](classpuc_1_1ipc_1_1_directory.md), discarding messages still pending.
 
-[Source](../../utils/ipc/channel.cpp#L233)
+[Source](../../utils/ipc/channel.cpp#L237)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1_1_impl_1aafdd922052e2c5f7e3a3ab96e2eeffcd"></a>
 
@@ -302,7 +302,7 @@ void puc::ipc::Channel::Impl::stop_delivery() noexcept
 
 Stop delivery during final [Channel](classpuc_1_1ipc_1_1_channel.md) destruction.
 
-[Source](../../utils/ipc/channel.cpp#L248)
+[Source](../../utils/ipc/channel.cpp#L252)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1_1_impl_1a2c6db998f2336e6bb6c687f54ea89a3f"></a>
 
@@ -314,7 +314,7 @@ void puc::ipc::Channel::Impl::fail_scheduled_delivery() noexcept
 
 Clear a queue whose worker rejected its scheduled delivery job.
 
-[Source](../../utils/ipc/channel.cpp#L264)
+[Source](../../utils/ipc/channel.cpp#L268)
 
 ## Public static functions
 
@@ -328,4 +328,4 @@ static Impl *& puc::ipc::Channel::Impl::current_delivery() noexcept
 
 Per-thread marker used to make reentrant detach nonblocking.
 
-[Source](../../utils/ipc/channel.cpp#L272)
+[Source](../../utils/ipc/channel.cpp#L276)

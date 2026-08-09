@@ -2,7 +2,7 @@
 
 # Namespace `puc::ipc::detail`
 
-[Source](../../utils/ipc/channel.cpp#L30)
+[Source](../../utils/ipc/channel.cpp#L31)
 
 ## Related symbols
 

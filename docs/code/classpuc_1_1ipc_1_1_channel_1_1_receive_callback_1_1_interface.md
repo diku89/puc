@@ -4,7 +4,7 @@
 
 Type-erased callback interface.
 
-[Source](../../utils/ipc/channel.hpp#L190)
+[Source](../../utils/ipc/channel.hpp#L192)
 
 ## Public functions
 
@@ -16,7 +16,7 @@ Type-erased callback interface.
 puc::ipc::Channel::ReceiveCallback::Interface::Interface()=default
 ```
 
-[Source](../../utils/ipc/channel.hpp#L192)
+[Source](../../utils/ipc/channel.hpp#L194)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1_1_receive_callback_1_1_interface_1ab5b4c6ddbbbe7ee80230ce2f0a722e93"></a>
 
@@ -26,7 +26,7 @@ puc::ipc::Channel::ReceiveCallback::Interface::Interface()=default
 puc::ipc::Channel::ReceiveCallback::Interface::Interface(const Interface &)=delete
 ```
 
-[Source](../../utils/ipc/channel.hpp#L193)
+[Source](../../utils/ipc/channel.hpp#L195)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1_1_receive_callback_1_1_interface_1afb8ff4055efc3590dbb433b262c90025"></a>
 
@@ -36,7 +36,7 @@ puc::ipc::Channel::ReceiveCallback::Interface::Interface(const Interface &)=dele
 Interface & puc::ipc::Channel::ReceiveCallback::Interface::operator=(const Interface &)=delete
 ```
 
-[Source](../../utils/ipc/channel.hpp#L194)
+[Source](../../utils/ipc/channel.hpp#L196)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1_1_receive_callback_1_1_interface_1ad526f63786e31521eebe8cc168ba1139"></a>
 
@@ -46,7 +46,7 @@ Interface & puc::ipc::Channel::ReceiveCallback::Interface::operator=(const Inter
 virtual puc::ipc::Channel::ReceiveCallback::Interface::~Interface()=default
 ```
 
-[Source](../../utils/ipc/channel.hpp#L195)
+[Source](../../utils/ipc/channel.hpp#L197)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1_1_receive_callback_1_1_interface_1aa31c98900904ac10b8c3dd5922d0eb16"></a>
 
@@ -58,4 +58,4 @@ virtual void puc::ipc::Channel::ReceiveCallback::Interface::invoke(Bytes bytes) 
 
 Invoke the concrete callback.
 
-[Source](../../utils/ipc/channel.hpp#L198)
+[Source](../../utils/ipc/channel.hpp#L200)

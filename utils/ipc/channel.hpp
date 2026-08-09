@@ -113,7 +113,9 @@ class Subscription {
  * Derived classes implement `transmit()`, while the base class owns any number
  * of subscribers. Subscriber callbacks receive a borrowed view valid only for
  * that invocation and must not retain it. Callbacks are statically required to
- * be `noexcept` and should return quickly.
+ * be `noexcept` and should return quickly. A shared lock is held only while the
+ * immutable subscriber snapshot pointer is copied; callbacks run after its
+ * release and may therefore transmit or subscribe reentrantly.
  *
  * With no `channel_max_depth`, delivery is synchronous, retains no payload,
  * and performs no subscriber-list allocation. Configuring a depth makes
