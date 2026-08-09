@@ -203,6 +203,26 @@ class Trie {
   }
 
   /**
+   * Remove the value associated with an exact sequence.
+   *
+   * Nodes are intentionally retained so indexes held by active cursors remain
+   * valid and a later insertion can reuse the existing path. Descendant
+   * sequences are unaffected.
+   *
+   * @param[in] key_sequence Exact sequence whose value should be removed.
+   * @return `true` when an exact value existed and was removed.
+   */
+  bool erase(const std::vector<KeyType>& key_sequence) {
+    const NodeIndex node_index = find_node(key_sequence);
+    if (node_index == kInvalidNode || !nodes_[node_index].sequence_end) {
+      return false;
+    }
+    nodes_[node_index].sequence_end = false;
+    nodes_[node_index].value        = ValueType{};
+    return true;
+  }
+
+  /**
    * Test whether a sequence terminates at an exact-match node.
    *
    * This tests `sequence_end`, not the stored value. An exact sequence holding
