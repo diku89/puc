@@ -13,4 +13,5 @@
 - [puc::logger](namespacepuc_1_1logger.md)
 - [puc::msg](namespacepuc_1_1msg.md)
 - [puc::multithreading](namespacepuc_1_1multithreading.md)
+- [puc::terminal](namespacepuc_1_1terminal.md)
 - [puc::tui](namespacepuc_1_1tui.md)

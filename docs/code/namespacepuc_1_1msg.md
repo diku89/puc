@@ -55,7 +55,7 @@ Globally registered payload schema identifiers.
 **Message:** [puc::msg::ScreenCommand](structpuc_1_1msg_1_1_screen_command.md)  
 **Purpose:** Selects the portable schema for terminal ownership, presentation, and release commands.  
 **Producers:** [Screen](classpuc_1_1tui_1_1_screen.md).  
-**Consumers:** TerminalSession.
+**Consumers:** [TerminalSession](classpuc_1_1terminal_1_1_terminal_session.md).
 - <a id="symbol-namespacepuc_1_1msg_1a24b154890bf81939005e112918c3813fac6358684a996df7bd22732e2db736db5"></a>`SCREEN_RESIZE_EVENT` — Observed terminal geometry publication.
 
 **[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000003):**
@@ -64,7 +64,7 @@ Globally registered payload schema identifiers.
 **ID:** `2`  
 **Message:** [puc::msg::ScreenResizeEvent](structpuc_1_1msg_1_1_screen_resize_event.md)  
 **Purpose:** Selects the fixed-width schema for the newest observed terminal geometry.  
-**Producers:** TerminalSession.  
+**Producers:** [TerminalSession](classpuc_1_1terminal_1_1_terminal_session.md).  
 **Consumers:** [Screen](classpuc_1_1tui_1_1_screen.md) and subscribed geometry observers.
 
 [Source](../../msgs/codec.hpp#L26)
@@ -144,7 +144,7 @@ Channel carrying commands from TUI presentation to terminal mechanism.
 **Name:** `//screen/commands`  
 **Purpose:** Carries ordered, one-way terminal ownership and presentation operations without a result path.  
 **Producers:** [Screen](classpuc_1_1tui_1_1_screen.md).  
-**Consumers:** TerminalSession.
+**Consumers:** [TerminalSession](classpuc_1_1terminal_1_1_terminal_session.md).
 
 [Source](../../msgs/screen_msgs.hpp#L28)
 
@@ -163,7 +163,7 @@ Channel publishing terminal geometry whenever the observation changes.
 **Kind:** Channel  
 **Name:** `//screen/resize_events`  
 **Purpose:** Publishes the newest observed character and optional pixel geometry as convergent state.  
-**Producers:** TerminalSession.  
+**Producers:** [TerminalSession](classpuc_1_1terminal_1_1_terminal_session.md).  
 **Consumers:** [Screen](classpuc_1_1tui_1_1_screen.md) and subscribed geometry observers.
 
 [Source](../../msgs/screen_msgs.hpp#L38)

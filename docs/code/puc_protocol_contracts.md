@@ -8,14 +8,14 @@
 **Name:** `//screen/commands`  
 **Purpose:** Carries ordered, one-way terminal ownership and presentation operations without a result path.  
 **Producers:** [Screen](classpuc_1_1tui_1_1_screen.md).  
-**Consumers:** TerminalSession.
+**Consumers:** [TerminalSession](classpuc_1_1terminal_1_1_terminal_session.md).
 
 ## Member [puc::msg::kScreenResizeEventChannel](namespacepuc_1_1msg.md#symbol-namespacepuc_1_1msg_1aac82f776baf22130dde29f2cb56284dd)
 
 <a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000006"></a> **Kind:** Channel  
 **Name:** `//screen/resize_events`  
 **Purpose:** Publishes the newest observed character and optional pixel geometry as convergent state.  
-**Producers:** TerminalSession.  
+**Producers:** [TerminalSession](classpuc_1_1terminal_1_1_terminal_session.md).  
 **Consumers:** [Screen](classpuc_1_1tui_1_1_screen.md) and subscribed geometry observers.
 
 ## Member [puc::msg::NULL\_MESSAGE](namespacepuc_1_1msg.md#symbol-namespacepuc_1_1msg_1a24b154890bf81939005e112918c3813fabba60353fe62a4eed8c486b71c20f573)
@@ -42,7 +42,7 @@
 **Message:** [puc::msg::ScreenCommand](structpuc_1_1msg_1_1_screen_command.md)  
 **Purpose:** Selects the portable schema for terminal ownership, presentation, and release commands.  
 **Producers:** [Screen](classpuc_1_1tui_1_1_screen.md).  
-**Consumers:** TerminalSession.
+**Consumers:** [TerminalSession](classpuc_1_1terminal_1_1_terminal_session.md).
 
 ## Member [puc::msg::SCREEN\_RESIZE\_EVENT](namespacepuc_1_1msg.md#symbol-namespacepuc_1_1msg_1a24b154890bf81939005e112918c3813fac6358684a996df7bd22732e2db736db5)
 
@@ -50,7 +50,7 @@
 **ID:** `2`  
 **Message:** [puc::msg::ScreenResizeEvent](structpuc_1_1msg_1_1_screen_resize_event.md)  
 **Purpose:** Selects the fixed-width schema for the newest observed terminal geometry.  
-**Producers:** TerminalSession.  
+**Producers:** [TerminalSession](classpuc_1_1terminal_1_1_terminal_session.md).  
 **Consumers:** [Screen](classpuc_1_1tui_1_1_screen.md) and subscribed geometry observers.
 
 ## Struct [puc::msg::ScreenCommand](structpuc_1_1msg_1_1_screen_command.md)
@@ -59,12 +59,12 @@
 **Type:** [puc::msg::ScreenCommand](structpuc_1_1msg_1_1_screen_command.md)  
 **Purpose:** Carries one fire-and-forget terminal take, presentation, clipboard-write, or release operation.  
 **Producers:** [Screen](classpuc_1_1tui_1_1_screen.md).  
-**Consumers:** TerminalSession.
+**Consumers:** [TerminalSession](classpuc_1_1terminal_1_1_terminal_session.md).
 
 ## Struct [puc::msg::ScreenResizeEvent](structpuc_1_1msg_1_1_screen_resize_event.md)
 
 <a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000008"></a> **Kind:** Message  
 **Type:** [puc::msg::ScreenResizeEvent](structpuc_1_1msg_1_1_screen_resize_event.md)  
 **Purpose:** Publishes changed terminal geometry as latest-value state rather than as a command reply.  
-**Producers:** TerminalSession.  
+**Producers:** [TerminalSession](classpuc_1_1terminal_1_1_terminal_session.md).  
 **Consumers:** [Screen](classpuc_1_1tui_1_1_screen.md) and subscribed geometry observers.

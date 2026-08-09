@@ -9,7 +9,7 @@ Terminal geometry observed independently of any individual command.
 **Kind:** Message  
 **Type:** [puc::msg::ScreenResizeEvent](#)  
 **Purpose:** Publishes changed terminal geometry as latest-value state rather than as a command reply.  
-**Producers:** TerminalSession.  
+**Producers:** [TerminalSession](classpuc_1_1terminal_1_1_terminal_session.md).  
 **Consumers:** [Screen](classpuc_1_1tui_1_1_screen.md) and subscribed geometry observers.
 
 [Source](../../msgs/screen_msgs.hpp#L140)

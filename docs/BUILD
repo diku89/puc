@@ -9,6 +9,7 @@ doxygen(
         "//github/ci_tools:code_docs_srcs",
         "//msgs:code_docs_srcs",
         "//puc-cli:code_docs_srcs",
+        "//puc-cli/terminal:code_docs_srcs",
         "//puc-cli/tui:code_docs_srcs",
         "//utils/config:code_docs_srcs",
         "//utils/containers:code_docs_srcs",

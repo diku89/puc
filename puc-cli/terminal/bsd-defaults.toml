@@ -1,0 +1,12 @@
+version = 1
+
+# BSD terminals follow the same Unix convention as Linux: Ctrl-C remains the
+# interrupt chord, while enhanced Ctrl-Shift-C can identify a copy request
+# without overloading byte 0x03.
+[[mapping]]
+sequence = "<CSI>99;6u"
+kind = "command"
+command = "COPY"
+
+# Paste remains terminal transport: Ctrl-Shift-V normally produces bracketed
+# paste data, which the universal input configuration decodes as PasteEvent.

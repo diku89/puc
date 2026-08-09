@@ -12,7 +12,7 @@ Commands intentionally contain no request identifier: the protocol has no comple
 **Type:** [puc::msg::ScreenCommand](#)  
 **Purpose:** Carries one fire-and-forget terminal take, presentation, clipboard-write, or release operation.  
 **Producers:** [Screen](classpuc_1_1tui_1_1_screen.md).  
-**Consumers:** TerminalSession.
+**Consumers:** [TerminalSession](classpuc_1_1terminal_1_1_terminal_session.md).
 
 [Source](../../msgs/screen_msgs.hpp#L120)
 

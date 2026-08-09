@@ -1,0 +1,775 @@
+version = 1
+
+# The empty sequence is the root fallback for committed UTF-8 text. Fixed C0
+# interpretations are ordinary, user-overridable mappings below.
+[[mapping]]
+sequence = ""
+kind = "protocol"
+protocol = "TEXT"
+
+[[mapping]]
+sequence = "<ESC>"
+kind = "protocol"
+protocol = "ESCAPE"
+
+[[mapping]]
+sequence = "<ESC>O"
+kind = "protocol"
+protocol = "SS3"
+
+[[mapping]]
+sequence = "<CSI>"
+kind = "protocol"
+protocol = "CSI"
+
+[[mapping]]
+sequence = "<OSC>"
+kind = "protocol"
+protocol = "OSC"
+
+[[mapping]]
+sequence = "<DCS>"
+kind = "protocol"
+protocol = "DEVICE_CONTROL_STRING"
+
+[[mapping]]
+sequence = "<APC>"
+kind = "protocol"
+protocol = "APPLICATION_PROGRAM_COMMAND"
+
+[[mapping]]
+sequence = "<PM>"
+kind = "protocol"
+protocol = "PRIVACY_MESSAGE"
+
+[[mapping]]
+sequence = "<CSI><LT>"
+kind = "protocol"
+protocol = "SGR_MOUSE"
+
+[[mapping]]
+sequence = "<OSC>52;"
+kind = "protocol"
+protocol = "OSC52"
+
+[[mapping]]
+sequence = "<CSI>200~"
+kind = "protocol"
+protocol = "PASTE_BEGIN"
+
+[[mapping]]
+sequence = "<CSI>201~"
+kind = "protocol"
+protocol = "PASTE_END"
+
+[[mapping]]
+sequence = "<CSI>I"
+kind = "focus"
+focused = true
+
+[[mapping]]
+sequence = "<CSI>O"
+kind = "focus"
+focused = false
+
+# Fixed C0 key interpretations. Terminals cannot distinguish several of these
+# byte encodings (for example, Ctrl-I and Tab), so the defaults choose the
+# traditional interpretation while leaving every path user-overridable.
+[[mapping]]
+sequence = "<NUL>"
+kind = "key"
+key = " "
+modifiers = ["CONTROL"]
+
+[[mapping]]
+sequence = "^A"
+kind = "key"
+key = "a"
+modifiers = ["CONTROL"]
+
+[[mapping]]
+sequence = "^B"
+kind = "key"
+key = "b"
+modifiers = ["CONTROL"]
+
+[[mapping]]
+sequence = "^C"
+kind = "key"
+key = "c"
+modifiers = ["CONTROL"]
+
+[[mapping]]
+sequence = "^D"
+kind = "key"
+key = "d"
+modifiers = ["CONTROL"]
+
+[[mapping]]
+sequence = "^E"
+kind = "key"
+key = "e"
+modifiers = ["CONTROL"]
+
+[[mapping]]
+sequence = "^F"
+kind = "key"
+key = "f"
+modifiers = ["CONTROL"]
+
+[[mapping]]
+sequence = "^G"
+kind = "key"
+key = "g"
+modifiers = ["CONTROL"]
+
+[[mapping]]
+sequence = "^H"
+kind = "key"
+key = "BACKSPACE"
+
+[[mapping]]
+sequence = "<TAB>"
+kind = "key"
+key = "TAB"
+
+[[mapping]]
+sequence = "<LF>"
+kind = "key"
+key = "ENTER"
+
+[[mapping]]
+sequence = "^K"
+kind = "key"
+key = "k"
+modifiers = ["CONTROL"]
+
+[[mapping]]
+sequence = "^L"
+kind = "key"
+key = "l"
+modifiers = ["CONTROL"]
+
+[[mapping]]
+sequence = "<CR>"
+kind = "key"
+key = "ENTER"
+
+[[mapping]]
+sequence = "^N"
+kind = "key"
+key = "n"
+modifiers = ["CONTROL"]
+
+[[mapping]]
+sequence = "^O"
+kind = "key"
+key = "o"
+modifiers = ["CONTROL"]
+
+[[mapping]]
+sequence = "^P"
+kind = "key"
+key = "p"
+modifiers = ["CONTROL"]
+
+[[mapping]]
+sequence = "^Q"
+kind = "key"
+key = "q"
+modifiers = ["CONTROL"]
+
+[[mapping]]
+sequence = "^R"
+kind = "key"
+key = "r"
+modifiers = ["CONTROL"]
+
+[[mapping]]
+sequence = "^S"
+kind = "key"
+key = "s"
+modifiers = ["CONTROL"]
+
+[[mapping]]
+sequence = "^T"
+kind = "key"
+key = "t"
+modifiers = ["CONTROL"]
+
+[[mapping]]
+sequence = "^U"
+kind = "key"
+key = "u"
+modifiers = ["CONTROL"]
+
+[[mapping]]
+sequence = "^V"
+kind = "key"
+key = "v"
+modifiers = ["CONTROL"]
+
+[[mapping]]
+sequence = "^W"
+kind = "key"
+key = "w"
+modifiers = ["CONTROL"]
+
+[[mapping]]
+sequence = "^X"
+kind = "key"
+key = "x"
+modifiers = ["CONTROL"]
+
+[[mapping]]
+sequence = "^Y"
+kind = "key"
+key = "y"
+modifiers = ["CONTROL"]
+
+[[mapping]]
+sequence = "^Z"
+kind = "key"
+key = "z"
+modifiers = ["CONTROL"]
+
+[[mapping]]
+sequence = '^\'
+kind = "key"
+key = "\\"
+modifiers = ["CONTROL"]
+
+[[mapping]]
+sequence = "^]"
+kind = "key"
+key = "]"
+modifiers = ["CONTROL"]
+
+[[mapping]]
+sequence = "^^"
+kind = "key"
+key = "^"
+modifiers = ["CONTROL"]
+
+[[mapping]]
+sequence = "^_"
+kind = "key"
+key = "_"
+modifiers = ["CONTROL"]
+
+[[mapping]]
+sequence = "<DEL>"
+kind = "key"
+key = "BACKSPACE"
+
+# Exact CSI key defaults live in the trie. The generic CSI parser handles only
+# parameterized forms and protocol replies, so deleting one of these mappings
+# cannot silently fall through to a hardcoded key interpretation.
+[[mapping]]
+sequence = "<CSI>A"
+kind = "key"
+key = "UP"
+
+[[mapping]]
+sequence = "<CSI>B"
+kind = "key"
+key = "DOWN"
+
+[[mapping]]
+sequence = "<CSI>C"
+kind = "key"
+key = "RIGHT"
+
+[[mapping]]
+sequence = "<CSI>D"
+kind = "key"
+key = "LEFT"
+
+[[mapping]]
+sequence = "<CSI>H"
+kind = "key"
+key = "HOME"
+
+[[mapping]]
+sequence = "<CSI>F"
+kind = "key"
+key = "END"
+
+[[mapping]]
+sequence = "<CSI>P"
+kind = "key"
+key = "F1"
+
+[[mapping]]
+sequence = "<CSI>Q"
+kind = "key"
+key = "F2"
+
+[[mapping]]
+sequence = "<CSI>S"
+kind = "key"
+key = "F4"
+
+[[mapping]]
+sequence = "<CSI>E"
+kind = "key"
+key = "KEYPAD_BEGIN"
+
+[[mapping]]
+sequence = "<CSI>Z"
+kind = "key"
+key = "TAB"
+modifiers = ["SHIFT"]
+
+[[mapping]]
+sequence = "<CSI>1~"
+kind = "key"
+key = "HOME"
+
+[[mapping]]
+sequence = "<CSI>2~"
+kind = "key"
+key = "INSERT"
+
+[[mapping]]
+sequence = "<CSI>3~"
+kind = "key"
+key = "DELETE"
+
+[[mapping]]
+sequence = "<CSI>4~"
+kind = "key"
+key = "END"
+
+[[mapping]]
+sequence = "<CSI>5~"
+kind = "key"
+key = "PAGE_UP"
+
+[[mapping]]
+sequence = "<CSI>6~"
+kind = "key"
+key = "PAGE_DOWN"
+
+[[mapping]]
+sequence = "<CSI>7~"
+kind = "key"
+key = "HOME"
+
+[[mapping]]
+sequence = "<CSI>8~"
+kind = "key"
+key = "END"
+
+[[mapping]]
+sequence = "<CSI>11~"
+kind = "key"
+key = "F1"
+
+[[mapping]]
+sequence = "<CSI>12~"
+kind = "key"
+key = "F2"
+
+[[mapping]]
+sequence = "<CSI>13~"
+kind = "key"
+key = "F3"
+
+[[mapping]]
+sequence = "<CSI>14~"
+kind = "key"
+key = "F4"
+
+[[mapping]]
+sequence = "<CSI>15~"
+kind = "key"
+key = "F5"
+
+[[mapping]]
+sequence = "<CSI>17~"
+kind = "key"
+key = "F6"
+
+[[mapping]]
+sequence = "<CSI>18~"
+kind = "key"
+key = "F7"
+
+[[mapping]]
+sequence = "<CSI>19~"
+kind = "key"
+key = "F8"
+
+[[mapping]]
+sequence = "<CSI>20~"
+kind = "key"
+key = "F9"
+
+[[mapping]]
+sequence = "<CSI>21~"
+kind = "key"
+key = "F10"
+
+[[mapping]]
+sequence = "<CSI>23~"
+kind = "key"
+key = "F11"
+
+[[mapping]]
+sequence = "<CSI>24~"
+kind = "key"
+key = "F12"
+
+# SS3 application-cursor, function-key, and keypad defaults. These mappings are
+# applied after the selected terminfo entry and therefore take precedence on an
+# identical path. User mappings are merged after them and have final authority.
+[[mapping]]
+sequence = "<ESC>OA"
+kind = "key"
+key = "UP"
+
+[[mapping]]
+sequence = "<ESC>OB"
+kind = "key"
+key = "DOWN"
+
+[[mapping]]
+sequence = "<ESC>OC"
+kind = "key"
+key = "RIGHT"
+
+[[mapping]]
+sequence = "<ESC>OD"
+kind = "key"
+key = "LEFT"
+
+[[mapping]]
+sequence = "<ESC>OH"
+kind = "key"
+key = "HOME"
+
+[[mapping]]
+sequence = "<ESC>OF"
+kind = "key"
+key = "END"
+
+[[mapping]]
+sequence = "<ESC>OP"
+kind = "key"
+key = "F1"
+
+[[mapping]]
+sequence = "<ESC>OQ"
+kind = "key"
+key = "F2"
+
+[[mapping]]
+sequence = "<ESC>OR"
+kind = "key"
+key = "F3"
+
+[[mapping]]
+sequence = "<ESC>OS"
+kind = "key"
+key = "F4"
+
+[[mapping]]
+sequence = "<ESC>OM"
+kind = "key"
+key = "KEYPAD_ENTER"
+
+[[mapping]]
+sequence = "<ESC>Oo"
+kind = "key"
+key = "KEYPAD_DIVIDE"
+
+[[mapping]]
+sequence = "<ESC>Oj"
+kind = "key"
+key = "KEYPAD_MULTIPLY"
+
+[[mapping]]
+sequence = "<ESC>Om"
+kind = "key"
+key = "KEYPAD_SUBTRACT"
+
+[[mapping]]
+sequence = "<ESC>Ok"
+kind = "key"
+key = "KEYPAD_ADD"
+
+[[mapping]]
+sequence = "<ESC>On"
+kind = "key"
+key = "KEYPAD_DECIMAL"
+
+[[mapping]]
+sequence = "<ESC>OX"
+kind = "key"
+key = "KEYPAD_EQUAL"
+
+[[mapping]]
+sequence = "<ESC>Op"
+kind = "key"
+key = "KEYPAD_0"
+
+[[mapping]]
+sequence = "<ESC>Oq"
+kind = "key"
+key = "KEYPAD_1"
+
+[[mapping]]
+sequence = "<ESC>Or"
+kind = "key"
+key = "KEYPAD_2"
+
+[[mapping]]
+sequence = "<ESC>Os"
+kind = "key"
+key = "KEYPAD_3"
+
+[[mapping]]
+sequence = "<ESC>Ot"
+kind = "key"
+key = "KEYPAD_4"
+
+[[mapping]]
+sequence = "<ESC>Ou"
+kind = "key"
+key = "KEYPAD_5"
+
+[[mapping]]
+sequence = "<ESC>Ov"
+kind = "key"
+key = "KEYPAD_6"
+
+[[mapping]]
+sequence = "<ESC>Ow"
+kind = "key"
+key = "KEYPAD_7"
+
+[[mapping]]
+sequence = "<ESC>Ox"
+kind = "key"
+key = "KEYPAD_8"
+
+[[mapping]]
+sequence = "<ESC>Oy"
+kind = "key"
+key = "KEYPAD_9"
+
+# Terminfo supplies the bytes for these logical keys. PUC supplies their
+# terminal-independent meaning.
+[[terminfo]]
+capability = "kbs"
+key = "BACKSPACE"
+
+[[terminfo]]
+capability = "kent"
+key = "ENTER"
+
+[[terminfo]]
+capability = "kcbt"
+key = "TAB"
+modifiers = ["SHIFT"]
+
+[[terminfo]]
+capability = "kcuu1"
+key = "UP"
+
+[[terminfo]]
+capability = "kcud1"
+key = "DOWN"
+
+[[terminfo]]
+capability = "kcub1"
+key = "LEFT"
+
+[[terminfo]]
+capability = "kcuf1"
+key = "RIGHT"
+
+[[terminfo]]
+capability = "khome"
+key = "HOME"
+
+[[terminfo]]
+capability = "kend"
+key = "END"
+
+[[terminfo]]
+capability = "kich1"
+key = "INSERT"
+
+[[terminfo]]
+capability = "kdch1"
+key = "DELETE"
+
+[[terminfo]]
+capability = "kpp"
+key = "PAGE_UP"
+
+[[terminfo]]
+capability = "knp"
+key = "PAGE_DOWN"
+
+[[terminfo]]
+capability = "ka1"
+key = "KEYPAD_HOME"
+
+[[terminfo]]
+capability = "ka3"
+key = "KEYPAD_PAGE_UP"
+
+[[terminfo]]
+capability = "kb2"
+key = "KEYPAD_BEGIN"
+
+[[terminfo]]
+capability = "kc1"
+key = "KEYPAD_END"
+
+[[terminfo]]
+capability = "kc3"
+key = "KEYPAD_PAGE_DOWN"
+
+[[terminfo]]
+capability = "kf1"
+key = "F1"
+
+[[terminfo]]
+capability = "kf2"
+key = "F2"
+
+[[terminfo]]
+capability = "kf3"
+key = "F3"
+
+[[terminfo]]
+capability = "kf4"
+key = "F4"
+
+[[terminfo]]
+capability = "kf5"
+key = "F5"
+
+[[terminfo]]
+capability = "kf6"
+key = "F6"
+
+[[terminfo]]
+capability = "kf7"
+key = "F7"
+
+[[terminfo]]
+capability = "kf8"
+key = "F8"
+
+[[terminfo]]
+capability = "kf9"
+key = "F9"
+
+[[terminfo]]
+capability = "kf10"
+key = "F10"
+
+[[terminfo]]
+capability = "kf11"
+key = "F11"
+
+[[terminfo]]
+capability = "kf12"
+key = "F12"
+
+[[terminfo]]
+capability = "kf13"
+key = "F13"
+
+[[terminfo]]
+capability = "kf14"
+key = "F14"
+
+[[terminfo]]
+capability = "kf15"
+key = "F15"
+
+[[terminfo]]
+capability = "kf16"
+key = "F16"
+
+[[terminfo]]
+capability = "kf17"
+key = "F17"
+
+[[terminfo]]
+capability = "kf18"
+key = "F18"
+
+[[terminfo]]
+capability = "kf19"
+key = "F19"
+
+[[terminfo]]
+capability = "kf20"
+key = "F20"
+
+[[terminfo]]
+capability = "kf21"
+key = "F21"
+
+[[terminfo]]
+capability = "kf22"
+key = "F22"
+
+[[terminfo]]
+capability = "kf23"
+key = "F23"
+
+[[terminfo]]
+capability = "kf24"
+key = "F24"
+
+[[terminfo]]
+capability = "kf25"
+key = "F25"
+
+[[terminfo]]
+capability = "kf26"
+key = "F26"
+
+[[terminfo]]
+capability = "kf27"
+key = "F27"
+
+[[terminfo]]
+capability = "kf28"
+key = "F28"
+
+[[terminfo]]
+capability = "kf29"
+key = "F29"
+
+[[terminfo]]
+capability = "kf30"
+key = "F30"
+
+[[terminfo]]
+capability = "kf31"
+key = "F31"
+
+[[terminfo]]
+capability = "kf32"
+key = "F32"
+
+[[terminfo]]
+capability = "kf33"
+key = "F33"
+
+[[terminfo]]
+capability = "kf34"
+key = "F34"
+
+[[terminfo]]
+capability = "kf35"
+key = "F35"

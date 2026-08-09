@@ -2,7 +2,7 @@
 
 # Namespace `puc::config`
 
-[Source](../../utils/config/config.cpp#L27)
+[Source](../../puc-cli/terminal/timeouts.hpp#L14)
 
 ## Related symbols
 
