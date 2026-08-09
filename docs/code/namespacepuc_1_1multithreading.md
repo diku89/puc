@@ -4,7 +4,7 @@
 
 Fixed worker pools and asynchronous job scheduling.
 
-[Source](../../utils/multithreading/job_queue.cpp#L24)
+[Source](../../utils/ipc/channel.hpp#L21)
 
 ## Related symbols
 
