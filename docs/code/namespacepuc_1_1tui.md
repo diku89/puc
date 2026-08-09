@@ -12,12 +12,51 @@ Terminal user-interface primitives, layout, rendering, and terminal control.
 - [puc::tui::CellDimensions](structpuc_1_1tui_1_1_cell_dimensions.md)
 - [puc::tui::Frame](classpuc_1_1tui_1_1_frame.md)
 - [puc::tui::Layout](classpuc_1_1tui_1_1_layout.md)
+- [puc::tui::ParallelRenderer](classpuc_1_1tui_1_1_parallel_renderer.md)
 - [puc::tui::Screen](classpuc_1_1tui_1_1_screen.md)
-- [puc::tui::State](structpuc_1_1tui_1_1_state.md)
+- [puc::tui::SelectionEvent](structpuc_1_1tui_1_1_selection_event.md)
+- [puc::tui::SelectionPosition](structpuc_1_1tui_1_1_selection_position.md)
+- [puc::tui::SelectionStateMachine](classpuc_1_1tui_1_1_selection_state_machine.md)
 - [puc::tui::Theme](classpuc_1_1tui_1_1_theme.md)
 - [puc::tui::ZBuffer](classpuc_1_1tui_1_1_z_buffer.md)
 
 ## Enumerations
+
+<a id="symbol-namespacepuc_1_1tui_1a6ec6e7ef6f90768da3386622a10eb37c"></a>
+
+### `SelectionPhase`
+
+```cpp
+SelectionPhase
+```
+
+Lifecycle phase of the one selection owned by a [Screen](classpuc_1_1tui_1_1_screen.md).
+
+#### Values
+- <a id="symbol-namespacepuc_1_1tui_1a6ec6e7ef6f90768da3386622a10eb37cab50339a10e1de285ac99d4c3990b8693"></a>`NONE` — No frame currently contains selected text.
+- <a id="symbol-namespacepuc_1_1tui_1a6ec6e7ef6f90768da3386622a10eb37caca69f96c768067fbff6c911ca87bccc9"></a>`IN_PROGRESS` — A captured pointer gesture is extending a selection.
+- <a id="symbol-namespacepuc_1_1tui_1a6ec6e7ef6f90768da3386622a10eb37ca3de44296982e58199afc513a715b12ba"></a>`COMPLETE` — A stable selection remains available for copying.
+
+[Source](../../puc-cli/tui/selection.hpp#L21)
+
+<a id="symbol-namespacepuc_1_1tui_1a144569aef987b76e95d4f5aec6cbca9c"></a>
+
+### `SelectionEventType`
+
+```cpp
+SelectionEventType
+```
+
+Semantic operations that a selectable [Frame](classpuc_1_1tui_1_1_frame.md) can apply to its content.
+
+#### Values
+- <a id="symbol-namespacepuc_1_1tui_1a144569aef987b76e95d4f5aec6cbca9caa1f131b203ba36f9bce543ecc00b1f63"></a>`SELECT_AND_EXTEND` — Begin or update a character-range drag.
+- <a id="symbol-namespacepuc_1_1tui_1a144569aef987b76e95d4f5aec6cbca9ca7812fb412b388ce21ce4bf6bcd2918a5"></a>`END_SELECT_AND_EXTEND` — Apply the release position and finish a drag.
+- <a id="symbol-namespacepuc_1_1tui_1a144569aef987b76e95d4f5aec6cbca9ca38c508f76a7dd45ed00b6b4d52c71c83"></a>`SELECT_WORD` — Replace the range with the word at `extent`.
+- <a id="symbol-namespacepuc_1_1tui_1a144569aef987b76e95d4f5aec6cbca9ca6632c7d2ade8b3950a1b4f3932f2f573"></a>`SELECT_LINE` — Replace the range with the line at `extent`.
+- <a id="symbol-namespacepuc_1_1tui_1a144569aef987b76e95d4f5aec6cbca9cab5859d8721cfdc0312b2838b9c985bc1"></a>`RESET` — Remove the frame's current selection.
+
+[Source](../../puc-cli/tui/selection.hpp#L28)
 
 <a id="symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270"></a>
 
@@ -42,6 +81,9 @@ Result codes returned by expected TUI operations.
 - <a id="symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270a495ebbc25234b754e9984ff6cd72249d"></a>`CELL_SHAPE_MISMATCH` — Source cell rows do not match their rectangle.
 - <a id="symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ad4b3d7863079cc31e48ce56a1e9e4b3e"></a>`DUPLICATE_FRAME_ID` — A [ZBuffer](classpuc_1_1tui_1_1_z_buffer.md) already contains the frame id.
 - <a id="symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270a7c351a12e8d4bf43ab7c0d7ee529a0c4"></a>`FRAME_NOT_FOUND` — A requested or referenced frame is absent.
+- <a id="symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270a53116f51e4c834a034faa650cc846b2c"></a>`FRAME_NOT_SELECTABLE` — A frame does not expose logical selectable text.
+- <a id="symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270afcd7d4c184c077149dcc9fa3b074d662"></a>`INVALID_SELECTION_TRANSITION` — A selection event violates its lifecycle.
+- <a id="symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270aac6cf090b11c4b65dbddc0baa84e4e72"></a>`NO_SELECTION` — No completed logical selection is available.
 - <a id="symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ac6a712b1b5d104c9eb40337259dba1ef"></a>`INVALID_PERCENTAGE` — A percentage is non-finite or outside `[0, 1]`.
 - <a id="symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270afc58877b0b667451adc4822042ece3b5"></a>`INVALID_RATIO` — An aspect-ratio dimension is not positive.
 - <a id="symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270a05c94345dbd2104f307cd6a6a90ef2d0"></a>`INVALID_CONSTRAINT` — A layout constraint is malformed or contradictory.
@@ -51,7 +93,9 @@ Result codes returned by expected TUI operations.
 - <a id="symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270abd886bccf2b8f84ee788a149533fd623"></a>`TERMINAL_QUERY_FAILED` — Terminal dimensions could not be queried.
 - <a id="symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270aea0a179066f996942bf50edd1b944c97"></a>`TERMINAL_CONFIG_FAILED` — Terminal attributes could not be changed/restored.
 - <a id="symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ac96841a758410c9a6e5897eee3da9d99"></a>`TERMINAL_WRITE_FAILED` — The complete terminal output could not be written.
-- <a id="symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270a7359f2961f938fa1c253503f4d527b51"></a>`EVENT_BUFFER_FULL` — A [Screen](classpuc_1_1tui_1_1_screen.md) event could not be queued.
+- <a id="symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270a767a0073624a94f0852e62c3567a1242"></a>`CHANNEL_SETUP_FAILED` — Asynchronous [Screen](classpuc_1_1tui_1_1_screen.md) channels could not be built.
+- <a id="symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270a14e610ffbb18babdaab9b4b060bfc6ed"></a>`MESSAGE_ENCODING_FAILED` — A typed [Screen](classpuc_1_1tui_1_1_screen.md) command could not be encoded.
+- <a id="symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270a48bfc59ef14509cf5160e41dede02da9"></a>`ASYNC_DISPATCH_FAILED` — Asynchronous work could not be completed.
 
 [Source](../../puc-cli/tui/status.hpp#L23)
 
@@ -67,7 +111,7 @@ CellDimensions puc::tui::kDefaultCellDimensions
 
 Conventional cell proportions used when a terminal omits pixel metrics.
 
-[Source](../../puc-cli/tui/screen.hpp#L39)
+[Source](../../puc-cli/tui/screen.hpp#L44)
 
 ## Functions
 
@@ -87,7 +131,7 @@ Test whether a status represents success.
 
 **Returns:** `true` only for [Status::OK](#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ae0aa021e21dddbd6d8cecec71e9cf564).
 
-[Source](../../puc-cli/tui/status.hpp#L56)
+[Source](../../puc-cli/tui/status.hpp#L62)
 
 <a id="symbol-namespacepuc_1_1tui_1aa6eafcdd424900009e70a0e945d425b8"></a>
 
@@ -107,4 +151,4 @@ Unknown enum values map to `"unknown terminal UI status"` so diagnostic paths ne
 
 **Returns:** A static string suitable for logs and diagnostics.
 
-[Source](../../puc-cli/tui/status.hpp#L67)
+[Source](../../puc-cli/tui/status.hpp#L73)

@@ -19,7 +19,7 @@ Theme::Colors test_colors() {
       .primary                      = 1,
       .secondary                    = 2,
       .tertiary                     = 3,
-      .highlight                    = 4,
+      .highlight_background         = 4,
       .highlight_text               = 5,
       .text                         = 6,
       .text_secondary               = 7,
@@ -51,6 +51,8 @@ TEST(ThemeTest, DefaultsToZeroInitializedColors) {
   const Theme::Colors colors = theme.get_colors();
 
   EXPECT_EQ(colors.primary, 0U);
+  EXPECT_EQ(colors.highlight_background, 0U);
+  EXPECT_EQ(colors.highlight_text, 0U);
   EXPECT_EQ(colors.text, 0U);
   EXPECT_EQ(colors.diff_added_text_background, 0U);
   EXPECT_EQ(colors.background, 0U);
@@ -76,7 +78,7 @@ TEST(ThemeTest, ResolvesEverySemanticColor) {
       {Theme::ColorTypes::PRIMARY, 1},
       {Theme::ColorTypes::SECONDARY, 2},
       {Theme::ColorTypes::TERTIARY, 3},
-      {Theme::ColorTypes::HIGHLIGHT, 4},
+      {Theme::ColorTypes::HIGHLIGHT_BACKGROUND, 4},
       {Theme::ColorTypes::HIGHLIGHT_TEXT, 5},
       {Theme::ColorTypes::TEXT, 6},
       {Theme::ColorTypes::TEXT_SECONDARY, 7},

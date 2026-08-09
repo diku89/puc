@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <iterator>
 #include <limits>
 #include <map>
 #include <string>
@@ -677,13 +678,15 @@ class Resolver {
   Resolver(const Layout::LayoutDescription& description,
            const ParsedLayout& parsed_layout, size_t screen_width,
            size_t screen_height, const CellDimensions& cell_dimensions,
-           Layout::AbsoluteLayout& output)
+           Layout::AbsoluteLayout& output,
+           std::vector<std::string>& resolution_order)
       : description_(description),
         parsed_layout_(parsed_layout),
         screen_width_(screen_width),
         screen_height_(screen_height),
         cell_dimensions_(cell_dimensions),
-        output_(output) {
+        output_(output),
+        resolution_order_(resolution_order) {
     for (const ZBuffer::Entry& entry : description_.z_buffer.frames()) {
       visit_states_.emplace(entry.frame_id, VisitState::UNVISITED);
     }
@@ -694,7 +697,17 @@ class Resolver {
    *
    * @return Status::OK or the first resolution error.
    */
-  Status resolve_all() {
+  Status resolve_all(const std::vector<std::string>* cached_order = nullptr) {
+    if (cached_order != nullptr) {
+      for (const std::string& frame_id : *cached_order) {
+        const Status status = resolve(frame_id);
+        if (!is_ok(status)) {
+          return status;
+        }
+      }
+      return Status::OK;
+    }
+
     for (const ZBuffer::Entry& entry : description_.z_buffer.frames()) {
       const Status status = resolve(entry.frame_id);
       if (!is_ok(status)) {
@@ -807,6 +820,7 @@ class Resolver {
         frame_id,
         Canvas::Rect{.x = x, .y = y, .width = width, .height = height});
     visit->second = VisitState::RESOLVED;
+    resolution_order_.push_back(frame_id);
     Logger<DEBUG> << "Resolved frame '" << frame_id << "' to " << x << ',' << y
                   << ' ' << width << 'x' << height;
     return Status::OK;
@@ -862,6 +876,8 @@ class Resolver {
 
   /** Destination map receiving solved frame rectangles. */
   Layout::AbsoluteLayout& output_;
+  /** Dependency-first order discovered while resolving named anchors. */
+  std::vector<std::string>& resolution_order_;
 
   /** Depth-first traversal state indexed by frame id. */
   std::map<std::string, VisitState> visit_states_;
@@ -1151,6 +1167,52 @@ Status frame_minimum_size(const ParsedConstraints& constraints,
   return Status::OK;
 }
 
+/** Return whether two non-empty half-open rectangles intersect. */
+bool rectangles_intersect(const Canvas::Rect& first,
+                          const Canvas::Rect& second) noexcept {
+  if (first.width == 0U || first.height == 0U || second.width == 0U ||
+      second.height == 0U) {
+    return false;
+  }
+  return first.x < second.x + second.width &&
+         second.x < first.x + first.width &&
+         first.y < second.y + second.height &&
+         second.y < first.y + first.height;
+}
+
+/**
+ * Build the render DAG implied by absolute overlap and Z-buffer ordering.
+ *
+ * Disjoint frames have no edge and may render concurrently. For every
+ * intersecting pair, the backmost index becomes a prerequisite of the
+ * frontmost index, preserving deterministic compositing without serializing
+ * unrelated regions.
+ */
+Status build_frame_dependencies(const Layout::LayoutDescription& description,
+                                Layout::AbsoluteLayout& absolute_layout) {
+  absolute_layout.frame_dependencies.clear();
+  const std::vector<ZBuffer::Entry>& frames = description.z_buffer.frames();
+  for (size_t back = 0U; back < frames.size(); ++back) {
+    const auto back_rect =
+        absolute_layout.frame_layouts.find(frames[back].frame_id);
+    if (back_rect == absolute_layout.frame_layouts.end()) {
+      return Status::FRAME_NOT_FOUND;
+    }
+    for (size_t front = back + 1U; front < frames.size(); ++front) {
+      const auto front_rect =
+          absolute_layout.frame_layouts.find(frames[front].frame_id);
+      if (front_rect == absolute_layout.frame_layouts.end()) {
+        return Status::FRAME_NOT_FOUND;
+      }
+      if (rectangles_intersect(back_rect->second, front_rect->second)) {
+        absolute_layout.frame_dependencies.push_back(
+            Layout::FrameDependency{.prerequisite = back, .dependent = front});
+      }
+    }
+  }
+  return Status::OK;
+}
+
 }  // namespace
 
 Layout::Constraint Layout::make_percentage_constraint(ConstraintType type,
@@ -1182,11 +1244,9 @@ Layout::Constraint Layout::make_name_constraint(ConstraintType type,
 std::shared_ptr<Layout::LayoutDescription> Layout::make_layout_description(
     const std::string& layout_name) const {
   Logger<DEBUG> << "Created layout description '" << layout_name << "'";
-  return std::make_shared<LayoutDescription>(LayoutDescription{
-      .layout_name = layout_name,
-      .z_buffer    = {},
-      .constraints = {},
-  });
+  auto description         = std::make_shared<LayoutDescription>();
+  description->layout_name = layout_name;
+  return description;
 }
 
 Status Layout::add_frame_to_layout_description(
@@ -1208,6 +1268,9 @@ Status Layout::add_frame_to_layout_description(
   }
 
   layout_description->constraints.try_emplace(frame_id);
+  ++layout_description->constraint_revision;
+  layout_description->cached_resolution_order_valid = false;
+  layout_description->cached_absolute_layout.reset();
   Logger<DEBUG> << "Added frame '" << frame_id << "' to layout '"
                 << layout_description->layout_name << "'";
   return Status::OK;
@@ -1247,6 +1310,9 @@ Status Layout::add_constraint_to_frame(
   }
 
   constraints.push_back(constraint);
+  ++layout_description->constraint_revision;
+  layout_description->cached_resolution_order_valid = false;
+  layout_description->cached_absolute_layout.reset();
   Logger<DEBUG> << "Added constraint to frame '" << frame_id << "'";
   return Status::OK;
 }
@@ -1257,6 +1323,7 @@ Status Layout::compute_absolute_layout(
     const CellDimensions& cell_dimensions,
     AbsoluteLayout& absolute_layout) const {
   absolute_layout.frame_layouts.clear();
+  absolute_layout.frame_dependencies.clear();
   if (!layout_description) {
     Logger<ERROR> << "Cannot compute a null layout description";
     return Status::INVALID_ARGUMENT;
@@ -1266,22 +1333,69 @@ Status Layout::compute_absolute_layout(
     return Status::INVALID_DIMENSIONS;
   }
 
+  const size_t z_buffer_revision = layout_description->z_buffer.revision();
+  const std::optional<CachedAbsoluteLayout>& cached =
+      layout_description->cached_absolute_layout;
+  if (cached.has_value() && cached->screen_width == screen_width &&
+      cached->screen_height == screen_height &&
+      cached->cell_dimensions == cell_dimensions &&
+      cached->z_buffer_revision == z_buffer_revision &&
+      cached->constraint_revision == layout_description->constraint_revision) {
+    absolute_layout = cached->layout;
+    Logger<DEBUG> << "Reused cached absolute layout '"
+                  << layout_description->layout_name << "'";
+    return Status::OK;
+  }
+
   ParsedLayout parsed_layout;
   Status status = parse_layout(*layout_description, parsed_layout);
   if (!is_ok(status)) {
     return status;
   }
 
+  std::vector<std::string> resolution_order;
   Resolver resolver(*layout_description, parsed_layout, screen_width,
-                    screen_height, cell_dimensions, absolute_layout);
-  status = resolver.resolve_all();
+                    screen_height, cell_dimensions, absolute_layout,
+                    resolution_order);
+  const bool cached_order_valid =
+      layout_description->cached_resolution_order_valid &&
+      layout_description->cached_order_z_buffer_revision == z_buffer_revision &&
+      layout_description->cached_order_constraint_revision ==
+          layout_description->constraint_revision;
+  status = resolver.resolve_all(
+      cached_order_valid ? &layout_description->cached_resolution_order
+                         : nullptr);
   if (!is_ok(status)) {
     absolute_layout.frame_layouts.clear();
+    absolute_layout.frame_dependencies.clear();
     Logger<ERROR> << "Could not compute layout '"
                   << layout_description->layout_name
                   << "': " << status_message(status);
     return status;
   }
+
+  status = build_frame_dependencies(*layout_description, absolute_layout);
+  if (!is_ok(status)) {
+    absolute_layout.frame_layouts.clear();
+    absolute_layout.frame_dependencies.clear();
+    return status;
+  }
+
+  if (!cached_order_valid) {
+    layout_description->cached_resolution_order = std::move(resolution_order);
+    layout_description->cached_order_z_buffer_revision = z_buffer_revision;
+    layout_description->cached_order_constraint_revision =
+        layout_description->constraint_revision;
+    layout_description->cached_resolution_order_valid = true;
+  }
+  layout_description->cached_absolute_layout = CachedAbsoluteLayout{
+      .screen_width        = screen_width,
+      .screen_height       = screen_height,
+      .cell_dimensions     = cell_dimensions,
+      .z_buffer_revision   = z_buffer_revision,
+      .constraint_revision = layout_description->constraint_revision,
+      .layout              = absolute_layout,
+  };
 
   Logger<DEBUG> << "Computed layout '" << layout_description->layout_name
                 << "' for " << screen_width << 'x' << screen_height
@@ -1307,14 +1421,6 @@ Status Layout::compute_minimum_dimensions(
 
   ParsedLayout parsed_layout;
   Status status = parse_layout(*layout_description, parsed_layout);
-  if (!is_ok(status)) {
-    return status;
-  }
-
-  AbsoluteLayout validation_layout;
-  Resolver validation_resolver(*layout_description, parsed_layout, 0, 0,
-                               cell_dimensions, validation_layout);
-  status = validation_resolver.resolve_all();
   if (!is_ok(status)) {
     return status;
   }
@@ -1353,33 +1459,31 @@ Status Layout::compute_minimum_dimensions(
 
 Status Layout::draw(
     const std::shared_ptr<LayoutDescription>& layout_description,
-    const AbsoluteLayout& absolute_layout, const State& state,
-    const Theme& theme, Canvas& canvas) const {
+    const AbsoluteLayout& absolute_layout, const Theme& theme,
+    Canvas& canvas) const {
   if (!layout_description) {
     Logger<ERROR> << "Cannot draw a null layout description";
     return Status::INVALID_ARGUMENT;
   }
 
-  for (const ZBuffer::Entry& entry : layout_description->z_buffer.frames()) {
-    if (!entry.frame->needs_update()) {
-      Logger<DEBUG> << "Skipped clean frame '" << entry.frame_id << "'";
-      continue;
-    }
-
-    const auto rect = absolute_layout.frame_layouts.find(entry.frame_id);
+  const std::vector<ZBuffer::Entry>& frames =
+      layout_description->z_buffer.frames();
+  for (size_t frame_index = 0U; frame_index < frames.size(); ++frame_index) {
+    const ZBuffer::Entry& frame = frames[frame_index];
+    const auto rect = absolute_layout.frame_layouts.find(frame.frame_id);
     if (rect == absolute_layout.frame_layouts.end()) {
-      Logger<ERROR> << "No absolute rectangle for frame '" << entry.frame_id
+      Logger<ERROR> << "No absolute rectangle for frame '" << frame.frame_id
                     << "'";
       return Status::FRAME_NOT_FOUND;
     }
 
-    const Status status = entry.frame->draw(state, theme, canvas, rect->second);
+    const Status status = frame.frame->draw(theme, canvas, rect->second);
     if (!is_ok(status)) {
-      Logger<ERROR> << "Frame '" << entry.frame_id
+      Logger<ERROR> << "Frame '" << frame.frame_id
                     << "' failed to draw: " << status_message(status);
       return status;
     }
-    Logger<DEBUG> << "Drew frame '" << entry.frame_id << "'";
+    Logger<DEBUG> << "Drew frame '" << frame.frame_id << "'";
   }
 
   return Status::OK;

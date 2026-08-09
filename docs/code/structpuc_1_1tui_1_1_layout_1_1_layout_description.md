@@ -2,11 +2,11 @@
 
 # Struct `puc::tui::Layout::LayoutDescription`
 
-Declarative frame ownership, ordering, and constraints for one layout.
+Declarative frame ownership, ordering, constraints, and derived caches.
 
-Use [Layout](classpuc_1_1tui_1_1_layout.md) mutation methods to preserve the invariant that every frame id appears exactly once in `z_buffer` and has one entry in `constraints`.
+Use [Layout](classpuc_1_1tui_1_1_layout.md) mutation methods to preserve the invariant that every frame id appears exactly once in `z_buffer` and has one entry in `constraints`, and to invalidate cached topology and geometry correctly.
 
-[Source](../../puc-cli/tui/layout.hpp#L113)
+[Source](../../puc-cli/tui/layout.hpp#L148)
 
 ## Public data members
 
@@ -20,7 +20,7 @@ std::string puc::tui::Layout::LayoutDescription::layout_name
 
 Human-readable layout name used in logs.
 
-[Source](../../puc-cli/tui/layout.hpp#L114)
+[Source](../../puc-cli/tui/layout.hpp#L149)
 
 <a id="symbol-structpuc_1_1tui_1_1_layout_1_1_layout_description_1ab2080d79061675a6ba4367ad79775d8e"></a>
 
@@ -32,7 +32,7 @@ ZBuffer puc::tui::Layout::LayoutDescription::z_buffer
 
 Frames in back-to-front drawing order.
 
-[Source](../../puc-cli/tui/layout.hpp#L115)
+[Source](../../puc-cli/tui/layout.hpp#L150)
 
 <a id="symbol-structpuc_1_1tui_1_1_layout_1_1_layout_description_1a0d26bedc338db3fe079322ffa836f88f"></a>
 
@@ -44,4 +44,76 @@ std::map<std::string, std::vector<Constraint> > puc::tui::Layout::LayoutDescript
 
 Constraints indexed by frame id.
 
-[Source](../../puc-cli/tui/layout.hpp#L117)
+[Source](../../puc-cli/tui/layout.hpp#L152)
+
+<a id="symbol-structpuc_1_1tui_1_1_layout_1_1_layout_description_1ab21ec61b51fa87abc534d5ac0f160ca6"></a>
+
+### `constraint_revision`
+
+```cpp
+size_t puc::tui::Layout::LayoutDescription::constraint_revision
+```
+
+Mutation generation.
+
+[Source](../../puc-cli/tui/layout.hpp#L153)
+
+<a id="symbol-structpuc_1_1tui_1_1_layout_1_1_layout_description_1a7facef8f612aa6c7e41a37c8e5070f12"></a>
+
+### `cached_resolution_order`
+
+```cpp
+std::vector<std::string> puc::tui::Layout::LayoutDescription::cached_resolution_order
+```
+
+Named-anchor topological order.
+
+[Source](../../puc-cli/tui/layout.hpp#L155)
+
+<a id="symbol-structpuc_1_1tui_1_1_layout_1_1_layout_description_1a0f8928779df1a756d874abfd2e878a8b"></a>
+
+### `cached_order_z_buffer_revision`
+
+```cpp
+size_t puc::tui::Layout::LayoutDescription::cached_order_z_buffer_revision
+```
+
+Cache key.
+
+[Source](../../puc-cli/tui/layout.hpp#L156)
+
+<a id="symbol-structpuc_1_1tui_1_1_layout_1_1_layout_description_1a906ef2e49bcb531f22c413027db75163"></a>
+
+### `cached_order_constraint_revision`
+
+```cpp
+size_t puc::tui::Layout::LayoutDescription::cached_order_constraint_revision
+```
+
+Cache key.
+
+[Source](../../puc-cli/tui/layout.hpp#L157)
+
+<a id="symbol-structpuc_1_1tui_1_1_layout_1_1_layout_description_1a4b06411ff1eb2f22dcaab495a155527a"></a>
+
+### `cached_resolution_order_valid`
+
+```cpp
+bool puc::tui::Layout::LayoutDescription::cached_resolution_order_valid
+```
+
+Cache presence.
+
+[Source](../../puc-cli/tui/layout.hpp#L158)
+
+<a id="symbol-structpuc_1_1tui_1_1_layout_1_1_layout_description_1a626f8c4f2049e0b845ad85401e579cce"></a>
+
+### `cached_absolute_layout`
+
+```cpp
+std::optional<CachedAbsoluteLayout> puc::tui::Layout::LayoutDescription::cached_absolute_layout
+```
+
+Last exact geometry solution.
+
+[Source](../../puc-cli/tui/layout.hpp#L160)

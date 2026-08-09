@@ -8,6 +8,7 @@
 
 #include <limits>
 #include <span>
+#include <thread>
 #include <utility>
 #include <vector>
 
@@ -104,6 +105,54 @@ TEST(CanvasTest, PreservesUnchangedCellsAcrossPartialFrames) {
   EXPECT_EQ(displayed[0].character, U'A');
   EXPECT_EQ(displayed[1].character, U'X');
   EXPECT_EQ(displayed[2].character, U'C');
+}
+
+TEST(CanvasTest, CancellationPreservesThePublishedImage) {
+  Canvas canvas(2, 1);
+  std::vector<std::vector<Canvas::Cell>> published{{cell(U'A'), cell(U'B')}};
+  std::vector<std::vector<Canvas::Cell>> abandoned{{cell(U'X'), cell(U'Y')}};
+
+  ASSERT_EQ(canvas.begin_frame(), Status::OK);
+  ASSERT_EQ(write(canvas, Canvas::Rect{.x = 0, .y = 0, .width = 2, .height = 1},
+                  published),
+            Status::OK);
+  ASSERT_EQ(canvas.end_frame(), Status::OK);
+
+  ASSERT_EQ(canvas.begin_frame(), Status::OK);
+  ASSERT_EQ(write(canvas, Canvas::Rect{.x = 0, .y = 0, .width = 2, .height = 1},
+                  abandoned),
+            Status::OK);
+  ASSERT_EQ(canvas.cancel_frame(), Status::OK);
+
+  EXPECT_EQ(canvas.get_drawable_buffer()[0].character, U'A');
+  EXPECT_EQ(canvas.get_drawable_buffer()[1].character, U'B');
+  EXPECT_EQ(canvas.cancel_frame(), Status::NO_FRAME_IN_PROGRESS);
+}
+
+TEST(CanvasTest, SupportsConcurrentWritesToDisjointRectangles) {
+  Canvas canvas(2, 1);
+  std::vector<std::vector<Canvas::Cell>> left{{cell(U'L')}};
+  std::vector<std::vector<Canvas::Cell>> right{{cell(U'R')}};
+  Status left_status  = Status::INVALID_ARGUMENT;
+  Status right_status = Status::INVALID_ARGUMENT;
+
+  ASSERT_EQ(canvas.begin_frame(), Status::OK);
+  std::thread left_writer([&] {
+    left_status = write(
+        canvas, Canvas::Rect{.x = 0, .y = 0, .width = 1, .height = 1}, left);
+  });
+  std::thread right_writer([&] {
+    right_status = write(
+        canvas, Canvas::Rect{.x = 1, .y = 0, .width = 1, .height = 1}, right);
+  });
+  left_writer.join();
+  right_writer.join();
+  EXPECT_EQ(left_status, Status::OK);
+  EXPECT_EQ(right_status, Status::OK);
+  ASSERT_EQ(canvas.end_frame(), Status::OK);
+
+  EXPECT_EQ(canvas.get_drawable_buffer()[0].character, U'L');
+  EXPECT_EQ(canvas.get_drawable_buffer()[1].character, U'R');
 }
 
 TEST(CanvasTest, ClearReplacesEveryWritableCell) {

@@ -40,6 +40,7 @@ Status ZBuffer::add(std::string frame_id, std::shared_ptr<Frame> frame) {
       .frame_id = std::move(frame_id),
       .frame    = std::move(frame),
   });
+  ++revision_;
   return Status::OK;
 }
 
@@ -54,6 +55,7 @@ Status ZBuffer::remove(std::string_view frame_id) {
 
   Logger<DEBUG> << "Removed frame '" << frame_id << "' from Z-buffer";
   frames_.erase(found);
+  ++revision_;
   return Status::OK;
 }
 
@@ -73,6 +75,7 @@ Status ZBuffer::bring_to_front(std::string_view frame_id) {
   Entry entry = std::move(*found);
   frames_.erase(found);
   frames_.push_back(std::move(entry));
+  ++revision_;
   Logger<DEBUG> << "Moved frame '" << moved_frame_id << "' to front";
   return Status::OK;
 }

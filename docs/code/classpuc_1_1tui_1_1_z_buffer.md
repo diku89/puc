@@ -6,7 +6,7 @@ A shared-ownership container that defines frame compositing order.
 
 Frames are stored in drawing order: the first frame is the backmost and the last frame is the frontmost. [Frame](classpuc_1_1tui_1_1_frame.md) identifiers are unique within one [ZBuffer](#) and are also used as keys for [Layout](classpuc_1_1tui_1_1_layout.md) constraints.
 
-[Source](../../puc-cli/tui/zbuf.hpp#L26)
+[Source](../../puc-cli/tui/zbuf.hpp#L27)
 
 ## Related symbols
 
@@ -24,7 +24,19 @@ std::vector<Entry> puc::tui::ZBuffer::frames_
 
 Entries ordered from backmost to frontmost.
 
-[Source](../../puc-cli/tui/zbuf.hpp#L77)
+[Source](../../puc-cli/tui/zbuf.hpp#L81)
+
+<a id="symbol-classpuc_1_1tui_1_1_z_buffer_1a102e658d5a787261966ff93bc98fda6f"></a>
+
+### `revision_`
+
+```cpp
+std::size_t puc::tui::ZBuffer::revision_
+```
+
+Generation used to invalidate derived layout and rendering caches.
+
+[Source](../../puc-cli/tui/zbuf.hpp#L83)
 
 ## Public functions
 
@@ -38,7 +50,7 @@ puc::tui::ZBuffer::ZBuffer()=default
 
 Construct an empty Z-buffer.
 
-[Source](../../puc-cli/tui/zbuf.hpp#L36)
+[Source](../../puc-cli/tui/zbuf.hpp#L37)
 
 <a id="symbol-classpuc_1_1tui_1_1_z_buffer_1a921a0214c928d37b6695afa40fe71f70"></a>
 
@@ -50,7 +62,7 @@ puc::tui::ZBuffer::~ZBuffer()=default
 
 Release this container's ownership of every frame.
 
-[Source](../../puc-cli/tui/zbuf.hpp#L39)
+[Source](../../puc-cli/tui/zbuf.hpp#L40)
 
 <a id="symbol-classpuc_1_1tui_1_1_z_buffer_1a5ab3e59567ce1b46c5a615a55545d4f9"></a>
 
@@ -69,7 +81,7 @@ Add a frame in front of all existing frames.
 
 **Returns:** [Status::OK](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ae0aa021e21dddbd6d8cecec71e9cf564) on success, [Status::INVALID\_ARGUMENT](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270af295a0c3e37c94f078e1c5476479132d) for an empty id or null frame, or [Status::DUPLICATE\_FRAME\_ID](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ad4b3d7863079cc31e48ce56a1e9e4b3e) when the id exists.
 
-[Source](../../puc-cli/tui/zbuf.hpp#L49)
+[Source](../../puc-cli/tui/zbuf.hpp#L50)
 
 <a id="symbol-classpuc_1_1tui_1_1_z_buffer_1a857c81527227237814140d4787434bea"></a>
 
@@ -87,7 +99,7 @@ Remove a frame.
 
 **Returns:** [Status::OK](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ae0aa021e21dddbd6d8cecec71e9cf564) on success, or [Status::FRAME\_NOT\_FOUND](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270a7c351a12e8d4bf43ab7c0d7ee529a0c4).
 
-[Source](../../puc-cli/tui/zbuf.hpp#L57)
+[Source](../../puc-cli/tui/zbuf.hpp#L58)
 
 <a id="symbol-classpuc_1_1tui_1_1_z_buffer_1a16eec7ce9f1f6847d1c50ce5c979047f"></a>
 
@@ -105,7 +117,7 @@ Move a frame in front of all other frames.
 
 **Returns:** [Status::OK](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ae0aa021e21dddbd6d8cecec71e9cf564) on success, including when it is already frontmost, or [Status::FRAME\_NOT\_FOUND](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270a7c351a12e8d4bf43ab7c0d7ee529a0c4) when the id is unknown.
 
-[Source](../../puc-cli/tui/zbuf.hpp#L66)
+[Source](../../puc-cli/tui/zbuf.hpp#L67)
 
 <a id="symbol-classpuc_1_1tui_1_1_z_buffer_1a603a6055238cc99589f2e6d634683589"></a>
 
@@ -119,4 +131,16 @@ Access entries in back-to-front drawing order.
 
 **Returns:** A read-only reference valid until this [ZBuffer](#) is mutated.
 
-[Source](../../puc-cli/tui/zbuf.hpp#L73)
+[Source](../../puc-cli/tui/zbuf.hpp#L74)
+
+<a id="symbol-classpuc_1_1tui_1_1_z_buffer_1a2e9a1d843534eca7fdeacc39273b2312"></a>
+
+### `revision`
+
+```cpp
+std::size_t puc::tui::ZBuffer::revision() const noexcept
+```
+
+Return a generation incremented by every structural/order mutation.
+
+[Source](../../puc-cli/tui/zbuf.hpp#L77)

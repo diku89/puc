@@ -25,8 +25,11 @@ namespace tui {
  * as the next drawable image from the caller's perspective. This preserves
  * cells that a partial redraw does not touch.
  *
- * Canvas performs no internal synchronization. All mutation and publication
- * must therefore be serialized by the owning UI thread.
+ * Transaction lifecycle operations and `clear()` belong to one coordinating
+ * thread. During an active transaction, separate workers may call
+ * `write_cells()` concurrently only for non-intersecting rectangles. The frame
+ * execution graph establishes that invariant and completes every write before
+ * cancellation, publication, or drawable-buffer access.
  */
 class Canvas {
  public:
@@ -65,6 +68,11 @@ class Canvas {
    * @param[in] height Number of rows.
    */
   Canvas(size_t width, size_t height);
+
+  Canvas(const Canvas&)            = delete;
+  Canvas& operator=(const Canvas&) = delete;
+  Canvas(Canvas&&)                 = delete;
+  Canvas& operator=(Canvas&&)      = delete;
 
   /** Destroy both cell buffers. */
   ~Canvas() = default;
@@ -129,6 +137,14 @@ class Canvas {
   Status end_frame() noexcept;
 
   /**
+   * Abandon the writable image without changing the published buffer.
+   *
+   * @return Status::OK on success, or Status::NO_FRAME_IN_PROGRESS when no
+   *         transaction is active.
+   */
+  Status cancel_frame() noexcept;
+
+  /**
    * Access the most recently published image in row-major order.
    *
    * A frame currently being assembled is not visible through this span until
@@ -147,6 +163,9 @@ class Canvas {
 
   /** Initialize the writable buffer with the currently published image. */
   void copy_drawable_to_writable() noexcept;
+
+  /** Return the buffer currently receiving transaction writes. */
+  std::vector<Cell>& writable_buffer() noexcept;
 
   /** First row-major cell buffer. */
   std::vector<Cell> screen_buffer_a_;

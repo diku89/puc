@@ -26,8 +26,8 @@ class Theme {
     PRIMARY,                      /**< Primary accent color. */
     SECONDARY,                    /**< Secondary accent color. */
     TERTIARY,                     /**< Tertiary accent color. */
-    HIGHLIGHT,                    /**< Highlighted-region background. */
-    HIGHLIGHT_TEXT,               /**< Text shown over a highlight. */
+    HIGHLIGHT_BACKGROUND,         /**< Selected-text background color. */
+    HIGHLIGHT_TEXT,               /**< Selected-text foreground color. */
     TEXT,                         /**< Default foreground text. */
     TEXT_SECONDARY,               /**< Secondary foreground text. */
     TEXT_TERTIARY,                /**< Tertiary foreground text. */
@@ -64,8 +64,8 @@ class Theme {
     uint32_t primary;                   /**< Primary accent color. */
     uint32_t secondary;                 /**< Secondary accent color. */
     uint32_t tertiary;                  /**< Tertiary accent color. */
-    uint32_t highlight;                 /**< Highlighted-region background. */
-    uint32_t highlight_text;            /**< Text shown over a highlight. */
+    uint32_t highlight_background;      /**< Selected-text background color. */
+    uint32_t highlight_text;            /**< Selected-text foreground color. */
     uint32_t text;                      /**< Default foreground text. */
     uint32_t text_secondary;            /**< Secondary text color. */
     uint32_t text_tertiary;             /**< Tertiary text color. */

@@ -4,9 +4,9 @@
 
 A renderable view assigned to a rectangular region by [Layout](classpuc_1_1tui_1_1_layout.md).
 
-A [Frame](#) owns its descriptive name but not its location. [Layout](classpuc_1_1tui_1_1_layout.md) computes the rectangle for each draw and invokes frames in [ZBuffer](classpuc_1_1tui_1_1_z_buffer.md) order. Implementations should restrict writes to the supplied rectangle and return a [Status](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270) instead of using exceptions for expected rendering failures.
+A [Frame](#) owns its descriptive name but not its location. [Layout](classpuc_1_1tui_1_1_layout.md) computes the rectangle and supplies the active [Canvas](classpuc_1_1tui_1_1_canvas.md). Independent non-intersecting frames may be invoked concurrently; implementations therefore keep mutable frame-local state synchronized and strictly restrict writes to the supplied rectangle. Expected rendering failures are returned as [Status](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270) values.
 
-[Source](../../puc-cli/tui/frame.hpp#L26)
+[Source](../../puc-cli/tui/frame.hpp#L27)
 
 ## Protected data members
 
@@ -20,7 +20,7 @@ std::string puc::tui::Frame::name_
 
 Human-readable name supplied by the concrete frame.
 
-[Source](../../puc-cli/tui/frame.hpp#L67)
+[Source](../../puc-cli/tui/frame.hpp#L90)
 
 ## Public functions
 
@@ -38,7 +38,7 @@ Construct a named frame.
 
 - `name` (in) — Human-readable frame name available to derived classes.
 
-[Source](../../puc-cli/tui/frame.hpp#L33)
+[Source](../../puc-cli/tui/frame.hpp#L34)
 
 <a id="symbol-classpuc_1_1tui_1_1_frame_1ae7ba38236ac115f6e7fe4cd381d38ac1"></a>
 
@@ -50,43 +50,80 @@ virtual puc::tui::Frame::~Frame()=default
 
 Destroy a frame through its abstract interface.
 
-[Source](../../puc-cli/tui/frame.hpp#L36)
+[Source](../../puc-cli/tui/frame.hpp#L37)
 
-<a id="symbol-classpuc_1_1tui_1_1_frame_1affb62e6d667634aeb829d7bbfd7ea9f6"></a>
+<a id="symbol-classpuc_1_1tui_1_1_frame_1aacdf871cef53089748a2b2bd9127abbf"></a>
 
 ### `draw`
 
 ```cpp
-virtual Status puc::tui::Frame::draw(const State &state, const Theme &theme, Canvas &canvas, const Canvas::Rect &rect)=0
+virtual Status puc::tui::Frame::draw(const Theme &theme, Canvas &canvas, const Canvas::Rect &rect)=0
 ```
 
 Render this frame into its assigned canvas rectangle.
 
-The canvas must already have an active frame transaction. Implementations may read shared UI state and semantic colors but should only mutate cells inside `rect`.
+The [Canvas](classpuc_1_1tui_1_1_canvas.md) has an active transaction. A concrete [Frame](#) that needs application data captures a typed state object in its constructor and synchronizes that object itself. Writing outside `rect` violates the parallel-rendering contract.
 
 **Parameters**
 
-- `state` (in) — Current terminal and application state.
 - `theme` (in) — Active semantic color theme.
-- `canvas` (inout) — [Canvas](classpuc_1_1tui_1_1_canvas.md) receiving this frame's cells.
+- `canvas` (inout) — [Canvas](classpuc_1_1tui_1_1_canvas.md) receiving cells within `rect`.
 - `rect` (in) — Rectangle assigned to this frame, in canvas coordinates.
 
 **Returns:** [Status::OK](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ae0aa021e21dddbd6d8cecec71e9cf564) on success, or an error status.
 
-[Source](../../puc-cli/tui/frame.hpp#L51)
+[Source](../../puc-cli/tui/frame.hpp#L52)
 
-<a id="symbol-classpuc_1_1tui_1_1_frame_1aa1bf82228c890db92343e0866a93d8e4"></a>
+<a id="symbol-classpuc_1_1tui_1_1_frame_1af770d45d6e8af4110efcfb8827685fca"></a>
 
-### `needs_update`
+### `is_selectable`
 
 ```cpp
-virtual bool puc::tui::Frame::needs_update() const =0
+bool puc::tui::Frame::is_selectable() const noexcept
 ```
 
-Report whether [Layout](classpuc_1_1tui_1_1_layout.md) should invoke `draw()` for the next frame.
+Return whether this [Frame](#) exposes logical text-selection operations.
 
-Because [Canvas](classpuc_1_1tui_1_1_canvas.md) preserves the previously published image at the start of a transaction, returning `false` leaves cells untouched by this frame. Frames drawn later in Z-order may still overwrite those cells.
+Nonselectable frames remain input barriers during hit testing: [Screen](classpuc_1_1tui_1_1_screen.md) does not select through a frontmost decoration into a frame behind it.
 
-**Returns:** `true` when the frame needs to be redrawn; otherwise `false`.
+[Source](../../puc-cli/tui/frame.hpp#L61)
 
-[Source](../../puc-cli/tui/frame.hpp#L63)
+<a id="symbol-classpuc_1_1tui_1_1_frame_1a2c0ee91685ed60812caf920bbce2e281"></a>
+
+### `update_selection`
+
+```cpp
+Status puc::tui::Frame::update_selection(const SelectionEvent &event)
+```
+
+Apply one semantic selection event expressed in frame-local coordinates.
+
+A selectable implementation owns its anchor, logical text range, click granularity, and rendering synchronization. RESET removes that range. Rejected operations must leave the previous range unchanged so [Screen](classpuc_1_1tui_1_1_screen.md)'s state machine remains synchronized with the [Frame](#).
+
+**Parameters**
+
+- `event` (in) — Selection operation routed by [Screen](classpuc_1_1tui_1_1_screen.md).
+
+**Returns:** [Status::OK](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ae0aa021e21dddbd6d8cecec71e9cf564) on success, or an error without partial mutation.
+
+[Source](../../puc-cli/tui/frame.hpp#L74)
+
+<a id="symbol-classpuc_1_1tui_1_1_frame_1af3c9642d08bf1ed62a247203c6c6d38a"></a>
+
+### `selected_text`
+
+```cpp
+Status puc::tui::Frame::selected_text(std::string &output) const
+```
+
+Extract selected logical text without performing clipboard I/O.
+
+Implementations omit visual padding, decorations, and text owned by other frames. Newline and wrapping policy therefore remain application logic.
+
+**Parameters**
+
+- `output` (out) — Receives selected UTF-8 bytes; cleared on failure.
+
+**Returns:** [Status::OK](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ae0aa021e21dddbd6d8cecec71e9cf564) on success, [Status::NO\_SELECTION](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270aac6cf090b11c4b65dbddc0baa84e4e72) when no logical range exists, or [Status::FRAME\_NOT\_SELECTABLE](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270a53116f51e4c834a034faa650cc846b2c) for the base behavior.
+
+[Source](../../puc-cli/tui/frame.hpp#L86)

@@ -13,17 +13,14 @@
 namespace puc::tui {
 namespace {
 
-/** Minimal always-dirty frame used to test container behavior. */
+/** Minimal frame used to test container behavior. */
 class TestFrame final : public Frame {
  public:
   explicit TestFrame(std::string name) : Frame(std::move(name)) {}
 
-  Status draw(const State&, const Theme&, Canvas&,
-              const Canvas::Rect&) override {
+  Status draw(const Theme&, Canvas&, const Canvas::Rect&) override {
     return Status::OK;
   }
-
-  bool needs_update() const override { return true; }
 };
 
 /** Allocate a TestFrame through the public Frame ownership type. */

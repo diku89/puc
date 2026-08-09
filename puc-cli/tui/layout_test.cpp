@@ -32,29 +32,22 @@ struct DrawCall {
 /** Configurable frame double that records calls and can inject a draw error. */
 class TestFrame final : public Frame {
  public:
-  /** Construct a frame double with configurable update and result behavior. */
+  /** Construct a frame double with configurable recording and result behavior.
+   */
   TestFrame(std::string name, std::vector<DrawCall>* calls = nullptr,
-            bool needs_update = true, Status draw_status = Status::OK)
-      : Frame(std::move(name)),
-        calls_(calls),
-        needs_update_(needs_update),
-        draw_status_(draw_status) {}
+            Status draw_status = Status::OK)
+      : Frame(std::move(name)), calls_(calls), draw_status_(draw_status) {}
 
-  Status draw(const State&, const Theme&, Canvas&,
-              const Canvas::Rect& rect) override {
+  Status draw(const Theme&, Canvas&, const Canvas::Rect& rect) override {
     if (calls_ != nullptr) {
       calls_->push_back(DrawCall{.frame_id = name_, .rect = rect});
     }
     return draw_status_;
   }
 
-  bool needs_update() const override { return needs_update_; }
-
  private:
   /** Optional destination for observed draw calls. */
   std::vector<DrawCall>* calls_;
-  /** Value returned by needs_update(). */
-  bool needs_update_;
   /** Value returned by draw(). */
   Status draw_status_;
 };
@@ -62,10 +55,8 @@ class TestFrame final : public Frame {
 /** Allocate a TestFrame through Layout's public Frame ownership type. */
 std::shared_ptr<Frame> frame(std::string name,
                              std::vector<DrawCall>* calls = nullptr,
-                             bool needs_update            = true,
                              Status draw_status           = Status::OK) {
-  return std::make_shared<TestFrame>(std::move(name), calls, needs_update,
-                                     draw_status);
+  return std::make_shared<TestFrame>(std::move(name), calls, draw_status);
 }
 
 /** Add a constraint and fail the current test immediately if rejected. */
@@ -530,15 +521,89 @@ TEST(LayoutTest, RejectsIntrinsicallyContradictoryBounds) {
       Status::INVALID_CONSTRAINT);
 }
 
-TEST(LayoutTest, DrawsDirtyFramesInZBufferOrderAndSkipsCleanFrames) {
+TEST(LayoutTest, BuildsDependenciesOnlyForIntersectingZOrderedFrames) {
+  Layout layout;
+  const auto desc = layout.make_layout_description("render-graph");
+  add_fixed_frame(layout, desc, "back-left", 2, 2);
+  add_fixed_frame(layout, desc, "right", 2, 2);
+  add_character_constraint(layout, desc, "right",
+                           Layout::ConstraintType::RIGHT_ANCHOR, 0U);
+  add_fixed_frame(layout, desc, "front-left", 2, 2);
+
+  Layout::AbsoluteLayout absolute;
+  ASSERT_EQ(
+      layout.compute_absolute_layout(desc, 10U, 4U, kSquareCells, absolute),
+      Status::OK);
+
+  ASSERT_EQ(absolute.frame_dependencies.size(), 1U);
+  EXPECT_EQ(absolute.frame_dependencies.front(),
+            (Layout::FrameDependency{.prerequisite = 0U, .dependent = 2U}));
+}
+
+TEST(LayoutTest, FullyOverlappingFramesFormAnAcyclicBackToFrontGraph) {
+  Layout layout;
+  const auto desc = layout.make_layout_description("overlap");
+  ASSERT_EQ(layout.add_frame_to_layout_description(desc, "back", frame("back")),
+            Status::OK);
+  ASSERT_EQ(
+      layout.add_frame_to_layout_description(desc, "middle", frame("middle")),
+      Status::OK);
+  ASSERT_EQ(
+      layout.add_frame_to_layout_description(desc, "front", frame("front")),
+      Status::OK);
+
+  Layout::AbsoluteLayout absolute;
+  ASSERT_EQ(
+      layout.compute_absolute_layout(desc, 8U, 3U, kSquareCells, absolute),
+      Status::OK);
+
+  EXPECT_EQ(absolute.frame_dependencies,
+            (std::vector<Layout::FrameDependency>{
+                {.prerequisite = 0U, .dependent = 1U},
+                {.prerequisite = 0U, .dependent = 2U},
+                {.prerequisite = 1U, .dependent = 2U},
+            }));
+}
+
+TEST(LayoutTest, ReusesExactAbsoluteGeometryAndExecutionPlan) {
+  Layout layout;
+  const auto desc = layout.make_layout_description("cached");
+  ASSERT_EQ(
+      layout.add_frame_to_layout_description(desc, "frame", frame("frame")),
+      Status::OK);
+
+  Layout::AbsoluteLayout first;
+  ASSERT_EQ(layout.compute_absolute_layout(desc, 12U, 5U, kSquareCells, first),
+            Status::OK);
+  ASSERT_TRUE(desc->cached_absolute_layout.has_value());
+  ASSERT_TRUE(desc->cached_resolution_order_valid);
+  const auto cached_order = desc->cached_resolution_order;
+
+  Layout::AbsoluteLayout second;
+  ASSERT_EQ(layout.compute_absolute_layout(desc, 12U, 5U, kSquareCells, second),
+            Status::OK);
+  EXPECT_EQ(second.frame_dependencies, first.frame_dependencies);
+  EXPECT_EQ(desc->cached_resolution_order, cached_order);
+  ASSERT_EQ(second.frame_layouts.size(), first.frame_layouts.size());
+  EXPECT_EQ(second.frame_layouts.at("frame").x,
+            first.frame_layouts.at("frame").x);
+  EXPECT_EQ(second.frame_layouts.at("frame").y,
+            first.frame_layouts.at("frame").y);
+  EXPECT_EQ(second.frame_layouts.at("frame").width,
+            first.frame_layouts.at("frame").width);
+  EXPECT_EQ(second.frame_layouts.at("frame").height,
+            first.frame_layouts.at("frame").height);
+}
+
+TEST(LayoutTest, DrawsEveryFrameInZBufferOrder) {
   Layout layout;
   const auto desc = layout.make_layout_description("test");
   std::vector<DrawCall> calls;
   ASSERT_EQ(layout.add_frame_to_layout_description(desc, "back",
                                                    frame("back", &calls)),
             Status::OK);
-  ASSERT_EQ(layout.add_frame_to_layout_description(
-                desc, "clean", frame("clean", &calls, false)),
+  ASSERT_EQ(layout.add_frame_to_layout_description(desc, "middle",
+                                                   frame("middle", &calls)),
             Status::OK);
   ASSERT_EQ(layout.add_frame_to_layout_description(desc, "front",
                                                    frame("front", &calls)),
@@ -549,12 +614,13 @@ TEST(LayoutTest, DrawsDirtyFramesInZBufferOrderAndSkipsCleanFrames) {
   ASSERT_EQ(layout.compute_absolute_layout(desc, 10, 5, kSquareCells, absolute),
             Status::OK);
   ASSERT_EQ(canvas.begin_frame(), Status::OK);
-  ASSERT_EQ(layout.draw(desc, absolute, State{}, Theme{}, canvas), Status::OK);
+  ASSERT_EQ(layout.draw(desc, absolute, Theme{}, canvas), Status::OK);
   ASSERT_EQ(canvas.end_frame(), Status::OK);
 
-  ASSERT_EQ(calls.size(), 2U);
+  ASSERT_EQ(calls.size(), 3U);
   EXPECT_EQ(calls[0].frame_id, "back");
-  EXPECT_EQ(calls[1].frame_id, "front");
+  EXPECT_EQ(calls[1].frame_id, "middle");
+  EXPECT_EQ(calls[2].frame_id, "front");
   EXPECT_EQ(calls[0].rect.width, 10U);
   EXPECT_EQ(calls[0].rect.height, 5U);
 }
@@ -565,7 +631,7 @@ TEST(LayoutTest, StopsDrawingAtTheFirstFrameError) {
   std::vector<DrawCall> calls;
   ASSERT_EQ(layout.add_frame_to_layout_description(
                 desc, "broken",
-                frame("broken", &calls, true, Status::TERMINAL_WRITE_FAILED)),
+                frame("broken", &calls, Status::TERMINAL_WRITE_FAILED)),
             Status::OK);
   ASSERT_EQ(layout.add_frame_to_layout_description(desc, "later",
                                                    frame("later", &calls)),
@@ -576,7 +642,7 @@ TEST(LayoutTest, StopsDrawingAtTheFirstFrameError) {
   ASSERT_EQ(layout.compute_absolute_layout(desc, 2, 2, kSquareCells, absolute),
             Status::OK);
   ASSERT_EQ(canvas.begin_frame(), Status::OK);
-  EXPECT_EQ(layout.draw(desc, absolute, State{}, Theme{}, canvas),
+  EXPECT_EQ(layout.draw(desc, absolute, Theme{}, canvas),
             Status::TERMINAL_WRITE_FAILED);
   ASSERT_EQ(canvas.end_frame(), Status::OK);
 
@@ -594,9 +660,9 @@ TEST(LayoutTest, DrawRequiresASolvedRectangleForEveryFrame) {
   Canvas canvas(2, 2);
   const Layout::AbsoluteLayout empty_absolute;
   ASSERT_EQ(canvas.begin_frame(), Status::OK);
-  EXPECT_EQ(layout.draw(desc, empty_absolute, State{}, Theme{}, canvas),
+  EXPECT_EQ(layout.draw(desc, empty_absolute, Theme{}, canvas),
             Status::FRAME_NOT_FOUND);
-  EXPECT_EQ(layout.draw(nullptr, empty_absolute, State{}, Theme{}, canvas),
+  EXPECT_EQ(layout.draw(nullptr, empty_absolute, Theme{}, canvas),
             Status::INVALID_ARGUMENT);
   ASSERT_EQ(canvas.end_frame(), Status::OK);
 }
