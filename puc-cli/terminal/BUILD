@@ -1,9 +1,10 @@
+load("@rules_cc//cc:cc_binary.bzl", "cc_binary")
 load("@rules_cc//cc:cc_library.bzl", "cc_library")
 load("@rules_cc//cc:cc_test.bzl", "cc_test")
 load("//docs:code_sources.bzl", "code_docs_sources")
 load("//utils/config:puc_config.bzl", "puc_config")
 
-code_docs_sources()
+code_docs_sources(extra_srcs = ["terminal_test.cpp"])
 
 config_setting(
     name = "linux",
@@ -76,6 +77,36 @@ cc_library(
     ],
 )
 
+cc_binary(
+    name = "terminal-test",
+    srcs = [
+        "terminal_test.cpp",
+        "terminal_test_options.cpp",
+        "terminal_test_options.hpp",
+        "terminal_test_runner.cpp",
+        "terminal_test_runner.hpp",
+        "terminal_test_selection.cpp",
+        "terminal_test_selection.hpp",
+    ],
+    data = [
+        ":bsd_defaults_config",
+        ":darwin_defaults_config",
+        ":input_config",
+        ":linux_defaults_config",
+        ":timeout_config",
+    ],
+    deps = [
+        ":terminal",
+        "//msgs",
+        "//puc-cli/tui",
+        "//utils/config",
+        "//utils/ipc",
+        "//utils/logger",
+        "//utils/metronome",
+        "//utils/multithreading",
+    ],
+)
+
 cc_test(
     name = "terminal_test",
     size = "small",
@@ -87,6 +118,15 @@ cc_test(
         "sequences_test.cpp",
         "session_test.cpp",
         "status_test.cpp",
+        "terminal_test_options.cpp",
+        "terminal_test_options.hpp",
+        "terminal_test_options_test.cpp",
+        "terminal_test_runner.cpp",
+        "terminal_test_runner.hpp",
+        "terminal_test_runner_test.cpp",
+        "terminal_test_selection.cpp",
+        "terminal_test_selection.hpp",
+        "terminal_test_selection_test.cpp",
         "timeouts_test.cpp",
     ],
     data = [
@@ -102,6 +142,7 @@ cc_test(
     }),
     deps = [
         ":terminal",
+        "//puc-cli/tui",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
     ],
