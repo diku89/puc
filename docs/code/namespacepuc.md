@@ -11,6 +11,7 @@
 - [puc::execution\_graph](namespacepuc_1_1execution__graph.md)
 - [puc::ipc](namespacepuc_1_1ipc.md)
 - [puc::logger](namespacepuc_1_1logger.md)
+- [puc::metronome](namespacepuc_1_1metronome.md)
 - [puc::msg](namespacepuc_1_1msg.md)
 - [puc::multithreading](namespacepuc_1_1multithreading.md)
 - [puc::terminal](namespacepuc_1_1terminal.md)

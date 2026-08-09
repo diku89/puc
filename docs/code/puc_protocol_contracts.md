@@ -2,6 +2,14 @@
 
 # PUC Protocol Contracts
 
+## Member [puc::metronome::kOneHertzChannel](namespacepuc_1_1metronome.md#symbol-metronome_8hpp_1ad712d1722112c3e9598cb3e96ee87db6)
+
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000009"></a> **Kind:** Channel  
+**Name:** `//metronome/1hz`  
+**Purpose:** Publishes a process-local one-hertz heartbeat as [puc.msg.NullMessage](structpuc_1_1msg_1_1_null_message.md). Only the newest pending heartbeat is retained, so a delayed consumer never receives a burst of stale clock ticks.  
+**Producers:** [puc.metronome.Metronome](classpuc_1_1metronome_1_1_metronome.md).  
+**Consumers:** TUI timers and other elapsed-time consumers.
+
 ## Member [puc::msg::kScreenCommandChannel](namespacepuc_1_1msg.md#symbol-namespacepuc_1_1msg_1ab3c15431e3548f48110d613240af05d9)
 
 <a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000005"></a> **Kind:** Channel  
