@@ -16,8 +16,10 @@ Aspect ratios are visual `width : height` ratios rather than raw column-to-row r
 
 - [puc::tui::Layout::AspectRatio](structpuc_1_1tui_1_1_layout_1_1_aspect_ratio.md)
 - [puc::tui::Layout::Constraint](structpuc_1_1tui_1_1_layout_1_1_constraint.md)
-- [puc::tui::Layout::LayoutDescription](structpuc_1_1tui_1_1_layout_1_1_layout_description.md)
+- [puc::tui::Layout::FrameDependency](structpuc_1_1tui_1_1_layout_1_1_frame_dependency.md)
 - [puc::tui::Layout::AbsoluteLayout](structpuc_1_1tui_1_1_layout_1_1_absolute_layout.md)
+- [puc::tui::Layout::CachedAbsoluteLayout](structpuc_1_1tui_1_1_layout_1_1_cached_absolute_layout.md)
+- [puc::tui::Layout::LayoutDescription](structpuc_1_1tui_1_1_layout_1_1_layout_description.md)
 
 ## Public types
 
@@ -89,7 +91,7 @@ Construct a percentage-valued constraint.
 
 **Returns:** An unvalidated constraint storing `percent` as [Unit::PERCENT](#symbol-classpuc_1_1tui_1_1_layout_1a2479854fd4aa64a75bc5f0fe1f34d05ba6865d19576ae60f95fd4e61333404352).
 
-[Source](../../puc-cli/tui/layout.hpp#L136)
+[Source](../../puc-cli/tui/layout.hpp#L171)
 
 <a id="symbol-classpuc_1_1tui_1_1_layout_1afacd902a4c884698dfaa1033d2cd2867"></a>
 
@@ -108,7 +110,7 @@ Construct a character-cell-valued constraint.
 
 **Returns:** An unvalidated constraint storing `characters` as [Unit::CHARACTERS](#symbol-classpuc_1_1tui_1_1_layout_1a2479854fd4aa64a75bc5f0fe1f34d05badc0fb426d37848b5e7eb694843212e7a).
 
-[Source](../../puc-cli/tui/layout.hpp#L147)
+[Source](../../puc-cli/tui/layout.hpp#L182)
 
 <a id="symbol-classpuc_1_1tui_1_1_layout_1aa9a51bffc837de59be931c9aa42a7dea"></a>
 
@@ -128,7 +130,7 @@ Construct a visual aspect-ratio constraint.
 
 **Returns:** An unvalidated constraint storing `{width, height}` as [Unit::RATIO](#symbol-classpuc_1_1tui_1_1_layout_1a2479854fd4aa64a75bc5f0fe1f34d05baf316290089ddb8a40a3293876e8154cb).
 
-[Source](../../puc-cli/tui/layout.hpp#L159)
+[Source](../../puc-cli/tui/layout.hpp#L194)
 
 <a id="symbol-classpuc_1_1tui_1_1_layout_1a34e001ff01954eadf9fae20ae6dfed1c"></a>
 
@@ -147,7 +149,7 @@ Construct a named-frame edge-anchor constraint.
 
 **Returns:** An unvalidated constraint storing `name` as [Unit::NAME](#symbol-classpuc_1_1tui_1_1_layout_1a2479854fd4aa64a75bc5f0fe1f34d05baad32e604e17467fc435538334fbddf3e).
 
-[Source](../../puc-cli/tui/layout.hpp#L170)
+[Source](../../puc-cli/tui/layout.hpp#L205)
 
 ## Public functions
 
@@ -167,7 +169,7 @@ Allocate an empty layout description.
 
 **Returns:** Shared ownership of an empty description named `layout_name`.
 
-[Source](../../puc-cli/tui/layout.hpp#L180)
+[Source](../../puc-cli/tui/layout.hpp#L215)
 
 <a id="symbol-classpuc_1_1tui_1_1_layout_1a616d70bcc4bf70457fc4b45f24892ae3"></a>
 
@@ -187,7 +189,7 @@ Add a frame at the front of a layout's Z-buffer.
 
 **Returns:** [Status::OK](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ae0aa021e21dddbd6d8cecec71e9cf564) on success, [Status::INVALID\_ARGUMENT](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270af295a0c3e37c94f078e1c5476479132d) for a null layout, empty id, or null frame, or [Status::DUPLICATE\_FRAME\_ID](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ad4b3d7863079cc31e48ce56a1e9e4b3e).
 
-[Source](../../puc-cli/tui/layout.hpp#L193)
+[Source](../../puc-cli/tui/layout.hpp#L228)
 
 <a id="symbol-classpuc_1_1tui_1_1_layout_1a249740758fb2ea7e5610a3b966263daf"></a>
 
@@ -209,7 +211,7 @@ A frame can have at most one constraint of each type and at most one horizontal 
 
 **Returns:** [Status::OK](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ae0aa021e21dddbd6d8cecec71e9cf564) on success; [Status::INVALID\_ARGUMENT](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270af295a0c3e37c94f078e1c5476479132d), [Status::FRAME\_NOT\_FOUND](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270a7c351a12e8d4bf43ab7c0d7ee529a0c4), [Status::INVALID\_PERCENTAGE](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ac6a712b1b5d104c9eb40337259dba1ef), [Status::INVALID\_RATIO](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270afc58877b0b667451adc4822042ece3b5), or [Status::INVALID\_CONSTRAINT](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270a05c94345dbd2104f307cd6a6a90ef2d0) otherwise.
 
-[Source](../../puc-cli/tui/layout.hpp#L211)
+[Source](../../puc-cli/tui/layout.hpp#L246)
 
 <a id="symbol-classpuc_1_1tui_1_1_layout_1a174f50512e491bc865c55f7c7acc1532"></a>
 
@@ -233,7 +235,7 @@ The output map is cleared before resolution and remains empty on error.
 
 **Returns:** [Status::OK](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ae0aa021e21dddbd6d8cecec71e9cf564) on success, or the first description, dimension, constraint, dependency, or overflow error encountered.
 
-[Source](../../puc-cli/tui/layout.hpp#L230)
+[Source](../../puc-cli/tui/layout.hpp#L265)
 
 <a id="symbol-classpuc_1_1tui_1_1_layout_1a42acc85b7a733550c9f1689d689e89b3"></a>
 
@@ -258,28 +260,27 @@ Outputs are reset to zero before validation.
 
 **Returns:** [Status::OK](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ae0aa021e21dddbd6d8cecec71e9cf564) on success, or the first description, dimension, constraint, dependency, or overflow error encountered.
 
-[Source](../../puc-cli/tui/layout.hpp#L252)
+[Source](../../puc-cli/tui/layout.hpp#L287)
 
-<a id="symbol-classpuc_1_1tui_1_1_layout_1ac5fbabea66551ce54204813b3e5f431b"></a>
+<a id="symbol-classpuc_1_1tui_1_1_layout_1ae2329b88df739953ba875f97eb704ebb"></a>
 
 ### `draw`
 
 ```cpp
-Status puc::tui::Layout::draw(const std::shared_ptr< LayoutDescription > &layout_description, const AbsoluteLayout &absolute_layout, const State &state, const Theme &theme, Canvas &canvas) const
+Status puc::tui::Layout::draw(const std::shared_ptr< LayoutDescription > &layout_description, const AbsoluteLayout &absolute_layout, const Theme &theme, Canvas &canvas) const
 ```
 
-Draw an already-solved layout in Z-buffer order.
+Draw an already-solved layout sequentially in Z-buffer order.
 
-The first Z-buffer entry is drawn first and the last is drawn last. Frames whose `needs_update()` returns false are skipped. The canvas must have an active frame transaction. `absolute_layout` should have been produced by `compute_absolute_layout()` for the current [Canvas](classpuc_1_1tui_1_1_canvas.md) and cell dimensions.
+Every frame is drawn from back to front. [ParallelRenderer](classpuc_1_1tui_1_1_parallel_renderer.md) instead consumes the execution dependencies computed in `absolute_layout` and invokes only non-intersecting frames concurrently. The canvas must have an active frame transaction. `absolute_layout` should have been produced by `compute_absolute_layout()` for the current [Canvas](classpuc_1_1tui_1_1_canvas.md) and cell dimensions.
 
 **Parameters**
 
 - `layout_description` (in) — The layout and frames to draw.
 - `absolute_layout` (in) — Solved rectangle for every frame.
-- `state` (in) — The current terminal UI state.
 - `theme` (in) — The active color theme.
 - `canvas` (inout) — The canvas receiving frame output.
 
 **Returns:** [Status::OK](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ae0aa021e21dddbd6d8cecec71e9cf564) on success, or the first frame error.
 
-[Source](../../puc-cli/tui/layout.hpp#L273)
+[Source](../../puc-cli/tui/layout.hpp#L308)

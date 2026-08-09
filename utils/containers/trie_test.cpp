@@ -186,6 +186,21 @@ TEST(TrieTest, SupportsMoveOnlyValues) {
   EXPECT_EQ(**stored, 42);
 }
 
+TEST(TrieTest, EraseRemovesOnlyTheExactValueAndRetainsItsPath) {
+  StringTrie trie;
+  trie.insert({'a'}, "prefix");
+  const StringTrie::NodeIndex prefix = trie.find_node({'a'});
+  trie.insert({'a', 'b'}, "longer");
+
+  EXPECT_TRUE(trie.erase({'a'}));
+  EXPECT_FALSE(trie.contains({'a'}));
+  ASSERT_NE(trie.find({'a', 'b'}), nullptr);
+  EXPECT_EQ(*trie.find({'a', 'b'}), "longer");
+  EXPECT_EQ(trie.find_node({'a'}), prefix);
+  EXPECT_FALSE(trie.erase({'a'}));
+  EXPECT_FALSE(trie.erase({'z'}));
+}
+
 TEST(TrieTest, NodeIndexesSurviveNodeVectorGrowth) {
   Trie<int, int> trie;
   const auto first = trie.insert({0}, 100);

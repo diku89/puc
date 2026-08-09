@@ -1,147 +1,112 @@
 /**
  * @file screen.cpp
- * @brief POSIX terminal control and ANSI true-color Canvas presentation.
+ * @brief Asynchronous Canvas presentation over bounded IPC channels.
  */
 
 #include "puc-cli/tui/screen.hpp"
 
-#include <sys/ioctl.h>
 #include <unistd.h>
 
-#include <cerrno>
 #include <charconv>
-#include <chrono>
 #include <cstddef>
 #include <cstdint>
-#include <cstring>
 #include <limits>
+#include <map>
+#include <memory>
 #include <mutex>
 #include <numeric>
 #include <span>
 #include <string>
 #include <string_view>
 #include <utility>
+#include <vector>
 
+#include "msgs/screen_msgs.hpp"
+#include "puc-cli/terminal/event.hpp"
+#include "puc-cli/tui/frame.hpp"
+#include "puc-cli/tui/selection.hpp"
+#include "puc-cli/tui/zbuf.hpp"
+#include "utils/ipc/smem_channel.hpp"
 #include "utils/logger/logger.hpp"
 
 /** @cond TUI_LOGGER_MODULE */
 LOGGER_MODULE("TUI Screen");
 /** @endcond */
 
-namespace puc {
-namespace tui {
+namespace puc::tui {
 namespace {
 
-/** Enter the alternate screen, hide the cursor, disable wrap, clear, and home.
- */
-constexpr std::string_view kTakeTerminal =
-    "\x1b[?1049h\x1b[?25l\x1b[?7l\x1b[2J\x1b[H";
-
-/** Reset styling and restore wrap, cursor visibility, and the primary screen.
- */
-constexpr std::string_view kReleaseTerminal =
-    "\x1b[0m\x1b[?7h\x1b[?25h\x1b[?1049l";
+/** Clear the PUC-owned alternate screen and move to its first cell. */
+constexpr std::string_view kClearAndHome = "\x1b[2J\x1b[H";
 
 /** ANSI control sequence that moves the cursor to row 1, column 1. */
 constexpr std::string_view kHomeCursor = "\x1b[H";
 
-/** ANSI Select Graphic Rendition reset sequence. */
+/** Reset styling before PUC relinquishes presentation control. */
 constexpr std::string_view kResetStyle = "\x1b[0m";
 
-/**
- * Write an entire byte sequence, retrying calls interrupted by a signal.
- *
- * @param[in] file_descriptor Destination descriptor.
- * @param[in] bytes Bytes that must all be written.
- * @return Status::OK or Status::TERMINAL_WRITE_FAILED.
- */
-Status write_all(int file_descriptor, std::string_view bytes) noexcept {
-  size_t offset = 0;
-  while (offset < bytes.size()) {
-    const ssize_t written =
-        ::write(file_descriptor, bytes.data() + offset, bytes.size() - offset);
-    if (written < 0 && errno == EINTR) {
-      continue;
+/** Maximum Screen commands retained while terminal delivery is behind. */
+constexpr std::size_t kScreenCommandDepth = 3U;
+
+/** Geometry is state, so only the newest pending observation is useful. */
+constexpr std::size_t kResizeEventDepth = 1U;
+
+/** Test whether a terminal cell lies inside a half-open frame rectangle. */
+bool contains(const Canvas::Rect& rect,
+              const terminal::CellPosition& position) noexcept {
+  return position.x >= rect.x && position.y >= rect.y &&
+         position.x - rect.x < rect.width && position.y - rect.y < rect.height;
+}
+
+/** Convert one unsigned absolute coordinate to a signed frame-local value. */
+Status relative_coordinate(std::size_t absolute, std::size_t origin,
+                           std::int64_t& output) noexcept {
+  constexpr std::size_t kMaximum =
+      static_cast<std::size_t>(std::numeric_limits<std::int64_t>::max());
+  if (absolute >= origin) {
+    const std::size_t difference = absolute - origin;
+    if (difference > kMaximum) {
+      return Status::DIMENSION_OVERFLOW;
     }
-    if (written <= 0) {
-      Logger<ERROR> << "Terminal write failed: " << std::strerror(errno);
-      return Status::TERMINAL_WRITE_FAILED;
-    }
-    offset += static_cast<size_t>(written);
+    output = static_cast<std::int64_t>(difference);
+    return Status::OK;
   }
+
+  const std::size_t difference = origin - absolute;
+  if (difference > kMaximum) {
+    return Status::DIMENSION_OVERFLOW;
+  }
+  output = -static_cast<std::int64_t>(difference);
   return Status::OK;
 }
 
-/**
- * Query cell and optional pixel dimensions with `TIOCGWINSZ`.
- *
- * The output descriptor is tried first because it is normally the presentation
- * terminal. If it fails and the descriptors differ, the input descriptor is
- * used as a fallback. Reported total pixel dimensions are converted to the
- * reduced ratio `(pixel_width / columns) : (pixel_height / rows)` without
- * integer division. Missing pixel dimensions use kDefaultCellDimensions.
- *
- * @param[in] output_fd Preferred terminal descriptor.
- * @param[in] input_fd Fallback terminal descriptor.
- * @param[out] width Terminal columns, or zero on error.
- * @param[out] height Terminal rows, or zero on error.
- * @param[out] cell_dimensions Reduced relative cell dimensions.
- * @return Status::OK, Status::TERMINAL_QUERY_FAILED, or
- *         Status::INVALID_DIMENSIONS.
- */
-Status query_dimensions(int output_fd, int input_fd, size_t& width,
-                        size_t& height,
-                        CellDimensions& cell_dimensions) noexcept {
-  cell_dimensions = kDefaultCellDimensions;
-  struct winsize dimensions {};
-  int result = ::ioctl(output_fd, TIOCGWINSZ, &dimensions);
-  if (result != 0 && input_fd != output_fd) {
-    result = ::ioctl(input_fd, TIOCGWINSZ, &dimensions);
+/** Convert an absolute terminal position to signed frame-local coordinates. */
+Status local_position(const terminal::CellPosition& position,
+                      const Canvas::Rect& rect,
+                      SelectionPosition& output) noexcept {
+  Status status = relative_coordinate(position.x, rect.x, output.x);
+  if (!is_ok(status)) {
+    return status;
   }
-  if (result != 0) {
-    width  = 0;
-    height = 0;
-    return Status::TERMINAL_QUERY_FAILED;
-  }
-  if (dimensions.ws_col == 0 || dimensions.ws_row == 0) {
-    width  = 0;
-    height = 0;
-    return Status::INVALID_DIMENSIONS;
-  }
-
-  width  = dimensions.ws_col;
-  height = dimensions.ws_row;
-  if (dimensions.ws_xpixel != 0 && dimensions.ws_ypixel != 0) {
-    const size_t relative_width =
-        static_cast<size_t>(dimensions.ws_xpixel) * height;
-    const size_t relative_height =
-        static_cast<size_t>(dimensions.ws_ypixel) * width;
-    const size_t common_factor = std::gcd(relative_width, relative_height);
-    cell_dimensions.width      = relative_width / common_factor;
-    cell_dimensions.height     = relative_height / common_factor;
-  }
-  return Status::OK;
+  return relative_coordinate(position.y, rect.y, output.y);
 }
 
-/**
- * Produce a monotonic timestamp for a Screen-generated event.
- *
- * @return Nanoseconds since the steady clock's unspecified epoch.
- */
-uint64_t event_timestamp() noexcept {
-  const auto elapsed = std::chrono::steady_clock::now().time_since_epoch();
-  return static_cast<uint64_t>(
-      std::chrono::duration_cast<std::chrono::nanoseconds>(elapsed).count());
+/** Return the terminal modes selected and owned by Screen. */
+msg::ScreenSessionOptions screen_session_options() noexcept {
+  return msg::ScreenSessionOptions{
+      .preserve_signals     = true,
+      .alternate_screen     = true,
+      .hide_cursor          = true,
+      .disable_auto_wrap    = true,
+      .bracketed_paste      = false,
+      .focus_reporting      = false,
+      .mouse                = msg::ScreenMouseTracking::NONE,
+      .kitty_keyboard_flags = 0U,
+  };
 }
 
-/**
- * Append an unsigned decimal integer without locale-sensitive formatting.
- *
- * @param[in,out] output String receiving decimal digits.
- * @param[in] value Integer to encode.
- * @return `true` when the local conversion buffer was large enough.
- */
-bool append_unsigned(std::string& output, uint64_t value) {
+/** Append an unsigned decimal integer without locale-sensitive formatting. */
+bool append_unsigned(std::string& output, std::uint64_t value) {
   char digits[16];
   const auto result = std::to_chars(digits, digits + sizeof(digits), value);
   if (result.ec != std::errc{}) {
@@ -151,16 +116,9 @@ bool append_unsigned(std::string& output, uint64_t value) {
   return true;
 }
 
-/**
- * Append ANSI 24-bit foreground and background color sequences.
- *
- * @param[in,out] output String receiving the escape sequences.
- * @param[in] foreground Packed `0xRRGGBB` foreground color.
- * @param[in] background Packed `0xRRGGBB` background color.
- * @return `true` on successful numeric conversion.
- */
-bool append_color(std::string& output, uint32_t foreground,
-                  uint32_t background) {
+/** Append ANSI 24-bit foreground and background color sequences. */
+bool append_color(std::string& output, std::uint32_t foreground,
+                  std::uint32_t background) {
   output.append("\x1b[38;2;");
   if (!append_unsigned(output, (foreground >> 16U) & 0xffU)) {
     return false;
@@ -189,17 +147,9 @@ bool append_color(std::string& output, uint32_t foreground,
   return true;
 }
 
-/**
- * Encode one safe terminal character as UTF-8.
- *
- * Control characters, surrogate values, and out-of-range code points are
- * replaced with U+FFFD so cell contents cannot inject terminal controls.
- *
- * @param[in,out] output String receiving one UTF-8 sequence.
- * @param[in] character Intended Unicode scalar value.
- */
+/** Encode one safe terminal character as UTF-8. */
 void append_utf8(std::string& output, char32_t character) {
-  uint32_t codepoint = static_cast<uint32_t>(character);
+  std::uint32_t codepoint = static_cast<std::uint32_t>(character);
   if (codepoint < 0x20U || codepoint == 0x7fU || codepoint > 0x10ffffU ||
       (codepoint >= 0xd800U && codepoint <= 0xdfffU)) {
     codepoint = 0xfffdU;
@@ -227,23 +177,12 @@ void append_utf8(std::string& output, char32_t character) {
   output.push_back(static_cast<char>(0x80U | (codepoint & 0x3fU)));
 }
 
-/**
- * Serialize the complete published Canvas into ANSI terminal output.
- *
- * Rows after the first use absolute cursor addressing so rendering the last
- * column cannot depend on terminal wrap behavior. Color escapes are emitted
- * only when foreground or background changes from the preceding cell.
- *
- * @param[in] canvas Published cells and dimensions to serialize.
- * @param[out] output Receives a complete home-to-reset byte sequence.
- * @return Status::OK or Status::DIMENSION_OVERFLOW if output-size arithmetic
- *         or numeric conversion cannot be represented.
- */
+/** Serialize the complete published Canvas into ANSI terminal output. */
 Status render_canvas(const Canvas& canvas, std::string& output) {
-  constexpr size_t kMaximumBytesPerCell     = 48;
-  const std::span<const Canvas::Cell> cells = canvas.get_drawable_buffer();
-  if (cells.size() > (std::numeric_limits<size_t>::max() - kHomeCursor.size() -
-                      kResetStyle.size()) /
+  constexpr std::size_t kMaximumBytesPerCell = 48U;
+  const std::span<const Canvas::Cell> cells  = canvas.get_drawable_buffer();
+  if (cells.size() > (std::numeric_limits<std::size_t>::max() -
+                      kHomeCursor.size() - kResetStyle.size()) /
                          kMaximumBytesPerCell) {
     return Status::DIMENSION_OVERFLOW;
   }
@@ -255,19 +194,19 @@ Status render_canvas(const Canvas& canvas, std::string& output) {
 
   const auto [width, height] = canvas.get_dimensions();
   bool has_color             = false;
-  uint32_t foreground        = 0;
-  uint32_t background        = 0;
+  std::uint32_t foreground   = 0U;
+  std::uint32_t background   = 0U;
 
-  for (size_t y = 0; y < height; ++y) {
-    if (y != 0) {
+  for (std::size_t y = 0U; y < height; ++y) {
+    if (y != 0U) {
       output.append("\x1b[");
-      if (!append_unsigned(output, y + 1)) {
+      if (!append_unsigned(output, y + 1U)) {
         return Status::DIMENSION_OVERFLOW;
       }
       output.append(";1H");
     }
 
-    for (size_t x = 0; x < width; ++x) {
+    for (std::size_t x = 0U; x < width; ++x) {
       const Canvas::Cell& cell = cells[y * width + x];
       if (!has_color || cell.foreground_color != foreground ||
           cell.background_color != background) {
@@ -289,124 +228,472 @@ Status render_canvas(const Canvas& canvas, std::string& output) {
 
 }  // namespace
 
-Screen::Screen(std::shared_ptr<EventBuffer> buffer)
-    : Screen(std::move(buffer), STDIN_FILENO, STDOUT_FILENO) {}
+Screen::Screen(multithreading::JobQueue& workers)
+    : Screen(STDIN_FILENO, STDOUT_FILENO, workers) {}
 
-Screen::Screen(std::shared_ptr<EventBuffer> buffer, int input_fd, int output_fd)
-    : event_buffer_(std::move(buffer)),
-      input_fd_(input_fd),
-      output_fd_(output_fd) {}
+Screen::Screen(int input_fd, int output_fd, multithreading::JobQueue& workers)
+    : terminal_session_(input_fd, output_fd),
+      directory_(std::make_unique<ipc::Directory>(workers)) {
+  setup_status_ = setup_channels();
+}
 
 Screen::~Screen() {
   const Status status = release();
   if (!is_ok(status)) {
-    Logger<ERROR> << "Could not release terminal during screen destruction: "
+    Logger<ERROR> << "Could not enqueue release during Screen destruction: "
                   << status_message(status);
   }
+
+  // Quiesce the command channel while the Directory and its downstream resize
+  // route are still alive. TerminalSession may publish one final observation
+  // from a command that was already executing.
+  if (directory_ != nullptr) {
+    const ipc::Status close_status =
+        directory_->close_channel(msg::kScreenCommandChannel);
+    if (!ipc::is_ok(close_status) &&
+        close_status != ipc::Status::CHANNEL_NOT_FOUND) {
+      Logger<ERROR> << "Could not quiesce Screen commands: "
+                    << ipc::status_message(close_status);
+    }
+  }
+  terminal_session_.unbind_screen_channels();
+  resize_subscription_.reset();
+  directory_.reset();
 }
 
-Status Screen::take(std::shared_ptr<EventBuffer> buffer) noexcept {
-  if (!buffer) {
-    Logger<ERROR> << "Cannot take terminal without an event buffer";
-    return Status::INVALID_ARGUMENT;
-  }
-  if (terminal_taken_) {
-    event_buffer_ = std::move(buffer);
-    Logger<DEBUG> << "Terminal is already owned by this screen";
-    return Status::OK;
-  }
-  if (::isatty(input_fd_) == 0 || ::isatty(output_fd_) == 0) {
-    Logger<ERROR> << "Cannot take terminal: "
-                  << status_message(Status::TERMINAL_NOT_AVAILABLE);
-    return Status::TERMINAL_NOT_AVAILABLE;
+Status Screen::setup_channels() {
+  if (directory_ == nullptr) {
+    return Status::CHANNEL_SETUP_FAILED;
   }
 
-  size_t width  = 0;
-  size_t height = 0;
-  CellDimensions cell_dimensions;
-  Status status =
-      query_dimensions(output_fd_, input_fd_, width, height, cell_dimensions);
-  if (!is_ok(status)) {
-    Logger<ERROR> << "Cannot take terminal: " << status_message(status);
-    return status;
+  command_channel_ = std::make_shared<ipc::SmemChannel>(
+      std::string{msg::kScreenCommandChannel}, ipc::kDefaultMaximumMessageBytes,
+      ipc::ChannelOptions{.channel_max_depth = kScreenCommandDepth});
+  ipc::ChannelId command_id = 0U;
+  ipc::Status ipc_status =
+      directory_->open_channel(command_channel_, command_id);
+  if (!ipc::is_ok(ipc_status)) {
+    Logger<ERROR> << "Could not open Screen command channel: "
+                  << ipc::status_message(ipc_status);
+    return Status::CHANNEL_SETUP_FAILED;
   }
 
-  if (::tcgetattr(input_fd_, &original_terminal_state_) != 0) {
-    Logger<ERROR> << "Could not read terminal settings: "
-                  << std::strerror(errno);
-    return Status::TERMINAL_CONFIG_FAILED;
-  }
-  has_original_terminal_state_ = true;
-
-  struct termios raw_terminal_state = original_terminal_state_;
-  ::cfmakeraw(&raw_terminal_state);
-  raw_terminal_state.c_lflag |= original_terminal_state_.c_lflag & ISIG;
-  if (::tcsetattr(input_fd_, TCSANOW, &raw_terminal_state) != 0) {
-    Logger<ERROR> << "Could not enable raw terminal mode: "
-                  << std::strerror(errno);
-    has_original_terminal_state_ = false;
-    return Status::TERMINAL_CONFIG_FAILED;
+  resize_channel_ = std::make_shared<ipc::SmemChannel>(
+      std::string{msg::kScreenResizeEventChannel}, 16U,
+      ipc::ChannelOptions{.channel_max_depth = kResizeEventDepth});
+  ipc::ChannelId resize_id = 0U;
+  ipc_status = directory_->open_channel(resize_channel_, resize_id);
+  if (!ipc::is_ok(ipc_status)) {
+    Logger<ERROR> << "Could not open Screen resize channel: "
+                  << ipc::status_message(ipc_status);
+    return Status::CHANNEL_SETUP_FAILED;
   }
 
-  status = write_all(output_fd_, kTakeTerminal);
-  if (!is_ok(status)) {
-    static_cast<void>(
-        ::tcsetattr(input_fd_, TCSANOW, &original_terminal_state_));
-    has_original_terminal_state_ = false;
-    return status;
+  ipc_status = directory_->subscribe(
+      resize_id,
+      [this](ipc::Channel::Bytes payload) noexcept {
+        receive_resize_event(payload);
+      },
+      resize_subscription_);
+  if (!ipc::is_ok(ipc_status)) {
+    Logger<ERROR> << "Could not subscribe Screen to resize events: "
+                  << ipc::status_message(ipc_status);
+    return Status::CHANNEL_SETUP_FAILED;
   }
 
-  event_buffer_   = std::move(buffer);
-  terminal_taken_ = true;
-  last_width_     = width;
-  last_height_    = height;
-  Logger<INFO> << "Took control of " << width << 'x' << height
-               << " terminal with " << cell_dimensions.width << ':'
-               << cell_dimensions.height << " cell dimensions";
+  const terminal::Status terminal_status =
+      terminal_session_.bind_screen_channels(*directory_);
+  if (!terminal::is_ok(terminal_status)) {
+    Logger<ERROR> << "Could not bind terminal session: "
+                  << terminal::status_message(terminal_status);
+    return Status::CHANNEL_SETUP_FAILED;
+  }
+  Logger<INFO> << "Configured asynchronous Screen channels " << command_id
+               << " and " << resize_id;
   return Status::OK;
 }
 
-Status Screen::release() noexcept {
-  if (!terminal_taken_) {
-    return Status::OK;
+Status Screen::send_command(const msg::ScreenCommand& command) noexcept {
+  if (!is_ok(setup_status_) || directory_ == nullptr) {
+    return Status::CHANNEL_SETUP_FAILED;
   }
+  std::vector<std::uint8_t> payload;
+  const msg::Status encode_status = command_codec_.serialize(command, payload);
+  if (!msg::is_ok(encode_status)) {
+    Logger<ERROR> << "Could not encode Screen command: "
+                  << msg::status_message(encode_status);
+    return Status::MESSAGE_ENCODING_FAILED;
+  }
+  const ipc::TransferResult transfer =
+      directory_->transmit(msg::kScreenCommandChannel, payload);
+  if (!ipc::is_ok(transfer.status) || transfer.bytes != payload.size()) {
+    Logger<ERROR> << "Screen command was not accepted: "
+                  << ipc::status_message(transfer.status);
+    return Status::ASYNC_DISPATCH_FAILED;
+  }
+  return Status::OK;
+}
 
-  Status result = write_all(output_fd_, kReleaseTerminal);
-  if (has_original_terminal_state_ &&
-      ::tcsetattr(input_fd_, TCSANOW, &original_terminal_state_) != 0) {
-    Logger<ERROR> << "Could not restore terminal settings: "
-                  << std::strerror(errno);
-    if (is_ok(result)) {
-      result = Status::TERMINAL_CONFIG_FAILED;
+Status Screen::take() noexcept { return take(screen_session_options()); }
+
+Status Screen::take(const msg::ScreenSessionOptions& options) noexcept {
+  if (!is_ok(setup_status_)) {
+    return setup_status_;
+  }
+  {
+    const std::lock_guard lock(state_mutex_);
+    if (terminal_requested_) {
+      return Status::OK;
     }
+    terminal_requested_ = true;
+    latest_size_.reset();
   }
 
-  terminal_taken_              = false;
-  has_original_terminal_state_ = false;
-  last_width_                  = 0;
-  last_height_                 = 0;
-  Logger<INFO> << "Released terminal";
-  return result;
-}
-
-Status Screen::get_dimensions(size_t& width, size_t& height) const noexcept {
-  CellDimensions cell_dimensions;
-  return get_dimensions(width, height, cell_dimensions);
-}
-
-Status Screen::get_dimensions(size_t& width, size_t& height,
-                              CellDimensions& cell_dimensions) const noexcept {
-  const Status status =
-      query_dimensions(output_fd_, input_fd_, width, height, cell_dimensions);
+  const msg::ScreenCommand command{
+      .data =
+          msg::ScreenTakeCommand{
+              .options       = options,
+              .initial_bytes = std::string{kClearAndHome},
+              .final_bytes   = std::string{kResetStyle},
+          },
+  };
+  const Status status = send_command(command);
   if (!is_ok(status)) {
-    Logger<ERROR> << "Could not query terminal dimensions: "
-                  << status_message(status);
+    const std::lock_guard lock(state_mutex_);
+    terminal_requested_ = false;
   }
   return status;
 }
 
+terminal::Status Screen::read_input(terminal::Decoder& decoder,
+                                    std::vector<terminal::Event>& events,
+                                    std::size_t& bytes_read,
+                                    bool& end_of_input) {
+  return terminal_session_.read(decoder, events, bytes_read, end_of_input);
+}
+
+Status Screen::handle_mouse_event(
+    const terminal::MouseEvent& event, const ZBuffer& z_buffer,
+    const std::map<std::string, Canvas::Rect>& frame_layouts) {
+  const std::lock_guard lock(selection_mutex_);
+
+  const auto find_frame_rect = [&](std::string_view frame_id,
+                                   const std::shared_ptr<Frame>& frame,
+                                   Canvas::Rect& rect) {
+    for (const ZBuffer::Entry& entry : z_buffer.frames()) {
+      if (entry.frame_id != frame_id || entry.frame != frame) {
+        continue;
+      }
+      const auto found = frame_layouts.find(entry.frame_id);
+      if (found == frame_layouts.end()) {
+        return false;
+      }
+      rect = found->second;
+      return true;
+    }
+    return false;
+  };
+
+  if (event.action == terminal::MouseAction::PRESS) {
+    if (event.button != terminal::MouseButton::LEFT) {
+      return Status::OK;
+    }
+
+    const Status reset_status = selection_state_machine_.reset();
+    if (!is_ok(reset_status)) {
+      return reset_status;
+    }
+    pointer_selection_gesture_.reset();
+
+    const ZBuffer::Entry* hit_frame = nullptr;
+    const Canvas::Rect* hit_rect    = nullptr;
+    for (auto entry = z_buffer.frames().rbegin();
+         entry != z_buffer.frames().rend(); ++entry) {
+      const auto rect = frame_layouts.find(entry->frame_id);
+      if (rect != frame_layouts.end() &&
+          contains(rect->second, event.position)) {
+        hit_frame = &*entry;
+        hit_rect  = &rect->second;
+        break;
+      }
+    }
+
+    if (hit_frame == nullptr || hit_rect == nullptr ||
+        !hit_frame->frame->is_selectable()) {
+      clear_click_history();
+      Logger<DEBUG> << "Selection press hit no selectable frame";
+      return Status::OK;
+    }
+
+    SelectionPosition anchor;
+    const Status coordinate_status =
+        local_position(event.position, *hit_rect, anchor);
+    if (!is_ok(coordinate_status)) {
+      clear_click_history();
+      return coordinate_status;
+    }
+    pointer_selection_gesture_ = PointerSelectionGesture{
+        .frame_id = hit_frame->frame_id,
+        .frame    = hit_frame->frame,
+        .rect     = *hit_rect,
+        .press    = event.position,
+        .anchor   = anchor,
+    };
+    return Status::OK;
+  }
+
+  if (event.action == terminal::MouseAction::DRAG) {
+    if (pointer_selection_gesture_ == std::nullopt ||
+        event.button != terminal::MouseButton::LEFT) {
+      return Status::OK;
+    }
+
+    PointerSelectionGesture& gesture = *pointer_selection_gesture_;
+    if (!find_frame_rect(gesture.frame_id, gesture.frame, gesture.rect)) {
+      Logger<INFO> << "Captured selection frame left the active layout";
+      const Status status = selection_state_machine_.reset();
+      pointer_selection_gesture_.reset();
+      clear_click_history();
+      return status;
+    }
+
+    SelectionPosition extent;
+    const Status coordinate_status =
+        local_position(event.position, gesture.rect, extent);
+    if (!is_ok(coordinate_status)) {
+      return coordinate_status;
+    }
+    const Status status = selection_state_machine_.apply(
+        gesture.frame_id, gesture.frame,
+        SelectionEvent{
+            .type   = SelectionEventType::SELECT_AND_EXTEND,
+            .anchor = gesture.anchor,
+            .extent = extent,
+        });
+    if (is_ok(status)) {
+      gesture.extended = true;
+      clear_click_history();
+    }
+    return status;
+  }
+
+  if (event.action != terminal::MouseAction::RELEASE ||
+      pointer_selection_gesture_ == std::nullopt) {
+    return Status::OK;
+  }
+
+  PointerSelectionGesture gesture = *pointer_selection_gesture_;
+  pointer_selection_gesture_.reset();
+  if (!find_frame_rect(gesture.frame_id, gesture.frame, gesture.rect)) {
+    Logger<INFO> << "Released selection after its frame left the active layout";
+    clear_click_history();
+    return selection_state_machine_.reset();
+  }
+
+  SelectionPosition extent;
+  const Status coordinate_status =
+      local_position(event.position, gesture.rect, extent);
+  if (!is_ok(coordinate_status)) {
+    clear_click_history();
+    return coordinate_status;
+  }
+
+  const bool moved = event.position != gesture.press;
+  if (gesture.extended || moved) {
+    clear_click_history();
+    if (!gesture.extended) {
+      const Status start_status = selection_state_machine_.apply(
+          gesture.frame_id, gesture.frame,
+          SelectionEvent{
+              .type   = SelectionEventType::SELECT_AND_EXTEND,
+              .anchor = gesture.anchor,
+              .extent = extent,
+          });
+      if (!is_ok(start_status)) {
+        return start_status;
+      }
+    }
+    return selection_state_machine_.apply(
+        gesture.frame_id, gesture.frame,
+        SelectionEvent{
+            .type   = SelectionEventType::END_SELECT_AND_EXTEND,
+            .anchor = gesture.anchor,
+            .extent = extent,
+        });
+  }
+
+  std::size_t click_count = 1U;
+  if (click_history_.has_value() &&
+      click_history_->frame_id == gesture.frame_id &&
+      click_history_->frame == gesture.frame &&
+      click_history_->position == event.position &&
+      click_history_->modifiers == event.modifiers) {
+    click_count = click_history_->count + 1U;
+  }
+
+  if (click_count == 1U) {
+    click_history_ = ClickHistory{
+        .frame_id  = gesture.frame_id,
+        .frame     = gesture.frame,
+        .position  = event.position,
+        .modifiers = event.modifiers,
+        .count     = click_count,
+    };
+    arm_click_timeout();
+    return Status::OK;
+  }
+
+  const SelectionEventType type = click_count == 2U
+                                      ? SelectionEventType::SELECT_WORD
+                                      : SelectionEventType::SELECT_LINE;
+  const Status status           = selection_state_machine_.apply(
+      gesture.frame_id, gesture.frame,
+      SelectionEvent{.type = type, .anchor = extent, .extent = extent});
+  if (!is_ok(status) || click_count >= 3U) {
+    clear_click_history();
+  } else {
+    click_history_ = ClickHistory{
+        .frame_id  = gesture.frame_id,
+        .frame     = gesture.frame,
+        .position  = event.position,
+        .modifiers = event.modifiers,
+        .count     = click_count,
+    };
+    arm_click_timeout();
+  }
+  return status;
+}
+
+void Screen::clear_click_history() noexcept {
+  click_history_.reset();
+  selection_timeout_.reset();
+}
+
+void Screen::arm_click_timeout() noexcept {
+  ++next_click_timeout_generation_;
+  if (next_click_timeout_generation_ == 0U) {
+    ++next_click_timeout_generation_;
+  }
+  selection_timeout_ = terminal::TimeoutInput{
+      .generation = next_click_timeout_generation_,
+  };
+}
+
+std::optional<terminal::TimeoutInput> Screen::pending_selection_timeout()
+    const {
+  const std::lock_guard lock(selection_mutex_);
+  return selection_timeout_;
+}
+
+Status Screen::handle_selection_timeout(terminal::TimeoutInput input) noexcept {
+  const std::lock_guard lock(selection_mutex_);
+  if (selection_timeout_.has_value() && input.generation != 0U &&
+      input == *selection_timeout_) {
+    clear_click_history();
+  }
+  return Status::OK;
+}
+
+Status Screen::reset_selection() {
+  const std::lock_guard lock(selection_mutex_);
+  const Status status = selection_state_machine_.reset();
+  if (is_ok(status)) {
+    pointer_selection_gesture_.reset();
+    clear_click_history();
+  }
+  return status;
+}
+
+SelectionPhase Screen::selection_phase() const noexcept {
+  const std::lock_guard lock(selection_mutex_);
+  return selection_state_machine_.phase();
+}
+
+std::optional<std::string> Screen::selected_frame_id() const {
+  const std::lock_guard lock(selection_mutex_);
+  return selection_state_machine_.active_frame_id();
+}
+
+Status Screen::selected_text(std::string& output) const {
+  const std::lock_guard lock(selection_mutex_);
+  return selection_state_machine_.selected_text(output);
+}
+
+Status Screen::copy_selection(
+    msg::ScreenClipboardSelection selection) noexcept {
+  std::string text;
+  {
+    const std::lock_guard lock(selection_mutex_);
+    const Status status = selection_state_machine_.selected_text(text);
+    if (!is_ok(status)) {
+      return status;
+    }
+  }
+  return send_command(msg::ScreenCommand{
+      .data =
+          msg::ScreenSetClipboardCommand{
+              .selection = selection,
+              .text      = std::move(text),
+          },
+  });
+}
+
+Status Screen::release() noexcept {
+  {
+    const std::lock_guard lock(state_mutex_);
+    if (!terminal_requested_) {
+      return Status::OK;
+    }
+    terminal_requested_ = false;
+    latest_size_.reset();
+  }
+
+  const Status status =
+      send_command(msg::ScreenCommand{.data = msg::ScreenReleaseCommand{}});
+  if (!is_ok(status)) {
+    const std::lock_guard lock(state_mutex_);
+    terminal_requested_ = true;
+  }
+  return status;
+}
+
+Status Screen::get_dimensions(std::size_t& width,
+                              std::size_t& height) const noexcept {
+  CellDimensions ignored;
+  return get_dimensions(width, height, ignored);
+}
+
+Status Screen::get_dimensions(std::size_t& width, std::size_t& height,
+                              CellDimensions& cell_dimensions) const noexcept {
+  msg::ScreenResizeEvent size;
+  {
+    const std::lock_guard lock(state_mutex_);
+    if (!latest_size_.has_value()) {
+      width           = 0U;
+      height          = 0U;
+      cell_dimensions = kDefaultCellDimensions;
+      return Status::TERMINAL_QUERY_FAILED;
+    }
+    size = *latest_size_;
+  }
+
+  width           = size.width;
+  height          = size.height;
+  cell_dimensions = kDefaultCellDimensions;
+  if (size.pixel_width != 0U && size.pixel_height != 0U) {
+    const std::size_t relative_width =
+        static_cast<std::size_t>(size.pixel_width) * height;
+    const std::size_t relative_height =
+        static_cast<std::size_t>(size.pixel_height) * width;
+    const std::size_t common_factor = std::gcd(relative_width, relative_height);
+    cell_dimensions.width           = relative_width / common_factor;
+    cell_dimensions.height          = relative_height / common_factor;
+  }
+  return Status::OK;
+}
+
 Status Screen::set_canvas(std::shared_ptr<Canvas> canvas) noexcept {
-  if (!canvas) {
+  if (canvas == nullptr) {
     canvas_.reset();
     Logger<ERROR> << status_message(Status::CANVAS_NOT_SET);
     return Status::CANVAS_NOT_SET;
@@ -423,104 +710,63 @@ Status Screen::set_canvas(std::shared_ptr<Canvas> canvas) noexcept {
   return Status::OK;
 }
 
-Status Screen::push_event(const std::shared_ptr<EventBuffer>& buffer,
-                          const Event& event) noexcept {
-  if (!buffer) {
-    Logger<ERROR> << "Cannot push event to a null buffer";
-    return Status::INVALID_ARGUMENT;
-  }
-
-  const std::lock_guard lock(buffer->lock);
-  if (buffer->size == EventBuffer::kMaxEvents) {
-    Logger<WARN> << status_message(Status::EVENT_BUFFER_FULL);
-    return Status::EVENT_BUFFER_FULL;
-  }
-
-  buffer->events[buffer->write_index] = event;
-  buffer->write_index = (buffer->write_index + 1) % EventBuffer::kMaxEvents;
-  ++buffer->size;
-  Logger<DEBUG> << "Queued screen event " << event.id;
-  return Status::OK;
-}
-
-std::optional<Screen::Event> Screen::pop_event() noexcept {
-  if (!event_buffer_) {
-    Logger<WARN> << "Cannot pop event from a null buffer";
-    return std::nullopt;
-  }
-
-  const std::lock_guard lock(event_buffer_->lock);
-  if (event_buffer_->size == 0) {
-    return std::nullopt;
-  }
-
-  Event event = event_buffer_->events[event_buffer_->read_index];
-  event_buffer_->read_index =
-      (event_buffer_->read_index + 1) % EventBuffer::kMaxEvents;
-  --event_buffer_->size;
-  return event;
-}
-
-size_t Screen::pending_events() const noexcept {
-  if (!event_buffer_) {
-    return 0;
-  }
-
-  const std::lock_guard lock(event_buffer_->lock);
-  return event_buffer_->size;
-}
-
 Status Screen::draw() noexcept {
-  if (!terminal_taken_) {
-    Logger<ERROR> << "Cannot draw screen: "
-                  << status_message(Status::TERMINAL_NOT_AVAILABLE);
+  if (!is_taken()) {
+    Logger<ERROR> << "Cannot draw screen without requested terminal ownership";
     return Status::TERMINAL_NOT_AVAILABLE;
   }
-  if (!canvas_) {
+  if (canvas_ == nullptr) {
     Logger<ERROR> << "Cannot draw screen: "
                   << status_message(Status::CANVAS_NOT_SET);
     return Status::CANVAS_NOT_SET;
   }
 
-  size_t width  = 0;
-  size_t height = 0;
-  Status status = get_dimensions(width, height);
-  if (!is_ok(status)) {
-    return status;
-  }
-
-  Status event_status = Status::OK;
-  if (width != last_width_ || height != last_height_) {
-    Event resize_event{
-        .timestamp = event_timestamp(),
-        .id        = next_event_id_++,
-        .type      = EventType::RESIZE,
-    };
-    resize_event.data.resize.width  = width;
-    resize_event.data.resize.height = height;
-    event_status                    = push_event(event_buffer_, resize_event);
-    last_width_                     = width;
-    last_height_                    = height;
-    Logger<INFO> << "Terminal resized to " << width << 'x' << height;
-  }
-
   std::string output;
-  status = render_canvas(*canvas_, output);
-  if (!is_ok(status)) {
-    Logger<ERROR> << "Could not render canvas: " << status_message(status);
-    return status;
+  const Status render_status = render_canvas(*canvas_, output);
+  if (!is_ok(render_status)) {
+    Logger<ERROR> << "Could not render canvas: "
+                  << status_message(render_status);
+    return render_status;
   }
-  status = write_all(output_fd_, output);
-  if (!is_ok(status)) {
-    return status;
+  const Status status = send_command(msg::ScreenCommand{
+      .data = msg::ScreenPresentCommand{.bytes = std::move(output)},
+  });
+  if (is_ok(status)) {
+    Logger<DEBUG> << "Enqueued canvas with "
+                  << canvas_->get_drawable_buffer().size() << " cells";
   }
-
-  Logger<DEBUG> << "Presented canvas with "
-                << canvas_->get_drawable_buffer().size() << " cells";
-  return event_status;
+  return status;
 }
 
-bool Screen::is_taken() const noexcept { return terminal_taken_; }
+void Screen::receive_resize_event(ipc::Channel::Bytes payload) noexcept {
+  msg::ScreenResizeEvent event;
+  const msg::Status status = resize_codec_.deserialize(payload, event);
+  if (!msg::is_ok(status)) {
+    Logger<ERROR> << "Discarded malformed resize event: "
+                  << msg::status_message(status);
+    return;
+  }
+  const std::lock_guard lock(state_mutex_);
+  if (terminal_requested_) {
+    latest_size_ = event;
+    Logger<INFO> << "Observed terminal geometry " << event.width << 'x'
+                 << event.height;
+  }
+}
 
-}  // namespace tui
-}  // namespace puc
+bool Screen::is_taken() const noexcept {
+  const std::lock_guard lock(state_mutex_);
+  return terminal_requested_;
+}
+
+std::size_t Screen::pending_commands() const noexcept {
+  return command_channel_ == nullptr ? 0U
+                                     : command_channel_->pending_messages();
+}
+
+std::uint64_t Screen::dropped_commands() const noexcept {
+  return command_channel_ == nullptr ? 0U
+                                     : command_channel_->dropped_messages();
+}
+
+}  // namespace puc::tui

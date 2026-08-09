@@ -4,7 +4,11 @@ package(
     default_visibility = ["//visibility:public"],
 )
 
-code_docs_sources()
+code_docs_sources(exclude = [
+    "github/**",
+    "puc-cli/**",
+    "utils/**",
+])
 
 exports_files([
     "ALIASES",

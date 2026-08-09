@@ -74,7 +74,12 @@ BLOCK_TAGS = {
     "parameterlist",
     "programlisting",
     "simplesect",
+    "variablelist",
+    "xrefsect",
 }
+
+## Internal marker that survives whitespace normalization as a hard line break.
+INLINE_LINE_BREAK = "\0PUC_DOXYGEN_LINE_BREAK\0"
 
 ## Local-link extractor used after rendering to reject incomplete page graphs.
 MARKDOWN_LINK = re.compile(r"\[[^]]*\]\(([^)]+)\)")
@@ -157,7 +162,10 @@ def _normalize_inline(text: str) -> str:
     @param text Rendered inline fragment.
     @return Fragment with runs of whitespace collapsed to one space.
     """
-    return re.sub(r"\s+", " ", text).strip()
+    fragments = [
+        re.sub(r"\s+", " ", part).strip() for part in text.split(INLINE_LINE_BREAK)
+    ]
+    return "  \n".join(fragments).strip()
 
 
 def _plain_text(element: ET.Element | None) -> str:
@@ -246,6 +254,10 @@ class MarkdownRenderer:
             return f"[{content}]({self._href(target)})" if target else f"`{content}`"
         if tag == "ulink":
             return f"[{content}]({element.get('url', '')})"
+        if tag == "image":
+            source = element.get("name", "")
+            alt_text = _markdown_escape(element.get("alt", "")) or content
+            return f"![{alt_text}]({source})" if source else alt_text
         if tag in {"computeroutput", "verbatim"}:
             return f"`{_plain_text(element).strip()}`"
         if tag == "bold":
@@ -255,7 +267,10 @@ class MarkdownRenderer:
         if tag == "sp":
             return " "
         if tag == "linebreak":
-            return "  \n"
+            return INLINE_LINE_BREAK
+        if tag == "anchor":
+            anchor_id = element.get("id", "")
+            return f'<a id="{_anchor(anchor_id)}"></a>' if anchor_id else ""
         if tag == "ndash":
             return "–"
         if tag == "mdash":
@@ -369,6 +384,43 @@ class MarkdownRenderer:
         }.get(element.get("kind", ""), "Details")
         return f"**{title}:** {self.inline(element)}"
 
+    def _variable_list(self, element: ET.Element) -> str:
+        """Render paired Doxygen terms and descriptions as scannable sections.
+
+        Doxygen uses this shape for generated ``xrefitem`` collection pages.
+        Headings retain the originating symbol link while each description can
+        carry structured hard line breaks and a stable cross-reference anchor.
+
+        @param element ``variablelist`` containing alternating term and item nodes.
+        @return Markdown sections for every complete term-description pair.
+        """
+        entries = []
+        term = ""
+        for child in element:
+            if child.tag == "varlistentry":
+                term = self.inline(child.find("term"))
+                continue
+            if child.tag != "listitem":
+                continue
+            description = self.blocks(child)
+            heading = f"## {term}" if term else "## Protocol contract"
+            entries.append(f"{heading}\n\n{description}".rstrip())
+            term = ""
+        return "\n\n".join(entries)
+
+    def _cross_reference(self, element: ET.Element) -> str:
+        """Link one local ``xrefitem`` occurrence to its collected page entry.
+
+        @param element ``xrefsect`` containing a title and full description.
+        @return Labeled contract details with a deep link when one is known.
+        """
+        title = self.inline(element.find("xreftitle")) or "Cross-reference"
+        target = self.targets.get(element.get("id", ""))
+        if target is not None:
+            title = f"[{title}]({self._href(target)})"
+        description = self.blocks(element.find("xrefdescription"))
+        return f"**{title}:**\n\n{description}" if description else f"**{title}**"
+
     def _paragraph(self, element: ET.Element) -> str:
         """Split a Doxygen paragraph around embedded block-level constructs.
 
@@ -417,6 +469,10 @@ class MarkdownRenderer:
             return self._list(element, ordered=True)
         if element.tag == "simplesect":
             return self._simple_section(element)
+        if element.tag == "variablelist":
+            return self._variable_list(element)
+        if element.tag == "xrefsect":
+            return self._cross_reference(element)
         return self.inline(element)
 
     def blocks(self, element: ET.Element | None) -> str:
@@ -555,13 +611,25 @@ def _render_compound(compound: Compound, targets: dict[str, LinkTarget]) -> str:
     if definition is None:
         raise ValueError(f"missing compounddef in {compound.refid}.xml")
 
-    title_kind = compound.kind.capitalize()
-    parts = [GENERATED_NOTICE, f"# {title_kind} `{compound.name}`"]
+    if compound.kind == "page":
+        parts = [GENERATED_NOTICE, f"# {compound.name}"]
+    else:
+        title_kind = compound.kind.capitalize()
+        parts = [GENERATED_NOTICE, f"# {title_kind} `{compound.name}`"]
     description = _description(renderer, definition)
     if description:
         parts.append(description)
 
-    source = _source_link(definition)
+    # Doxygen synthesizes a location equal to the page ID for ``xrefitem``
+    # collection pages. Preserve real source links on ordinary documented
+    # pages while suppressing that identifier-shaped pseudo-path.
+    location = definition.find("location")
+    synthetic_page = (
+        compound.kind == "page"
+        and location is not None
+        and location.get("file") == compound.refid
+    )
+    source = "" if synthetic_page else _source_link(definition)
     if source:
         parts.append(source)
 
@@ -643,13 +711,20 @@ def _load_compounds(xml_dir: Path) -> tuple[list[Compound], dict[str, LinkTarget
             continue
 
         page = f"{refid}.md"
-        compound = Compound(refid, kind, name, page, element)
+        display_name = (
+            definition.findtext("title", default="").strip() if kind == "page" else name
+        )
+        compound = Compound(refid, kind, display_name or name, page, element)
         compounds.append(compound)
         targets[refid] = LinkTarget(page)
         for member in item.findall("member"):
             member_refid = member.get("refid", "")
             if member_refid:
                 targets[member_refid] = LinkTarget(page, _anchor(member_refid))
+        for anchor in definition.findall(".//anchor"):
+            anchor_refid = anchor.get("id", "")
+            if anchor_refid:
+                targets[anchor_refid] = LinkTarget(page, _anchor(anchor_refid))
     return compounds, targets
 
 

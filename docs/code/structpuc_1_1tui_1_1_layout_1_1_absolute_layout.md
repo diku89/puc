@@ -2,9 +2,9 @@
 
 # Struct `puc::tui::Layout::AbsoluteLayout`
 
-Solved rectangles for every frame in a [LayoutDescription](structpuc_1_1tui_1_1_layout_1_1_layout_description.md).
+Solved rectangles and cached render dependencies for one layout geometry.
 
-[Source](../../puc-cli/tui/layout.hpp#L123)
+[Source](../../puc-cli/tui/layout.hpp#L124)
 
 ## Public data members
 
@@ -18,4 +18,16 @@ std::map<std::string, Canvas::Rect> puc::tui::Layout::AbsoluteLayout::frame_layo
 
 [Frame](classpuc_1_1tui_1_1_frame.md) ids mapped to half-open canvas rectangles.
 
-[Source](../../puc-cli/tui/layout.hpp#L125)
+[Source](../../puc-cli/tui/layout.hpp#L126)
+
+<a id="symbol-structpuc_1_1tui_1_1_layout_1_1_absolute_layout_1a1d49e3c56e78a113018042c6fb74303f"></a>
+
+### `frame_dependencies`
+
+```cpp
+std::vector<FrameDependency> puc::tui::Layout::AbsoluteLayout::frame_dependencies
+```
+
+Z-order edges for intersecting rectangles.
+
+[Source](../../puc-cli/tui/layout.hpp#L128)

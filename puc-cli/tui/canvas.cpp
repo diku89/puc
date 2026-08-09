@@ -82,9 +82,7 @@ Status Canvas::clear(const Cell& cell) noexcept {
     return Status::NO_FRAME_IN_PROGRESS;
   }
 
-  std::vector<Cell>& writable = buffer_state_ == BufferState::DRAW_A_WRITETO_B
-                                    ? screen_buffer_b_
-                                    : screen_buffer_a_;
+  std::vector<Cell>& writable = writable_buffer();
   std::fill(writable.begin(), writable.end(), cell);
   return Status::OK;
 }
@@ -118,9 +116,7 @@ Status Canvas::write_cells(const Rect& rect,
     }
   }
 
-  std::vector<Cell>& writable = buffer_state_ == BufferState::DRAW_A_WRITETO_B
-                                    ? screen_buffer_b_
-                                    : screen_buffer_a_;
+  std::vector<Cell>& writable = writable_buffer();
   for (size_t row = 0; row < rect.height; ++row) {
     const size_t destination = (rect.y + row) * width_ + rect.x;
     std::copy(cells[row].begin(), cells[row].end(),
@@ -142,6 +138,15 @@ Status Canvas::end_frame() noexcept {
   return Status::OK;
 }
 
+Status Canvas::cancel_frame() noexcept {
+  if (!frame_in_progress_) {
+    Logger<ERROR> << status_message(Status::NO_FRAME_IN_PROGRESS);
+    return Status::NO_FRAME_IN_PROGRESS;
+  }
+  frame_in_progress_ = false;
+  return Status::OK;
+}
+
 std::span<const Canvas::Cell> Canvas::get_drawable_buffer() const noexcept {
   return buffer_state_ == BufferState::DRAW_A_WRITETO_B
              ? std::span<const Cell>{screen_buffer_a_}
@@ -157,6 +162,11 @@ void Canvas::copy_drawable_to_writable() noexcept {
 
   std::copy(screen_buffer_b_.begin(), screen_buffer_b_.end(),
             screen_buffer_a_.begin());
+}
+
+std::vector<Canvas::Cell>& Canvas::writable_buffer() noexcept {
+  return buffer_state_ == BufferState::DRAW_A_WRITETO_B ? screen_buffer_b_
+                                                        : screen_buffer_a_;
 }
 
 }  // namespace tui

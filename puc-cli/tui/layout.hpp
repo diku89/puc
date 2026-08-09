@@ -9,6 +9,7 @@
 #include <cstdint>
 #include <map>
 #include <memory>
+#include <optional>
 #include <string>
 #include <utility>
 #include <variant>
@@ -16,7 +17,6 @@
 
 #include "puc-cli/tui/canvas.hpp"
 #include "puc-cli/tui/screen.hpp"
-#include "puc-cli/tui/state.hpp"
 #include "puc-cli/tui/theme.hpp"
 #include "puc-cli/tui/zbuf.hpp"
 
@@ -105,24 +105,59 @@ class Layout {
   };
 
   /**
-   * Declarative frame ownership, ordering, and constraints for one layout.
+   * One back-to-front ordering requirement between overlapping frames.
+   *
+   * Indices address `LayoutDescription::z_buffer.frames()`. The dependent
+   * frame may begin only after the prerequisite frame has finished drawing.
+   */
+  struct FrameDependency {
+    size_t prerequisite = 0U; /**< Backmost frame that must finish first. */
+    size_t dependent    = 0U; /**< Frontmost frame unblocked afterward. */
+
+    /** Compare both endpoints for cached-plan reuse. */
+    constexpr bool operator==(const FrameDependency&) const noexcept = default;
+  };
+
+  /**
+   * Solved rectangles and cached render dependencies for one layout geometry.
+   */
+  struct AbsoluteLayout {
+    std::map<std::string, Canvas::Rect>
+        frame_layouts; /**< Frame ids mapped to half-open canvas rectangles. */
+    std::vector<FrameDependency>
+        frame_dependencies; /**< Z-order edges for intersecting rectangles. */
+  };
+
+  /** Cached geometry together with every input that determines it. */
+  struct CachedAbsoluteLayout {
+    size_t screen_width  = 0U;       /**< Cached terminal column count. */
+    size_t screen_height = 0U;       /**< Cached terminal row count. */
+    CellDimensions cell_dimensions;  /**< Cached physical cell proportions. */
+    size_t z_buffer_revision   = 0U; /**< Structural frame generation. */
+    size_t constraint_revision = 0U; /**< Relative-layout generation. */
+    AbsoluteLayout layout; /**< Previously solved rectangles and order. */
+  };
+
+  /**
+   * Declarative frame ownership, ordering, constraints, and derived caches.
    *
    * Use Layout mutation methods to preserve the invariant that every frame id
-   * appears exactly once in `z_buffer` and has one entry in `constraints`.
+   * appears exactly once in `z_buffer` and has one entry in `constraints`, and
+   * to invalidate cached topology and geometry correctly.
    */
   struct LayoutDescription {
     std::string layout_name; /**< Human-readable layout name used in logs. */
     ZBuffer z_buffer;        /**< Frames in back-to-front drawing order. */
     std::map<std::string, std::vector<Constraint>>
-        constraints; /**< Constraints indexed by frame id. */
-  };
-
-  /**
-   * Solved rectangles for every frame in a LayoutDescription.
-   */
-  struct AbsoluteLayout {
-    std::map<std::string, Canvas::Rect>
-        frame_layouts; /**< Frame ids mapped to half-open canvas rectangles. */
+        constraints;                 /**< Constraints indexed by frame id. */
+    size_t constraint_revision = 0U; /**< Mutation generation. */
+    mutable std::vector<std::string>
+        cached_resolution_order; /**< Named-anchor topological order. */
+    mutable size_t cached_order_z_buffer_revision   = 0U; /**< Cache key. */
+    mutable size_t cached_order_constraint_revision = 0U; /**< Cache key. */
+    mutable bool cached_resolution_order_valid = false; /**< Cache presence. */
+    mutable std::optional<CachedAbsoluteLayout>
+        cached_absolute_layout; /**< Last exact geometry solution. */
   };
 
   /**
@@ -255,24 +290,24 @@ class Layout {
       size_t& minimum_height) const;
 
   /**
-   * Draw an already-solved layout in Z-buffer order.
+   * Draw an already-solved layout sequentially in Z-buffer order.
    *
-   * The first Z-buffer entry is drawn first and the last is drawn last. Frames
-   * whose `needs_update()` returns false are skipped. The canvas must have an
-   * active frame transaction. `absolute_layout` should have been produced by
+   * Every frame is drawn from back to front. ParallelRenderer instead consumes
+   * the execution dependencies computed in `absolute_layout` and invokes only
+   * non-intersecting frames concurrently. The canvas must have an active frame
+   * transaction. `absolute_layout` should have been produced by
    * `compute_absolute_layout()` for the current Canvas and cell dimensions.
    *
    * @param[in] layout_description The layout and frames to draw.
    * @param[in] absolute_layout     Solved rectangle for every frame.
-   * @param[in] state              The current terminal UI state.
    * @param[in] theme              The active color theme.
    * @param[in,out] canvas         The canvas receiving frame output.
    *
    * @return Status::OK on success, or the first frame error.
    */
   Status draw(const std::shared_ptr<LayoutDescription>& layout_description,
-              const AbsoluteLayout& absolute_layout, const State& state,
-              const Theme& theme, Canvas& canvas) const;
+              const AbsoluteLayout& absolute_layout, const Theme& theme,
+              Canvas& canvas) const;
 };
 
 }  // namespace tui

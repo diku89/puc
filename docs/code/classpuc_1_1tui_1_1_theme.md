@@ -28,8 +28,8 @@ Semantic roles addressable through `get_color()`.
 - <a id="symbol-classpuc_1_1tui_1_1_theme_1a9e3465a5aa51fe8db53bf14c9575e7d8a428429ba9ea83e4841036fb0508fd6dc"></a>`PRIMARY` — Primary accent color.
 - <a id="symbol-classpuc_1_1tui_1_1_theme_1a9e3465a5aa51fe8db53bf14c9575e7d8a371b09d93ca01e09a42fbd5a2a423f8e"></a>`SECONDARY` — Secondary accent color.
 - <a id="symbol-classpuc_1_1tui_1_1_theme_1a9e3465a5aa51fe8db53bf14c9575e7d8aaa03dabaa6b3d0cbccd9af58bf3527ad"></a>`TERTIARY` — Tertiary accent color.
-- <a id="symbol-classpuc_1_1tui_1_1_theme_1a9e3465a5aa51fe8db53bf14c9575e7d8a57830ad692fb15d7a396d61f7bd9ccc7"></a>`HIGHLIGHT` — Highlighted-region background.
-- <a id="symbol-classpuc_1_1tui_1_1_theme_1a9e3465a5aa51fe8db53bf14c9575e7d8af256ade7d3d8911363bfaaffc6fca1e0"></a>`HIGHLIGHT_TEXT` — Text shown over a highlight.
+- <a id="symbol-classpuc_1_1tui_1_1_theme_1a9e3465a5aa51fe8db53bf14c9575e7d8aef504f5d90d8d0df1a5a12bc3287a662"></a>`HIGHLIGHT_BACKGROUND` — Selected-text background color.
+- <a id="symbol-classpuc_1_1tui_1_1_theme_1a9e3465a5aa51fe8db53bf14c9575e7d8af256ade7d3d8911363bfaaffc6fca1e0"></a>`HIGHLIGHT_TEXT` — Selected-text foreground color.
 - <a id="symbol-classpuc_1_1tui_1_1_theme_1a9e3465a5aa51fe8db53bf14c9575e7d8a61a96ffcb251bb9bf0abf8fec19d0ea8"></a>`TEXT` — Default foreground text.
 - <a id="symbol-classpuc_1_1tui_1_1_theme_1a9e3465a5aa51fe8db53bf14c9575e7d8af77b5259d2c5878f89e53cad39eb611e"></a>`TEXT_SECONDARY` — Secondary foreground text.
 - <a id="symbol-classpuc_1_1tui_1_1_theme_1a9e3465a5aa51fe8db53bf14c9575e7d8ab29c055a65dd3ad4227167c15008131e"></a>`TEXT_TERTIARY` — Tertiary foreground text.

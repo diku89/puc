@@ -29,8 +29,8 @@ uint32_t Theme::get_color(ColorTypes color_type) const noexcept {
       return colors_.secondary;
     case ColorTypes::TERTIARY:
       return colors_.tertiary;
-    case ColorTypes::HIGHLIGHT:
-      return colors_.highlight;
+    case ColorTypes::HIGHLIGHT_BACKGROUND:
+      return colors_.highlight_background;
     case ColorTypes::HIGHLIGHT_TEXT:
       return colors_.highlight_text;
     case ColorTypes::TEXT:

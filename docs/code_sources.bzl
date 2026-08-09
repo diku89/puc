@@ -18,8 +18,8 @@ _SOURCE_PATTERNS = [
     "hooks/sync-submodules",
 ]
 
-def code_docs_sources(name = "code_docs_srcs"):
-    """Exports non-test implementation and script files in this Bazel package."""
+def code_docs_sources(name = "code_docs_srcs", exclude = [], extra_srcs = []):
+    """Exports non-test sources plus explicitly named manual applications."""
     native.filegroup(
         name = name,
         srcs = native.glob(
@@ -31,7 +31,7 @@ def code_docs_sources(name = "code_docs_srcs"):
                 "**/*_test.*",
                 "bazel-*/**",
                 "third_party/**",
-            ],
-        ),
+            ] + exclude,
+        ) + extra_srcs,
         visibility = ["//visibility:public"],
     )

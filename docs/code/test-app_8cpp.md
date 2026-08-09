@@ -4,7 +4,11 @@
 
 Interactive visual integration test for the complete TUI rendering pipeline.
 
-This executable is a manual smoke test rather than an automated unit test. It exercises the integration between Screen, Canvas, Layout, ZBuffer, Frame, Theme, terminal resize detection, Unicode rendering, true color, and Canvas frame publication. Run it from a real terminal with: `bazel run //puc-cli/tui:test-app`
+This executable is a manual smoke test rather than an automated unit test. It exercises the integration between Screen, Canvas, Layout, ZBuffer, Frame, Theme, TerminalSession, bounded IPC channels, terminal resize events, Unicode rendering, true color, and parallel Canvas publication. `main()` owns one four-thread worker pool shared by terminal messages and ParallelRenderer; all consumers merely borrow it, and `main()` destroys those consumers before stopping and joining the workers. Every ready frame in the layout is rendered as an independent job, and the last real frame to complete publishes the Canvas A/B transaction. Run it from a real terminal with: `bazel run //puc-cli/tui:test-app`
+
+The animation below demonstrates the normal layout, live terminal resizing, and the small-screen fallback:
+
+![The PUC TUI test app responding to terminal resizes.](../assets/puc-cli-tui-test-app-resize-demo.gif)
 
 **Expected display**
 
@@ -43,4 +47,4 @@ Run the interactive TUI smoke test until signaled or an operation fails.
 
 **Returns:** Zero after successful setup, drawing, and terminal restoration; otherwise one.
 
-[Source](../../puc-cli/tui/test-app.cpp#L734)
+[Source](../../puc-cli/tui/test-app.cpp#L812)

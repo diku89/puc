@@ -46,15 +46,15 @@ Tertiary accent color.
 
 [Source](../../puc-cli/tui/theme.hpp#L66)
 
-<a id="symbol-structpuc_1_1tui_1_1_theme_1_1_colors_1a1c0c7b124c1f8e61d5d45a0d53b5edaf"></a>
+<a id="symbol-structpuc_1_1tui_1_1_theme_1_1_colors_1a6376a91c6c51242fd6420d08f536cc74"></a>
 
-### `highlight`
+### `highlight_background`
 
 ```cpp
-uint32_t puc::tui::Theme::Colors::highlight
+uint32_t puc::tui::Theme::Colors::highlight_background
 ```
 
-Highlighted-region background.
+Selected-text background color.
 
 [Source](../../puc-cli/tui/theme.hpp#L67)
 
@@ -66,7 +66,7 @@ Highlighted-region background.
 uint32_t puc::tui::Theme::Colors::highlight_text
 ```
 
-Text shown over a highlight.
+Selected-text foreground color.
 
 [Source](../../puc-cli/tui/theme.hpp#L68)
 

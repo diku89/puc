@@ -2,7 +2,7 @@
 
 # File `screen.hpp`
 
-POSIX terminal ownership, presentation, and event buffering.
+PUC-owned asynchronous terminal presentation and observed geometry.
 
 [Source](../../puc-cli/tui/screen.hpp)
 
@@ -10,8 +10,7 @@ POSIX terminal ownership, presentation, and event buffering.
 
 - [puc::tui::CellDimensions](structpuc_1_1tui_1_1_cell_dimensions.md)
 - [puc::tui::Screen](classpuc_1_1tui_1_1_screen.md)
-- [puc::tui::Screen::Event](structpuc_1_1tui_1_1_screen_1_1_event.md)
-- [puc::tui::Screen::Event::Data](unionpuc_1_1tui_1_1_screen_1_1_event_1_1_data.md)
-- [puc::tui::Screen::EventBuffer](structpuc_1_1tui_1_1_screen_1_1_event_buffer.md)
+- [puc::tui::Screen::PointerSelectionGesture](structpuc_1_1tui_1_1_screen_1_1_pointer_selection_gesture.md)
+- [puc::tui::Screen::ClickHistory](structpuc_1_1tui_1_1_screen_1_1_click_history.md)
 - [puc](namespacepuc.md)
 - [puc::tui](namespacepuc_1_1tui.md)

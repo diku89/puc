@@ -7,13 +7,27 @@ doxygen(
     srcs = [
         "//:code_docs_srcs",
         "//github/ci_tools:code_docs_srcs",
+        "//msgs:code_docs_srcs",
         "//puc-cli:code_docs_srcs",
+        "//puc-cli/terminal:code_docs_srcs",
         "//puc-cli/tui:code_docs_srcs",
+        "//utils/config:code_docs_srcs",
         "//utils/containers:code_docs_srcs",
+        "//utils/execution_graph:code_docs_srcs",
+        "//utils/ipc:code_docs_srcs",
         "//utils/logger:code_docs_srcs",
+        "//utils/metronome:code_docs_srcs",
+        "//utils/multithreading:code_docs_srcs",
         "//utils/scripts:code_docs_srcs",
     ],
     outs = ["xml"],
+    # Communication contracts share one cross-reference page. The double-pipe
+    # separator keeps ordinary prose commas usable without escaping.
+    aliases = [
+        "channel{4||}=@xrefitem puc_protocol_contracts \\\"Protocol Contract\\\" \\\"PUC Protocol Contracts\\\" @b Kind: Channel @n @b Name: @c \\1 @n @b Purpose: \\2 @n @b Producers: \\3 @n @b Consumers: \\4",
+        "msg{4||}=@xrefitem puc_protocol_contracts \\\"Protocol Contract\\\" \\\"PUC Protocol Contracts\\\" @b Kind: Message @n @b Type: @ref \\1 \\\"\\1\\\" @n @b Purpose: \\2 @n @b Producers: \\3 @n @b Consumers: \\4",
+        "msg_id{5||}=@xrefitem puc_protocol_contracts \\\"Protocol Contract\\\" \\\"PUC Protocol Contracts\\\" @b Kind: Message ID @n @b ID: @c \\1 @n @b Message: @ref \\2 \\\"\\2\\\" @n @b Purpose: \\3 @n @b Producers: \\4 @n @b Consumers: \\5",
+    ],
     # Doxygen's SYSTEM default follows filesystem case sensitivity, changing
     # XML refids and Markdown filenames between macOS and Linux.
     case_sense_names = False,

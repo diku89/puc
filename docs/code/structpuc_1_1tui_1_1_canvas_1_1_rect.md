@@ -6,7 +6,7 @@ A half-open rectangular region in canvas cell coordinates.
 
 The covered coordinates are `[x, x + width)` and `[y, y + height)`.
 
-[Source](../../puc-cli/tui/canvas.hpp#L50)
+[Source](../../puc-cli/tui/canvas.hpp#L53)
 
 ## Public data members
 
@@ -20,7 +20,7 @@ size_t puc::tui::Canvas::Rect::x
 
 X coordinate of the top-left corner of the rectangle.
 
-[Source](../../puc-cli/tui/canvas.hpp#L51)
+[Source](../../puc-cli/tui/canvas.hpp#L54)
 
 <a id="symbol-structpuc_1_1tui_1_1_canvas_1_1_rect_1a686579d363812887707e971d08e4bf14"></a>
 
@@ -32,7 +32,7 @@ size_t puc::tui::Canvas::Rect::y
 
 Y coordinate of the top-left corner of the rectangle.
 
-[Source](../../puc-cli/tui/canvas.hpp#L52)
+[Source](../../puc-cli/tui/canvas.hpp#L55)
 
 <a id="symbol-structpuc_1_1tui_1_1_canvas_1_1_rect_1aeeaa261ba869929a777d8a337b0b03cb"></a>
 
@@ -44,7 +44,7 @@ size_t puc::tui::Canvas::Rect::width
 
 Width of the rectangle.
 
-[Source](../../puc-cli/tui/canvas.hpp#L53)
+[Source](../../puc-cli/tui/canvas.hpp#L56)
 
 <a id="symbol-structpuc_1_1tui_1_1_canvas_1_1_rect_1a6a9983caf1eed93bbd9fec6f7fed8518"></a>
 
@@ -56,4 +56,4 @@ size_t puc::tui::Canvas::Rect::height
 
 Height of the rectangle.
 
-[Source](../../puc-cli/tui/canvas.hpp#L54)
+[Source](../../puc-cli/tui/canvas.hpp#L57)

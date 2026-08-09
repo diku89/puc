@@ -31,6 +31,9 @@ TEST(StatusTest, EveryStatusHasAHumanReadableMessage) {
       Status::CELL_SHAPE_MISMATCH,
       Status::DUPLICATE_FRAME_ID,
       Status::FRAME_NOT_FOUND,
+      Status::FRAME_NOT_SELECTABLE,
+      Status::INVALID_SELECTION_TRANSITION,
+      Status::NO_SELECTION,
       Status::INVALID_PERCENTAGE,
       Status::INVALID_RATIO,
       Status::INVALID_CONSTRAINT,
@@ -40,7 +43,9 @@ TEST(StatusTest, EveryStatusHasAHumanReadableMessage) {
       Status::TERMINAL_QUERY_FAILED,
       Status::TERMINAL_CONFIG_FAILED,
       Status::TERMINAL_WRITE_FAILED,
-      Status::EVENT_BUFFER_FULL,
+      Status::CHANNEL_SETUP_FAILED,
+      Status::MESSAGE_ENCODING_FAILED,
+      Status::ASYNC_DISPATCH_FAILED,
   };
 
   for (const Status status : statuses) {

@@ -1,0 +1,13 @@
+version = 1
+
+# macOS conventionally assigns copy to Command-C. PUC can receive this exact
+# CSI-u form when the terminal forwards the chord instead of consuming it as a
+# terminal-owned shortcut. A same-path user file may replace or disable it.
+[[mapping]]
+sequence = "<CSI>99;9u"
+kind = "command"
+command = "COPY"
+
+# Paste is intentionally absent: the terminal supplies the pasted content as a
+# bracketed-paste stream rather than forwarding Command-V as an application
+# command.

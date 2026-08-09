@@ -1,0 +1,9 @@
+# Terminal input timing defaults. A user may override either field by placing
+# this same relative file beneath the configured user-overrides root.
+
+[timeouts]
+# Idle time before an incomplete Trie/protocol path receives a timeout input.
+input_sequence_ms = 50
+
+# Maximum gap between releases recognized as one double/triple-click chain.
+multiple_click_ms = 500

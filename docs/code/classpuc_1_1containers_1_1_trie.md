@@ -79,7 +79,7 @@ std::vector<Node> puc::containers::Trie< KeyType, ValueType >::nodes_
 
 Append-only storage whose indexes identify every node.
 
-[Source](../../utils/containers/trie.hpp#L221)
+[Source](../../utils/containers/trie.hpp#L241)
 
 ## Public functions
 
@@ -223,6 +223,26 @@ Missing nodes are appended in traversal order. Existing prefix and descendant in
 
 [Source](../../utils/containers/trie.hpp#L188)
 
+<a id="symbol-classpuc_1_1containers_1_1_trie_1abceefad89d37ad8d83493a36b6515a2b"></a>
+
+### `erase`
+
+```cpp
+bool puc::containers::Trie< KeyType, ValueType >::erase(const std::vector< KeyType > &key_sequence)
+```
+
+Remove the value associated with an exact sequence.
+
+Nodes are intentionally retained so indexes held by active cursors remain valid and a later insertion can reuse the existing path. Descendant sequences are unaffected.
+
+**Parameters**
+
+- `key_sequence` (in) — Exact sequence whose value should be removed.
+
+**Returns:** `true` when an exact value existed and was removed.
+
+[Source](../../utils/containers/trie.hpp#L215)
+
 <a id="symbol-classpuc_1_1containers_1_1_trie_1a561168ebed405060e80b6f6c6fa2dcf1"></a>
 
 ### `contains`
@@ -241,7 +261,7 @@ This tests `sequence_end`, not the stored value. An exact sequence holding a nul
 
 **Returns:** `true` only for an inserted complete sequence.
 
-[Source](../../utils/containers/trie.hpp#L214)
+[Source](../../utils/containers/trie.hpp#L234)
 
 ## Public static functions
 

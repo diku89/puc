@@ -7,7 +7,6 @@ cc_binary(
     name = "puc",
     srcs = ["main.cc"],
     deps = [
-        "//third_party:tomlc17",
         "//utils/logger",
     ],
 )

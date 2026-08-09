@@ -14,8 +14,11 @@ cc_library(
     name = "tui",
     srcs = [
         "canvas.cpp",
+        "frame.cpp",
         "layout.cpp",
+        "renderer.cpp",
         "screen.cpp",
+        "selection.cpp",
         "theme.cpp",
         "zbuf.cpp",
     ],
@@ -23,15 +26,21 @@ cc_library(
         "canvas.hpp",
         "frame.hpp",
         "layout.hpp",
+        "renderer.hpp",
         "screen.hpp",
-        "state.hpp",
+        "selection.hpp",
         "status.hpp",
         "theme.hpp",
         "zbuf.hpp",
     ],
     visibility = ["//visibility:public"],
     deps = [
+        "//msgs",
+        "//puc-cli/terminal",
+        "//utils/execution_graph",
+        "//utils/ipc",
         "//utils/logger",
+        "//utils/multithreading",
     ],
 )
 
@@ -41,6 +50,7 @@ cc_binary(
     deps = [
         ":tui",
         "//utils/logger",
+        "//utils/multithreading",
     ],
 )
 
@@ -50,10 +60,18 @@ cc_test(
     srcs = [
         "canvas_test.cpp",
         "layout_test.cpp",
+        "renderer_test.cpp",
         "screen_test.cpp",
+        "selection_test.cpp",
         "status_test.cpp",
         "theme_test.cpp",
         "zbuf_test.cpp",
+    ],
+    data = [
+        "//puc-cli/terminal:bsd_defaults_config",
+        "//puc-cli/terminal:darwin_defaults_config",
+        "//puc-cli/terminal:input_config",
+        "//puc-cli/terminal:linux_defaults_config",
     ],
     linkopts = select({
         ":linux": ["-lutil"],
@@ -61,6 +79,7 @@ cc_test(
     }),
     deps = [
         ":tui",
+        "//utils/multithreading",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
     ],

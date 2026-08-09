@@ -32,8 +32,12 @@ enum class Status {
   CELL_SHAPE_MISMATCH,  /**< Source cell rows do not match their rectangle. */
   DUPLICATE_FRAME_ID,   /**< A ZBuffer already contains the frame id. */
   FRAME_NOT_FOUND,      /**< A requested or referenced frame is absent. */
-  INVALID_PERCENTAGE,   /**< A percentage is non-finite or outside `[0, 1]`. */
-  INVALID_RATIO,        /**< An aspect-ratio dimension is not positive. */
+  FRAME_NOT_SELECTABLE, /**< A frame does not expose logical selectable text. */
+  INVALID_SELECTION_TRANSITION, /**< A selection event violates its lifecycle.
+                                 */
+  NO_SELECTION,       /**< No completed logical selection is available. */
+  INVALID_PERCENTAGE, /**< A percentage is non-finite or outside `[0, 1]`. */
+  INVALID_RATIO,      /**< An aspect-ratio dimension is not positive. */
   INVALID_CONSTRAINT, /**< A layout constraint is malformed or contradictory. */
   CONSTRAINT_CYCLE,   /**< Named frame anchors form a dependency cycle. */
   CANVAS_NOT_SET,     /**< Screen has no valid Canvas to present. */
@@ -44,7 +48,9 @@ enum class Status {
                              changed/restored. */
   TERMINAL_WRITE_FAILED, /**< The complete terminal output could not be written.
                           */
-  EVENT_BUFFER_FULL,     /**< A Screen event could not be queued. */
+  CHANNEL_SETUP_FAILED, /**< Asynchronous Screen channels could not be built. */
+  MESSAGE_ENCODING_FAILED, /**< A typed Screen command could not be encoded. */
+  ASYNC_DISPATCH_FAILED,   /**< Asynchronous work could not be completed. */
 };
 
 /**
@@ -86,6 +92,12 @@ constexpr std::string_view status_message(Status status) noexcept {
       return "frame id already exists";
     case Status::FRAME_NOT_FOUND:
       return "frame id was not found";
+    case Status::FRAME_NOT_SELECTABLE:
+      return "frame is not selectable";
+    case Status::INVALID_SELECTION_TRANSITION:
+      return "selection event is invalid in the current phase";
+    case Status::NO_SELECTION:
+      return "no completed selection is available";
     case Status::INVALID_PERCENTAGE:
       return "percentage must be between zero and one";
     case Status::INVALID_RATIO:
@@ -104,8 +116,12 @@ constexpr std::string_view status_message(Status status) noexcept {
       return "terminal mode could not be configured";
     case Status::TERMINAL_WRITE_FAILED:
       return "terminal output could not be written";
-    case Status::EVENT_BUFFER_FULL:
-      return "event buffer is full";
+    case Status::CHANNEL_SETUP_FAILED:
+      return "asynchronous screen channels could not be configured";
+    case Status::MESSAGE_ENCODING_FAILED:
+      return "screen command could not be encoded";
+    case Status::ASYNC_DISPATCH_FAILED:
+      return "asynchronous work could not be completed";
   }
   return "unknown terminal UI status";
 }

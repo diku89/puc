@@ -5,6 +5,7 @@
  * @brief Owning, ordered frame container used to define compositing order.
  */
 
+#include <cstddef>
 #include <memory>
 #include <string>
 #include <string_view>
@@ -72,9 +73,14 @@ class ZBuffer {
    */
   const std::vector<Entry>& frames() const noexcept;
 
+  /** Return a generation incremented by every structural/order mutation. */
+  std::size_t revision() const noexcept { return revision_; }
+
  private:
   /** Entries ordered from backmost to frontmost. */
   std::vector<Entry> frames_;
+  /** Generation used to invalidate derived layout and rendering caches. */
+  std::size_t revision_ = 0U;
 };
 
 }  // namespace tui

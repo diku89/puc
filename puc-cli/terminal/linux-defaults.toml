@@ -1,0 +1,12 @@
+version = 1
+
+# Keep plain Ctrl-C available for the Unix interrupt signal. With CSI-u
+# disambiguation enabled, Ctrl-Shift-C has modifier value 6 and can reach PUC
+# as a distinct application-owned copy command when the terminal forwards it.
+[[mapping]]
+sequence = "<CSI>99;6u"
+kind = "command"
+command = "COPY"
+
+# Paste remains terminal transport: Ctrl-Shift-V normally produces bracketed
+# paste data, which the universal input configuration decodes as PasteEvent.

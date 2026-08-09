@@ -2,7 +2,7 @@
 
 # File `screen.cpp`
 
-POSIX terminal control and ANSI true-color Canvas presentation.
+Asynchronous Canvas presentation over bounded IPC channels.
 
 [Source](../../puc-cli/tui/screen.cpp)
 

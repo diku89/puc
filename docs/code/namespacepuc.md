@@ -2,10 +2,17 @@
 
 # Namespace `puc`
 
-[Source](../../puc-cli/tui/canvas.cpp#L17)
+[Source](../../msgs/codec.cpp#L25)
 
 ## Related symbols
 
+- [puc::config](namespacepuc_1_1config.md)
 - [puc::containers](namespacepuc_1_1containers.md)
+- [puc::execution\_graph](namespacepuc_1_1execution__graph.md)
+- [puc::ipc](namespacepuc_1_1ipc.md)
 - [puc::logger](namespacepuc_1_1logger.md)
+- [puc::metronome](namespacepuc_1_1metronome.md)
+- [puc::msg](namespacepuc_1_1msg.md)
+- [puc::multithreading](namespacepuc_1_1multithreading.md)
+- [puc::terminal](namespacepuc_1_1terminal.md)
 - [puc::tui](namespacepuc_1_1tui.md)
