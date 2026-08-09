@@ -6,7 +6,7 @@ Render Doxygen description nodes in the context of one output page.
 
 Doxygen references carry only a `refid`. The renderer combines the repository-wide destination map with the current page so self-links can be shortened while cross-page links remain relative and relocatable.
 
-[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L200)
+[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L208)
 
 ## Public data members
 
@@ -20,7 +20,7 @@ doxygen_xml_to_markdown.MarkdownRenderer::targets
 
 Repository-wide canonical destinations for Doxygen references.
 
-[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L215)
+[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L223)
 
 <a id="symbol-classdoxygen__xml__to__markdown_1_1_markdown_renderer_1aec1a4c96ab694649ccc92262b5e47305"></a>
 
@@ -32,7 +32,7 @@ doxygen_xml_to_markdown.MarkdownRenderer::current_page
 
 Page being rendered, used to shorten links to local fragments.
 
-[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L218)
+[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L226)
 
 ## Public functions
 
@@ -51,7 +51,7 @@ Bind symbol destinations to a page-specific rendering context.
 - `targets` — Canonical mapping from Doxygen IDs to Markdown targets.
 - `current_page` — Filename currently being generated.
 
-[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L208)
+[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L216)
 
 <a id="symbol-classdoxygen__xml__to__markdown_1_1_markdown_renderer_1afa4365525d27fb28d733d9dc59101dbb"></a>
 
@@ -69,7 +69,7 @@ Render an optional inline container and normalize XML indentation.
 
 **Returns:** One normalized Markdown inline fragment.
 
-[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L283)
+[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L298)
 
 <a id="symbol-classdoxygen__xml__to__markdown_1_1_markdown_renderer_1a7a3617c63aa308c913539aad372596b5"></a>
 
@@ -87,7 +87,7 @@ Dispatch a block node to the renderer that understands its shape.
 
 **Returns:** Markdown representation of that block.
 
-[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L402)
+[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L454)
 
 <a id="symbol-classdoxygen__xml__to__markdown_1_1_markdown_renderer_1a2f70fe202b21ed2bb99c04022e2e13eb"></a>
 
@@ -105,7 +105,7 @@ Render a description container with Markdown paragraph separation.
 
 **Returns:** Rendered nonempty children separated by blank lines.
 
-[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L422)
+[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L478)
 
 ## Protected functions
 
@@ -125,7 +125,7 @@ Build the shortest valid relative reference to a known target.
 
 **Returns:** Same-page fragment or sibling Markdown link.
 
-[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L220)
+[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L228)
 
 <a id="symbol-classdoxygen__xml__to__markdown_1_1_markdown_renderer_1affed861d9173b6ae5978f79abc098307"></a>
 
@@ -145,7 +145,7 @@ Unknown tags intentionally degrade to their rendered contents. This preserves do
 
 **Returns:** Markdown fragment representing the element.
 
-[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L231)
+[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L239)
 
 <a id="symbol-classdoxygen__xml__to__markdown_1_1_markdown_renderer_1afb84fbb9f7eb1584377bb42843f08891"></a>
 
@@ -165,7 +165,7 @@ ElementTree stores text after a child in `child.tail`. Omitting tails is a subtl
 
 **Returns:** Unnormalized Markdown fragment.
 
-[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L268)
+[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L283)
 
 <a id="symbol-classdoxygen__xml__to__markdown_1_1_markdown_renderer_1a8433a27f212d17b77cc693448aa4136a"></a>
 
@@ -185,7 +185,7 @@ Syntax-highlight spans are deliberately flattened: Markdown renderers can highli
 
 **Returns:** Markdown fenced code block.
 
-[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L293)
+[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L308)
 
 <a id="symbol-classdoxygen__xml__to__markdown_1_1_markdown_renderer_1a26e66905adb1bd898f9fc4f7ca91ffea"></a>
 
@@ -205,7 +205,7 @@ Parameter, exception, return-value, and template-parameter lists share one XML s
 
 **Returns:** Titled Markdown list.
 
-[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L311)
+[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L326)
 
 <a id="symbol-classdoxygen__xml__to__markdown_1_1_markdown_renderer_1abfa1a9bcc7ef1fd5c5dc2520d8cdeb1f"></a>
 
@@ -224,7 +224,7 @@ Render nested block content without breaking Markdown indentation.
 
 **Returns:** Markdown list with continuation lines indented.
 
-[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L342)
+[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L357)
 
 <a id="symbol-classdoxygen__xml__to__markdown_1_1_markdown_renderer_1a169f04f8cede74e9db10d46b04076f94"></a>
 
@@ -242,7 +242,45 @@ Turn Doxygen semantic callouts into compact labeled paragraphs.
 
 **Returns:** Markdown paragraph retaining the section's semantic label.
 
-[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L356)
+[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L371)
+
+<a id="symbol-classdoxygen__xml__to__markdown_1_1_markdown_renderer_1a566c6ae8e7560368e9ed7dfd2ebdf8bb"></a>
+
+### `_variable_list`
+
+```cpp
+str doxygen_xml_to_markdown.MarkdownRenderer._variable_list(self, ET.Element element)
+```
+
+Render paired Doxygen terms and descriptions as scannable sections.
+
+Doxygen uses this shape for generated `xrefitem` collection pages. Headings retain the originating symbol link while each description can carry structured hard line breaks and a stable cross-reference anchor.
+
+**Parameters**
+
+- `element` — `variablelist` containing alternating term and item nodes.
+
+**Returns:** Markdown sections for every complete term-description pair.
+
+[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L387)
+
+<a id="symbol-classdoxygen__xml__to__markdown_1_1_markdown_renderer_1a828b55949e12c25d02db332f3c766505"></a>
+
+### `_cross_reference`
+
+```cpp
+str doxygen_xml_to_markdown.MarkdownRenderer._cross_reference(self, ET.Element element)
+```
+
+Link one local `xrefitem` occurrence to its collected page entry.
+
+**Parameters**
+
+- `element` — `xrefsect` containing a title and full description.
+
+**Returns:** Labeled contract details with a deep link when one is known.
+
+[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L411)
 
 <a id="symbol-classdoxygen__xml__to__markdown_1_1_markdown_renderer_1aafc446ac64970815c85e1f863745de77"></a>
 
@@ -262,4 +300,4 @@ Doxygen may place a code listing or parameter list inside `para`. Markdown canno
 
 **Returns:** One or more Markdown paragraphs and blocks.
 
-[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L372)
+[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L424)

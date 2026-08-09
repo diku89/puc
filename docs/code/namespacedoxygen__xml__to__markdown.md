@@ -66,6 +66,18 @@ Elements that must interrupt inline paragraph accumulation in Markdown.
 
 [Source](../../utils/scripts/doxygen_xml_to_markdown.py#L71)
 
+<a id="symbol-namespacedoxygen__xml__to__markdown_1aba78fe575f1588ff936dcf37b26fe97b"></a>
+
+### `INLINE_LINE_BREAK`
+
+```cpp
+str doxygen_xml_to_markdown.INLINE_LINE_BREAK
+```
+
+Internal marker that survives whitespace normalization as a hard line break.
+
+[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L82)
+
 <a id="symbol-namespacedoxygen__xml__to__markdown_1aa07e70e704e76401ff4cd50fb41fa103"></a>
 
 ### `MARKDOWN_LINK`
@@ -76,7 +88,7 @@ doxygen_xml_to_markdown.MARKDOWN_LINK
 
 Local-link extractor used after rendering to reject incomplete page graphs.
 
-[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L80)
+[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L85)
 
 ## Functions
 
@@ -98,7 +110,7 @@ Formatting introduced deliberately by the renderer is added after this escape st
 
 **Returns:** Text safe to embed in a Markdown paragraph or link label.
 
-[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L138)
+[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L143)
 
 <a id="symbol-namespacedoxygen__xml__to__markdown_1af7a2234bb92623d063fc34d004b212a5"></a>
 
@@ -118,7 +130,7 @@ Doxygen indents XML for readability, but those newlines are not paragraph bounda
 
 **Returns:** Fragment with runs of whitespace collapsed to one space.
 
-[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L151)
+[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L156)
 
 <a id="symbol-namespacedoxygen__xml__to__markdown_1a184e1eb805acff5fee9fe034b3c00447"></a>
 
@@ -138,7 +150,7 @@ Signatures and code listings must remain literal code rather than contain clicka
 
 **Returns:** Concatenated textual content with code spacing preserved.
 
-[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L163)
+[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L171)
 
 <a id="symbol-namespacedoxygen__xml__to__markdown_1ae7695c80ce32fc5393163a1358b9380f"></a>
 
@@ -158,7 +170,7 @@ Explicit anchors avoid relying on renderer-specific heading slug rules and keep 
 
 **Returns:** Sanitized HTML anchor used in generated Markdown.
 
-[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L188)
+[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L196)
 
 <a id="symbol-namespacedoxygen__xml__to__markdown_1a78570448ab07b508d75f48d41a3ff338"></a>
 
@@ -177,7 +189,7 @@ Combine brief and detailed descriptions without inventing content.
 
 **Returns:** Available description sections separated as Markdown paragraphs.
 
-[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L434)
+[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L490)
 
 <a id="symbol-namespacedoxygen__xml__to__markdown_1ab556c218d969c24235a812f7da90e60c"></a>
 
@@ -197,7 +209,7 @@ Generated pages always live two directories below the repository root, so Doxyge
 
 **Returns:** Markdown source link, or an empty string when location is unknown.
 
-[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L448)
+[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L504)
 
 <a id="symbol-namespacedoxygen__xml__to__markdown_1a79339d34ae89d7f2dd20101c48b0c134"></a>
 
@@ -217,7 +229,7 @@ Function argument strings are stored separately from definitions. Macros have a 
 
 **Returns:** Plain declaration suitable for a code fence.
 
-[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L467)
+[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L523)
 
 <a id="symbol-namespacedoxygen__xml__to__markdown_1a52468d5b47e8cf6126a0b06b3af88c98"></a>
 
@@ -238,7 +250,7 @@ Enumeration values receive anchors as well as their parent so references to an i
 
 **Returns:** Complete Markdown section for the member.
 
-[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L492)
+[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L548)
 
 <a id="symbol-namespacedoxygen__xml__to__markdown_1a20ade2efe65f5c1324b0f3f51c29b998"></a>
 
@@ -256,7 +268,7 @@ Map Doxygen section codes to reader-facing headings with a fallback.
 
 **Returns:** Human-readable Markdown heading text.
 
-[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L532)
+[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L588)
 
 <a id="symbol-namespacedoxygen__xml__to__markdown_1a04c96a1a38d7384f305f16f7bc1c8f88"></a>
 
@@ -281,7 +293,7 @@ Inner classes and namespaces become a navigation list before member sections. Al
 
 - `ValueError` — If the detail XML lacks its required compound definition.
 
-[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L541)
+[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L597)
 
 <a id="symbol-namespacedoxygen__xml__to__markdown_1a451954034bee249c852ba983b5a78717"></a>
 
@@ -306,7 +318,7 @@ Load documentable compounds and establish canonical symbol ownership.
 - `ValueError` — If `index.xml` is missing.
 - `xml.etree.ElementTree.ParseError` — If XML is malformed.
 
-[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L590)
+[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L658)
 
 <a id="symbol-namespacedoxygen__xml__to__markdown_1a65b99f6312da615ad3143cd2a256dc52"></a>
 
@@ -324,7 +336,7 @@ Create a human-oriented landing page grouped by semantic kind.
 
 **Returns:** Generated `README.md` contents with deterministic ordering.
 
-[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L656)
+[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L731)
 
 <a id="symbol-namespacedoxygen__xml__to__markdown_1a41eaab36fe54b5c849cb2272288dd89a"></a>
 
@@ -346,7 +358,7 @@ Only Markdown-to-Markdown links are checked here; source and external URLs belon
 
 - `ValueError` — If a generated local link or anchor is unresolved.
 
-[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L677)
+[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L752)
 
 <a id="symbol-namespacedoxygen__xml__to__markdown_1a06f360d03e398240157cda154b741729"></a>
 
@@ -371,7 +383,7 @@ The destination must not already exist. That contract makes accidental partial o
 - `OSError` — If input cannot be read or output cannot be created.
 - `xml.etree.ElementTree.ParseError` — If Doxygen XML is malformed.
 
-[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L702)
+[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L777)
 
 <a id="symbol-namespacedoxygen__xml__to__markdown_1afc06a5a38b74c234cc888d1ee47082e3"></a>
 
@@ -389,7 +401,7 @@ Parse explicit input and output directories for Bazel invocation.
 
 **Returns:** Parsed path arguments.
 
-[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L729)
+[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L804)
 
 <a id="symbol-namespacedoxygen__xml__to__markdown_1ace15ef2eda791c07f6261cce12d95810"></a>
 
@@ -409,4 +421,4 @@ Tracebacks are useful during development but obscure the actionable cause in CI.
 
 **Returns:** 0 on success or 1 for an expected conversion failure.
 
-[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L743)
+[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L818)

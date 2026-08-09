@@ -14,6 +14,13 @@ doxygen(
         "//utils/scripts:code_docs_srcs",
     ],
     outs = ["xml"],
+    # Communication contracts share one cross-reference page. The double-pipe
+    # separator keeps ordinary prose commas usable without escaping.
+    aliases = [
+        "channel{4||}=@xrefitem puc_protocol_contracts \\\"Protocol Contract\\\" \\\"PUC Protocol Contracts\\\" @b Kind: Channel @n @b Name: @c \\1 @n @b Purpose: \\2 @n @b Producers: \\3 @n @b Consumers: \\4",
+        "msg{4||}=@xrefitem puc_protocol_contracts \\\"Protocol Contract\\\" \\\"PUC Protocol Contracts\\\" @b Kind: Message @n @b Type: @ref \\1 \\\"\\1\\\" @n @b Purpose: \\2 @n @b Producers: \\3 @n @b Consumers: \\4",
+        "msg_id{5||}=@xrefitem puc_protocol_contracts \\\"Protocol Contract\\\" \\\"PUC Protocol Contracts\\\" @b Kind: Message ID @n @b ID: @c \\1 @n @b Message: @ref \\2 \\\"\\2\\\" @n @b Purpose: \\3 @n @b Producers: \\4 @n @b Consumers: \\5",
+    ],
     # Doxygen's SYSTEM default follows filesystem case sensitivity, changing
     # XML refids and Markdown filenames between macOS and Linux.
     case_sense_names = False,

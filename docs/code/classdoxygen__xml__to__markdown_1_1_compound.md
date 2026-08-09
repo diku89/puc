@@ -12,4 +12,4 @@ Keep index metadata and parsed detail XML together for one page.
 - `page` — Destination Markdown filename.
 - `element` — Parsed root of the compound's XML document.
 
-[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L108)
+[Source](../../utils/scripts/doxygen_xml_to_markdown.py#L113)

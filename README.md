@@ -89,6 +89,22 @@ git diff -- docs/code
 git add docs/code
 ```
 
+Channels, typed messages, and numeric message IDs are collected into one
+generated [PUC Protocol Contracts](docs/code/puc_protocol_contracts.md) page
+with structured custom commands:
+
+```cpp
+/// \channel{//screen/events||Purpose text||Producer symbols||Consumer symbols}
+/// \msg{puc::msg::Event||Purpose text||Producer symbols||Consumer symbols}
+/// \msg_id{42||puc::msg::Event||Purpose text||Producer symbols||Consumer symbols}
+```
+
+The arguments use `||` as their separator, so normal commas remain available
+in prose. Use Doxygen `\ref` commands in producer and consumer arguments when a
+named C++ symbol should be linked. Every entry must state its purpose and both
+sides of the contract; this keeps the generated list useful as an architectural
+inventory rather than merely a symbol index.
+
 ## Contributors
 
 GitHub requires signed commits. First configure a Git-supported GPG, SSH, or
