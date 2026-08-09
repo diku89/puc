@@ -34,6 +34,12 @@
 - [`puc::logger::Logger`](classpuc_1_1logger_1_1_logger.md)
 - [`puc::logger::LogLine`](classpuc_1_1logger_1_1_log_line.md)
 - [`puc::logger::LogStarter`](classpuc_1_1logger_1_1_log_starter.md)
+- [`puc::msg::Codec`](classpuc_1_1msg_1_1_codec.md)
+- [`puc::msg::CodecBase`](classpuc_1_1msg_1_1_codec_base.md)
+- [`puc::msg::MessageCodecCollection`](classpuc_1_1msg_1_1_message_codec_collection.md)
+- [`puc::msg::NullMessageCodec`](classpuc_1_1msg_1_1_null_message_codec.md)
+- [`puc::msg::ScreenCommandCodec`](classpuc_1_1msg_1_1_screen_command_codec.md)
+- [`puc::msg::ScreenResizeEventCodec`](classpuc_1_1msg_1_1_screen_resize_event_codec.md)
 - [`puc::multithreading::Job`](classpuc_1_1multithreading_1_1_job.md)
 - [`puc::multithreading::JobQueue`](classpuc_1_1multithreading_1_1_job_queue.md)
 - [`puc::multithreading::PeriodicJobHandle`](classpuc_1_1multithreading_1_1_periodic_job_handle.md)
@@ -50,6 +56,7 @@
 - [`puc::containers::TrieValue`](conceptpuc_1_1containers_1_1_trie_value.md)
 - [`puc::execution\_graph::ExecutionGraphJob`](conceptpuc_1_1execution__graph_1_1_execution_graph_job.md)
 - [`puc::execution\_graph::ExecutionGraphNode`](conceptpuc_1_1execution__graph_1_1_execution_graph_node.md)
+- [`puc::msg::MessageValue`](conceptpuc_1_1msg_1_1_message_value.md)
 
 ## File
 
@@ -60,6 +67,8 @@
 - [`channel.hpp`](channel_8hpp.md)
 - [`check\_authors.py`](check__authors_8py.md)
 - [`check\_signatures.py`](check__signatures_8py.md)
+- [`codec.cpp`](codec_8cpp.md)
+- [`codec.hpp`](codec_8hpp.md)
 - [`config.cpp`](config_8cpp.md)
 - [`config.hpp`](config_8hpp.md)
 - [`directory.cpp`](directory_8cpp.md)
@@ -85,7 +94,9 @@
 - [`metachannel.hpp`](metachannel_8hpp.md)
 - [`msg.cpp`](msg_8cpp.md)
 - [`msg.hpp`](msg_8hpp.md)
+- [`msgs.hpp`](msgs_8hpp.md)
 - [`multithreading.hpp`](multithreading_8hpp.md)
+- [`null\_message.hpp`](null__message_8hpp.md)
 - [`post-checkout`](post-checkout.md)
 - [`post-merge`](post-merge.md)
 - [`post-rewrite`](post-rewrite.md)
@@ -93,11 +104,14 @@
 - [`pre-push`](pre-push.md)
 - [`screen.cpp`](screen_8cpp.md)
 - [`screen.hpp`](screen_8hpp.md)
+- [`screen\_msgs.cpp`](screen__msgs_8cpp.md)
+- [`screen\_msgs.hpp`](screen__msgs_8hpp.md)
 - [`smem\_channel.cpp`](smem__channel_8cpp.md)
 - [`smem\_channel.hpp`](smem__channel_8hpp.md)
 - [`socket\_channel.cpp`](socket__channel_8cpp.md)
 - [`socket\_channel.hpp`](socket__channel_8hpp.md)
 - [`state.hpp`](state_8hpp.md)
+- [`status.hpp`](msgs_2status_8hpp.md)
 - [`status.hpp`](puc-cli_2tui_2status_8hpp.md)
 - [`status.hpp`](utils_2execution__graph_2status_8hpp.md)
 - [`status.hpp`](utils_2ipc_2status_8hpp.md)
@@ -126,9 +140,15 @@
 - [`puc::ipc`](namespacepuc_1_1ipc.md)
 - [`puc::ipc::detail`](namespacepuc_1_1ipc_1_1detail.md)
 - [`puc::logger`](namespacepuc_1_1logger.md)
+- [`puc::msg`](namespacepuc_1_1msg.md)
 - [`puc::multithreading`](namespacepuc_1_1multithreading.md)
 - [`puc::multithreading::detail`](namespacepuc_1_1multithreading_1_1detail.md)
 - [`puc::tui`](namespacepuc_1_1tui.md)
+- [`std`](namespacestd.md)
+
+## Page
+
+- [`PUC Protocol Contracts`](puc_protocol_contracts.md)
 
 ## Struct
 
@@ -154,6 +174,14 @@
 - [`puc::ipc::WireHeader`](structpuc_1_1ipc_1_1_wire_header.md)
 - [`puc::logger::LoggerConf`](structpuc_1_1logger_1_1_logger_conf.md)
 - [`puc::logger::ModuleConf`](structpuc_1_1logger_1_1_module_conf.md)
+- [`puc::msg::NullMessage`](structpuc_1_1msg_1_1_null_message.md)
+- [`puc::msg::ScreenCommand`](structpuc_1_1msg_1_1_screen_command.md)
+- [`puc::msg::ScreenPresentCommand`](structpuc_1_1msg_1_1_screen_present_command.md)
+- [`puc::msg::ScreenReleaseCommand`](structpuc_1_1msg_1_1_screen_release_command.md)
+- [`puc::msg::ScreenResizeEvent`](structpuc_1_1msg_1_1_screen_resize_event.md)
+- [`puc::msg::ScreenSessionOptions`](structpuc_1_1msg_1_1_screen_session_options.md)
+- [`puc::msg::ScreenSetClipboardCommand`](structpuc_1_1msg_1_1_screen_set_clipboard_command.md)
+- [`puc::msg::ScreenTakeCommand`](structpuc_1_1msg_1_1_screen_take_command.md)
 - [`puc::multithreading::detail::PeriodicJobState`](structpuc_1_1multithreading_1_1detail_1_1_periodic_job_state.md)
 - [`puc::multithreading::JobQueue::JobEntry`](structpuc_1_1multithreading_1_1_job_queue_1_1_job_entry.md)
 - [`puc::tui::Canvas::Cell`](structpuc_1_1tui_1_1_canvas_1_1_cell.md)
@@ -168,6 +196,9 @@
 - [`puc::tui::State`](structpuc_1_1tui_1_1_state.md)
 - [`puc::tui::Theme::Colors`](structpuc_1_1tui_1_1_theme_1_1_colors.md)
 - [`puc::tui::ZBuffer::Entry`](structpuc_1_1tui_1_1_z_buffer_1_1_entry.md)
+- [`std::formatter< puc::msg::NullMessage, char >`](structstd_1_1formatter_3_01puc_1_1msg_1_1_null_message_00_01char_01_4.md)
+- [`std::formatter< puc::msg::ScreenCommand, char >`](structstd_1_1formatter_3_01puc_1_1msg_1_1_screen_command_00_01char_01_4.md)
+- [`std::formatter< puc::msg::ScreenResizeEvent, char >`](structstd_1_1formatter_3_01puc_1_1msg_1_1_screen_resize_event_00_01char_01_4.md)
 
 ## Union
 
