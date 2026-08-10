@@ -1,0 +1,13 @@
+{
+  "format_version": 1,
+  "licenses": [
+    {
+      "repository": "https://github.com/cktan/tomlc17",
+      "license_file": "licenses/tomlc17/LICENSE"
+    },
+    {
+      "repository": "https://github.com/deadpixi/libtmt",
+      "license_file": "licenses/libtmt/LICENSE"
+    }
+  ]
+}
