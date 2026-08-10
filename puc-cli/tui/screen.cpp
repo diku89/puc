@@ -532,6 +532,13 @@ Status Screen::handle_mouse_event(
   }
 
   if (click_count == 1U) {
+    if (gesture.frame->accepts_cursor_placement()) {
+      const Status status = gesture.frame->place_cursor(extent);
+      if (!is_ok(status)) {
+        clear_click_history();
+        return status;
+      }
+    }
     click_history_ = ClickHistory{
         .frame_id  = gesture.frame_id,
         .frame     = gesture.frame,
@@ -562,6 +569,15 @@ Status Screen::handle_mouse_event(
     arm_click_timeout();
   }
   return status;
+}
+
+Status Screen::select_all(std::string_view frame_id,
+                          const std::shared_ptr<Frame>& frame) {
+  const std::lock_guard lock(selection_mutex_);
+  pointer_selection_gesture_.reset();
+  clear_click_history();
+  return selection_state_machine_.apply(
+      frame_id, frame, SelectionEvent{.type = SelectionEventType::SELECT_ALL});
 }
 
 void Screen::clear_click_history() noexcept {

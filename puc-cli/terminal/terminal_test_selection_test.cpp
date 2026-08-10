@@ -133,6 +133,26 @@ TEST(TerminalTestSelectionTest, SelectLineExtractsExactlyOneLogicalLine) {
             }));
 }
 
+TEST(TerminalTestSelectionTest, SelectAllExtractsEveryLogicalLine) {
+  TerminalTestSelection selection;
+  selection.set_lines({
+      {.x = 7, .y = 2, .text = "first line"},
+      {.x = 9, .y = 4, .text = "second line"},
+  });
+
+  ASSERT_EQ(
+      selection.update(SelectionEvent{.type = SelectionEventType::SELECT_ALL}),
+      Status::OK);
+  std::string output;
+  ASSERT_EQ(selection.selected_text(output), Status::OK);
+  EXPECT_EQ(output, "first line\nsecond line");
+  EXPECT_EQ(selection.highlight_spans(),
+            (std::vector<HighlightSpan>{
+                {.line = 0U, .first = 0U, .last = 9U},
+                {.line = 1U, .first = 0U, .last = 10U},
+            }));
+}
+
 TEST(TerminalTestSelectionTest, ResetClearsRangeAndExtractedOutput) {
   TerminalTestSelection selection;
   selection.set_lines({{.x = 0, .y = 0, .text = "selected"}});

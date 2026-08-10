@@ -409,8 +409,28 @@ std::optional<InputProtocol> input_protocol(std::string_view name) noexcept {
 
 /** Parse one high-level command name stored directly in the input Trie. */
 std::optional<Command> command(std::string_view name) noexcept {
-  if (name == "COPY") {
-    return Command::COPY;
+  struct Entry {
+    std::string_view name;
+    Command command;
+  };
+  constexpr Entry kEntries[] = {
+      {"COPY", Command::COPY},
+      {"SELECT_ALL", Command::SELECT_ALL},
+      {"ENTER_COMMAND_MODE", Command::ENTER_COMMAND_MODE},
+      {"ENTER_TERMINAL_MODE", Command::ENTER_TERMINAL_MODE},
+      {"MOVE_WORD_LEFT", Command::MOVE_WORD_LEFT},
+      {"MOVE_WORD_RIGHT", Command::MOVE_WORD_RIGHT},
+      {"MOVE_ROW_START", Command::MOVE_ROW_START},
+      {"MOVE_ROW_END", Command::MOVE_ROW_END},
+      {"MOVE_BUFFER_START", Command::MOVE_BUFFER_START},
+      {"MOVE_BUFFER_END", Command::MOVE_BUFFER_END},
+      {"MOVE_PAGE_UP", Command::MOVE_PAGE_UP},
+      {"MOVE_PAGE_DOWN", Command::MOVE_PAGE_DOWN},
+  };
+  for (const Entry& entry : kEntries) {
+    if (entry.name == name) {
+      return entry.command;
+    }
   }
   return std::nullopt;
 }
@@ -613,9 +633,6 @@ Status InputMap::setup(const config::Config& configurations, InputMap& output,
           "terminal-specific profiles may not redefine terminfo declarations");
       status = Status::CONFIGURATION_PARSE_FAILED;
     }
-    if (is_ok(status)) {
-      status = candidate.apply_mappings(terminal_profile.document.root());
-    }
   }
   if (is_ok(status)) {
     status = candidate.apply_mappings(configured.document.root());
@@ -649,6 +666,9 @@ Status InputMap::setup(const config::Config& configurations, InputMap& output,
     if (is_ok(status)) {
       status = candidate.apply_mappings(root);
     }
+  }
+  if (is_ok(status) && terminal_profile.status == config::Status::OK) {
+    status = candidate.apply_mappings(terminal_profile.document.root());
   }
   if (is_ok(status)) {
     status = candidate.validate_command_sequences();

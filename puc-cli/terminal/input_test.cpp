@@ -5,6 +5,7 @@
 
 #include "puc-cli/terminal/input.hpp"
 
+#include <chrono>
 #include <cstdio>
 #include <cstdlib>
 #include <filesystem>
@@ -16,9 +17,12 @@
 
 #include "gtest/gtest.h"
 #include "puc-cli/terminal/decoder.hpp"
+#include "puc-cli/tui/input_frame.hpp"
 
 namespace puc::terminal {
 namespace {
+
+using namespace std::chrono_literals;
 
 /** Primary and user roots created below Bazel's per-test temporary directory.
  */
@@ -138,7 +142,9 @@ TEST(TerminalInputSetupTest, PucConfigAppearsAtItsDeclaredRunfilesPath) {
     EXPECT_EQ(defaults.find("version").as_integer(), 1) << path;
     ASSERT_EQ(defaults.find("mapping").type(), config::ValueType::ARRAY)
         << path;
-    EXPECT_EQ(defaults.find("mapping").size(), 1U) << path;
+    const std::size_t expected_mappings =
+        path == "darwin-defaults.toml" ? 20U : 1U;
+    EXPECT_EQ(defaults.find("mapping").size(), expected_mappings) << path;
     EXPECT_EQ(defaults.find("mapping").at(0U).find("kind").as_string(),
               "command")
         << path;
@@ -146,6 +152,13 @@ TEST(TerminalInputSetupTest, PucConfigAppearsAtItsDeclaredRunfilesPath) {
               "COPY")
         << path;
   }
+
+  const config::LoadResult ghostty =
+      runfiles_config().load("terminals/xterm-ghostty.toml");
+  ASSERT_EQ(ghostty.status, config::Status::OK);
+  EXPECT_EQ(ghostty.find("version").as_integer(), 1);
+  ASSERT_EQ(ghostty.find("mapping").type(), config::ValueType::ARRAY);
+  EXPECT_EQ(ghostty.find("mapping").size(), 4U);
 }
 
 TEST(TerminalInputSetupTest, SelectsAStableDefaultsPathForEverySupportedOs) {
@@ -183,6 +196,210 @@ TEST(TerminalInputSetupTest, PackagedOsDefaultsEmitCopyDirectlyFromTheTrie) {
   EXPECT_EQ(events.front(), Event{CommandEvent{.command = Command::COPY}});
 }
 
+TEST(TerminalInputSetupTest, EscapeColonEmitsCommandModeIntentFromTheTrie) {
+  Decoder decoder;
+  ASSERT_EQ(decoder.setup(runfiles_config(), "xterm-256color"), Status::OK);
+
+  const std::vector<Event> events = decode(decoder, "\x1b:");
+  ASSERT_EQ(events.size(), 1U);
+  EXPECT_EQ(events.front(),
+            Event{CommandEvent{.command = Command::ENTER_COMMAND_MODE}});
+}
+
+TEST(TerminalInputSetupTest,
+     EscapeGreaterThanEmitsTerminalModeIntentFromTheTrie) {
+  Decoder decoder;
+  ASSERT_EQ(decoder.setup(runfiles_config(), "xterm-256color"), Status::OK);
+
+  const std::vector<Event> events = decode(decoder, "\x1b>");
+  ASSERT_EQ(events.size(), 1U);
+  EXPECT_EQ(events.front(),
+            Event{CommandEvent{.command = Command::ENTER_TERMINAL_MODE}});
+}
+
+TEST(TerminalInputIntegrationTest,
+     LegacyAndEnhancedEscapeColonReachTheSameFrameTransition) {
+  const auto exercise = [](std::string_view bytes) {
+    Decoder decoder;
+    ASSERT_EQ(decoder.setup(runfiles_config(), "xterm-256color"), Status::OK);
+    std::vector<Event> events = decode(decoder, bytes);
+    ASSERT_FALSE(events.empty());
+
+    tui::InputFrame frame;
+    const auto start = tui::InputFrame::Clock::time_point{} + 1s;
+    ASSERT_EQ(frame.handle_event(Event{TextEvent{.utf8 = "normal"}}, start),
+              tui::Status::OK);
+    for (std::size_t index = 0U; index < events.size(); ++index) {
+      ASSERT_EQ(frame.handle_event(events[index], start + (index + 1U) * 1ms),
+                tui::Status::OK);
+    }
+    EXPECT_EQ(frame.snapshot().mode, tui::InputMode::COMMAND);
+    EXPECT_EQ(frame.snapshot().input_text, "normal");
+    EXPECT_TRUE(frame.snapshot().command_text.empty());
+  };
+
+  exercise("\x1b:");
+  // REPORT_ALL_KEYS emits the Shift press used to type colon as its own event.
+  exercise("\x1b[27u\x1b[57441;2u\x1b[59:58;2;58u");
+}
+
+TEST(TerminalInputIntegrationTest,
+     LegacyAndEnhancedEscapeGreaterThanReachTheSameFrameTransition) {
+  const auto exercise = [](std::string_view bytes) {
+    Decoder decoder;
+    ASSERT_EQ(decoder.setup(runfiles_config(), "xterm-256color"), Status::OK);
+    std::vector<Event> events = decode(decoder, bytes);
+    ASSERT_FALSE(events.empty());
+
+    tui::InputFrame frame;
+    const auto start = tui::InputFrame::Clock::time_point{} + 1s;
+    ASSERT_EQ(frame.handle_event(Event{TextEvent{.utf8 = "normal"}}, start),
+              tui::Status::OK);
+    for (std::size_t index = 0U; index < events.size(); ++index) {
+      ASSERT_EQ(frame.handle_event(events[index], start + (index + 1U) * 1ms),
+                tui::Status::OK);
+    }
+    EXPECT_EQ(frame.snapshot().mode, tui::InputMode::TERMINAL);
+    EXPECT_EQ(frame.snapshot().input_text, "normal");
+    EXPECT_TRUE(frame.snapshot().terminal_session_active);
+  };
+
+  exercise("\x1b>");
+  // REPORT_ALL_KEYS emits the Shift press used to type greater-than separately.
+  exercise("\x1b[27u\x1b[57441;2u\x1b[46:62;2;62u");
+}
+
+TEST(TerminalInputIntegrationTest,
+     DecoderNormalizedDoubleEscapeClearsTheFrame) {
+  Decoder decoder;
+  ASSERT_EQ(decoder.setup(runfiles_config(), "xterm-256color"), Status::OK);
+  const std::vector<Event> events = decode(decoder, "\x1b\x1b");
+  ASSERT_EQ(events.size(), 1U);
+
+  tui::InputFrame frame;
+  ASSERT_EQ(frame.handle_event(Event{TextEvent{.utf8 = "clear me"}}),
+            tui::Status::OK);
+  ASSERT_EQ(frame.handle_event(events.front()), tui::Status::OK);
+  EXPECT_TRUE(frame.snapshot().input_text.empty());
+  EXPECT_FALSE(frame.snapshot().escape_armed);
+}
+
+TEST(TerminalInputIntegrationTest,
+     DecoderTimeoutArmsThenFrameTimeoutDismissesEscapePrompt) {
+  Decoder decoder;
+  ASSERT_EQ(decoder.setup(runfiles_config(), "xterm-256color"), Status::OK);
+  std::vector<Event> events;
+  ASSERT_EQ(decoder.feed("\x1b", events), Status::OK);
+  ASSERT_TRUE(events.empty());
+  const std::optional<TimeoutInput> pending = decoder.pending_timeout();
+  ASSERT_TRUE(pending.has_value());
+  ASSERT_EQ(decoder.handle_timeout(*pending, events), Status::OK);
+  ASSERT_EQ(events.size(), 1U);
+
+  tui::InputFrame frame;
+  const auto start = tui::InputFrame::Clock::time_point{} + 1s;
+  ASSERT_EQ(frame.handle_event(Event{TextEvent{.utf8 = "keep"}}, start),
+            tui::Status::OK);
+  ASSERT_EQ(frame.handle_event(events.front(), start + 1ms), tui::Status::OK);
+  EXPECT_TRUE(frame.snapshot().escape_armed);
+  frame.advance_time(start + 501ms);
+  EXPECT_FALSE(frame.snapshot().escape_armed);
+  EXPECT_EQ(frame.snapshot().input_text, "keep");
+}
+
+TEST(TerminalInputSetupTest, DarwinDefaultsDeclareMacNavigationCommands) {
+  const config::LoadResult defaults =
+      runfiles_config().load("darwin-defaults.toml");
+  ASSERT_EQ(defaults.status, config::Status::OK);
+  const config::Value mappings = defaults.find("mapping");
+  ASSERT_EQ(mappings.size(), 20U);
+  EXPECT_EQ(mappings.at(1U).find("command").as_string(), "MOVE_WORD_LEFT");
+  EXPECT_EQ(mappings.at(2U).find("command").as_string(), "MOVE_WORD_RIGHT");
+  EXPECT_EQ(mappings.at(3U).find("sequence").as_string(), "<ESC>b");
+  EXPECT_EQ(mappings.at(4U).find("sequence").as_string(), "<ESC>f");
+  EXPECT_EQ(mappings.at(10U).find("sequence").as_string(), "<CSI>57353;3u");
+  EXPECT_EQ(mappings.at(11U).find("command").as_string(), "MOVE_ROW_START");
+  EXPECT_EQ(mappings.at(14U).find("command").as_string(), "MOVE_BUFFER_END");
+  EXPECT_EQ(mappings.at(15U).find("sequence").as_string(), "<CSI>57350;9u");
+  EXPECT_EQ(mappings.at(18U).find("command").as_string(), "MOVE_BUFFER_END");
+  EXPECT_EQ(mappings.at(19U).find("command").as_string(), "SELECT_ALL");
+}
+
+TEST(TerminalInputSetupTest, GhosttyProfileDeclaresReachableMacFallbacks) {
+  const config::LoadResult profile =
+      runfiles_config().load("terminals/xterm-ghostty.toml");
+  ASSERT_EQ(profile.status, config::Status::OK);
+  const config::Value mappings = profile.find("mapping");
+  ASSERT_EQ(mappings.size(), 4U);
+  EXPECT_EQ(mappings.at(0U).find("sequence").as_string(), "^A");
+  EXPECT_EQ(mappings.at(0U).find("command").as_string(), "MOVE_ROW_START");
+  EXPECT_EQ(mappings.at(1U).find("sequence").as_string(), "<CSI>97;5u");
+  EXPECT_EQ(mappings.at(1U).find("command").as_string(), "SELECT_ALL");
+  EXPECT_EQ(mappings.at(2U).find("sequence").as_string(), "^E");
+  EXPECT_EQ(mappings.at(2U).find("command").as_string(), "MOVE_ROW_END");
+  EXPECT_EQ(mappings.at(3U).find("command").as_string(), "SELECT_ALL");
+}
+
+TEST(TerminalInputSetupTest, PackagedGhosttyMacFallbacksDecodeFromTrie) {
+  Decoder decoder;
+  const Status setup = decoder.setup(runfiles_config(), "xterm-ghostty");
+  if (setup == Status::TERMINFO_LOAD_FAILED) {
+    GTEST_SKIP() << "xterm-ghostty terminfo is not installed on this host";
+  }
+  ASSERT_EQ(setup, Status::OK);
+
+  const struct {
+    std::string_view sequence;
+    Command command;
+  } cases[] = {
+      {"\x01", Command::MOVE_ROW_START},
+      {"\x1b[97;5u", Command::SELECT_ALL},
+      {"\x05", Command::MOVE_ROW_END},
+      {"\x1b[97;6u", Command::SELECT_ALL},
+  };
+  for (const auto& test_case : cases) {
+    const std::vector<Event> events = decode(decoder, test_case.sequence);
+    ASSERT_EQ(events.size(), 1U) << test_case.sequence;
+    EXPECT_EQ(events.front(), Event{CommandEvent{.command = test_case.command}})
+        << test_case.sequence;
+  }
+}
+
+TEST(TerminalInputSetupTest, DarwinDefaultsDecodeCommonMacNavigationForms) {
+  if (current_operating_system() != OperatingSystem::DARWIN) {
+    GTEST_SKIP() << "Darwin defaults are active only on macOS";
+  }
+
+  Decoder decoder;
+  ASSERT_EQ(decoder.setup(runfiles_config(), "xterm-256color"), Status::OK);
+  const struct {
+    std::string_view sequence;
+    Command command;
+  } cases[] = {
+      {"\x1b"
+       "b",
+       Command::MOVE_WORD_LEFT},
+      {"\x1b"
+       "f",
+       Command::MOVE_WORD_RIGHT},
+      {"\x1b[57350;3u", Command::MOVE_WORD_LEFT},
+      {"\x1b[57351;3u", Command::MOVE_WORD_RIGHT},
+      {"\x1b[57352;3u", Command::MOVE_PAGE_UP},
+      {"\x1b[57353;3u", Command::MOVE_PAGE_DOWN},
+      {"\x1b[57350;9u", Command::MOVE_ROW_START},
+      {"\x1b[57351;9u", Command::MOVE_ROW_END},
+      {"\x1b[57352;9u", Command::MOVE_BUFFER_START},
+      {"\x1b[57353;9u", Command::MOVE_BUFFER_END},
+      {"\x1b[97;9u", Command::SELECT_ALL},
+  };
+  for (const auto& test_case : cases) {
+    const std::vector<Event> events = decode(decoder, test_case.sequence);
+    ASSERT_EQ(events.size(), 1U) << test_case.sequence;
+    EXPECT_EQ(events.front(), Event{CommandEvent{.command = test_case.command}})
+        << test_case.sequence;
+  }
+}
+
 TEST(TerminalInputSetupTest, PlainControlCRemainsAKeyAndNotACopyCommand) {
   Decoder decoder;
   ASSERT_EQ(decoder.setup(runfiles_config(), "xterm-256color"), Status::OK);
@@ -211,7 +428,7 @@ TEST(TerminalInputSetupTest, LoadsThePackagedProfileAtRuntime) {
 }
 
 TEST(TerminalInputSetupTest,
-     AppliesTerminfoThenTerminalProfileThenFinalTomlMappings) {
+     AppliesTerminfoThenUniversalAndOsThenFinalTerminalProfile) {
   const ProfileRoots roots = profile_roots("source_hierarchy");
   ASSERT_TRUE(write_profile(roots.primary / "input_keys.toml", R"toml(
 version = 1
@@ -257,7 +474,7 @@ key = "END"
 
   const std::vector<Event> events = decode(decoder, "\x1b[Ay");
   ASSERT_EQ(events.size(), 2U);
-  EXPECT_EQ(events[0], Event{KeyEvent{.key = NamedKey::END}});
+  EXPECT_EQ(events[0], Event{KeyEvent{.key = NamedKey::PAGE_UP}});
   EXPECT_EQ(events[1], Event{KeyEvent{.key = NamedKey::PAGE_DOWN}});
 }
 

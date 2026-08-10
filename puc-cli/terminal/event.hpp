@@ -341,7 +341,18 @@ struct ClipboardEvent {
 
 /** High-level application commands selected by configured input sequences. */
 enum class Command {
-  COPY, /**< Copy the application's completed logical selection. */
+  COPY,       /**< Copy the application's completed logical selection. */
+  SELECT_ALL, /**< Select all logical text in the focused application field. */
+  ENTER_COMMAND_MODE,  /**< Replace the active editor with a command buffer. */
+  ENTER_TERMINAL_MODE, /**< Show the libtmt-backed terminal surface. */
+  MOVE_WORD_LEFT,      /**< Move an editor caret to the preceding word. */
+  MOVE_WORD_RIGHT,     /**< Move an editor caret to the following word. */
+  MOVE_ROW_START,      /**< Move an editor caret to the start of its row. */
+  MOVE_ROW_END,        /**< Move an editor caret to the end of its row. */
+  MOVE_BUFFER_START,   /**< Move an editor caret to the beginning of input. */
+  MOVE_BUFFER_END,     /**< Move an editor caret to the end of input. */
+  MOVE_PAGE_UP,        /**< Move an editor caret up one visible page. */
+  MOVE_PAGE_DOWN,      /**< Move an editor caret down one visible page. */
 };
 
 /**

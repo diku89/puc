@@ -15,6 +15,7 @@ cc_library(
     srcs = [
         "canvas.cpp",
         "frame.cpp",
+        "input_frame.cpp",
         "layout.cpp",
         "renderer.cpp",
         "screen.cpp",
@@ -25,6 +26,7 @@ cc_library(
     hdrs = [
         "canvas.hpp",
         "frame.hpp",
+        "input_frame.hpp",
         "layout.hpp",
         "renderer.hpp",
         "screen.hpp",
@@ -37,6 +39,7 @@ cc_library(
     deps = [
         "//msgs",
         "//puc-cli/terminal",
+        "//third_party:tmt",
         "//utils/execution_graph",
         "//utils/ipc",
         "//utils/logger",
@@ -59,6 +62,7 @@ cc_test(
     size = "small",
     srcs = [
         "canvas_test.cpp",
+        "input_frame_test.cpp",
         "layout_test.cpp",
         "renderer_test.cpp",
         "screen_test.cpp",
@@ -72,6 +76,7 @@ cc_test(
         "//puc-cli/terminal:darwin_defaults_config",
         "//puc-cli/terminal:input_config",
         "//puc-cli/terminal:linux_defaults_config",
+        "//puc-cli/terminal:xterm_ghostty_defaults_config",
     ],
     linkopts = select({
         ":linux": ["-lutil"],

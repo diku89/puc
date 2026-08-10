@@ -562,6 +562,22 @@ TEST(TerminalDecoderTest, DecodesEveryParameterizedCsiLetterKey) {
     const std::vector<Event> events =
         decode(decoder, "\x1b[1;3" + std::string{key.sequence});
     ASSERT_EQ(events.size(), 1U) << key.sequence;
+    if (current_operating_system() == OperatingSystem::DARWIN) {
+      std::optional<Command> mac_command;
+      if (key.key == NamedKey::UP) {
+        mac_command = Command::MOVE_PAGE_UP;
+      } else if (key.key == NamedKey::DOWN) {
+        mac_command = Command::MOVE_PAGE_DOWN;
+      } else if (key.key == NamedKey::LEFT) {
+        mac_command = Command::MOVE_WORD_LEFT;
+      } else if (key.key == NamedKey::RIGHT) {
+        mac_command = Command::MOVE_WORD_RIGHT;
+      }
+      if (mac_command.has_value()) {
+        EXPECT_EQ(events[0], Event{CommandEvent{.command = *mac_command}});
+        continue;
+      }
+    }
     expect_named_key(events[0], key.key, Modifier::ALT);
   }
 }
@@ -623,6 +639,18 @@ TEST(TerminalDecoderTest, DecodesKittyAlternateKeysAndAssociatedText) {
   EXPECT_EQ(event.base_layout_key, U'c');
   EXPECT_EQ(event.modifiers, Modifiers{Modifier::SHIFT});
   EXPECT_EQ(event.text, "A");
+}
+
+TEST(TerminalDecoderTest, DecodesEnhancedColonWithAssociatedText) {
+  Decoder decoder                 = configured_decoder();
+  const std::vector<Event> events = decode(decoder, "\x1b[59:58;2;58u");
+
+  ASSERT_EQ(events.size(), 1U);
+  const KeyEvent& event = key_event(events[0]);
+  EXPECT_EQ(std::get<char32_t>(event.key.value), U';');
+  EXPECT_EQ(event.shifted_key, U':');
+  EXPECT_EQ(event.modifiers, Modifiers{Modifier::SHIFT});
+  EXPECT_EQ(event.text, ":");
 }
 
 TEST(TerminalDecoderTest, DecodesPureKittyTextEvents) {

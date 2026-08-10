@@ -151,11 +151,13 @@ static_assert(std::regular<InputAction>);
  * into the decoder. In increasing authority, that hierarchy is:
  *
  * 1. key sequences materialized from terminfo;
- * 2. an optional `terminals/<TERM>.toml` terminal profile; and
- * 3. `input_keys.toml`, merged by Config from system defaults followed by user
- *    overrides; and
- * 4. the detected host's `*-defaults.toml`, likewise merged with its same-path
- *    user override.
+ * 2. `input_keys.toml`, merged by Config from system defaults followed by user
+ *    overrides;
+ * 3. the detected host's `*-defaults.toml`, likewise merged with its same-path
+ *    user override; and
+ * 4. an optional `terminals/<TERM>.toml` terminal profile, whose system and
+ *    user documents are merged by Config before this most-specific layer is
+ *    applied.
  *
  * Later declarations replace earlier exact paths. Generic protocol actions
  * remain accepting prefixes beneath more-specific terminfo, profile, and TOML
@@ -165,7 +167,8 @@ static_assert(std::regular<InputAction>);
  * every pair of active semantic command sequences for which either byte path
  * is a prefix of the other. Duplicate commands in one physical source file
  * are also rejected; exact declarations from distinct system and user files
- * retain their documented override behavior.
+ * retain their documented override behavior. Terminal-specific mappings are
+ * final so an emulator quirk can replace otherwise correct OS conventions.
  */
 class InputMap {
  private:

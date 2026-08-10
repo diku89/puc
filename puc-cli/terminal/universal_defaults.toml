@@ -12,6 +12,21 @@ sequence = "<ESC>"
 kind = "protocol"
 protocol = "ESCAPE"
 
+# Escape followed by a colon is an application command, not an Alt-modified
+# printable character. Keeping this in the input trie also makes the chord
+# independent of the decoder's standalone-Escape timeout.
+[[mapping]]
+sequence = "<ESC>:"
+kind = "command"
+command = "ENTER_COMMAND_MODE"
+
+# Escape followed by greater-than opens the embedded terminal surface. As with
+# command mode, this belongs in the trie so it is independent of Escape timing.
+[[mapping]]
+sequence = "<ESC>>"
+kind = "command"
+command = "ENTER_TERMINAL_MODE"
+
 [[mapping]]
 sequence = "<ESC>O"
 kind = "protocol"

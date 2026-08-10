@@ -34,6 +34,17 @@ tui::Status TerminalTestSelection::update(const tui::SelectionEvent& event) {
     selection_.reset();
     return tui::Status::OK;
   }
+  if (event.type == tui::SelectionEventType::SELECT_ALL) {
+    if (lines_.empty()) {
+      return tui::Status::NO_SELECTION;
+    }
+    selection_ = LogicalSelection{
+        .first = {},
+        .last  = {.line   = lines_.size() - 1U,
+                  .column = lines_.back().text.size() - 1U},
+    };
+    return tui::Status::OK;
+  }
 
   const std::optional<LogicalPosition> extent = map_position(event.extent);
   if (!extent.has_value()) {

@@ -1,0 +1,30 @@
+version = 1
+
+# Ghostty's stock Command-Left binding injects the traditional readline Ctrl-A
+# byte through a `text:` action. Preserve row-start navigation for that exact
+# legacy path.
+[[mapping]]
+sequence = "^A"
+kind = "command"
+command = "MOVE_ROW_START"
+
+# With enhanced keyboard reporting, a physical Ctrl-A keypress is distinct from
+# the raw byte injected by Command-Left and becomes the select-all fallback for
+# Ghostty's terminal-owned Command-A.
+[[mapping]]
+sequence = "<CSI>97;5u"
+kind = "command"
+command = "SELECT_ALL"
+
+# Ghostty's stock Command-Right binding emits the readline Ctrl-E byte. Retain
+# row-end navigation for that exact fallback.
+[[mapping]]
+sequence = "^E"
+kind = "command"
+command = "MOVE_ROW_END"
+
+# Keep Ctrl-Shift-A as an additional distinct select-all gesture.
+[[mapping]]
+sequence = "<CSI>97;6u"
+kind = "command"
+command = "SELECT_ALL"

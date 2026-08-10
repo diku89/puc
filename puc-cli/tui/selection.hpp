@@ -30,6 +30,7 @@ enum class SelectionEventType {
   END_SELECT_AND_EXTEND, /**< Apply the release position and finish a drag. */
   SELECT_WORD,           /**< Replace the range with the word at `extent`. */
   SELECT_LINE,           /**< Replace the range with the line at `extent`. */
+  SELECT_ALL,            /**< Replace the range with all target-frame text. */
   RESET,                 /**< Remove the frame's current selection. */
 };
 
@@ -89,9 +90,9 @@ class SelectionStateMachine {
    *
    * `SELECT_AND_EXTEND` enters or remains in IN_PROGRESS.
    * `END_SELECT_AND_EXTEND` requires the same in-progress frame and enters
-   * COMPLETE. `SELECT_WORD` and `SELECT_LINE` reset any existing selection and
-   * enter COMPLETE from NONE. A `SELECT_AND_EXTEND` received in COMPLETE
-   * similarly resets the old selection before beginning anew.
+   * COMPLETE. `SELECT_WORD`, `SELECT_LINE`, and `SELECT_ALL` reset any existing
+   * selection and enter COMPLETE from NONE. A `SELECT_AND_EXTEND` received in
+   * COMPLETE similarly resets the old selection before beginning anew.
    * RESET ignores the supplied target and delegates to `reset()`.
    *
    * Frame handlers must reject an event without partially mutating their
