@@ -8,6 +8,111 @@ sequence = "<CSI>99;9u"
 kind = "command"
 command = "COPY"
 
+# macOS Option navigation. Modified cursor-key parameters use xterm/CSI-u's
+# one-based modifier value: Alt is 3.
+[[mapping]]
+sequence = "<CSI>1;3D"
+kind = "command"
+command = "MOVE_WORD_LEFT"
+
+[[mapping]]
+sequence = "<CSI>1;3C"
+kind = "command"
+command = "MOVE_WORD_RIGHT"
+
+# Terminal.app, iTerm2, and compatible profiles commonly translate Option-Left
+# and Option-Right to the traditional readline Meta-b and Meta-f sequences.
+[[mapping]]
+sequence = "<ESC>b"
+kind = "command"
+command = "MOVE_WORD_LEFT"
+
+[[mapping]]
+sequence = "<ESC>f"
+kind = "command"
+command = "MOVE_WORD_RIGHT"
+
+[[mapping]]
+sequence = "<CSI>1;3A"
+kind = "command"
+command = "MOVE_PAGE_UP"
+
+[[mapping]]
+sequence = "<CSI>1;3B"
+kind = "command"
+command = "MOVE_PAGE_DOWN"
+
+# Kitty's keyboard protocol may report arrows through their functional key
+# numbers instead of the legacy final-byte form. Alt retains value 3.
+[[mapping]]
+sequence = "<CSI>57350;3u"
+kind = "command"
+command = "MOVE_WORD_LEFT"
+
+[[mapping]]
+sequence = "<CSI>57351;3u"
+kind = "command"
+command = "MOVE_WORD_RIGHT"
+
+[[mapping]]
+sequence = "<CSI>57352;3u"
+kind = "command"
+command = "MOVE_PAGE_UP"
+
+[[mapping]]
+sequence = "<CSI>57353;3u"
+kind = "command"
+command = "MOVE_PAGE_DOWN"
+
+# macOS Command navigation. Super/Command has one-based modifier value 9.
+[[mapping]]
+sequence = "<CSI>1;9D"
+kind = "command"
+command = "MOVE_ROW_START"
+
+[[mapping]]
+sequence = "<CSI>1;9C"
+kind = "command"
+command = "MOVE_ROW_END"
+
+[[mapping]]
+sequence = "<CSI>1;9A"
+kind = "command"
+command = "MOVE_BUFFER_START"
+
+[[mapping]]
+sequence = "<CSI>1;9B"
+kind = "command"
+command = "MOVE_BUFFER_END"
+
+# Equivalent Kitty functional-key encodings for Command-modified arrows.
+[[mapping]]
+sequence = "<CSI>57350;9u"
+kind = "command"
+command = "MOVE_ROW_START"
+
+[[mapping]]
+sequence = "<CSI>57351;9u"
+kind = "command"
+command = "MOVE_ROW_END"
+
+[[mapping]]
+sequence = "<CSI>57352;9u"
+kind = "command"
+command = "MOVE_BUFFER_START"
+
+[[mapping]]
+sequence = "<CSI>57353;9u"
+kind = "command"
+command = "MOVE_BUFFER_END"
+
+# Command-A is deliberately an application-field selection. Terminals that
+# forward Command through Kitty's keyboard protocol use modifier value 9.
+[[mapping]]
+sequence = "<CSI>97;9u"
+kind = "command"
+command = "SELECT_ALL"
+
 # Paste is intentionally absent: the terminal supplies the pasted content as a
 # bracketed-paste stream rather than forwarding Command-V as an application
 # command.

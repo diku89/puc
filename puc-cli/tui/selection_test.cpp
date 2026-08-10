@@ -121,6 +121,8 @@ TEST(FrameSelectionTest, BaseFrameIsAnExplicitNonselectableBarrier) {
   std::string output = "stale";
 
   EXPECT_FALSE(frame.is_selectable());
+  EXPECT_FALSE(frame.accepts_cursor_placement());
+  EXPECT_EQ(frame.place_cursor({.x = 1, .y = 2}), Status::FRAME_NOT_SELECTABLE);
   EXPECT_EQ(
       frame.update_selection(selection_event(SelectionEventType::SELECT_WORD)),
       Status::FRAME_NOT_SELECTABLE);
@@ -187,6 +189,39 @@ TEST(SelectionStateMachineTest, WordAndLineResetACompletedSelectionFirst) {
   EXPECT_EQ(frame->events[0], word);
   EXPECT_EQ(frame->events[1].type, SelectionEventType::RESET);
   EXPECT_EQ(frame->events[2], line);
+}
+
+TEST(SelectionStateMachineTest, SelectAllIsACompletedReplacementSelection) {
+  SelectionStateMachine machine;
+  const auto first          = std::make_shared<SelectionFrame>("first");
+  const auto second         = std::make_shared<SelectionFrame>("second");
+  const SelectionEvent word = selection_event(SelectionEventType::SELECT_WORD);
+  const SelectionEvent all{.type = SelectionEventType::SELECT_ALL};
+
+  ASSERT_EQ(machine.apply("first", first, word), Status::OK);
+  ASSERT_EQ(machine.apply("second", second, all), Status::OK);
+
+  EXPECT_EQ(machine.phase(), SelectionPhase::COMPLETE);
+  EXPECT_EQ(machine.active_frame_id(), std::optional<std::string>{"second"});
+  ASSERT_EQ(first->events.size(), 2U);
+  EXPECT_EQ(first->events.back().type, SelectionEventType::RESET);
+  EXPECT_EQ(second->events, (std::vector<SelectionEvent>{all}));
+}
+
+TEST(ScreenSelectionTest, KeyboardSelectAllUsesTheSharedSelectionState) {
+  multithreading::JobQueue workers;
+  Screen screen(-1, -1, workers);
+  const auto document = std::make_shared<SelectionFrame>("document");
+  document->text      = "only the focused frame";
+
+  ASSERT_EQ(screen.select_all("document", document), Status::OK);
+  EXPECT_EQ(screen.selection_phase(), SelectionPhase::COMPLETE);
+  EXPECT_EQ(screen.selected_frame_id(), std::optional<std::string>{"document"});
+  ASSERT_EQ(document->events.size(), 1U);
+  EXPECT_EQ(document->events.front().type, SelectionEventType::SELECT_ALL);
+  std::string output;
+  EXPECT_EQ(screen.selected_text(output), Status::OK);
+  EXPECT_EQ(output, document->text);
 }
 
 TEST(SelectionStateMachineTest, NewDragResetsACompletedSelectionFirst) {

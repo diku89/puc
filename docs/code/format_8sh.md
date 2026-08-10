@@ -4,6 +4,6 @@
 
 Apply or verify every repository-owned source formatter.
 
-The default scope mirrors a developer's current change, keeping the edit loop quick. `--full` supplies the repository-wide invariant used by CI. Tool binaries resolved through Bazel remain pinned by MODULE.bazel; clang-format is the only required system formatter.
+The default scope mirrors a developer's current change, keeping the edit loop quick. `--full` supplies the repository-wide invariant used by CI. Paths listed in the repository root's `.formatignore` are excluded in both modes. Tool binaries resolved through Bazel remain pinned by MODULE.bazel; clang-format is the only required system formatter.
 
 [Source](../../utils/scripts/format.sh)

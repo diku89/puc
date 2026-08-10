@@ -12,6 +12,7 @@
 #include <mutex>
 #include <optional>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include "msgs/screen_msgs.hpp"
@@ -130,9 +131,10 @@ class Screen {
    * The ZBuffer is inspected from front to back. The first visible frame under
    * a press owns that hit even when it is not selectable, preventing selection
    * through overlays. A left press resets any completed selection and records
-   * a possible drag. Movement captures the original selectable frame, while a
-   * release without movement remains NONE. Successive clicks in the same cell
-   * select a word and then a line.
+   * a possible drag. Movement captures the original selectable frame. A
+   * release without movement remains NONE and, for an editor that opts in,
+   * places its caret. Successive clicks in the same cell select a word and then
+   * a line.
    *
    * `frame_layouts` is the map from the active AbsoluteLayout. Coordinates
    * dispatched to Frame are local and signed, so captured drags may extend
@@ -148,6 +150,22 @@ class Screen {
   Status handle_mouse_event(
       const terminal::MouseEvent& event, const ZBuffer& z_buffer,
       const std::map<std::string, Canvas::Rect>& frame_layouts);
+
+  /**
+   * Select all logical text in one explicitly focused selectable frame.
+   *
+   * This positionless keyboard operation uses the same state machine as mouse
+   * drags, double-clicks, and triple-clicks. It therefore replaces any prior
+   * application selection and becomes the sole completed selection available
+   * to `selected_text()` and `copy_selection()`.
+   *
+   * @param[in] frame_id Stable id of the focused frame in the active layout.
+   * @param[in] frame Shared ownership of that exact frame.
+   * @return Status::OK when all text was selected, Status::NO_SELECTION for an
+   *         empty frame, or a validation/Frame error.
+   */
+  Status select_all(std::string_view frame_id,
+                    const std::shared_ptr<Frame>& frame);
 
   /** Return the current multi-click timeout token, if a click is pending. */
   std::optional<terminal::TimeoutInput> pending_selection_timeout() const;

@@ -40,6 +40,13 @@ puc_config(
 )
 
 puc_config(
+    name = "xterm_ghostty_defaults_config",
+    src = "terminals/xterm-ghostty.toml",
+    install_path = "terminals/xterm-ghostty.toml",
+    visibility = ["//visibility:public"],
+)
+
+puc_config(
     name = "timeout_config",
     src = "terminal_timeouts.toml",
     install_path = "terminal_timeouts.toml",
@@ -94,6 +101,7 @@ cc_binary(
         ":input_config",
         ":linux_defaults_config",
         ":timeout_config",
+        ":xterm_ghostty_defaults_config",
     ],
     deps = [
         ":terminal",
@@ -135,6 +143,7 @@ cc_test(
         ":input_config",
         ":linux_defaults_config",
         ":timeout_config",
+        ":xterm_ghostty_defaults_config",
     ],
     linkopts = select({
         ":linux": ["-lutil"],

@@ -4,7 +4,7 @@
 
 Two same-source declarations that attempted an exact-path collision.
 
-[Source](../../puc-cli/terminal/input.hpp#L192)
+[Source](../../puc-cli/terminal/input.hpp#L195)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ CommandSequence puc::terminal::InputMap::ExactCommandConflict::first
 
 Earlier declaration.
 
-[Source](../../puc-cli/terminal/input.hpp#L193)
+[Source](../../puc-cli/terminal/input.hpp#L196)
 
 <a id="symbol-structpuc_1_1terminal_1_1_input_map_1_1_exact_command_conflict_1a1d52d977560364af33f0c0282f2f83a4"></a>
 
@@ -30,4 +30,4 @@ CommandSequence puc::terminal::InputMap::ExactCommandConflict::second
 
 Later declaration.
 
-[Source](../../puc-cli/terminal/input.hpp#L194)
+[Source](../../puc-cli/terminal/input.hpp#L197)

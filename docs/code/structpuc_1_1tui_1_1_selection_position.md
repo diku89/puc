@@ -6,7 +6,7 @@ A signed position in one [Frame](classpuc_1_1tui_1_1_frame.md)'s local terminal-
 
 Coordinates outside the frame remain meaningful during pointer capture. For example, a negative y coordinate asks a vertically scrollable frame to extend above its visible content rather than retargeting another frame.
 
-[Source](../../puc-cli/tui/selection.hpp#L43)
+[Source](../../puc-cli/tui/selection.hpp#L44)
 
 ## Public data members
 
@@ -20,7 +20,7 @@ std::int64_t puc::tui::SelectionPosition::x
 
 Column relative to the frame's left edge.
 
-[Source](../../puc-cli/tui/selection.hpp#L44)
+[Source](../../puc-cli/tui/selection.hpp#L45)
 
 <a id="symbol-structpuc_1_1tui_1_1_selection_position_1a28accbc5105fb2be6a6c954e3ff400ba"></a>
 
@@ -32,7 +32,7 @@ std::int64_t puc::tui::SelectionPosition::y
 
 Row relative to the frame's top edge.
 
-[Source](../../puc-cli/tui/selection.hpp#L45)
+[Source](../../puc-cli/tui/selection.hpp#L46)
 
 ## Public functions
 
@@ -46,4 +46,4 @@ bool puc::tui::SelectionPosition::operator==(const SelectionPosition &) const no
 
 Compare both frame-local coordinates.
 
-[Source](../../puc-cli/tui/selection.hpp#L48)
+[Source](../../puc-cli/tui/selection.hpp#L49)

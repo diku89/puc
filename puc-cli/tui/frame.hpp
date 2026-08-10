@@ -23,6 +23,8 @@ namespace tui {
  * frames may be invoked concurrently; implementations therefore keep mutable
  * frame-local state synchronized and strictly restrict writes to the supplied
  * rectangle. Expected rendering failures are returned as Status values.
+ * Selectable editor frames may additionally opt into stationary-click caret
+ * placement without changing Screen's selection lifecycle.
  */
 class Frame {
  public:
@@ -84,6 +86,24 @@ class Frame {
    *         exists, or Status::FRAME_NOT_SELECTABLE for the base behavior.
    */
   virtual Status selected_text(std::string& output) const;
+
+  /**
+   * Return whether a stationary primary click may place a caret in this Frame.
+   *
+   * This capability is independent of selection: ordinary document frames can
+   * remain selectable without receiving caret operations, while editors opt in
+   * explicitly. Screen invokes place_cursor() only when this returns true.
+   */
+  virtual bool accepts_cursor_placement() const noexcept;
+
+  /**
+   * Place an editor caret at one frame-local cell.
+   *
+   * @param[in] position Signed position relative to the Frame rectangle.
+   * @return Status::OK on success or Status::FRAME_NOT_SELECTABLE for the base
+   *         non-editor behavior.
+   */
+  virtual Status place_cursor(SelectionPosition position);
 
  protected:
   /** Human-readable name supplied by the concrete frame. */

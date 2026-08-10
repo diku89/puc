@@ -1,2 +1,5 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Keep the pinned libtmt sources byte-for-byte identical to upstream.
+third_party/tmt/** -whitespace

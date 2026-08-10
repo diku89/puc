@@ -4,7 +4,7 @@
 
 One terminfo capability associated with a terminal-independent key.
 
-[Source](../../puc-cli/terminal/input.hpp#L178)
+[Source](../../puc-cli/terminal/input.hpp#L181)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::string puc::terminal::InputMap::TerminfoKeyBinding::capability
 
 Short terminfo string-capability name.
 
-[Source](../../puc-cli/terminal/input.hpp#L179)
+[Source](../../puc-cli/terminal/input.hpp#L182)
 
 <a id="symbol-structpuc_1_1terminal_1_1_input_map_1_1_terminfo_key_binding_1a568d7903b5a650807aba5985d59a10a8"></a>
 
@@ -30,4 +30,4 @@ KeyEvent puc::terminal::InputMap::TerminfoKeyBinding::event
 
 PUC key emitted for the capability's byte sequence.
 
-[Source](../../puc-cli/terminal/input.hpp#L180)
+[Source](../../puc-cli/terminal/input.hpp#L183)

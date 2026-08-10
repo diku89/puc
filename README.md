@@ -66,6 +66,8 @@ utils/scripts/format.sh test --full
 through Bazel's pinned module dependencies and format/lint Bazel and Python
 sources respectively. GitHub CI runs `test --full` on every push and pull
 request, so all repository-owned source files must be clean before merging.
+Vendored or generated paths that must retain upstream formatting belong in the
+root `.formatignore`, using repository-relative Git glob patterns.
 
 ## Code documentation
 

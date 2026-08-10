@@ -86,6 +86,7 @@ Status SelectionStateMachine::apply(std::string_view frame_id,
 
     case SelectionEventType::SELECT_WORD:
     case SelectionEventType::SELECT_LINE:
+    case SelectionEventType::SELECT_ALL:
       if (phase_ != SelectionPhase::NONE) {
         const Status status = reset();
         if (!is_ok(status)) {

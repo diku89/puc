@@ -5,9 +5,10 @@
 # @brief Apply or verify every repository-owned source formatter.
 #
 # The default scope mirrors a developer's current change, keeping the edit loop
-# quick. ``--full`` supplies the repository-wide invariant used by CI. Tool
-# binaries resolved through Bazel remain pinned by MODULE.bazel; clang-format
-# is the only required system formatter.
+# quick. ``--full`` supplies the repository-wide invariant used by CI. Paths
+# listed in the repository root's ``.formatignore`` are excluded in both modes.
+# Tool binaries resolved through Bazel remain pinned by MODULE.bazel;
+# clang-format is the only required system formatter.
 
 ## @cond SHELL_IMPLEMENTATION
 # Doxygen has no shell parser, so the executable body is intentionally hidden
@@ -33,6 +34,13 @@ Options:
             files changed since HEAD and untracked files are processed.
   -h, --help
             Show this help text.
+
+Ignore file:
+  .formatignore
+            Repository-relative Git glob patterns excluded in every mode.
+            Blank lines and lines beginning with # are ignored. A trailing /
+            excludes the complete directory tree. Negated patterns are not
+            supported.
 EOF
 }
 
@@ -76,20 +84,49 @@ fi
 repo_root=$(git -C "$(dirname "${BASH_SOURCE[0]}")" rev-parse --show-toplevel)
 cd "$repo_root"
 
+format_pathspecs=(.)
+format_ignore_file="$repo_root/.formatignore"
+if [[ -f "$format_ignore_file" ]]; then
+  while IFS= read -r pattern || [[ -n "$pattern" ]]; do
+    pattern=${pattern%$'\r'}
+    # Match Git's familiar treatment of surrounding whitespace for this
+    # deliberately small, repository-owned configuration format.
+    pattern=${pattern#"${pattern%%[![:space:]]*}"}
+    pattern=${pattern%"${pattern##*[![:space:]]}"}
+    [[ -z "$pattern" || "$pattern" == \#* ]] && continue
+    if [[ "$pattern" == \!* ]]; then
+      echo ".formatignore: negated patterns are not supported: $pattern" >&2
+      exit 2
+    fi
+    pattern=${pattern#/}
+    if [[ -z "$pattern" ]]; then
+      echo ".formatignore: patterns must name a path below the repository root" >&2
+      exit 2
+    fi
+    [[ "$pattern" == */ ]] && pattern="${pattern}**"
+    format_pathspecs+=(":(exclude,glob)$pattern")
+  done <"$format_ignore_file"
+fi
+
 files=()
 # Git is the source of truth for ownership. NUL delimiters make spaces, tabs,
-# and shell metacharacters in filenames safe all the way into Bash arrays.
+# and shell metacharacters in filenames safe all the way into Bash arrays. Git
+# pathspec exclusions apply .formatignore uniformly to tracked and untracked
+# files before language-specific classification.
 if [[ "$full" == true ]]; then
   while IFS= read -r -d '' file; do
     files+=("$file")
-  done < <(git ls-files --cached --others --exclude-standard -z)
+  done < <(git ls-files --cached --others --exclude-standard -z -- \
+    "${format_pathspecs[@]}")
 else
   while IFS= read -r -d '' file; do
     files+=("$file")
-  done < <(git diff --name-only --diff-filter=ACMRTUXB -z HEAD)
+  done < <(git diff --name-only --diff-filter=ACMRTUXB -z HEAD -- \
+    "${format_pathspecs[@]}")
   while IFS= read -r -d '' file; do
     files+=("$file")
-  done < <(git ls-files --others --exclude-standard -z)
+  done < <(git ls-files --others --exclude-standard -z -- \
+    "${format_pathspecs[@]}")
 fi
 
 cc_files=()

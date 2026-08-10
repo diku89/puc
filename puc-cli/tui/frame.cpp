@@ -20,4 +20,10 @@ Status Frame::selected_text(std::string& output) const {
   return Status::FRAME_NOT_SELECTABLE;
 }
 
+bool Frame::accepts_cursor_placement() const noexcept { return false; }
+
+Status Frame::place_cursor(SelectionPosition) {
+  return Status::FRAME_NOT_SELECTABLE;
+}
+
 }  // namespace puc::tui

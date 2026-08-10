@@ -292,6 +292,17 @@ High-level application commands selected by configured input sequences.
 
 #### Values
 - <a id="symbol-event_8hpp_1ab586d1b5a53718f2f4a09d0efce7421bae8606d021da140a92c7eba8d9b8af84f"></a>`COPY` — Copy the application's completed logical selection.
+- <a id="symbol-event_8hpp_1ab586d1b5a53718f2f4a09d0efce7421baa53f1f05ae28f5898af529e0eb864a9a"></a>`SELECT_ALL` — Select all logical text in the focused application field.
+- <a id="symbol-event_8hpp_1ab586d1b5a53718f2f4a09d0efce7421ba40df2c313d3613c7b4dffa8924a5ed11"></a>`ENTER_COMMAND_MODE` — Replace the active editor with a command buffer.
+- <a id="symbol-event_8hpp_1ab586d1b5a53718f2f4a09d0efce7421ba8abf394a28a2c6dc2063ae08def5cfba"></a>`ENTER_TERMINAL_MODE` — Show the libtmt-backed terminal surface.
+- <a id="symbol-event_8hpp_1ab586d1b5a53718f2f4a09d0efce7421badaa524b10a0ac098117fbeafd56ee21b"></a>`MOVE_WORD_LEFT` — Move an editor caret to the preceding word.
+- <a id="symbol-event_8hpp_1ab586d1b5a53718f2f4a09d0efce7421ba86836e2de0cb0b561241acc192673d45"></a>`MOVE_WORD_RIGHT` — Move an editor caret to the following word.
+- <a id="symbol-event_8hpp_1ab586d1b5a53718f2f4a09d0efce7421baeb087a414a898b3f21fb23dbdc6305f5"></a>`MOVE_ROW_START` — Move an editor caret to the start of its row.
+- <a id="symbol-event_8hpp_1ab586d1b5a53718f2f4a09d0efce7421ba0174b2862d08a6d21b06fdea76cb07e6"></a>`MOVE_ROW_END` — Move an editor caret to the end of its row.
+- <a id="symbol-event_8hpp_1ab586d1b5a53718f2f4a09d0efce7421ba57389c4f45461ede5bc7b24ee3929db4"></a>`MOVE_BUFFER_START` — Move an editor caret to the beginning of input.
+- <a id="symbol-event_8hpp_1ab586d1b5a53718f2f4a09d0efce7421ba1b300693d5af0a18738b42f07bd30473"></a>`MOVE_BUFFER_END` — Move an editor caret to the end of input.
+- <a id="symbol-event_8hpp_1ab586d1b5a53718f2f4a09d0efce7421ba89be5e403234d68ac9e8f4a68357a63a"></a>`MOVE_PAGE_UP` — Move an editor caret up one visible page.
+- <a id="symbol-event_8hpp_1ab586d1b5a53718f2f4a09d0efce7421ba5933f9ca3d1a26d2985d0f9dc2d9e38e"></a>`MOVE_PAGE_DOWN` — Move an editor caret down one visible page.
 
 [Source](../../puc-cli/terminal/event.hpp#L343)
 
@@ -313,7 +324,7 @@ Kinds of terminal protocol replies routed away from user key input.
 - <a id="symbol-event_8hpp_1ab51ea62f68e6bd51aaa91d35b2840806a32c6bbbb1b7919e0de2b330296d16978"></a>`OPERATING_SYSTEM_COMMAND`
 - <a id="symbol-event_8hpp_1ab51ea62f68e6bd51aaa91d35b2840806af06bbe29848a63bbd711c6c77bd563e3"></a>`DEVICE_CONTROL_STRING`
 
-[Source](../../puc-cli/terminal/event.hpp#L362)
+[Source](../../puc-cli/terminal/event.hpp#L373)
 
 <a id="symbol-event_8hpp_1abefeef863d54c3abe599928f3d869e21"></a>
 
@@ -332,7 +343,7 @@ Reason bytes could not be normalized into a supported event.
 - <a id="symbol-event_8hpp_1abefeef863d54c3abe599928f3d869e21ab26f64128dee356daf83774beee88505"></a>`INCOMPLETE_SEQUENCE`
 - <a id="symbol-event_8hpp_1abefeef863d54c3abe599928f3d869e21a12daed15e373d11c0e26720525ecc201"></a>`LIMIT_EXCEEDED`
 
-[Source](../../puc-cli/terminal/event.hpp#L383)
+[Source](../../puc-cli/terminal/event.hpp#L394)
 
 <a id="symbol-input_8hpp_1a8e5a89e22c128ff7b8173404667203b9"></a>
 
@@ -583,7 +594,7 @@ using puc::terminal::Event = std::variant<KeyEvent, TextEvent, MouseEvent, Scrol
 
 Every semantic input or protocol-reply event emitted by [Decoder](classpuc_1_1terminal_1_1_decoder.md).
 
-[Source](../../puc-cli/terminal/event.hpp#L402)
+[Source](../../puc-cli/terminal/event.hpp#L413)
 
 ## Variables
 
