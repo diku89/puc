@@ -57,6 +57,31 @@ cc_binary(
     ],
 )
 
+cc_binary(
+    name = "input-test-app",
+    srcs = ["input-test-app.cpp"],
+    data = [
+        "//puc-cli/terminal:bsd_defaults_config",
+        "//puc-cli/terminal:darwin_defaults_config",
+        "//puc-cli/terminal:input_config",
+        "//puc-cli/terminal:linux_defaults_config",
+        "//puc-cli/terminal:timeout_config",
+        "//puc-cli/terminal:xterm_ghostty_defaults_config",
+    ],
+    linkopts = select({
+        ":linux": ["-lutil"],
+        "//conditions:default": [],
+    }),
+    deps = [
+        ":tui",
+        "//msgs",
+        "//puc-cli/terminal",
+        "//utils/config",
+        "//utils/logger",
+        "//utils/multithreading",
+    ],
+)
+
 cc_test(
     name = "tui_test",
     size = "small",
