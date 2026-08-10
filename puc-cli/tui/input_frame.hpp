@@ -13,6 +13,7 @@
 
 #include "puc-cli/terminal/event.hpp"
 #include "puc-cli/tui/frame.hpp"
+#include "puc-cli/tui/text_editor_utils.hpp"
 
 namespace puc::tui {
 
@@ -23,14 +24,8 @@ enum class InputMode {
   TERMINAL, /**< Render the persistent libtmt virtual-terminal surface. */
 };
 
-/** Zero-based logical caret position in an input buffer. */
-struct InputCursor {
-  std::size_t line   = 0U; /**< Logical newline-delimited line. */
-  std::size_t column = 0U; /**< Unicode-scalar offset within that line. */
-
-  /** Compare both logical coordinates. */
-  constexpr bool operator==(const InputCursor&) const noexcept = default;
-};
+/** Backward-compatible name for the shared reusable editor caret type. */
+using InputCursor = TextCursor;
 
 /** Read-only state snapshot intended for application orchestration and tests.
  */
@@ -50,7 +45,7 @@ struct InputFrameSnapshot {
 };
 
 /**
- * Composite editor frame used for PUC's bottom-of-screen input terminal.
+ * Composite coordinator used for PUC's bottom-of-screen input terminal.
  *
  * The supplied rectangle is the outermost frame. Its first row is a gap and
  * its last row is a notification bar. Between them, a single-line box encloses
@@ -63,11 +58,11 @@ struct InputFrameSnapshot {
  * A token wider than the editor remains one logical line and hard-wraps across
  * unnumbered continuation rows. Horizontal scrolling is deliberately absent.
  *
- * InputFrame consumes terminal-independent events produced by Decoder. It does
- * not parse escape sequences and does not own terminal or clipboard I/O.
- * Screen continues to route drag, word, and line selections through Frame's
- * selection interface. InputFrame additionally accepts Screen's single-click
- * caret placement hook.
+ * BoundingFrame owns the margins and border, AnnotatedTextFrame owns line
+ * numbers, TextInputFrame owns normal text rendering, CmdFrame owns command
+ * text, IntegratedTermFrame owns libtmt, and TextEditor owns reusable editing
+ * mechanics. InputFrame only coordinates those views, mode transitions,
+ * Escape timing, and the notification row.
  *
  * Mutable editor state is synchronized because rendering may run on a worker
  * while the application's input loop processes an event.

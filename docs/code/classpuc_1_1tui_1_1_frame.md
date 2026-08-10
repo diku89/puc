@@ -4,9 +4,9 @@
 
 A renderable view assigned to a rectangular region by [Layout](classpuc_1_1tui_1_1_layout.md).
 
-A [Frame](#) owns its descriptive name but not its location. [Layout](classpuc_1_1tui_1_1_layout.md) computes the rectangle and supplies the active [Canvas](classpuc_1_1tui_1_1_canvas.md). Independent non-intersecting frames may be invoked concurrently; implementations therefore keep mutable frame-local state synchronized and strictly restrict writes to the supplied rectangle. Expected rendering failures are returned as [Status](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270) values.
+A [Frame](#) owns its descriptive name but not its location. [Layout](classpuc_1_1tui_1_1_layout.md) computes the rectangle and supplies the active [Canvas](classpuc_1_1tui_1_1_canvas.md). Independent non-intersecting frames may be invoked concurrently; implementations therefore keep mutable frame-local state synchronized and strictly restrict writes to the supplied rectangle. Expected rendering failures are returned as [Status](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270) values. Selectable editor frames may additionally opt into stationary-click caret placement without changing [Screen](classpuc_1_1tui_1_1_screen.md)'s selection lifecycle.
 
-[Source](../../puc-cli/tui/frame.hpp#L27)
+[Source](../../puc-cli/tui/frame.hpp#L29)
 
 ## Protected data members
 
@@ -20,7 +20,7 @@ std::string puc::tui::Frame::name_
 
 Human-readable name supplied by the concrete frame.
 
-[Source](../../puc-cli/tui/frame.hpp#L90)
+[Source](../../puc-cli/tui/frame.hpp#L110)
 
 ## Public functions
 
@@ -38,7 +38,7 @@ Construct a named frame.
 
 - `name` (in) — Human-readable frame name available to derived classes.
 
-[Source](../../puc-cli/tui/frame.hpp#L34)
+[Source](../../puc-cli/tui/frame.hpp#L36)
 
 <a id="symbol-classpuc_1_1tui_1_1_frame_1ae7ba38236ac115f6e7fe4cd381d38ac1"></a>
 
@@ -50,7 +50,7 @@ virtual puc::tui::Frame::~Frame()=default
 
 Destroy a frame through its abstract interface.
 
-[Source](../../puc-cli/tui/frame.hpp#L37)
+[Source](../../puc-cli/tui/frame.hpp#L39)
 
 <a id="symbol-classpuc_1_1tui_1_1_frame_1aacdf871cef53089748a2b2bd9127abbf"></a>
 
@@ -72,7 +72,7 @@ The [Canvas](classpuc_1_1tui_1_1_canvas.md) has an active transaction. A concret
 
 **Returns:** [Status::OK](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ae0aa021e21dddbd6d8cecec71e9cf564) on success, or an error status.
 
-[Source](../../puc-cli/tui/frame.hpp#L52)
+[Source](../../puc-cli/tui/frame.hpp#L54)
 
 <a id="symbol-classpuc_1_1tui_1_1_frame_1af770d45d6e8af4110efcfb8827685fca"></a>
 
@@ -86,7 +86,7 @@ Return whether this [Frame](#) exposes logical text-selection operations.
 
 Nonselectable frames remain input barriers during hit testing: [Screen](classpuc_1_1tui_1_1_screen.md) does not select through a frontmost decoration into a frame behind it.
 
-[Source](../../puc-cli/tui/frame.hpp#L61)
+[Source](../../puc-cli/tui/frame.hpp#L63)
 
 <a id="symbol-classpuc_1_1tui_1_1_frame_1a2c0ee91685ed60812caf920bbce2e281"></a>
 
@@ -106,7 +106,7 @@ A selectable implementation owns its anchor, logical text range, click granulari
 
 **Returns:** [Status::OK](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ae0aa021e21dddbd6d8cecec71e9cf564) on success, or an error without partial mutation.
 
-[Source](../../puc-cli/tui/frame.hpp#L74)
+[Source](../../puc-cli/tui/frame.hpp#L76)
 
 <a id="symbol-classpuc_1_1tui_1_1_frame_1af3c9642d08bf1ed62a247203c6c6d38a"></a>
 
@@ -126,4 +126,36 @@ Implementations omit visual padding, decorations, and text owned by other frames
 
 **Returns:** [Status::OK](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ae0aa021e21dddbd6d8cecec71e9cf564) on success, [Status::NO\_SELECTION](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270aac6cf090b11c4b65dbddc0baa84e4e72) when no logical range exists, or [Status::FRAME\_NOT\_SELECTABLE](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270a53116f51e4c834a034faa650cc846b2c) for the base behavior.
 
-[Source](../../puc-cli/tui/frame.hpp#L86)
+[Source](../../puc-cli/tui/frame.hpp#L88)
+
+<a id="symbol-classpuc_1_1tui_1_1_frame_1ae636cb71b96e26db4a16df76e15eadd6"></a>
+
+### `accepts_cursor_placement`
+
+```cpp
+bool puc::tui::Frame::accepts_cursor_placement() const noexcept
+```
+
+Return whether a stationary primary click may place a caret in this [Frame](#).
+
+This capability is independent of selection: ordinary document frames can remain selectable without receiving caret operations, while editors opt in explicitly. [Screen](classpuc_1_1tui_1_1_screen.md) invokes [place\_cursor()](#symbol-classpuc_1_1tui_1_1_frame_1accf2a27dddf59f863e548e83942e9f79) only when this returns true.
+
+[Source](../../puc-cli/tui/frame.hpp#L97)
+
+<a id="symbol-classpuc_1_1tui_1_1_frame_1accf2a27dddf59f863e548e83942e9f79"></a>
+
+### `place_cursor`
+
+```cpp
+Status puc::tui::Frame::place_cursor(SelectionPosition position)
+```
+
+Place an editor caret at one frame-local cell.
+
+**Parameters**
+
+- `position` (in) — Signed position relative to the [Frame](#) rectangle.
+
+**Returns:** [Status::OK](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ae0aa021e21dddbd6d8cecec71e9cf564) on success or [Status::FRAME\_NOT\_SELECTABLE](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270a53116f51e4c834a034faa650cc846b2c) for the base non-editor behavior.
+
+[Source](../../puc-cli/tui/frame.hpp#L106)

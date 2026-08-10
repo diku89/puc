@@ -6,7 +6,7 @@ A configurable semantic command emitted directly by the input Trie.
 
 Unlike [KeyEvent](structpuc_1_1terminal_1_1_key_event.md), this event no longer describes the physical key chord. The active operating-system defaults, terminal profile, and user overrides have already resolved that chord to application intent.
 
-[Source](../../puc-cli/terminal/event.hpp#L354)
+[Source](../../puc-cli/terminal/event.hpp#L365)
 
 ## Public data members
 
@@ -20,7 +20,7 @@ Command puc::terminal::CommandEvent::command
 
 Requested application operation.
 
-[Source](../../puc-cli/terminal/event.hpp#L355)
+[Source](../../puc-cli/terminal/event.hpp#L366)
 
 ## Public functions
 
@@ -34,4 +34,4 @@ bool puc::terminal::CommandEvent::operator==(const CommandEvent &) const noexcep
 
 Compare normalized command identities.
 
-[Source](../../puc-cli/terminal/event.hpp#L358)
+[Source](../../puc-cli/terminal/event.hpp#L369)

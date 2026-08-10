@@ -4,23 +4,66 @@
 
 Terminal user-interface primitives, layout, rendering, and terminal control.
 
-[Source](../../puc-cli/tui/canvas.cpp#L18)
+[Source](../../puc-cli/tui/annotated_text_frame.cpp#L22)
 
 ## Related symbols
 
+- [puc::tui::AnnotatedLineStatus](structpuc_1_1tui_1_1_annotated_line_status.md)
+- [puc::tui::AnnotatedTextConfiguration](structpuc_1_1tui_1_1_annotated_text_configuration.md)
+- [puc::tui::AnnotatedTextFrame](classpuc_1_1tui_1_1_annotated_text_frame.md)
+- [puc::tui::AnnotatedTextRow](structpuc_1_1tui_1_1_annotated_text_row.md)
+- [puc::tui::AnnotatedTextSource](classpuc_1_1tui_1_1_annotated_text_source.md)
+- [puc::tui::BoundingFrame](classpuc_1_1tui_1_1_bounding_frame.md)
+- [puc::tui::BoundingFrameConfiguration](structpuc_1_1tui_1_1_bounding_frame_configuration.md)
 - [puc::tui::Canvas](classpuc_1_1tui_1_1_canvas.md)
 - [puc::tui::CellDimensions](structpuc_1_1tui_1_1_cell_dimensions.md)
+- [puc::tui::CmdFrame](classpuc_1_1tui_1_1_cmd_frame.md)
 - [puc::tui::Frame](classpuc_1_1tui_1_1_frame.md)
+- [puc::tui::FrameMargins](structpuc_1_1tui_1_1_frame_margins.md)
+- [puc::tui::FrameSizeConstraints](structpuc_1_1tui_1_1_frame_size_constraints.md)
+- [puc::tui::InputFrame](classpuc_1_1tui_1_1_input_frame.md)
+- [puc::tui::InputFrameSnapshot](structpuc_1_1tui_1_1_input_frame_snapshot.md)
+- [puc::tui::IntegratedTermFrame](classpuc_1_1tui_1_1_integrated_term_frame.md)
+- [puc::tui::IntegratedTermFrameSnapshot](structpuc_1_1tui_1_1_integrated_term_frame_snapshot.md)
+- [puc::tui::IntegratedTermFrameStyle](structpuc_1_1tui_1_1_integrated_term_frame_style.md)
 - [puc::tui::Layout](classpuc_1_1tui_1_1_layout.md)
 - [puc::tui::ParallelRenderer](classpuc_1_1tui_1_1_parallel_renderer.md)
 - [puc::tui::Screen](classpuc_1_1tui_1_1_screen.md)
 - [puc::tui::SelectionEvent](structpuc_1_1tui_1_1_selection_event.md)
 - [puc::tui::SelectionPosition](structpuc_1_1tui_1_1_selection_position.md)
 - [puc::tui::SelectionStateMachine](classpuc_1_1tui_1_1_selection_state_machine.md)
+- [puc::tui::TextCursor](structpuc_1_1tui_1_1_text_cursor.md)
+- [puc::tui::TextEditor](classpuc_1_1tui_1_1_text_editor.md)
+- [puc::tui::TextEditorOptions](structpuc_1_1tui_1_1_text_editor_options.md)
+- [puc::tui::TextEditorRenderCell](structpuc_1_1tui_1_1_text_editor_render_cell.md)
+- [puc::tui::TextEditorRenderRow](structpuc_1_1tui_1_1_text_editor_render_row.md)
+- [puc::tui::TextEditorRenderState](structpuc_1_1tui_1_1_text_editor_render_state.md)
+- [puc::tui::TextEditorSnapshot](structpuc_1_1tui_1_1_text_editor_snapshot.md)
+- [puc::tui::TextInputFrame](classpuc_1_1tui_1_1_text_input_frame.md)
+- [puc::tui::TextInputFrameStyle](structpuc_1_1tui_1_1_text_input_frame_style.md)
+- [puc::tui::TextSelectionRange](structpuc_1_1tui_1_1_text_selection_range.md)
 - [puc::tui::Theme](classpuc_1_1tui_1_1_theme.md)
 - [puc::tui::ZBuffer](classpuc_1_1tui_1_1_z_buffer.md)
+- [puc::tui::text\_editor](namespacepuc_1_1tui_1_1text__editor.md)
 
 ## Enumerations
+
+<a id="symbol-namespacepuc_1_1tui_1a934fae8d8b59ef801802451dd8a56d86"></a>
+
+### `InputMode`
+
+```cpp
+InputMode
+```
+
+Surface currently occupying the inner input frame.
+
+#### Values
+- <a id="symbol-namespacepuc_1_1tui_1a934fae8d8b59ef801802451dd8a56d86a1e23852820b9154316c7c06e2b7ba051"></a>`NORMAL` — Edit the ordinary prompt buffer.
+- <a id="symbol-namespacepuc_1_1tui_1a934fae8d8b59ef801802451dd8a56d86a26097a57f572fe88a7cdf80543422cb1"></a>`COMMAND` — Edit the temporary green command buffer.
+- <a id="symbol-namespacepuc_1_1tui_1a934fae8d8b59ef801802451dd8a56d86a6c7748bd0ad3fbdff996e81581ad64d6"></a>`TERMINAL` — Render the persistent libtmt virtual-terminal surface.
+
+[Source](../../puc-cli/tui/input_frame.hpp#L21)
 
 <a id="symbol-namespacepuc_1_1tui_1a6ec6e7ef6f90768da3386622a10eb37c"></a>
 
@@ -54,6 +97,7 @@ Semantic operations that a selectable [Frame](classpuc_1_1tui_1_1_frame.md) can 
 - <a id="symbol-namespacepuc_1_1tui_1a144569aef987b76e95d4f5aec6cbca9ca7812fb412b388ce21ce4bf6bcd2918a5"></a>`END_SELECT_AND_EXTEND` — Apply the release position and finish a drag.
 - <a id="symbol-namespacepuc_1_1tui_1a144569aef987b76e95d4f5aec6cbca9ca38c508f76a7dd45ed00b6b4d52c71c83"></a>`SELECT_WORD` — Replace the range with the word at `extent`.
 - <a id="symbol-namespacepuc_1_1tui_1a144569aef987b76e95d4f5aec6cbca9ca6632c7d2ade8b3950a1b4f3932f2f573"></a>`SELECT_LINE` — Replace the range with the line at `extent`.
+- <a id="symbol-namespacepuc_1_1tui_1a144569aef987b76e95d4f5aec6cbca9caa53f1f05ae28f5898af529e0eb864a9a"></a>`SELECT_ALL` — Replace the range with all target-frame text.
 - <a id="symbol-namespacepuc_1_1tui_1a144569aef987b76e95d4f5aec6cbca9cab5859d8721cfdc0312b2838b9c985bc1"></a>`RESET` — Remove the frame's current selection.
 
 [Source](../../puc-cli/tui/selection.hpp#L28)
@@ -99,6 +143,20 @@ Result codes returned by expected TUI operations.
 
 [Source](../../puc-cli/tui/status.hpp#L23)
 
+## Type aliases
+
+<a id="symbol-namespacepuc_1_1tui_1a02f3ffbdf23ffc4e9c52735ee0fff826"></a>
+
+### `InputCursor`
+
+```cpp
+using puc::tui::InputCursor = TextCursor
+```
+
+Backward-compatible name for the shared reusable editor caret type.
+
+[Source](../../puc-cli/tui/input_frame.hpp#L28)
+
 ## Variables
 
 <a id="symbol-namespacepuc_1_1tui_1ac35b2518a5f736a7fbb8b6cc54b9f89e"></a>
@@ -111,7 +169,7 @@ CellDimensions puc::tui::kDefaultCellDimensions
 
 Conventional cell proportions used when a terminal omits pixel metrics.
 
-[Source](../../puc-cli/tui/screen.hpp#L44)
+[Source](../../puc-cli/tui/screen.hpp#L45)
 
 ## Functions
 

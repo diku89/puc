@@ -31,7 +31,7 @@ Selects which backing buffer is drawable and which is writable.
 - <a id="symbol-classpuc_1_1tui_1_1_canvas_1a4440dc5e32584520fff386c2ffd5a93dae57fcde39fe1fa09300bd588c2841520"></a>`DRAW_A_WRITETO_B` — Buffer A is published; mutations target buffer B.
 - <a id="symbol-classpuc_1_1tui_1_1_canvas_1a4440dc5e32584520fff386c2ffd5a93da7cf3dc1d89c10e17ef8b8b6964302a3e"></a>`DRAW_B_WRITETO_A` — Buffer B is published; mutations target buffer A.
 
-[Source](../../puc-cli/tui/canvas.hpp#L159)
+[Source](../../puc-cli/tui/canvas.hpp#L162)
 
 ## Private data members
 
@@ -45,7 +45,7 @@ std::vector<Cell> puc::tui::Canvas::screen_buffer_a_
 
 First row-major cell buffer.
 
-[Source](../../puc-cli/tui/canvas.hpp#L171)
+[Source](../../puc-cli/tui/canvas.hpp#L174)
 
 <a id="symbol-classpuc_1_1tui_1_1_canvas_1ab92e9637d80077778e5e81cc9a1e8bb9"></a>
 
@@ -57,7 +57,7 @@ std::vector<Cell> puc::tui::Canvas::screen_buffer_b_
 
 Second row-major cell buffer.
 
-[Source](../../puc-cli/tui/canvas.hpp#L173)
+[Source](../../puc-cli/tui/canvas.hpp#L176)
 
 <a id="symbol-classpuc_1_1tui_1_1_canvas_1af3edfa20c8ecee92f21ba7454c5d48fc"></a>
 
@@ -69,7 +69,7 @@ BufferState puc::tui::Canvas::buffer_state_
 
 Current roles of the two buffers.
 
-[Source](../../puc-cli/tui/canvas.hpp#L175)
+[Source](../../puc-cli/tui/canvas.hpp#L178)
 
 <a id="symbol-classpuc_1_1tui_1_1_canvas_1a55cf7d85fd842ada762d317395ebc0e9"></a>
 
@@ -81,7 +81,7 @@ bool puc::tui::Canvas::frame_in_progress_
 
 Whether a frame is currently being constructed.
 
-[Source](../../puc-cli/tui/canvas.hpp#L177)
+[Source](../../puc-cli/tui/canvas.hpp#L180)
 
 <a id="symbol-classpuc_1_1tui_1_1_canvas_1ad2735f64e84ffca27f7f4e551661b936"></a>
 
@@ -93,7 +93,7 @@ Status puc::tui::Canvas::status_
 
 Result of validating and allocating the canvas dimensions.
 
-[Source](../../puc-cli/tui/canvas.hpp#L180)
+[Source](../../puc-cli/tui/canvas.hpp#L183)
 
 <a id="symbol-classpuc_1_1tui_1_1_canvas_1ae43d26b17456735f3f0f2f1d610b2093"></a>
 
@@ -105,7 +105,7 @@ size_t puc::tui::Canvas::width_
 
 Width of the canvas.
 
-[Source](../../puc-cli/tui/canvas.hpp#L183)
+[Source](../../puc-cli/tui/canvas.hpp#L186)
 
 <a id="symbol-classpuc_1_1tui_1_1_canvas_1a02d28f30bc9429a3bb288feac0a2087f"></a>
 
@@ -117,7 +117,7 @@ size_t puc::tui::Canvas::height_
 
 Height of the canvas.
 
-[Source](../../puc-cli/tui/canvas.hpp#L185)
+[Source](../../puc-cli/tui/canvas.hpp#L188)
 
 ## Public functions
 
@@ -138,7 +138,7 @@ Zero-sized dimensions are valid. If `width * height` cannot be represented by `s
 - `width` (in) — Number of columns.
 - `height` (in) — Number of rows.
 
-[Source](../../puc-cli/tui/canvas.hpp#L70)
+[Source](../../puc-cli/tui/canvas.hpp#L73)
 
 <a id="symbol-classpuc_1_1tui_1_1_canvas_1a0e231ec6cf390a36944e0696f6666bcb"></a>
 
@@ -148,7 +148,7 @@ Zero-sized dimensions are valid. If `width * height` cannot be represented by `s
 puc::tui::Canvas::Canvas(const Canvas &)=delete
 ```
 
-[Source](../../puc-cli/tui/canvas.hpp#L72)
+[Source](../../puc-cli/tui/canvas.hpp#L75)
 
 <a id="symbol-classpuc_1_1tui_1_1_canvas_1a749dc7698ce6fa743913ba9bbce2b3cf"></a>
 
@@ -158,7 +158,7 @@ puc::tui::Canvas::Canvas(const Canvas &)=delete
 Canvas & puc::tui::Canvas::operator=(const Canvas &)=delete
 ```
 
-[Source](../../puc-cli/tui/canvas.hpp#L73)
+[Source](../../puc-cli/tui/canvas.hpp#L76)
 
 <a id="symbol-classpuc_1_1tui_1_1_canvas_1a3ba9e310c2de4960dec66248936937c9"></a>
 
@@ -168,7 +168,7 @@ Canvas & puc::tui::Canvas::operator=(const Canvas &)=delete
 puc::tui::Canvas::Canvas(Canvas &&)=delete
 ```
 
-[Source](../../puc-cli/tui/canvas.hpp#L74)
+[Source](../../puc-cli/tui/canvas.hpp#L77)
 
 <a id="symbol-classpuc_1_1tui_1_1_canvas_1a969375e8c22297dff9eb215e180600c4"></a>
 
@@ -178,7 +178,7 @@ puc::tui::Canvas::Canvas(Canvas &&)=delete
 Canvas & puc::tui::Canvas::operator=(Canvas &&)=delete
 ```
 
-[Source](../../puc-cli/tui/canvas.hpp#L75)
+[Source](../../puc-cli/tui/canvas.hpp#L78)
 
 <a id="symbol-classpuc_1_1tui_1_1_canvas_1a7966e182b3a9901fad00e1227ffef314"></a>
 
@@ -190,7 +190,7 @@ puc::tui::Canvas::~Canvas()=default
 
 Destroy both cell buffers.
 
-[Source](../../puc-cli/tui/canvas.hpp#L78)
+[Source](../../puc-cli/tui/canvas.hpp#L81)
 
 <a id="symbol-classpuc_1_1tui_1_1_canvas_1a3073ee7906d30866b46f3e8de48c797c"></a>
 
@@ -204,7 +204,7 @@ Return the canvas dimensions.
 
 **Returns:** `{width, height}` in terminal cells.
 
-[Source](../../puc-cli/tui/canvas.hpp#L85)
+[Source](../../puc-cli/tui/canvas.hpp#L88)
 
 <a id="symbol-classpuc_1_1tui_1_1_canvas_1af43680a8cbf67b0f4c333b53c50f4308"></a>
 
@@ -218,7 +218,7 @@ Return the result of validating and allocating this canvas.
 
 **Returns:** [Status::OK](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ae0aa021e21dddbd6d8cecec71e9cf564) for a usable canvas, otherwise the construction error.
 
-[Source](../../puc-cli/tui/canvas.hpp#L92)
+[Source](../../puc-cli/tui/canvas.hpp#L95)
 
 <a id="symbol-classpuc_1_1tui_1_1_canvas_1adcbf1051311b0d5a93df6085d4031171"></a>
 
@@ -234,7 +234,7 @@ This copies the currently drawable buffer into the writable buffer. `clear()` an
 
 **Returns:** [Status::OK](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ae0aa021e21dddbd6d8cecec71e9cf564) on success, the canvas construction status if invalid, or [Status::FRAME\_ALREADY\_IN\_PROGRESS](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270a27023964231ab51c6c6da5851bd668d8) for a nested transaction.
 
-[Source](../../puc-cli/tui/canvas.hpp#L104)
+[Source](../../puc-cli/tui/canvas.hpp#L107)
 
 <a id="symbol-classpuc_1_1tui_1_1_canvas_1a31157fd5b74374319e7987d71928245b"></a>
 
@@ -252,7 +252,7 @@ Fill every cell in the frame under construction.
 
 **Returns:** [Status::OK](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ae0aa021e21dddbd6d8cecec71e9cf564) on success, or [Status::NO\_FRAME\_IN\_PROGRESS](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270a724ef1baa751cd6e245cc246e1868fa2) when called outside a frame transaction.
 
-[Source](../../puc-cli/tui/canvas.hpp#L113)
+[Source](../../puc-cli/tui/canvas.hpp#L116)
 
 <a id="symbol-classpuc_1_1tui_1_1_canvas_1a6b7f14bcb0823e7c71631d3827000339"></a>
 
@@ -273,7 +273,7 @@ The outer span must contain exactly `rect.height` rows and each inner span must 
 
 **Returns:** [Status::OK](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ae0aa021e21dddbd6d8cecec71e9cf564) on success, [Status::NO\_FRAME\_IN\_PROGRESS](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270a724ef1baa751cd6e245cc246e1868fa2) outside a transaction, [Status::RECT\_OUT\_OF\_BOUNDS](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270a2483529a969feb26151730c02d3b5608) for an invalid rectangle, or [Status::CELL\_SHAPE\_MISMATCH](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270a495ebbc25234b754e9984ff6cd72249d) for incompatible source dimensions.
 
-[Source](../../puc-cli/tui/canvas.hpp#L128)
+[Source](../../puc-cli/tui/canvas.hpp#L131)
 
 <a id="symbol-classpuc_1_1tui_1_1_canvas_1a098c5bb27bc9564e250ee3b3ec977b8f"></a>
 
@@ -287,7 +287,7 @@ Publish the completed writable buffer.
 
 **Returns:** [Status::OK](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ae0aa021e21dddbd6d8cecec71e9cf564) on success, or [Status::NO\_FRAME\_IN\_PROGRESS](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270a724ef1baa751cd6e245cc246e1868fa2) when no frame transaction is active.
 
-[Source](../../puc-cli/tui/canvas.hpp#L137)
+[Source](../../puc-cli/tui/canvas.hpp#L140)
 
 <a id="symbol-classpuc_1_1tui_1_1_canvas_1a1bac85f45e79db290b6ae13accefc735"></a>
 
@@ -301,7 +301,7 @@ Abandon the writable image without changing the published buffer.
 
 **Returns:** [Status::OK](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ae0aa021e21dddbd6d8cecec71e9cf564) on success, or [Status::NO\_FRAME\_IN\_PROGRESS](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270a724ef1baa751cd6e245cc246e1868fa2) when no transaction is active.
 
-[Source](../../puc-cli/tui/canvas.hpp#L145)
+[Source](../../puc-cli/tui/canvas.hpp#L148)
 
 <a id="symbol-classpuc_1_1tui_1_1_canvas_1ab12ec6f52c4449f910830d5348c32ba4"></a>
 
@@ -317,7 +317,7 @@ A frame currently being assembled is not visible through this span until `end_fr
 
 **Returns:** A read-only span containing `width * height` cells.
 
-[Source](../../puc-cli/tui/canvas.hpp#L155)
+[Source](../../puc-cli/tui/canvas.hpp#L158)
 
 ## Private functions
 
@@ -331,7 +331,7 @@ void puc::tui::Canvas::copy_drawable_to_writable() noexcept
 
 Initialize the writable buffer with the currently published image.
 
-[Source](../../puc-cli/tui/canvas.hpp#L165)
+[Source](../../puc-cli/tui/canvas.hpp#L168)
 
 <a id="symbol-classpuc_1_1tui_1_1_canvas_1a2c20b6ab87bdd8b9d3b5085f2227bfb7"></a>
 
@@ -343,4 +343,4 @@ std::vector< Canvas::Cell > & puc::tui::Canvas::writable_buffer() noexcept
 
 Return the buffer currently receiving transaction writes.
 
-[Source](../../puc-cli/tui/canvas.hpp#L168)
+[Source](../../puc-cli/tui/canvas.hpp#L171)

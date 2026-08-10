@@ -55,6 +55,9 @@ class Canvas {
     size_t y;      /**< Y coordinate of the top-left corner of the rectangle. */
     size_t width;  /**< Width of the rectangle. */
     size_t height; /**< Height of the rectangle. */
+
+    /** Compare origin and dimensions. */
+    constexpr bool operator==(const Rect&) const noexcept = default;
   };
 
   /**

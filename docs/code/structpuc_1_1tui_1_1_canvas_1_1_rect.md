@@ -57,3 +57,17 @@ size_t puc::tui::Canvas::Rect::height
 Height of the rectangle.
 
 [Source](../../puc-cli/tui/canvas.hpp#L57)
+
+## Public functions
+
+<a id="symbol-structpuc_1_1tui_1_1_canvas_1_1_rect_1a48ced4dab98057cca4392eff012d315d"></a>
+
+### `operator==`
+
+```cpp
+bool puc::tui::Canvas::Rect::operator==(const Rect &) const noexcept=default
+```
+
+Compare origin and dimensions.
+
+[Source](../../puc-cli/tui/canvas.hpp#L60)
