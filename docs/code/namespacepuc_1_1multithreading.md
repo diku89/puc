@@ -4,7 +4,7 @@
 
 Fixed worker pools and asynchronous job scheduling.
 
-[Source](../../utils/ipc/channel.hpp#L21)
+[Source](../../commands/command.hpp#L22)
 
 ## Related symbols
 

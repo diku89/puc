@@ -80,7 +80,7 @@ Return whether this view names an existing value.
 ValueType puc::config::Value::type() const noexcept
 ```
 
-Return the public TOML type, or [ValueType::NONE](namespacepuc_1_1config.md#symbol-config_8hpp_1a6d6f4a02e466eec79eb03f5870d45664ab50339a10e1de285ac99d4c3990b8693) when missing.
+Return the public TOML type, or [ValueType::NONE](namespacepuc_1_1config.md#symbol-utils_2config_2config_8hpp_1a6d6f4a02e466eec79eb03f5870d45664ab50339a10e1de285ac99d4c3990b8693) when missing.
 
 [Source](../../utils/config/config.hpp#L128)
 

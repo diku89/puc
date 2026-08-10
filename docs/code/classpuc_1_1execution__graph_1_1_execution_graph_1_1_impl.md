@@ -4,7 +4,7 @@
 
 Shared graph state retained independently by scheduled wrapper jobs.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L103)
+[Source](../../utils/execution_graph/execution_graph.hpp#L95)
 
 ## Related symbols
 
@@ -25,7 +25,7 @@ RunState
 - <a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1_1_impl_1a073ab56cf967079fd0a21d102ced4305a43491564ebcfd38568918efbd6e840fd"></a>`RUNNING` — At least one run has uncompleted logical nodes.
 - <a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1_1_impl_1a073ab56cf967079fd0a21d102ced4305a3de44296982e58199afc513a715b12ba"></a>`COMPLETE` — Run result exists and must be consumed by [wait()](classpuc_1_1execution__graph_1_1_execution_graph.md#symbol-classpuc_1_1execution__graph_1_1_execution_graph_1aef03da0ec504c47b9d0485c33b372fc7).
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L114)
+[Source](../../utils/execution_graph/execution_graph.hpp#L105)
 
 ## Private data members
 
@@ -39,7 +39,7 @@ multithreading::JobQueue& puc::execution_graph::ExecutionGraph< NodeType >::Impl
 
 Borrowed caller-owned executor.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L389)
+[Source](../../utils/execution_graph/execution_graph.hpp#L331)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1_1_impl_1a4f675a99dd0ccd2a2f0ec9249f0f4e61"></a>
 
@@ -51,7 +51,7 @@ std::mutex puc::execution_graph::ExecutionGraph< NodeType >::Impl::mutex
 
 Protects topology and all run state.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L390)
+[Source](../../utils/execution_graph/execution_graph.hpp#L332)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1_1_impl_1a5c0f05616a9d2155d274e76fa313b5ef"></a>
 
@@ -63,7 +63,19 @@ std::condition_variable puc::execution_graph::ExecutionGraph< NodeType >::Impl::
 
 Signals a collectable run result.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L391)
+[Source](../../utils/execution_graph/execution_graph.hpp#L333)
+
+<a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1_1_impl_1a186064db6c4d3cbce847f06c36868a4e"></a>
+
+### `topology`
+
+```cpp
+DependencyGraph<NodeType> puc::execution_graph::ExecutionGraph< NodeType >::Impl::topology
+```
+
+Shared validated DAG mechanism.
+
+[Source](../../utils/execution_graph/execution_graph.hpp#L334)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1_1_impl_1ad5b491ac23fa8bc535d338dc63536277"></a>
 
@@ -75,43 +87,7 @@ std::vector<Node> puc::execution_graph::ExecutionGraph< NodeType >::Impl::nodes
 
 Dense stable node storage.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L392)
-
-<a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1_1_impl_1a5386dea640d34370cb40829b18eac2b3"></a>
-
-### `node_indices`
-
-```cpp
-std::unordered_map<NodeType, std::size_t> puc::execution_graph::ExecutionGraph< NodeType >::Impl::node_indices
-```
-
-Id index.
-
-[Source](../../utils/execution_graph/execution_graph.hpp#L393)
-
-<a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1_1_impl_1a552cd7759e1d149899689029fd40b991"></a>
-
-### `edge_count`
-
-```cpp
-std::size_t puc::execution_graph::ExecutionGraph< NodeType >::Impl::edge_count
-```
-
-Directed topology edge count.
-
-[Source](../../utils/execution_graph/execution_graph.hpp#L394)
-
-<a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1_1_impl_1a0d33be8ee8754a7b6db37ede0e8ed4b1"></a>
-
-### `topology_valid`
-
-```cpp
-bool puc::execution_graph::ExecutionGraph< NodeType >::Impl::topology_valid
-```
-
-Acyclicity cache for current edges.
-
-[Source](../../utils/execution_graph/execution_graph.hpp#L395)
+[Source](../../utils/execution_graph/execution_graph.hpp#L335)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1_1_impl_1ac2e33e8df8c653ceaa8bde888379185d"></a>
 
@@ -123,7 +99,7 @@ RunState puc::execution_graph::ExecutionGraph< NodeType >::Impl::state
 
 Current lifecycle state.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L396)
+[Source](../../utils/execution_graph/execution_graph.hpp#L336)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1_1_impl_1acc4bfc1d32cacbed0ee2e3781aff4dce"></a>
 
@@ -135,7 +111,7 @@ Status puc::execution_graph::ExecutionGraph< NodeType >::Impl::run_status
 
 Result of the active run.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L397)
+[Source](../../utils/execution_graph/execution_graph.hpp#L337)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1_1_impl_1aeb37d3c039c978c2c36dfb3c869b8dbf"></a>
 
@@ -147,7 +123,7 @@ std::size_t puc::execution_graph::ExecutionGraph< NodeType >::Impl::remaining_no
 
 Nodes not completed this run.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L398)
+[Source](../../utils/execution_graph/execution_graph.hpp#L338)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1_1_impl_1a7fcd6d6e7a99e1c7c7a7297492675f4a"></a>
 
@@ -159,7 +135,7 @@ std::size_t puc::execution_graph::ExecutionGraph< NodeType >::Impl::running_jobs
 
 Wrappers executing or queued.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L399)
+[Source](../../utils/execution_graph/execution_graph.hpp#L339)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1_1_impl_1a9156f31dfa99595b5783d510a33b7727"></a>
 
@@ -171,7 +147,7 @@ std::uint64_t puc::execution_graph::ExecutionGraph< NodeType >::Impl::generation
 
 Rejects stale wrapper completion.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L400)
+[Source](../../utils/execution_graph/execution_graph.hpp#L340)
 
 ## Public functions
 
@@ -183,7 +159,7 @@ Rejects stale wrapper completion.
 puc::execution_graph::ExecutionGraph< NodeType >::Impl::Impl(multithreading::JobQueue &configured_workers) noexcept
 ```
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L120)
+[Source](../../utils/execution_graph/execution_graph.hpp#L111)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1_1_impl_1a97d7e114c585c5e10071657cf1aa5e67"></a>
 
@@ -195,7 +171,7 @@ Status puc::execution_graph::ExecutionGraph< NodeType >::Impl::add(NodeType valu
 
 Add one uniquely identified executable node while idle.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L124)
+[Source](../../utils/execution_graph/execution_graph.hpp#L115)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1_1_impl_1a13145656c0aaf1ce3bad15d5cbe72698"></a>
 
@@ -207,7 +183,7 @@ Status puc::execution_graph::ExecutionGraph< NodeType >::Impl::depend(const Node
 
 Add one prerequisite-to-dependent edge while idle.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L144)
+[Source](../../utils/execution_graph/execution_graph.hpp#L133)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1_1_impl_1ae7213564e7289490ad09b558bcaf7d08"></a>
 
@@ -219,7 +195,7 @@ Status puc::execution_graph::ExecutionGraph< NodeType >::Impl::start()
 
 Validate the topology, initialize readiness, and schedule every root.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L169)
+[Source](../../utils/execution_graph/execution_graph.hpp#L142)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1_1_impl_1ac705f021733bd6154b14d7246e23bc87"></a>
 
@@ -231,7 +207,7 @@ Status puc::execution_graph::ExecutionGraph< NodeType >::Impl::wait() noexcept
 
 Wait for the active run, consume its status, and restore idle state.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L216)
+[Source](../../utils/execution_graph/execution_graph.hpp#L192)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1_1_impl_1a6cacfc7e4b8da0631c35fc874ad5fabd"></a>
 
@@ -243,7 +219,7 @@ void puc::execution_graph::ExecutionGraph< NodeType >::Impl::execute_node(std::s
 
 Execute the caller's job and unlock newly ready successors.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L234)
+[Source](../../utils/execution_graph/execution_graph.hpp#L210)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1_1_impl_1ad6bfebdbc28c5ec1744e279596b251e8"></a>
 
@@ -255,7 +231,7 @@ bool puc::execution_graph::ExecutionGraph< NodeType >::Impl::active() const noex
 
 Return whether a run is active or awaiting result collection.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L251)
+[Source](../../utils/execution_graph/execution_graph.hpp#L227)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1_1_impl_1af5538d35465060d76d17e7a3ace3e149"></a>
 
@@ -267,7 +243,7 @@ std::size_t puc::execution_graph::ExecutionGraph< NodeType >::Impl::size() const
 
 Return the number of registered nodes.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L257)
+[Source](../../utils/execution_graph/execution_graph.hpp#L233)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1_1_impl_1ae4259cef9e51f877458ec0e0ada8f4a1"></a>
 
@@ -279,7 +255,7 @@ std::size_t puc::execution_graph::ExecutionGraph< NodeType >::Impl::dependencies
 
 Return the number of registered directed edges.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L263)
+[Source](../../utils/execution_graph/execution_graph.hpp#L239)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1_1_impl_1a4c9e53725a57703199bf1bec5d03825f"></a>
 
@@ -291,21 +267,9 @@ std::size_t puc::execution_graph::ExecutionGraph< NodeType >::Impl::worker_count
 
 Return the configured worker count.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L269)
+[Source](../../utils/execution_graph/execution_graph.hpp#L245)
 
 ## Private functions
-
-<a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1_1_impl_1a3639d56312ad69b51e40593d98e43abc"></a>
-
-### `validate_topology_locked`
-
-```cpp
-Status puc::execution_graph::ExecutionGraph< NodeType >::Impl::validate_topology_locked()
-```
-
-Validate acyclicity once for the current immutable topology.
-
-[Source](../../utils/execution_graph/execution_graph.hpp#L273)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1_1_impl_1a4b10514b9234a40c2db1068d7516b340"></a>
 
@@ -317,7 +281,7 @@ void puc::execution_graph::ExecutionGraph< NodeType >::Impl::schedule(std::size_
 
 Submit one ready node, converting queue rejection into run failure.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L307)
+[Source](../../utils/execution_graph/execution_graph.hpp#L249)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1_1_impl_1a6849a1904b17dd9ca620b325cb3418a5"></a>
 
@@ -329,7 +293,7 @@ void puc::execution_graph::ExecutionGraph< NodeType >::Impl::complete(std::size_
 
 Complete one node and submit every successor it newly unblocks.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L331)
+[Source](../../utils/execution_graph/execution_graph.hpp#L273)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1_1_impl_1a83ce54bc626f17b876203ae0b46a6dab"></a>
 
@@ -341,7 +305,7 @@ void puc::execution_graph::ExecutionGraph< NodeType >::Impl::fail_run_locked(Sta
 
 Stop successor submission and finish after already-running jobs exit.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L371)
+[Source](../../utils/execution_graph/execution_graph.hpp#L313)
 
 ## Private static functions
 
@@ -355,4 +319,4 @@ static Impl *& puc::execution_graph::ExecutionGraph< NodeType >::Impl::current_g
 
 Identify a graph currently executing on this thread.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L383)
+[Source](../../utils/execution_graph/execution_graph.hpp#L325)

@@ -7,10 +7,12 @@ code_docs_sources()
 cc_library(
     name = "msgs",
     srcs = [
+        "cmdframe_msgs.cpp",
         "codec.cpp",
         "screen_msgs.cpp",
     ],
     hdrs = [
+        "cmdframe_msgs.hpp",
         "codec.hpp",
         "msgs.hpp",
         "null_message.hpp",
@@ -21,6 +23,7 @@ cc_library(
     deps = [
         "//utils/ipc",
         "//utils/logger",
+        "//utils/utf8",
     ],
 )
 
@@ -30,6 +33,7 @@ cc_test(
     name = "msgs_test",
     size = "small",
     srcs = [
+        "cmdframe_msgs_test.cpp",
         "codec_test.cpp",
         "screen_msgs_test.cpp",
     ],

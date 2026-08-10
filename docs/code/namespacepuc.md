@@ -2,10 +2,22 @@
 
 # Namespace `puc`
 
-[Source](../../msgs/codec.cpp#L25)
+Implement the config comand.
+
+\\command config || View, edit, or reload the configuration. \\subcommand get <full.key.path> || Get the value of a configuration key. \\subcommand set <full.key.path>
+
+|| Set the value of a configuration key. \\subcommand list \[partial.prefix\] || List all configuration keys, optionally filtered by a prefix. \\subcommand reload || Reload all configurations from config files.
+
+Implement the quit command.
+
+\\command quit || Quit the application. \\alias q \\alias exit
+
+[Source](../../commands/command.cpp#L31)
 
 ## Related symbols
 
+- [puc::app](namespacepuc_1_1app.md)
+- [puc::command](namespacepuc_1_1command.md)
 - [puc::config](namespacepuc_1_1config.md)
 - [puc::containers](namespacepuc_1_1containers.md)
 - [puc::execution\_graph](namespacepuc_1_1execution__graph.md)
@@ -16,3 +28,4 @@
 - [puc::multithreading](namespacepuc_1_1multithreading.md)
 - [puc::terminal](namespacepuc_1_1terminal.md)
 - [puc::tui](namespacepuc_1_1tui.md)
+- [puc::utf8](namespacepuc_1_1utf8.md)

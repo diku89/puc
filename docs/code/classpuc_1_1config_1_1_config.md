@@ -82,7 +82,7 @@ LoadResult puc::config::Config::load(const std::filesystem::path &relative_path)
 
 Load and merge one relative TOML file from the two configured roots.
 
-The primary file supplies system defaults. When the corresponding file is present under the user-overrides root, its scalar and table values take precedence. Arrays of tables retain primary entries followed by override entries, allowing domain-specific loaders to apply later entries last. If neither file exists, this returns [Status::NOT\_FOUND](namespacepuc_1_1config.md#symbol-config_8hpp_1a22e10c0db0ee053eaca618763e0e28dfa8c02547a8a3b02382bac3557bcb2280d) without logging an error. The supplied path must be a non-empty relative path with no `.` or `..` components.
+The primary file supplies system defaults. When the corresponding file is present under the user-overrides root, its scalar and table values take precedence. Arrays of tables retain primary entries followed by override entries, allowing domain-specific loaders to apply later entries last. If neither file exists, this returns [Status::NOT\_FOUND](namespacepuc_1_1config.md#symbol-utils_2config_2config_8hpp_1a22e10c0db0ee053eaca618763e0e28dfa8c02547a8a3b02382bac3557bcb2280d) without logging an error. The supplied path must be a non-empty relative path with no `.` or `..` components.
 
 [Source](../../utils/config/config.hpp#L276)
 

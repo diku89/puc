@@ -4,7 +4,7 @@
 
 Internal job that observes completion of one caller-owned node job.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L84)
+[Source](../../utils/execution_graph/execution_graph.hpp#L76)
 
 ## Private data members
 
@@ -18,7 +18,7 @@ std::shared_ptr<Impl> puc::execution_graph::ExecutionGraph< NodeType >::Completi
 
 Graph kept alive by the job.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L97)
+[Source](../../utils/execution_graph/execution_graph.hpp#L89)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1_1_completion_job_1a4d0270ebab0d71eacac408fb0e3af997"></a>
 
@@ -30,7 +30,7 @@ std::size_t puc::execution_graph::ExecutionGraph< NodeType >::CompletionJob::nod
 
 Dense registered-node index.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L98)
+[Source](../../utils/execution_graph/execution_graph.hpp#L90)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1_1_completion_job_1a28e41d26b8af784ac0c5807924bce227"></a>
 
@@ -42,7 +42,7 @@ std::uint64_t puc::execution_graph::ExecutionGraph< NodeType >::CompletionJob::g
 
 Run generation to complete.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L99)
+[Source](../../utils/execution_graph/execution_graph.hpp#L91)
 
 ## Public functions
 
@@ -54,7 +54,7 @@ Run generation to complete.
 puc::execution_graph::ExecutionGraph< NodeType >::CompletionJob::CompletionJob(std::shared_ptr< Impl > implementation, std::size_t node_index, std::uint64_t generation)
 ```
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L86)
+[Source](../../utils/execution_graph/execution_graph.hpp#L78)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1_1_completion_job_1aaad074a01949ae1798733b5222725c96"></a>
 
@@ -64,4 +64,4 @@ puc::execution_graph::ExecutionGraph< NodeType >::CompletionJob::CompletionJob(s
 void puc::execution_graph::ExecutionGraph< NodeType >::CompletionJob::execute() noexcept override
 ```
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L92)
+[Source](../../utils/execution_graph/execution_graph.hpp#L84)

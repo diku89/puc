@@ -4,6 +4,6 @@
 
 Node identities accepted by ExecutionGraph.
 
-Values are copied into the graph, compared for equality, and indexed by `std::hash`. The constraint deliberately says nothing about formatting, ordering, inheritance, or the work performed by a node.
+This compatibility concept is the topology-only DependencyGraphNode contract under the execution scheduler's established public name.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L49)
+[Source](../../utils/execution_graph/execution_graph.hpp#L44)

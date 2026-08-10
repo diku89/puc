@@ -8,6 +8,10 @@ This executable gives InputFrame the same real terminal pipeline validated by th
 
 Run from a real terminal with: `bazel run //puc-cli/tui:input-test-app`
 
+The animation below demonstrates normal text input and line numbering, shared selection behavior, command mode, and the integrated terminal:
+
+![The PUC input frame demonstrating normal, command, and terminal modes.](../assets/puc-cli-input-frame-demo.gif)
+
 Ctrl-C restores the terminal and exits. `PUC_CONFIG_ROOT` and `PUC_USER_CONFIG_ROOT` have the same meaning as in terminal-test. `PUC_TEST_SHELL` may replace the embedded `/bin/sh` used for terminal mode.
 
 [Source](../../puc-cli/tui/input-test-app.cpp)
@@ -31,4 +35,4 @@ Run the standalone InputFrame manual test until interrupted.
 
 **Returns:** Zero after successful setup, rendering, and terminal restoration.
 
-[Source](../../puc-cli/tui/input-test-app.cpp#L1241)
+[Source](../../puc-cli/tui/input-test-app.cpp#L1247)

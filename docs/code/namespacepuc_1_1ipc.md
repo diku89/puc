@@ -6,7 +6,7 @@ Named event distribution, portable wire messages, and Unix transports.
 
 Include this header when an application needs several IPC components. Small consumers may include the individual component header they use instead.
 
-[Source](../../utils/ipc/channel.cpp#L29)
+[Source](../../commands/command.hpp#L17)
 
 ## Related symbols
 

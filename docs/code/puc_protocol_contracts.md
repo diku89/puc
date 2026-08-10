@@ -4,15 +4,40 @@
 
 ## Member [puc::metronome::kOneHertzChannel](namespacepuc_1_1metronome.md#symbol-metronome_8hpp_1ad712d1722112c3e9598cb3e96ee87db6)
 
-<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000009"></a> **Kind:** Channel  
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000012"></a> **Kind:** Channel  
 **Name:** `//metronome/1hz`  
 **Purpose:** Publishes a process-local one-hertz heartbeat as [puc.msg.NullMessage](structpuc_1_1msg_1_1_null_message.md). Only the newest pending heartbeat is retained, so a delayed consumer never receives a burst of stale clock ticks.  
 **Producers:** [puc.metronome.Metronome](classpuc_1_1metronome_1_1_metronome.md).  
 **Consumers:** TUI timers and other elapsed-time consumers.
 
+## Member [puc::msg::CMD\_FRAME\_NOTIFICATION](namespacepuc_1_1msg.md#symbol-namespacepuc_1_1msg_1a24b154890bf81939005e112918c3813fa927a4a1b4940c5412075641ddb1120b5)
+
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000006"></a> **Kind:** Message ID  
+**ID:** `3`  
+**Message:** [puc::msg::CmdFrameNotification](structpuc_1_1msg_1_1_cmd_frame_notification.md)  
+**Purpose:** Selects the UTF-8 command notification schema published on //cmdframe/notify.  
+**Producers:** [Command notification producers](namespacepuc_1_1command.md#symbol-command_8cpp_1aae6bb7ab5476027600e831b5731b57ea).  
+**Consumers:** The command-mode controller presenting [CmdFrame](classpuc_1_1tui_1_1_cmd_frame.md).
+
+## Struct [puc::msg::CmdFrameNotification](structpuc_1_1msg_1_1_cmd_frame_notification.md)
+
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000002"></a> **Kind:** Message  
+**Type:** [puc::msg::CmdFrameNotification](structpuc_1_1msg_1_1_cmd_frame_notification.md)  
+**Purpose:** Carries one complete UTF-8 status or result string emitted by a command.  
+**Producers:** [Command notification producers](namespacepuc_1_1command.md#symbol-command_8cpp_1aae6bb7ab5476027600e831b5731b57ea).  
+**Consumers:** The command-mode controller presenting [CmdFrame](classpuc_1_1tui_1_1_cmd_frame.md).
+
+## Member [puc::msg::kCmdFrameNotifyChannel](namespacepuc_1_1msg.md#symbol-namespacepuc_1_1msg_1a2750e4faa0d4b6bedda2b4809e89a08a)
+
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000001"></a> **Kind:** Channel  
+**Name:** `//cmdframe/notify`  
+**Purpose:** Publishes the newest UTF-8 command notification for display beneath the command editor. Pending stale notifications may be replaced before delivery.  
+**Producers:** [Command notification producers](namespacepuc_1_1command.md#symbol-command_8cpp_1aae6bb7ab5476027600e831b5731b57ea).  
+**Consumers:** The command-mode controller presenting [CmdFrame](classpuc_1_1tui_1_1_cmd_frame.md).
+
 ## Member [puc::msg::kScreenCommandChannel](namespacepuc_1_1msg.md#symbol-namespacepuc_1_1msg_1ab3c15431e3548f48110d613240af05d9)
 
-<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000005"></a> **Kind:** Channel  
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000008"></a> **Kind:** Channel  
 **Name:** `//screen/commands`  
 **Purpose:** Carries ordered, one-way terminal ownership and presentation operations without a result path.  
 **Producers:** [Screen](classpuc_1_1tui_1_1_screen.md).  
@@ -20,7 +45,7 @@
 
 ## Member [puc::msg::kScreenResizeEventChannel](namespacepuc_1_1msg.md#symbol-namespacepuc_1_1msg_1aac82f776baf22130dde29f2cb56284dd)
 
-<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000006"></a> **Kind:** Channel  
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000009"></a> **Kind:** Channel  
 **Name:** `//screen/resize_events`  
 **Purpose:** Publishes the newest observed character and optional pixel geometry as convergent state.  
 **Producers:** [TerminalSession](classpuc_1_1terminal_1_1_terminal_session.md).  
@@ -28,7 +53,7 @@
 
 ## Member [puc::msg::NULL\_MESSAGE](namespacepuc_1_1msg.md#symbol-namespacepuc_1_1msg_1a24b154890bf81939005e112918c3813fabba60353fe62a4eed8c486b71c20f573)
 
-<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000001"></a> **Kind:** Message ID  
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000003"></a> **Kind:** Message ID  
 **ID:** `0`  
 **Message:** [puc::msg::NullMessage](structpuc_1_1msg_1_1_null_message.md)  
 **Purpose:** Reserves the zero schema identifier for an explicitly empty typed payload.  
@@ -37,7 +62,7 @@
 
 ## Struct [puc::msg::NullMessage](structpuc_1_1msg_1_1_null_message.md)
 
-<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000004"></a> **Kind:** Message  
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000007"></a> **Kind:** Message  
 **Type:** [puc::msg::NullMessage](structpuc_1_1msg_1_1_null_message.md)  
 **Purpose:** Represents an explicit typed no-data payload and gives generic dispatch a valid schema at message ID zero.  
 **Producers:** Components that need a typed no-data envelope.  
@@ -45,7 +70,7 @@
 
 ## Member [puc::msg::SCREEN\_COMMAND](namespacepuc_1_1msg.md#symbol-namespacepuc_1_1msg_1a24b154890bf81939005e112918c3813fa2762e0ac6a7a8de6eb1160ffeaa14043)
 
-<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000002"></a> **Kind:** Message ID  
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000004"></a> **Kind:** Message ID  
 **ID:** `1`  
 **Message:** [puc::msg::ScreenCommand](structpuc_1_1msg_1_1_screen_command.md)  
 **Purpose:** Selects the portable schema for terminal ownership, presentation, and release commands.  
@@ -54,7 +79,7 @@
 
 ## Member [puc::msg::SCREEN\_RESIZE\_EVENT](namespacepuc_1_1msg.md#symbol-namespacepuc_1_1msg_1a24b154890bf81939005e112918c3813fac6358684a996df7bd22732e2db736db5)
 
-<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000003"></a> **Kind:** Message ID  
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000005"></a> **Kind:** Message ID  
 **ID:** `2`  
 **Message:** [puc::msg::ScreenResizeEvent](structpuc_1_1msg_1_1_screen_resize_event.md)  
 **Purpose:** Selects the fixed-width schema for the newest observed terminal geometry.  
@@ -63,7 +88,7 @@
 
 ## Struct [puc::msg::ScreenCommand](structpuc_1_1msg_1_1_screen_command.md)
 
-<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000007"></a> **Kind:** Message  
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000010"></a> **Kind:** Message  
 **Type:** [puc::msg::ScreenCommand](structpuc_1_1msg_1_1_screen_command.md)  
 **Purpose:** Carries one fire-and-forget terminal take, presentation, clipboard-write, or release operation.  
 **Producers:** [Screen](classpuc_1_1tui_1_1_screen.md).  
@@ -71,7 +96,7 @@
 
 ## Struct [puc::msg::ScreenResizeEvent](structpuc_1_1msg_1_1_screen_resize_event.md)
 
-<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000008"></a> **Kind:** Message  
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000011"></a> **Kind:** Message  
 **Type:** [puc::msg::ScreenResizeEvent](structpuc_1_1msg_1_1_screen_resize_event.md)  
 **Purpose:** Publishes changed terminal geometry as latest-value state rather than as a command reply.  
 **Producers:** [TerminalSession](classpuc_1_1terminal_1_1_terminal_session.md).  

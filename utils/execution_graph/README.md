@@ -1,12 +1,19 @@
 # Execution graph
 
+`//utils/execution_graph:dependency_graph` stores reusable dependency topology
+without requiring a worker pool or executable jobs. It validates cycles,
+provides a dense adjacency snapshot, and produces stable dependency-first and
+dependent-first layers. Application lifecycle orchestration uses those layers
+for startup, rollback, and teardown while retaining its own failure policy.
+
 `//utils/execution_graph:execution_graph` runs reusable directed acyclic graphs
 on a `puc::multithreading::JobQueue`. It is independent of the work represented
 by a node: frame rendering, indexing, dependency analysis, and other subsystems
 can use the same scheduler.
 
-The node key type must satisfy `ExecutionGraphNode`: it is a regular C++ value
-with `std::hash` support. Each key is associated with any concrete
+The node key type must satisfy `ExecutionGraphNode`: it is a copyable,
+equality-comparable C++ value with `std::hash` support and need not be default
+constructible. Each key is associated with any concrete
 `multithreading::Job` subtype, checked by the `ExecutionGraphJob` concept.
 Different job subtypes may coexist in one graph.
 

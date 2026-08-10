@@ -4,7 +4,7 @@
 
 Terminal user-interface primitives, layout, rendering, and terminal control.
 
-[Source](../../puc-cli/tui/annotated_text_frame.cpp#L22)
+[Source](../../commands/command.hpp#L30)
 
 ## Related symbols
 

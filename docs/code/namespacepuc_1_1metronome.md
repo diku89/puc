@@ -40,7 +40,7 @@ std::string_view puc::metronome::kOneHertzChannel
 
 Canonical channel carrying one empty heartbeat payload per second.
 
-**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000009):**
+**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000012):**
 
 **Kind:** Channel  
 **Name:** `//metronome/1hz`  

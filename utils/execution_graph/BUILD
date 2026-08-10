@@ -7,16 +7,34 @@ code_docs_sources()
 exports_files(["README.md"])
 
 cc_library(
-    name = "execution_graph",
-    srcs = ["execution_graph.cpp"],
+    name = "dependency_graph",
     hdrs = [
-        "execution_graph.hpp",
+        "dependency_graph.hpp",
         "status.hpp",
     ],
     visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "execution_graph",
+    srcs = ["execution_graph.cpp"],
+    hdrs = ["execution_graph.hpp"],
+    visibility = ["//visibility:public"],
     deps = [
+        ":dependency_graph",
         "//utils/logger",
         "//utils/multithreading",
+    ],
+)
+
+cc_test(
+    name = "dependency_graph_test",
+    size = "small",
+    srcs = ["dependency_graph_test.cpp"],
+    deps = [
+        ":dependency_graph",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
     ],
 )
 

@@ -4,7 +4,7 @@
 
 Type-erased interface stored by [MessageCodecCollection](classpuc_1_1msg_1_1_message_codec_collection.md).
 
-[Source](../../msgs/codec.hpp#L80)
+[Source](../../msgs/codec.hpp#L91)
 
 ## Private data members
 
@@ -18,7 +18,7 @@ MessageId puc::msg::CodecBase::message_id_
 
 Payload schema selected by this codec.
 
-[Source](../../msgs/codec.hpp#L104)
+[Source](../../msgs/codec.hpp#L115)
 
 ## Public functions
 
@@ -32,7 +32,7 @@ virtual puc::msg::CodecBase::~CodecBase()=default
 
 Destroy a codec through the type-erased interface.
 
-[Source](../../msgs/codec.hpp#L83)
+[Source](../../msgs/codec.hpp#L94)
 
 <a id="symbol-classpuc_1_1msg_1_1_codec_base_1a02f83658df7891a2a5030d6c9302f142"></a>
 
@@ -44,7 +44,7 @@ MessageId puc::msg::CodecBase::message_id() const noexcept
 
 Return the payload schema identifier implemented by this codec.
 
-[Source](../../msgs/codec.hpp#L86)
+[Source](../../msgs/codec.hpp#L97)
 
 <a id="symbol-classpuc_1_1msg_1_1_codec_base_1a5115a01a2d71804312bc2acce8756ef1"></a>
 
@@ -63,7 +63,7 @@ Decode a payload and format its typed value as JSON.
 
 **Returns:** [Status::OK](namespacepuc_1_1msg.md#symbol-namespacepuc_1_1msg_1a907eec61a676749c81ee4d71de76953fae0aa021e21dddbd6d8cecec71e9cf564) or the concrete payload decoder's failure status.
 
-[Source](../../msgs/codec.hpp#L95)
+[Source](../../msgs/codec.hpp#L106)
 
 ## Protected functions
 
@@ -77,4 +77,4 @@ puc::msg::CodecBase::CodecBase(MessageId message_id) noexcept
 
 Construct a codec for one immutable payload schema identifier.
 
-[Source](../../msgs/codec.hpp#L100)
+[Source](../../msgs/codec.hpp#L111)
