@@ -6,8 +6,20 @@
 
 ## Related symbols
 
-- [puc::app::AppSubsystem](classpuc_1_1app_1_1_app_subsystem.md)
+- [puc::app::ApplicationSubsystemOptions](structpuc_1_1app_1_1_application_subsystem_options.md)
 - [puc::app::AppState](classpuc_1_1app_1_1_app_state.md)
+- [puc::app::AppSubsystem](classpuc_1_1app_1_1_app_subsystem.md)
+- [puc::app::CommandNotificationChannelSubsystem](classpuc_1_1app_1_1_command_notification_channel_subsystem.md)
+- [puc::app::CommandSubsystem](classpuc_1_1app_1_1_command_subsystem.md)
+- [puc::app::DirectorySubsystem](classpuc_1_1app_1_1_directory_subsystem.md)
+- [puc::app::InputSubsystem](classpuc_1_1app_1_1_input_subsystem.md)
+- [puc::app::LoggerSubsystem](classpuc_1_1app_1_1_logger_subsystem.md)
+- [puc::app::ScreenChannelSubsystem](classpuc_1_1app_1_1_screen_channel_subsystem.md)
+- [puc::app::ScreenSubsystem](classpuc_1_1app_1_1_screen_subsystem.md)
+- [puc::app::ScreenSubsystemOptions](structpuc_1_1app_1_1_screen_subsystem_options.md)
+- [puc::app::TerminalSubsystem](classpuc_1_1app_1_1_terminal_subsystem.md)
+- [puc::app::TerminalSubsystemOptions](structpuc_1_1app_1_1_terminal_subsystem_options.md)
+- [puc::app::WorkerSubsystem](classpuc_1_1app_1_1_worker_subsystem.md)
 
 ## Enumerations
 
@@ -91,7 +103,37 @@ Concrete C++ type used as one stable subsystem identity.
 
 [Source](../../puc-cli/state/state.hpp#L29)
 
+## Variables
+
+<a id="symbol-bootstrap_8hpp_1a448286e276a1ae8724f4c17b834a4ef4"></a>
+
+### `kApplicationSubsystemCount`
+
+```cpp
+std::size_t puc::app::kApplicationSubsystemCount
+```
+
+Number of concrete adapters installed by register\_application\_subsystems.
+
+[Source](../../puc-cli/state/bootstrap.hpp#L19)
+
 ## Functions
+
+<a id="symbol-bootstrap_8cpp_1a4d996dc85454a4820feeb86d3984bf07"></a>
+
+### `register_application_subsystems`
+
+```cpp
+Status puc::app::register_application_subsystems(AppState &app, ApplicationSubsystemOptions options)
+```
+
+Register the complete concrete adapter graph into an empty [AppState](classpuc_1_1app_1_1_app_state.md).
+
+Registration is root-to-leaf for readability, although [AppState](classpuc_1_1app_1_1_app_state.md) derives the actual order from declared dependencies. The function does not initialize or start the graph. A nonempty [AppState](classpuc_1_1app_1_1_app_state.md) is rejected to avoid returning a misleading partial "default" graph.
+
+**Returns:** [Status::OK](#symbol-lifecycle_8hpp_1a01c86981579ba6b89336774973c68d60ae0aa021e21dddbd6d8cecec71e9cf564), [Status::INVALID\_ARGUMENT](#symbol-lifecycle_8hpp_1a01c86981579ba6b89336774973c68d60af295a0c3e37c94f078e1c5476479132d) for a nonempty [AppState](classpuc_1_1app_1_1_app_state.md), or an unexpected registration failure.
+
+[Source](../../puc-cli/state/bootstrap.cpp#L22)
 
 <a id="symbol-lifecycle_8hpp_1a4b70db1608e49fb1b3c00c6b9f30ecbe"></a>
 

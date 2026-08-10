@@ -35,4 +35,4 @@ Run the standalone InputFrame manual test until interrupted.
 
 **Returns:** Zero after successful setup, rendering, and terminal restoration.
 
-[Source](../../puc-cli/tui/input-test-app.cpp#L1247)
+[Source](../../puc-cli/tui/input-test-app.cpp#L1229)

@@ -87,6 +87,7 @@ cc_binary(
     deps = [
         ":tui",
         "//msgs",
+        "//puc-cli/state:adapters",
         "//puc-cli/terminal",
         "//utils/config",
         "//utils/logger",

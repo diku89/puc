@@ -2,7 +2,7 @@
 
 # Namespace `puc::command`
 
-[Source](../../commands/command.cpp#L31)
+[Source](../../commands/command.cpp#L29)
 
 ## Related symbols
 
@@ -29,13 +29,12 @@ Result of command registration, lookup, or execution.
 - <a id="symbol-command_8hpp_1a6fef870a7bf5516b662333b401f3fda7af295a0c3e37c94f078e1c5476479132d"></a>`INVALID_ARGUMENT` — A name, alias, command, or argument is invalid.
 - <a id="symbol-command_8hpp_1a6fef870a7bf5516b662333b401f3fda7ab60f1401bf3b1746120a63995035329d"></a>`DUPLICATE_COMMAND_NAME` — A name or alias is already registered.
 - <a id="symbol-command_8hpp_1a6fef870a7bf5516b662333b401f3fda7a1ec90cd6f3a98d4abd47f52937ea2805"></a>`COMMAND_NOT_FOUND` — No command owns the requested spelling.
-- <a id="symbol-command_8hpp_1a6fef870a7bf5516b662333b401f3fda7a767a0073624a94f0852e62c3567a1242"></a>`CHANNEL_SETUP_FAILED` — The notification channel could not be opened.
 - <a id="symbol-command_8hpp_1a6fef870a7bf5516b662333b401f3fda7a14e610ffbb18babdaab9b4b060bfc6ed"></a>`MESSAGE_ENCODING_FAILED` — Notification text could not be encoded.
 - <a id="symbol-command_8hpp_1a6fef870a7bf5516b662333b401f3fda7ae4073272492fa399f022338edbb8a378"></a>`NOTIFICATION_FAILED` — The notification channel rejected a message.
 - <a id="symbol-command_8hpp_1a6fef870a7bf5516b662333b401f3fda7a4596302bc1e8ce6e62188e769aac94cf"></a>`NOT_ALLOWED` — Current application policy forbids execution.
 - <a id="symbol-command_8hpp_1a6fef870a7bf5516b662333b401f3fda7ae8c0c70879b5895c615677261d64a1ee"></a>`INTERNAL_ERROR` — Command execution failed internally.
 
-[Source](../../commands/command.hpp#L47)
+[Source](../../commands/command.hpp#L45)
 
 ## Functions
 
@@ -49,11 +48,11 @@ Status puc::command::send_notification(const CommonCommandArgs &common_args, std
 
 Encode and publish one notification through `common_args.directory`.
 
-The dispatcher that owns the command session must have opened the canonical notification channel in the same Directory. Empty text is valid and clears an earlier notification when consumed.
+CommandNotificationChannelSubsystem must have opened the canonical route in the same Directory. Empty text is valid and clears an earlier notification when consumed.
 
 **Returns:** [Status::OK](#symbol-command_8hpp_1a6fef870a7bf5516b662333b401f3fda7ae0aa021e21dddbd6d8cecec71e9cf564), [Status::INVALID\_ARGUMENT](#symbol-command_8hpp_1a6fef870a7bf5516b662333b401f3fda7af295a0c3e37c94f078e1c5476479132d) when no Directory is supplied, [Status::MESSAGE\_ENCODING\_FAILED](#symbol-command_8hpp_1a6fef870a7bf5516b662333b401f3fda7a14e610ffbb18babdaab9b4b060bfc6ed) for malformed UTF-8, or [Status::NOTIFICATION\_FAILED](#symbol-command_8hpp_1a6fef870a7bf5516b662333b401f3fda7ae4073272492fa399f022338edbb8a378) when the channel rejects the payload.
 
-[Source](../../commands/command.cpp#L58)
+[Source](../../commands/command.cpp#L53)
 
 <a id="symbol-command_8hpp_1a78ef70572932ec712469e79fc3558fed"></a>
 
@@ -65,7 +64,7 @@ bool puc::command::is_ok(Status status) noexcept
 
 Return whether a command operation succeeded.
 
-[Source](../../commands/command.hpp#L60)
+[Source](../../commands/command.hpp#L57)
 
 <a id="symbol-command_8hpp_1a3cd776a4c939d894cf736835d274b232"></a>
 
@@ -77,4 +76,4 @@ std::string_view puc::command::status_message(Status status) noexcept
 
 Return stable human-readable text for a command result.
 
-[Source](../../commands/command.hpp#L63)
+[Source](../../commands/command.hpp#L60)

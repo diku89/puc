@@ -35,7 +35,7 @@ int main() {
 
 ## Macros
 
-<a id="symbol-logger_8hpp_1a9d7cb17bff1907d5e09ecfbd2a779683"></a>
+<a id="symbol-utils_2logger_2logger_8hpp_1a9d7cb17bff1907d5e09ecfbd2a779683"></a>
 
 ### `LOGGER_INIT`
 
@@ -51,9 +51,9 @@ Call this macro from the program entry point after constructing a [puc::logger::
 
 - `config` — Global logger configuration.
 
-[Source](../../utils/logger/logger.hpp#L234)
+[Source](../../utils/logger/logger.hpp#L246)
 
-<a id="symbol-logger_8hpp_1afe144fc32be52607c8eac7e98ecdbc8b"></a>
+<a id="symbol-utils_2logger_2logger_8hpp_1afe144fc32be52607c8eac7e98ecdbc8b"></a>
 
 ### `LOGGER_MODULE`
 
@@ -77,4 +77,4 @@ void run() {
 
 - `module_name` — Name included in log lines from this translation unit.
 
-[Source](../../utils/logger/logger.hpp#L254)
+[Source](../../utils/logger/logger.hpp#L266)

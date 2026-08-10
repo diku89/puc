@@ -4,13 +4,13 @@
 
 Starts a log line at a compile-time log level.
 
-[LOGGER\_MODULE()](logger_8hpp.md#symbol-logger_8hpp_1afe144fc32be52607c8eac7e98ecdbc8b) creates one variable-template instance of this class for each log level used by a translation unit.
+[LOGGER\_MODULE()](utils_2logger_2logger_8hpp.md#symbol-utils_2logger_2logger_8hpp_1afe144fc32be52607c8eac7e98ecdbc8b) creates one variable-template instance of this class for each log level used by a translation unit.
 
 **Template parameters**
 
 - `Level` — Log level assigned to each line started by this object.
 
-[Source](../../utils/logger/logger.hpp#L197)
+[Source](../../utils/logger/logger.hpp#L209)
 
 ## Private data members
 
@@ -24,7 +24,7 @@ ModuleConf puc::logger::LogStarter< Level >::module_
 
 Module configuration copied into each new log line.
 
-[Source](../../utils/logger/logger.hpp#L220)
+[Source](../../utils/logger/logger.hpp#L232)
 
 ## Public functions
 
@@ -42,7 +42,7 @@ Construct a log starter for a module.
 
 - `module` (in) — Module configuration copied into the starter.
 
-[Source](../../utils/logger/logger.hpp#L204)
+[Source](../../utils/logger/logger.hpp#L216)
 
 <a id="symbol-classpuc_1_1logger_1_1_log_starter_1a2e90cbcaa79165b89d2b726273cbc058"></a>
 
@@ -64,4 +64,4 @@ Start a log line with its first value.
 
 **Returns:** A temporary log line that emits at end of expression.
 
-[Source](../../utils/logger/logger.hpp#L204)
+[Source](../../utils/logger/logger.hpp#L216)

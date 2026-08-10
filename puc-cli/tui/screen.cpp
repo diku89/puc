@@ -232,9 +232,18 @@ Screen::Screen(multithreading::JobQueue& workers)
     : Screen(STDIN_FILENO, STDOUT_FILENO, workers) {}
 
 Screen::Screen(int input_fd, int output_fd, multithreading::JobQueue& workers)
-    : terminal_session_(input_fd, output_fd),
-      directory_(std::make_unique<ipc::Directory>(workers)) {
-  setup_status_ = setup_channels();
+    : owned_terminal_session_(
+          std::make_unique<terminal::TerminalSession>(input_fd, output_fd)),
+      terminal_session_(owned_terminal_session_.get()),
+      owned_directory_(std::make_unique<ipc::Directory>(workers)),
+      directory_(owned_directory_.get()),
+      owns_channels_(true) {
+  setup_status_ = setup_channels(true);
+}
+
+Screen::Screen(ipc::Directory& directory, terminal::TerminalSession& session)
+    : terminal_session_(&session), directory_(&directory) {
+  setup_status_ = setup_channels(false);
 }
 
 Screen::~Screen() {
@@ -247,7 +256,7 @@ Screen::~Screen() {
   // Quiesce the command channel while the Directory and its downstream resize
   // route are still alive. TerminalSession may publish one final observation
   // from a command that was already executing.
-  if (directory_ != nullptr) {
+  if (owns_channels_ && directory_ != nullptr) {
     const ipc::Status close_status =
         directory_->close_channel(msg::kScreenCommandChannel);
     if (!ipc::is_ok(close_status) &&
@@ -255,38 +264,66 @@ Screen::~Screen() {
       Logger<ERROR> << "Could not quiesce Screen commands: "
                     << ipc::status_message(close_status);
     }
+    const ipc::Status resize_close_status =
+        directory_->close_channel(msg::kScreenResizeEventChannel);
+    if (!ipc::is_ok(resize_close_status) &&
+        resize_close_status != ipc::Status::CHANNEL_NOT_FOUND) {
+      Logger<ERROR> << "Could not quiesce Screen resize events: "
+                    << ipc::status_message(resize_close_status);
+    }
   }
-  terminal_session_.unbind_screen_channels();
+  if (owns_channels_ && terminal_session_ != nullptr) {
+    terminal_session_->unbind_screen_channels();
+  }
   resize_subscription_.reset();
-  directory_.reset();
+  command_channel_.reset();
+  resize_channel_.reset();
+  directory_ = nullptr;
+  owned_directory_.reset();
 }
 
-Status Screen::setup_channels() {
-  if (directory_ == nullptr) {
+Status Screen::setup_channels(bool create_channels) {
+  if (directory_ == nullptr || terminal_session_ == nullptr) {
     return Status::CHANNEL_SETUP_FAILED;
   }
 
-  command_channel_ = std::make_shared<ipc::SmemChannel>(
-      std::string{msg::kScreenCommandChannel}, ipc::kDefaultMaximumMessageBytes,
-      ipc::ChannelOptions{.channel_max_depth = kScreenCommandDepth});
   ipc::ChannelId command_id = 0U;
-  ipc::Status ipc_status =
-      directory_->open_channel(command_channel_, command_id);
-  if (!ipc::is_ok(ipc_status)) {
-    Logger<ERROR> << "Could not open Screen command channel: "
-                  << ipc::status_message(ipc_status);
-    return Status::CHANNEL_SETUP_FAILED;
-  }
+  ipc::ChannelId resize_id  = 0U;
+  ipc::Status ipc_status    = ipc::Status::OK;
+  if (create_channels) {
+    command_channel_ = std::make_shared<ipc::SmemChannel>(
+        std::string{msg::kScreenCommandChannel},
+        ipc::kDefaultMaximumMessageBytes,
+        ipc::ChannelOptions{.channel_max_depth = kScreenCommandDepth});
+    ipc_status = directory_->open_channel(command_channel_, command_id);
+    if (!ipc::is_ok(ipc_status)) {
+      Logger<ERROR> << "Could not open Screen command channel: "
+                    << ipc::status_message(ipc_status);
+      return Status::CHANNEL_SETUP_FAILED;
+    }
 
-  resize_channel_ = std::make_shared<ipc::SmemChannel>(
-      std::string{msg::kScreenResizeEventChannel}, 16U,
-      ipc::ChannelOptions{.channel_max_depth = kResizeEventDepth});
-  ipc::ChannelId resize_id = 0U;
-  ipc_status = directory_->open_channel(resize_channel_, resize_id);
-  if (!ipc::is_ok(ipc_status)) {
-    Logger<ERROR> << "Could not open Screen resize channel: "
-                  << ipc::status_message(ipc_status);
-    return Status::CHANNEL_SETUP_FAILED;
+    resize_channel_ = std::make_shared<ipc::SmemChannel>(
+        std::string{msg::kScreenResizeEventChannel}, 16U,
+        ipc::ChannelOptions{.channel_max_depth = kResizeEventDepth});
+    ipc_status = directory_->open_channel(resize_channel_, resize_id);
+    if (!ipc::is_ok(ipc_status)) {
+      Logger<ERROR> << "Could not open Screen resize channel: "
+                    << ipc::status_message(ipc_status);
+      return Status::CHANNEL_SETUP_FAILED;
+    }
+  } else {
+    command_channel_ = directory_->get_channel(msg::kScreenCommandChannel);
+    resize_channel_  = directory_->get_channel(msg::kScreenResizeEventChannel);
+    if (command_channel_ == nullptr || resize_channel_ == nullptr ||
+        !ipc::is_ok(directory_->get_channel_id(msg::kScreenCommandChannel,
+                                               command_id)) ||
+        !ipc::is_ok(directory_->get_channel_id(msg::kScreenResizeEventChannel,
+                                               resize_id))) {
+      command_channel_.reset();
+      resize_channel_.reset();
+      Logger<ERROR> << "Lifecycle-owned Screen channels are not registered";
+      return Status::CHANNEL_SETUP_FAILED;
+    }
   }
 
   ipc_status = directory_->subscribe(
@@ -302,7 +339,7 @@ Status Screen::setup_channels() {
   }
 
   const terminal::Status terminal_status =
-      terminal_session_.bind_screen_channels(*directory_);
+      terminal_session_->bind_screen_channels(*directory_);
   if (!terminal::is_ok(terminal_status)) {
     Logger<ERROR> << "Could not bind terminal session: "
                   << terminal::status_message(terminal_status);
@@ -369,7 +406,7 @@ terminal::Status Screen::read_input(terminal::Decoder& decoder,
                                     std::vector<terminal::Event>& events,
                                     std::size_t& bytes_read,
                                     bool& end_of_input) {
-  return terminal_session_.read(decoder, events, bytes_read, end_of_input);
+  return terminal_session_->read(decoder, events, bytes_read, end_of_input);
 }
 
 Status Screen::handle_mouse_event(

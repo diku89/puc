@@ -35,12 +35,10 @@ namespace puc::command {
 
 /** Shared application services available to every command invocation. */
 struct CommonCommandArgs {
-  std::shared_ptr<multithreading::JobQueue>
-      workers;                         /**< General application worker pool. */
-  std::shared_ptr<tui::Screen> screen; /**< Active terminal presentation. */
-  std::shared_ptr<ipc::Directory>
-      directory;                  /**< Process-local channel directory. */
-  app::AppState* state = nullptr; /**< Borrowed application lifecycle. */
+  multithreading::JobQueue* workers = nullptr; /**< Borrowed worker pool. */
+  tui::Screen* screen = nullptr; /**< Borrowed active terminal presentation. */
+  ipc::Directory* directory = nullptr; /**< Borrowed channel directory. */
+  app::AppState* state      = nullptr; /**< Borrowed application lifecycle. */
 };
 
 /** Result of command registration, lookup, or execution. */
@@ -49,7 +47,6 @@ enum class Status {
   INVALID_ARGUMENT, /**< A name, alias, command, or argument is invalid. */
   DUPLICATE_COMMAND_NAME,  /**< A name or alias is already registered. */
   COMMAND_NOT_FOUND,       /**< No command owns the requested spelling. */
-  CHANNEL_SETUP_FAILED,    /**< The notification channel could not be opened. */
   MESSAGE_ENCODING_FAILED, /**< Notification text could not be encoded. */
   NOTIFICATION_FAILED,     /**< The notification channel rejected a message. */
   NOT_ALLOWED,             /**< Current application policy forbids execution. */
@@ -70,8 +67,6 @@ constexpr std::string_view status_message(Status status) noexcept {
       return "command name or alias is already registered";
     case Status::COMMAND_NOT_FOUND:
       return "command was not found";
-    case Status::CHANNEL_SETUP_FAILED:
-      return "command notification channel could not be configured";
     case Status::MESSAGE_ENCODING_FAILED:
       return "command notification could not be encoded";
     case Status::NOTIFICATION_FAILED:
@@ -87,9 +82,9 @@ constexpr std::string_view status_message(Status status) noexcept {
 /**
  * Encode and publish one notification through `common_args.directory`.
  *
- * The dispatcher that owns the command session must have opened the canonical
- * notification channel in the same Directory. Empty text is valid and clears
- * an earlier notification when consumed.
+ * CommandNotificationChannelSubsystem must have opened the canonical route in
+ * the same Directory. Empty text is valid and clears an earlier notification
+ * when consumed.
  *
  * @return Status::OK, Status::INVALID_ARGUMENT when no Directory is supplied,
  *         Status::MESSAGE_ENCODING_FAILED for malformed UTF-8, or
@@ -132,8 +127,8 @@ class CommandApp {
  * All registry access is synchronized. `dispatch()` retains a shared command
  * reference and releases the registry lock before calling user code, allowing
  * a command to perform long-running or reentrant work without blocking lookup.
- * After open_notification_channel(), the dispatcher also owns the canonical
- * command-frame notification route until destruction.
+ * Channel lifetime is deliberately external: CommandDispatcher owns only the
+ * command Trie and shared command implementations.
  */
 class CommandDispatcher {
  public:
@@ -145,22 +140,8 @@ class CommandDispatcher {
   CommandDispatcher(CommandDispatcher&&)                 = delete;
   CommandDispatcher& operator=(CommandDispatcher&&)      = delete;
 
-  /** Close an owned notification channel and release registered commands. */
-  ~CommandDispatcher();
-
-  /**
-   * Open the canonical command notification channel in a shared Directory.
-   *
-   * The newest one pending notification is retained for asynchronous delivery.
-   * Reopening with the same Directory is idempotent; selecting another
-   * Directory after setup returns Status::NOT_ALLOWED. The retained Directory
-   * must continue to borrow a live worker pool through dispatcher destruction.
-   * Callers must not independently close the dispatcher-owned route.
-   */
-  Status open_notification_channel(std::shared_ptr<ipc::Directory> directory);
-
-  /** Return whether this dispatcher owns an opened notification channel. */
-  bool notification_channel_ready() const;
+  /** Release registered command implementations and Trie storage. */
+  ~CommandDispatcher() = default;
 
   /**
    * Register one canonical name and zero or more aliases atomically.
@@ -207,12 +188,8 @@ class CommandDispatcher {
   /** Copy a registered command reference while holding the registry lock. */
   std::shared_ptr<CommandApp> find_command(std::string_view name) const;
 
-  mutable std::shared_mutex mutex_; /**< Synchronizes registry/channel state. */
+  mutable std::shared_mutex mutex_; /**< Synchronizes registry state. */
   CommandTrie command_trie_;        /**< Character-keyed spelling registry. */
-  std::shared_ptr<ipc::Directory>
-      notification_directory_; /**< Directory retaining the notify route. */
-  std::shared_ptr<ipc::Channel>
-      notification_channel_; /**< Dispatcher-owned notify endpoint. */
 };
 
 }  // namespace puc::command

@@ -33,6 +33,7 @@ struct InputFrameSnapshot {
   InputMode mode = InputMode::NORMAL; /**< Buffer currently receiving input. */
   std::string input_text;             /**< Preserved normal-mode UTF-8 text. */
   std::string command_text;           /**< Current command-mode UTF-8 text. */
+  std::string notification;           /**< Bottom-row command/status text. */
   InputCursor cursor;                 /**< Caret in the active buffer. */
   std::size_t scroll_row = 0U;        /**< First visible wrapped content row. */
   bool escape_armed      = false;     /**< Whether one Escape is pending. */

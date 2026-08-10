@@ -81,13 +81,25 @@ class RegisteringCommand final : public CommandApp {
   std::shared_ptr<CommandApp> nested_;
 };
 
+/** Register the command notification route for producer-focused tests. */
+std::shared_ptr<ipc::Channel> open_notification_channel(
+    ipc::Directory& directory) {
+  auto channel = std::make_shared<ipc::SmemChannel>(
+      std::string{msg::kCmdFrameNotifyChannel},
+      ipc::kDefaultMaximumMessageBytes,
+      ipc::ChannelOptions{.channel_max_depth = 1U});
+  ipc::ChannelId channel_id = 0U;
+  return ipc::is_ok(directory.open_channel(channel, channel_id))
+             ? std::move(channel)
+             : nullptr;
+}
+
 TEST(CommandStatusTest, ReportsStableHumanReadableResults) {
   EXPECT_TRUE(is_ok(Status::OK));
   for (const Status status : {
            Status::INVALID_ARGUMENT,
            Status::DUPLICATE_COMMAND_NAME,
            Status::COMMAND_NOT_FOUND,
-           Status::CHANNEL_SETUP_FAILED,
            Status::MESSAGE_ENCODING_FAILED,
            Status::NOTIFICATION_FAILED,
            Status::NOT_ALLOWED,
@@ -203,37 +215,12 @@ TEST(CommandDispatcherTest, ReleasesRegistryLockBeforeRunningCommandCode) {
   EXPECT_TRUE(dispatcher.contains("nested"));
 }
 
-TEST(CommandNotificationTest, OpensIdempotentlyAndClosesWithDispatcher) {
-  auto workers         = std::make_shared<multithreading::JobQueue>(2U);
-  auto directory       = std::make_shared<ipc::Directory>(*workers);
-  auto other_directory = std::make_shared<ipc::Directory>(*workers);
-
-  {
-    CommandDispatcher dispatcher;
-    EXPECT_FALSE(dispatcher.notification_channel_ready());
-    EXPECT_EQ(directory->get_channel(msg::kCmdFrameNotifyChannel), nullptr);
-    ASSERT_EQ(dispatcher.open_notification_channel(directory), Status::OK);
-    EXPECT_TRUE(dispatcher.notification_channel_ready());
-
-    const std::shared_ptr<ipc::Channel> channel =
-        directory->get_channel(msg::kCmdFrameNotifyChannel);
-    ASSERT_NE(channel, nullptr);
-    EXPECT_EQ(channel->channel_max_depth(), std::optional<std::size_t>{1U});
-    EXPECT_EQ(dispatcher.open_notification_channel(directory), Status::OK);
-    EXPECT_EQ(dispatcher.open_notification_channel(other_directory),
-              Status::NOT_ALLOWED);
-  }
-
-  EXPECT_EQ(directory->get_channel(msg::kCmdFrameNotifyChannel), nullptr);
-  EXPECT_EQ(other_directory->get_channel(msg::kCmdFrameNotifyChannel), nullptr);
-  workers->wait();
-}
-
 TEST(CommandNotificationTest, PublishesTypedUtf8ThroughCanonicalChannel) {
   auto workers   = std::make_shared<multithreading::JobQueue>(2U);
   auto directory = std::make_shared<ipc::Directory>(*workers);
-  CommandDispatcher dispatcher;
-  ASSERT_EQ(dispatcher.open_notification_channel(directory), Status::OK);
+  const std::shared_ptr<ipc::Channel> channel =
+      open_notification_channel(*directory);
+  ASSERT_NE(channel, nullptr);
 
   std::mutex mutex;
   std::condition_variable changed;
@@ -255,7 +242,7 @@ TEST(CommandNotificationTest, PublishesTypedUtf8ThroughCanonicalChannel) {
                 subscription),
             ipc::Status::OK);
 
-  EXPECT_EQ(send_notification(CommonCommandArgs{.directory = directory},
+  EXPECT_EQ(send_notification(CommonCommandArgs{.directory = directory.get()},
                               "building ✓"),
             Status::OK);
   {
@@ -266,6 +253,7 @@ TEST(CommandNotificationTest, PublishesTypedUtf8ThroughCanonicalChannel) {
   }
 
   subscription.reset();
+  directory.reset();
   workers->wait();
 }
 
@@ -274,35 +262,17 @@ TEST(CommandNotificationTest, ReportsSetupEncodingAndDeliveryFailures) {
   auto directory = std::make_shared<ipc::Directory>(*workers);
   EXPECT_EQ(send_notification(CommonCommandArgs{}, "missing directory"),
             Status::INVALID_ARGUMENT);
-  EXPECT_EQ(send_notification(CommonCommandArgs{.directory = directory},
+  EXPECT_EQ(send_notification(CommonCommandArgs{.directory = directory.get()},
                               "missing channel"),
             Status::NOTIFICATION_FAILED);
 
-  CommandDispatcher dispatcher;
-  EXPECT_EQ(dispatcher.open_notification_channel(nullptr),
-            Status::INVALID_ARGUMENT);
-  ASSERT_EQ(dispatcher.open_notification_channel(directory), Status::OK);
-  EXPECT_EQ(send_notification(CommonCommandArgs{.directory = directory},
+  const std::shared_ptr<ipc::Channel> channel =
+      open_notification_channel(*directory);
+  ASSERT_NE(channel, nullptr);
+  EXPECT_EQ(send_notification(CommonCommandArgs{.directory = directory.get()},
                               std::string{"\xf0\x28\x8c\x28", 4U}),
             Status::MESSAGE_ENCODING_FAILED);
-  workers->wait();
-}
-
-TEST(CommandNotificationTest, DoesNotTakeOwnershipOfAConflictingChannel) {
-  auto workers   = std::make_shared<multithreading::JobQueue>();
-  auto directory = std::make_shared<ipc::Directory>(*workers);
-  auto existing  = std::make_shared<ipc::SmemChannel>(
-      std::string{msg::kCmdFrameNotifyChannel}, 32U);
-  ipc::ChannelId channel_id = 0U;
-  ASSERT_EQ(directory->open_channel(existing, channel_id), ipc::Status::OK);
-
-  {
-    CommandDispatcher dispatcher;
-    EXPECT_EQ(dispatcher.open_notification_channel(directory),
-              Status::CHANNEL_SETUP_FAILED);
-    EXPECT_FALSE(dispatcher.notification_channel_ready());
-  }
-  EXPECT_EQ(directory->get_channel(msg::kCmdFrameNotifyChannel), existing);
+  directory.reset();
   workers->wait();
 }
 

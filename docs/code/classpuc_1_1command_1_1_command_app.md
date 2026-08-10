@@ -6,7 +6,7 @@ One operation callable from command mode or another application component.
 
 Implementations receive arguments after the command name. Descriptions are displayed next to command-name completions; nonempty usage text is displayed after a command spelling has been completed.
 
-[Source](../../commands/command.hpp#L108)
+[Source](../../commands/command.hpp#L103)
 
 ## Public functions
 
@@ -20,7 +20,7 @@ virtual puc::command::CommandApp::~CommandApp()=default
 
 Destroy a command through the shared type-erased interface.
 
-[Source](../../commands/command.hpp#L111)
+[Source](../../commands/command.hpp#L106)
 
 <a id="symbol-classpuc_1_1command_1_1_command_app_1a5e5e7b6c369f74af463b25fcab18d11d"></a>
 
@@ -32,7 +32,7 @@ virtual Status puc::command::CommandApp::run(CommonCommandArgs common_args, std:
 
 Execute with shared services and arguments excluding the command name.
 
-[Source](../../commands/command.hpp#L114)
+[Source](../../commands/command.hpp#L109)
 
 <a id="symbol-classpuc_1_1command_1_1_command_app_1a7abab3255f25b6f853d2f7f199833328"></a>
 
@@ -44,7 +44,7 @@ virtual std::string puc::command::CommandApp::get_description() const =0
 
 Return the short text displayed beside a completion candidate.
 
-[Source](../../commands/command.hpp#L118)
+[Source](../../commands/command.hpp#L113)
 
 <a id="symbol-classpuc_1_1command_1_1_command_app_1a7e1c1ad0ac293a6611fc776e79d228c3"></a>
 
@@ -56,4 +56,4 @@ virtual std::string puc::command::CommandApp::get_usage() const =0
 
 Return argument and subcommand help, or an empty string for none.
 
-[Source](../../commands/command.hpp#L121)
+[Source](../../commands/command.hpp#L116)

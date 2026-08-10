@@ -67,6 +67,16 @@ class Screen {
   /** Construct a Screen over descriptors using a caller-owned worker pool. */
   Screen(int input_fd, int output_fd, multithreading::JobQueue& workers);
 
+  /**
+   * Construct over lifecycle-owned protocol and terminal mechanisms.
+   *
+   * Both borrowed objects must outlive this Screen. The Directory must already
+   * contain the canonical Screen channels and the session must already own its
+   * command subscription. This Screen owns only its resize subscription and
+   * never closes or unbinds those shared mechanisms.
+   */
+  Screen(ipc::Directory& directory, terminal::TerminalSession& session);
+
   Screen(const Screen&)            = delete;
   Screen& operator=(const Screen&) = delete;
   Screen(Screen&&)                 = delete;
@@ -201,6 +211,9 @@ class Screen {
   /** Return the process-local channel directory for additional subscribers. */
   ipc::Directory& ipc_directory() noexcept { return *directory_; }
 
+  /** Return the persistent channel/bootstrap result. */
+  Status setup_status() const noexcept { return setup_status_; }
+
   /** Return the number of Screen commands currently pending delivery. */
   std::size_t pending_commands() const noexcept;
 
@@ -233,8 +246,8 @@ class Screen {
   /** Retain click recognition and issue a fresh timeout generation. */
   void arm_click_timeout() noexcept;
 
-  /** Create channels, subscribe to resize state, and bind TerminalSession. */
-  Status setup_channels();
+  /** Create or resolve channels, subscribe, and bind TerminalSession. */
+  Status setup_channels(bool create_channels);
 
   /** Encode and transmit one command without waiting for its execution. */
   Status send_command(const msg::ScreenCommand& command) noexcept;
@@ -244,8 +257,10 @@ class Screen {
 
   /** Current published Canvas, owned on the caller's presentation thread. */
   std::shared_ptr<Canvas> canvas_;
-  /** Mechanism adapter invoked only through the command-channel callback. */
-  terminal::TerminalSession terminal_session_;
+  /** TerminalSession owned only by standalone Screen constructors. */
+  std::unique_ptr<terminal::TerminalSession> owned_terminal_session_;
+  /** Borrowed active terminal mechanism. */
+  terminal::TerminalSession* terminal_session_ = nullptr;
   /** Shared-memory channel carrying bounded one-way Screen commands. */
   std::shared_ptr<ipc::Channel> command_channel_;
   /** Shared-memory channel carrying latest-only geometry observations. */
@@ -276,12 +291,12 @@ class Screen {
   std::uint64_t next_click_timeout_generation_ = 0U;
   /** Token accepted by handle_selection_timeout(), if one is armed. */
   std::optional<terminal::TimeoutInput> selection_timeout_;
-  /**
-   * Directory is destroyed explicitly before TerminalSession and state fields,
-   * ensuring every asynchronous callback has quiesced first. Its borrowed
-   * worker pool must outlive Screen and remain active through destruction.
-   */
-  std::unique_ptr<ipc::Directory> directory_;
+  /** Directory owned only by standalone Screen constructors. */
+  std::unique_ptr<ipc::Directory> owned_directory_;
+  /** Borrowed process-local channel directory. */
+  ipc::Directory* directory_ = nullptr;
+  /** Whether this Screen registered and must close its protocol channels. */
+  bool owns_channels_ = false;
 };
 
 }  // namespace puc::tui

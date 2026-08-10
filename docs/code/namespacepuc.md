@@ -12,7 +12,7 @@ Implement the quit command.
 
 \\command quit || Quit the application. \\alias q \\alias exit
 
-[Source](../../commands/command.cpp#L31)
+[Source](../../commands/command.cpp#L29)
 
 ## Related symbols
 

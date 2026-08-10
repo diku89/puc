@@ -125,6 +125,18 @@ void init_logger(const LoggerConf& config);
 std::shared_ptr<Logger> get_logger();
 
 /**
+ * Clear the global logger only when it is still the expected instance.
+ *
+ * This compare-and-clear operation lets a lifecycle owner release the logger
+ * it installed without erasing a newer logger installed by another owner.
+ * Passing an empty pointer is harmless and returns false.
+ *
+ * @param[in] expected Logger instance the caller previously installed.
+ * @return True when the matching global logger was cleared.
+ */
+bool clear_logger(const std::shared_ptr<Logger>& expected) noexcept;
+
+/**
  * Accumulates one stream-style log line and emits it at end of expression.
  *
  * Applications normally create log lines through the Logger variable template

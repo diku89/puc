@@ -2,7 +2,7 @@
 
 # Namespace `puc::terminal`
 
-[Source](../../puc-cli/terminal/clipboard.cpp#L21)
+[Source](../../puc-cli/state/terminal.hpp#L17)
 
 ## Related symbols
 
@@ -345,7 +345,7 @@ Reason bytes could not be normalized into a supported event.
 
 [Source](../../puc-cli/terminal/event.hpp#L394)
 
-<a id="symbol-input_8hpp_1a8e5a89e22c128ff7b8173404667203b9"></a>
+<a id="symbol-terminal_2input_8hpp_1a8e5a89e22c128ff7b8173404667203b9"></a>
 
 ### `OperatingSystem`
 
@@ -356,14 +356,14 @@ OperatingSystem
 Host operating-system families with packaged input defaults.
 
 #### Values
-- <a id="symbol-input_8hpp_1a8e5a89e22c128ff7b8173404667203b9a9a60c7d7fc6c5dfa71d40f1fd81a389f"></a>`DARWIN` — Apple Darwin, including macOS.
-- <a id="symbol-input_8hpp_1a8e5a89e22c128ff7b8173404667203b9aee86602a23e7a9a5136f6b2138894aa5"></a>`LINUX` — Linux-based systems.
-- <a id="symbol-input_8hpp_1a8e5a89e22c128ff7b8173404667203b9ac539e03be7b269c8a84f85437bc8d298"></a>`BSD` — FreeBSD, OpenBSD, NetBSD, or DragonFly BSD.
-- <a id="symbol-input_8hpp_1a8e5a89e22c128ff7b8173404667203b9a03570470bad94692ce93e32700d2e1cb"></a>`OTHER` — A system without a packaged input-default profile.
+- <a id="symbol-terminal_2input_8hpp_1a8e5a89e22c128ff7b8173404667203b9a9a60c7d7fc6c5dfa71d40f1fd81a389f"></a>`DARWIN` — Apple Darwin, including macOS.
+- <a id="symbol-terminal_2input_8hpp_1a8e5a89e22c128ff7b8173404667203b9aee86602a23e7a9a5136f6b2138894aa5"></a>`LINUX` — Linux-based systems.
+- <a id="symbol-terminal_2input_8hpp_1a8e5a89e22c128ff7b8173404667203b9ac539e03be7b269c8a84f85437bc8d298"></a>`BSD` — FreeBSD, OpenBSD, NetBSD, or DragonFly BSD.
+- <a id="symbol-terminal_2input_8hpp_1a8e5a89e22c128ff7b8173404667203b9a03570470bad94692ce93e32700d2e1cb"></a>`OTHER` — A system without a packaged input-default profile.
 
 [Source](../../puc-cli/terminal/input.hpp#L25)
 
-<a id="symbol-input_8hpp_1ad83833e02bad99e13fdc6e45a26979ee"></a>
+<a id="symbol-terminal_2input_8hpp_1ad83833e02bad99e13fdc6e45a26979ee"></a>
 
 ### `InputProtocol`
 
@@ -374,18 +374,18 @@ InputProtocol
 Protocol behavior entered after an input-trie sequence is recognized.
 
 #### Values
-- <a id="symbol-input_8hpp_1ad83833e02bad99e13fdc6e45a26979eea61a96ffcb251bb9bf0abf8fec19d0ea8"></a>`TEXT` — Decode ordinary UTF-8; fixed controls remain trie mappings.
-- <a id="symbol-input_8hpp_1ad83833e02bad99e13fdc6e45a26979eeadaaedac409335b869929ea43fa44be5d"></a>`ESCAPE` — Resolve a standalone Escape or one Alt-modified input.
-- <a id="symbol-input_8hpp_1ad83833e02bad99e13fdc6e45a26979eeab9803ac6799686694c606c9f12e58cd0"></a>`SS3` — Capture an SS3 function-key sequence through its final byte.
-- <a id="symbol-input_8hpp_1ad83833e02bad99e13fdc6e45a26979eea29231abcf88777a5ff99e2e0feec4718"></a>`CSI` — Capture a generic control-sequence introducer sequence.
-- <a id="symbol-input_8hpp_1ad83833e02bad99e13fdc6e45a26979eea0e0ec5752ef20d94dc6fbb13507f5e5e"></a>`OSC` — Capture a generic operating-system command sequence.
-- <a id="symbol-input_8hpp_1ad83833e02bad99e13fdc6e45a26979eeaf06bbe29848a63bbd711c6c77bd563e3"></a>`DEVICE_CONTROL_STRING` — Capture a DCS reply through its ST terminator.
-- <a id="symbol-input_8hpp_1ad83833e02bad99e13fdc6e45a26979eea560394e0d7053dc5a17914e64ab66f7f"></a>`APPLICATION_PROGRAM_COMMAND` — Capture an APC through ST.
-- <a id="symbol-input_8hpp_1ad83833e02bad99e13fdc6e45a26979eea2675833d9f4506f189ea624c828efdde"></a>`PRIVACY_MESSAGE` — Capture a privacy message through ST.
-- <a id="symbol-input_8hpp_1ad83833e02bad99e13fdc6e45a26979eeaae4c3e1185607987d1dd00459fe87ac7"></a>`SGR_MOUSE` — Capture numeric SGR mouse fields through `M` or `m`.
-- <a id="symbol-input_8hpp_1ad83833e02bad99e13fdc6e45a26979eeaa7778817b478335381c81dd02d429bab"></a>`OSC52` — Capture an OSC 52 clipboard response.
-- <a id="symbol-input_8hpp_1ad83833e02bad99e13fdc6e45a26979eea46dc25d563544f7be4275b3106c5c9d2"></a>`PASTE_BEGIN` — Enter bracketed-paste payload mode.
-- <a id="symbol-input_8hpp_1ad83833e02bad99e13fdc6e45a26979eea41f02d3b2b353f9b008b6b1d29f54946"></a>`PASTE_END` — Leave bracketed-paste payload mode.
+- <a id="symbol-terminal_2input_8hpp_1ad83833e02bad99e13fdc6e45a26979eea61a96ffcb251bb9bf0abf8fec19d0ea8"></a>`TEXT` — Decode ordinary UTF-8; fixed controls remain trie mappings.
+- <a id="symbol-terminal_2input_8hpp_1ad83833e02bad99e13fdc6e45a26979eeadaaedac409335b869929ea43fa44be5d"></a>`ESCAPE` — Resolve a standalone Escape or one Alt-modified input.
+- <a id="symbol-terminal_2input_8hpp_1ad83833e02bad99e13fdc6e45a26979eeab9803ac6799686694c606c9f12e58cd0"></a>`SS3` — Capture an SS3 function-key sequence through its final byte.
+- <a id="symbol-terminal_2input_8hpp_1ad83833e02bad99e13fdc6e45a26979eea29231abcf88777a5ff99e2e0feec4718"></a>`CSI` — Capture a generic control-sequence introducer sequence.
+- <a id="symbol-terminal_2input_8hpp_1ad83833e02bad99e13fdc6e45a26979eea0e0ec5752ef20d94dc6fbb13507f5e5e"></a>`OSC` — Capture a generic operating-system command sequence.
+- <a id="symbol-terminal_2input_8hpp_1ad83833e02bad99e13fdc6e45a26979eeaf06bbe29848a63bbd711c6c77bd563e3"></a>`DEVICE_CONTROL_STRING` — Capture a DCS reply through its ST terminator.
+- <a id="symbol-terminal_2input_8hpp_1ad83833e02bad99e13fdc6e45a26979eea560394e0d7053dc5a17914e64ab66f7f"></a>`APPLICATION_PROGRAM_COMMAND` — Capture an APC through ST.
+- <a id="symbol-terminal_2input_8hpp_1ad83833e02bad99e13fdc6e45a26979eea2675833d9f4506f189ea624c828efdde"></a>`PRIVACY_MESSAGE` — Capture a privacy message through ST.
+- <a id="symbol-terminal_2input_8hpp_1ad83833e02bad99e13fdc6e45a26979eeaae4c3e1185607987d1dd00459fe87ac7"></a>`SGR_MOUSE` — Capture numeric SGR mouse fields through `M` or `m`.
+- <a id="symbol-terminal_2input_8hpp_1ad83833e02bad99e13fdc6e45a26979eeaa7778817b478335381c81dd02d429bab"></a>`OSC52` — Capture an OSC 52 clipboard response.
+- <a id="symbol-terminal_2input_8hpp_1ad83833e02bad99e13fdc6e45a26979eea46dc25d563544f7be4275b3106c5c9d2"></a>`PASTE_BEGIN` — Enter bracketed-paste payload mode.
+- <a id="symbol-terminal_2input_8hpp_1ad83833e02bad99e13fdc6e45a26979eea41f02d3b2b353f9b008b6b1d29f54946"></a>`PASTE_END` — Leave bracketed-paste payload mode.
 
 [Source](../../puc-cli/terminal/input.hpp#L74)
 
@@ -714,7 +714,7 @@ Add an individual modifier to a modifier set.
 
 [Source](../../puc-cli/terminal/event.hpp#L211)
 
-<a id="symbol-input_8hpp_1a813519af89de13cbd6690c833e27af3e"></a>
+<a id="symbol-terminal_2input_8hpp_1a813519af89de13cbd6690c833e27af3e"></a>
 
 ### `current_operating_system`
 
@@ -728,7 +728,7 @@ Return the operating-system family selected by the C++ target platform.
 
 [Source](../../puc-cli/terminal/input.hpp#L37)
 
-<a id="symbol-input_8hpp_1a0e60447d49ad2043bf3af5e712998998"></a>
+<a id="symbol-terminal_2input_8hpp_1a0e60447d49ad2043bf3af5e712998998"></a>
 
 ### `operating_system_defaults_path`
 

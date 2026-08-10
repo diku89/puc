@@ -475,6 +475,7 @@ InputFrameSnapshot InputFrame::snapshot() const {
       .mode                    = impl_->mode,
       .input_text              = normal.text,
       .command_text            = command.text,
+      .notification            = impl_->notification,
       .cursor                  = active.cursor,
       .scroll_row              = active.scroll_row,
       .escape_armed            = impl_->escape_started.has_value(),

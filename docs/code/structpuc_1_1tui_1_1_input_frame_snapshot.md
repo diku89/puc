@@ -44,6 +44,18 @@ Current command-mode UTF-8 text.
 
 [Source](../../puc-cli/tui/input_frame.hpp#L35)
 
+<a id="symbol-structpuc_1_1tui_1_1_input_frame_snapshot_1a02cdfe4707121f291cdde4258412188b"></a>
+
+### `notification`
+
+```cpp
+std::string puc::tui::InputFrameSnapshot::notification
+```
+
+Bottom-row command/status text.
+
+[Source](../../puc-cli/tui/input_frame.hpp#L36)
+
 <a id="symbol-structpuc_1_1tui_1_1_input_frame_snapshot_1a6f696d489e752a0a90798aee20bc9e7d"></a>
 
 ### `cursor`
@@ -54,7 +66,7 @@ InputCursor puc::tui::InputFrameSnapshot::cursor
 
 Caret in the active buffer.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L36)
+[Source](../../puc-cli/tui/input_frame.hpp#L37)
 
 <a id="symbol-structpuc_1_1tui_1_1_input_frame_snapshot_1a3a4ff3ee2153279cee510b80058ed055"></a>
 
@@ -66,7 +78,7 @@ std::size_t puc::tui::InputFrameSnapshot::scroll_row
 
 First visible wrapped content row.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L37)
+[Source](../../puc-cli/tui/input_frame.hpp#L38)
 
 <a id="symbol-structpuc_1_1tui_1_1_input_frame_snapshot_1a06f3862e38de4cdc129bf2950501c746"></a>
 
@@ -78,7 +90,7 @@ bool puc::tui::InputFrameSnapshot::escape_armed
 
 Whether one Escape is pending.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L38)
+[Source](../../puc-cli/tui/input_frame.hpp#L39)
 
 <a id="symbol-structpuc_1_1tui_1_1_input_frame_snapshot_1ac1569def8fa78480e4a4dabd4e631249"></a>
 
@@ -90,7 +102,7 @@ bool puc::tui::InputFrameSnapshot::paste_in_progress
 
 Whether a paste transaction is open.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L39)
+[Source](../../puc-cli/tui/input_frame.hpp#L40)
 
 <a id="symbol-structpuc_1_1tui_1_1_input_frame_snapshot_1a47e49fee3571c617b6ca3e35c4cce750"></a>
 
@@ -102,7 +114,7 @@ std::size_t puc::tui::InputFrameSnapshot::terminal_rows
 
 Allocated virtual-terminal rows.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L40)
+[Source](../../puc-cli/tui/input_frame.hpp#L41)
 
 <a id="symbol-structpuc_1_1tui_1_1_input_frame_snapshot_1a89da0a3ad02eef7d9c8c1aeab9e73428"></a>
 
@@ -114,7 +126,7 @@ std::size_t puc::tui::InputFrameSnapshot::terminal_columns
 
 Allocated virtual-terminal columns.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L41)
+[Source](../../puc-cli/tui/input_frame.hpp#L42)
 
 <a id="symbol-structpuc_1_1tui_1_1_input_frame_snapshot_1a7695108a06f148c6f9571be14227725c"></a>
 
@@ -126,7 +138,7 @@ bool puc::tui::InputFrameSnapshot::terminal_cursor_visible
 
 libtmt cursor-visibility state.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L42)
+[Source](../../puc-cli/tui/input_frame.hpp#L43)
 
 <a id="symbol-structpuc_1_1tui_1_1_input_frame_snapshot_1a7b8c953fc0146af27fa5bef51422bc42"></a>
 
@@ -138,7 +150,7 @@ bool puc::tui::InputFrameSnapshot::terminal_session_active
 
 Whether a PTY owner should live.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L43)
+[Source](../../puc-cli/tui/input_frame.hpp#L44)
 
 <a id="symbol-structpuc_1_1tui_1_1_input_frame_snapshot_1ac894d660c1ec48c0e85e41b96a65ef35"></a>
 
@@ -150,4 +162,4 @@ std::size_t puc::tui::InputFrameSnapshot::terminal_generation
 
 Identity of requested session.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L44)
+[Source](../../puc-cli/tui/input_frame.hpp#L45)

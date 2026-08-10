@@ -6,9 +6,9 @@ Thread-safe registry of command names, aliases, and shared implementations.
 
 Names are case-sensitive, nonempty tokens containing no ASCII whitespace or control bytes. Aliases behave exactly like canonical names for completion, metadata, and execution. Registration never replaces an existing spelling, while prefix relationships such as `q` and `quit` are valid.
 
-All registry access is synchronized. `dispatch()` retains a shared command reference and releases the registry lock before calling user code, allowing a command to perform long-running or reentrant work without blocking lookup. After [open\_notification\_channel()](#symbol-classpuc_1_1command_1_1_command_dispatcher_1a23b095940dab716485d888327e14ef7b), the dispatcher also owns the canonical command-frame notification route until destruction.
+All registry access is synchronized. `dispatch()` retains a shared command reference and releases the registry lock before calling user code, allowing a command to perform long-running or reentrant work without blocking lookup. Channel lifetime is deliberately external: [CommandDispatcher](#) owns only the command Trie and shared command implementations.
 
-[Source](../../commands/command.hpp#L138)
+[Source](../../commands/command.hpp#L133)
 
 ## Private types
 
@@ -22,7 +22,7 @@ using puc::command::CommandDispatcher::CommandTrie = containers::Trie<char, std:
 
 Name index.
 
-[Source](../../commands/command.hpp#L204)
+[Source](../../commands/command.hpp#L185)
 
 ## Private data members
 
@@ -34,9 +34,9 @@ Name index.
 std::shared_mutex puc::command::CommandDispatcher::mutex_
 ```
 
-Synchronizes registry/channel state.
+Synchronizes registry state.
 
-[Source](../../commands/command.hpp#L210)
+[Source](../../commands/command.hpp#L191)
 
 <a id="symbol-classpuc_1_1command_1_1_command_dispatcher_1aa39df965371c061e980359834675807b"></a>
 
@@ -48,31 +48,7 @@ CommandTrie puc::command::CommandDispatcher::command_trie_
 
 Character-keyed spelling registry.
 
-[Source](../../commands/command.hpp#L211)
-
-<a id="symbol-classpuc_1_1command_1_1_command_dispatcher_1a72bdbb6b1bfd30ae02dde2bf4df65a3c"></a>
-
-### `notification_directory_`
-
-```cpp
-std::shared_ptr<ipc::Directory> puc::command::CommandDispatcher::notification_directory_
-```
-
-Directory retaining the notify route.
-
-[Source](../../commands/command.hpp#L213)
-
-<a id="symbol-classpuc_1_1command_1_1_command_dispatcher_1a460a605ae0fc7b8ec46e930b74015b4b"></a>
-
-### `notification_channel_`
-
-```cpp
-std::shared_ptr<ipc::Channel> puc::command::CommandDispatcher::notification_channel_
-```
-
-Dispatcher-owned notify endpoint.
-
-[Source](../../commands/command.hpp#L215)
+[Source](../../commands/command.hpp#L192)
 
 ## Public functions
 
@@ -86,7 +62,7 @@ puc::command::CommandDispatcher::CommandDispatcher()=default
 
 Construct an empty registry.
 
-[Source](../../commands/command.hpp#L141)
+[Source](../../commands/command.hpp#L136)
 
 <a id="symbol-classpuc_1_1command_1_1_command_dispatcher_1a426cc7e53b630cc55c229e3672795521"></a>
 
@@ -96,7 +72,7 @@ Construct an empty registry.
 puc::command::CommandDispatcher::CommandDispatcher(const CommandDispatcher &)=delete
 ```
 
-[Source](../../commands/command.hpp#L143)
+[Source](../../commands/command.hpp#L138)
 
 <a id="symbol-classpuc_1_1command_1_1_command_dispatcher_1a4971a4a610bee55a7b3827fca3b0edf6"></a>
 
@@ -106,7 +82,7 @@ puc::command::CommandDispatcher::CommandDispatcher(const CommandDispatcher &)=de
 CommandDispatcher & puc::command::CommandDispatcher::operator=(const CommandDispatcher &)=delete
 ```
 
-[Source](../../commands/command.hpp#L144)
+[Source](../../commands/command.hpp#L139)
 
 <a id="symbol-classpuc_1_1command_1_1_command_dispatcher_1a1b4511eaa27cf8e9ce42c28a02b5b184"></a>
 
@@ -116,7 +92,7 @@ CommandDispatcher & puc::command::CommandDispatcher::operator=(const CommandDisp
 puc::command::CommandDispatcher::CommandDispatcher(CommandDispatcher &&)=delete
 ```
 
-[Source](../../commands/command.hpp#L145)
+[Source](../../commands/command.hpp#L140)
 
 <a id="symbol-classpuc_1_1command_1_1_command_dispatcher_1a874c5d48ab695e6f69c913d0de694cda"></a>
 
@@ -126,45 +102,19 @@ puc::command::CommandDispatcher::CommandDispatcher(CommandDispatcher &&)=delete
 CommandDispatcher & puc::command::CommandDispatcher::operator=(CommandDispatcher &&)=delete
 ```
 
-[Source](../../commands/command.hpp#L146)
+[Source](../../commands/command.hpp#L141)
 
-<a id="symbol-classpuc_1_1command_1_1_command_dispatcher_1a2467d323996ee4ba725d7df42bdb42bf"></a>
+<a id="symbol-classpuc_1_1command_1_1_command_dispatcher_1a6cebc0da9e9d2e6a2cdee5e81b649f9b"></a>
 
 ### `~CommandDispatcher`
 
 ```cpp
-puc::command::CommandDispatcher::~CommandDispatcher()
+puc::command::CommandDispatcher::~CommandDispatcher()=default
 ```
 
-Close an owned notification channel and release registered commands.
+Release registered command implementations and Trie storage.
 
-[Source](../../commands/command.hpp#L149)
-
-<a id="symbol-classpuc_1_1command_1_1_command_dispatcher_1a23b095940dab716485d888327e14ef7b"></a>
-
-### `open_notification_channel`
-
-```cpp
-Status puc::command::CommandDispatcher::open_notification_channel(std::shared_ptr< ipc::Directory > directory)
-```
-
-Open the canonical command notification channel in a shared Directory.
-
-The newest one pending notification is retained for asynchronous delivery. Reopening with the same Directory is idempotent; selecting another Directory after setup returns [Status::NOT\_ALLOWED](namespacepuc_1_1command.md#symbol-command_8hpp_1a6fef870a7bf5516b662333b401f3fda7a4596302bc1e8ce6e62188e769aac94cf). The retained Directory must continue to borrow a live worker pool through dispatcher destruction. Callers must not independently close the dispatcher-owned route.
-
-[Source](../../commands/command.hpp#L160)
-
-<a id="symbol-classpuc_1_1command_1_1_command_dispatcher_1ae136de067339e7e73e0549f7220513b4"></a>
-
-### `notification_channel_ready`
-
-```cpp
-bool puc::command::CommandDispatcher::notification_channel_ready() const
-```
-
-Return whether this dispatcher owns an opened notification channel.
-
-[Source](../../commands/command.hpp#L163)
+[Source](../../commands/command.hpp#L144)
 
 <a id="symbol-classpuc_1_1command_1_1_command_dispatcher_1a4bf66179c9e2d5fb5fd8d3d1c0695f57"></a>
 
@@ -178,7 +128,7 @@ Register one canonical name and zero or more aliases atomically.
 
 **Returns:** [Status::OK](namespacepuc_1_1command.md#symbol-command_8hpp_1a6fef870a7bf5516b662333b401f3fda7ae0aa021e21dddbd6d8cecec71e9cf564), [Status::INVALID\_ARGUMENT](namespacepuc_1_1command.md#symbol-command_8hpp_1a6fef870a7bf5516b662333b401f3fda7af295a0c3e37c94f078e1c5476479132d) for a null command or invalid spelling, or [Status::DUPLICATE\_COMMAND\_NAME](namespacepuc_1_1command.md#symbol-command_8hpp_1a6fef870a7bf5516b662333b401f3fda7ab60f1401bf3b1746120a63995035329d) when any supplied spelling is repeated or already registered. No spelling is added on either validation failure.
 
-[Source](../../commands/command.hpp#L173)
+[Source](../../commands/command.hpp#L154)
 
 <a id="symbol-classpuc_1_1command_1_1_command_dispatcher_1a3f027f9078f295ba7bd3953ce177398f"></a>
 
@@ -192,7 +142,7 @@ Run the command registered under a canonical name or alias.
 
 **Returns:** [Status::INVALID\_ARGUMENT](namespacepuc_1_1command.md#symbol-command_8hpp_1a6fef870a7bf5516b662333b401f3fda7af295a0c3e37c94f078e1c5476479132d) for an invalid spelling, [Status::COMMAND\_NOT\_FOUND](namespacepuc_1_1command.md#symbol-command_8hpp_1a6fef870a7bf5516b662333b401f3fda7a1ec90cd6f3a98d4abd47f52937ea2805) for an unregistered spelling, or the result returned by the command.
 
-[Source](../../commands/command.hpp#L183)
+[Source](../../commands/command.hpp#L164)
 
 <a id="symbol-classpuc_1_1command_1_1_command_dispatcher_1a97f591ac0e0bd9eaf5081d52eb135026"></a>
 
@@ -204,7 +154,7 @@ bool puc::command::CommandDispatcher::contains(std::string_view name) const
 
 Return whether an exact canonical name or alias is registered.
 
-[Source](../../commands/command.hpp#L187)
+[Source](../../commands/command.hpp#L168)
 
 <a id="symbol-classpuc_1_1command_1_1_command_dispatcher_1aa7fe749f857da4f5aa475ab372529779"></a>
 
@@ -218,7 +168,7 @@ Return every registered spelling beginning with `prefix`.
 
 Results retain the trie's stable branch-insertion order. An empty prefix lists every spelling; an invalid or absent prefix produces an empty list.
 
-[Source](../../commands/command.hpp#L195)
+[Source](../../commands/command.hpp#L176)
 
 <a id="symbol-classpuc_1_1command_1_1_command_dispatcher_1aeb265fb9138fd58a77532651ea480ecb"></a>
 
@@ -230,7 +180,7 @@ std::string puc::command::CommandDispatcher::get_command_description(std::string
 
 Return completion-list text, or an empty string when name is absent.
 
-[Source](../../commands/command.hpp#L198)
+[Source](../../commands/command.hpp#L179)
 
 <a id="symbol-classpuc_1_1command_1_1_command_dispatcher_1a7ed23fe09b61087f6324f2d7d768bb6e"></a>
 
@@ -242,7 +192,7 @@ std::string puc::command::CommandDispatcher::get_command_usage(std::string_view 
 
 Return argument help, or an empty string when absent or undocumented.
 
-[Source](../../commands/command.hpp#L201)
+[Source](../../commands/command.hpp#L182)
 
 ## Private functions
 
@@ -256,4 +206,4 @@ std::shared_ptr< CommandApp > puc::command::CommandDispatcher::find_command(std:
 
 Copy a registered command reference while holding the registry lock.
 
-[Source](../../commands/command.hpp#L208)
+[Source](../../commands/command.hpp#L189)

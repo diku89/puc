@@ -18,9 +18,7 @@
 
 #include "msgs/cmdframe_msgs.hpp"
 #include "msgs/status.hpp"
-#include "utils/ipc/channel.hpp"
 #include "utils/ipc/directory.hpp"
-#include "utils/ipc/smem_channel.hpp"
 #include "utils/ipc/status.hpp"
 #include "utils/logger/logger.hpp"
 
@@ -30,9 +28,6 @@ LOGGER_MODULE("Command Dispatcher");
 
 namespace puc::command {
 namespace {
-
-/** Only the newest pending bottom-of-frame notification remains useful. */
-constexpr std::size_t kNotificationChannelDepth = 1U;
 
 /** Return whether one spelling can be represented by the command tokenizer. */
 bool valid_command_name(std::string_view name) noexcept {
@@ -78,59 +73,6 @@ Status send_notification(const CommonCommandArgs& common_args,
     return Status::NOTIFICATION_FAILED;
   }
   return Status::OK;
-}
-
-CommandDispatcher::~CommandDispatcher() {
-  std::shared_ptr<ipc::Directory> directory;
-  {
-    const std::unique_lock lock(mutex_);
-    directory = std::move(notification_directory_);
-    notification_channel_.reset();
-  }
-  if (directory == nullptr) {
-    return;
-  }
-  const ipc::Status status =
-      directory->close_channel(msg::kCmdFrameNotifyChannel);
-  if (!ipc::is_ok(status) && status != ipc::Status::CHANNEL_NOT_FOUND) {
-    Logger<ERROR> << "Could not close command notification channel: "
-                  << ipc::status_message(status);
-  }
-}
-
-Status CommandDispatcher::open_notification_channel(
-    std::shared_ptr<ipc::Directory> directory) {
-  if (directory == nullptr) {
-    return Status::INVALID_ARGUMENT;
-  }
-
-  const std::unique_lock lock(mutex_);
-  if (notification_directory_ != nullptr) {
-    return notification_directory_ == directory ? Status::OK
-                                                : Status::NOT_ALLOWED;
-  }
-
-  auto channel = std::make_shared<ipc::SmemChannel>(
-      std::string{msg::kCmdFrameNotifyChannel},
-      ipc::kDefaultMaximumMessageBytes,
-      ipc::ChannelOptions{.channel_max_depth = kNotificationChannelDepth});
-  ipc::ChannelId channel_id = 0U;
-  const ipc::Status status  = directory->open_channel(channel, channel_id);
-  if (!ipc::is_ok(status)) {
-    Logger<ERROR> << "Could not open command notification channel: "
-                  << ipc::status_message(status);
-    return Status::CHANNEL_SETUP_FAILED;
-  }
-
-  notification_directory_ = std::move(directory);
-  notification_channel_   = std::move(channel);
-  Logger<INFO> << "Configured command notification channel " << channel_id;
-  return Status::OK;
-}
-
-bool CommandDispatcher::notification_channel_ready() const {
-  const std::shared_lock lock(mutex_);
-  return notification_directory_ != nullptr && notification_channel_ != nullptr;
 }
 
 Status CommandDispatcher::register_command(

@@ -38,6 +38,7 @@
 #include <csignal>
 #include <cstddef>
 #include <cstdint>
+#include <cstdio>
 #include <cstdlib>
 #include <filesystem>
 #include <initializer_list>
@@ -60,6 +61,11 @@
 #endif
 
 #include "msgs/screen_msgs.hpp"
+#include "puc-cli/state/bootstrap.hpp"
+#include "puc-cli/state/input.hpp"
+#include "puc-cli/state/screen.hpp"
+#include "puc-cli/state/terminal.hpp"
+#include "puc-cli/state/workers.hpp"
 #include "puc-cli/terminal/decoder.hpp"
 #include "puc-cli/terminal/timeouts.hpp"
 #include "puc-cli/tui/canvas.hpp"
@@ -668,13 +674,19 @@ Status add_frame(Layout& layout,
   return Status::OK;
 }
 
-/** Own one interactive input-frame run while borrowing main's worker pool. */
+/** Own one interactive run while borrowing AppState-managed mechanisms. */
 class InputTestApplication {
  public:
-  /** Retain the worker pool and executable path used for runfiles lookup. */
+  /** Retain running subsystem mechanisms and timeout configuration. */
   InputTestApplication(puc::multithreading::JobQueue& workers,
-                       std::string_view executable)
-      : workers_(workers), executable_(executable) {}
+                       puc::terminal::Decoder& decoder,
+                       std::shared_ptr<InputFrame> input_frame, Screen& screen,
+                       const puc::config::Config& configuration)
+      : workers_(workers),
+        decoder_(decoder),
+        configuration_(configuration),
+        input_frame_(std::move(input_frame)),
+        screen_(&screen) {}
 
   InputTestApplication(const InputTestApplication&)            = delete;
   InputTestApplication& operator=(const InputTestApplication&) = delete;
@@ -682,19 +694,10 @@ class InputTestApplication {
   /** Restore terminal resources if the caller exits an error path. */
   ~InputTestApplication() { static_cast<void>(shutdown()); }
 
-  /** Configure decoding, take the terminal, and construct the first layout. */
+  /** Configure timeouts, rendering, and the first resolved layout. */
   bool setup() {
-    const std::filesystem::path primary = primary_config_root(executable_);
-    const puc::config::Config configuration{primary, user_config_root(primary)};
-    const puc::terminal::Status decoder_status =
-        decoder_.setup(configuration, environment_value("TERM"), STDOUT_FILENO);
-    if (!puc::terminal::is_ok(decoder_status)) {
-      Logger<ERROR> << "Input decoder setup failed: "
-                    << puc::terminal::status_message(decoder_status);
-      return false;
-    }
     const puc::terminal::Status timeout_status =
-        puc::terminal::load_timeout_settings(configuration, timeout_settings_);
+        puc::terminal::load_timeout_settings(configuration_, timeout_settings_);
     if (!puc::terminal::is_ok(timeout_status)) {
       Logger<ERROR> << "Terminal timeout setup failed: "
                     << puc::terminal::status_message(timeout_status);
@@ -702,28 +705,14 @@ class InputTestApplication {
     }
 
     configure_theme();
-    input_frame_ = std::make_shared<InputFrame>("input");
-    input_frame_->set_notification(std::string{kNotification});
-    screen_   = std::make_unique<Screen>(workers_);
-    renderer_ = std::make_unique<ParallelRenderer>(workers_);
-
-    const msg::ScreenSessionOptions options{
-        .preserve_signals     = true,
-        .alternate_screen     = true,
-        .hide_cursor          = true,
-        .disable_auto_wrap    = true,
-        .bracketed_paste      = true,
-        .focus_reporting      = true,
-        .mouse                = msg::ScreenMouseTracking::DRAG,
-        .kitty_keyboard_flags = kKeyboardEnhancements,
-    };
-    Status status = screen_->take(options);
-    if (!puc::tui::is_ok(status)) {
-      Logger<ERROR> << "Could not request terminal ownership: "
-                    << puc::tui::status_message(status);
+    if (input_frame_ == nullptr || screen_ == nullptr) {
+      Logger<ERROR> << "Input application mechanisms are unavailable";
       return false;
     }
+    input_frame_->set_notification(std::string{kNotification});
+    renderer_ = std::make_unique<ParallelRenderer>(workers_);
 
+    Status status = Status::OK;
     const auto geometry_deadline =
         std::chrono::steady_clock::now() + std::chrono::seconds{2};
     while (true) {
@@ -821,21 +810,13 @@ class InputTestApplication {
     return true;
   }
 
-  /** Quiesce rendering and restore every terminal mode requested by setup(). */
+  /** Quiesce app-specific rendering and the embedded child process. */
   bool shutdown() noexcept {
     renderer_.reset();
     terminal_process_.stop();
-    bool released = true;
-    if (screen_ != nullptr) {
-      const Status status = screen_->release();
-      released            = puc::tui::is_ok(status);
-      if (!released) {
-        Logger<ERROR> << "Could not request terminal restoration: "
-                      << puc::tui::status_message(status);
-      }
-      screen_.reset();
-    }
-    return released;
+    input_frame_.reset();
+    screen_ = nullptr;
+    return true;
   }
 
  private:
@@ -1206,12 +1187,13 @@ class InputTestApplication {
   }
 
   puc::multithreading::JobQueue& workers_; /**< Main-owned shared workers. */
-  std::string executable_;                 /**< argv[0] runfiles fallback. */
-  puc::terminal::Decoder decoder_; /**< Runtime-configured input Trie. */
+  puc::terminal::Decoder&
+      decoder_; /**< AppState-owned configured input Trie. */
+  const puc::config::Config& configuration_; /**< Timeout configuration. */
   puc::terminal::TimeoutSettings timeout_settings_; /**< Input timing policy. */
   std::shared_ptr<InputFrame> input_frame_;    /**< Editor under manual test. */
   EmbeddedTerminalProcess terminal_process_;   /**< PTY child behind libtmt. */
-  std::unique_ptr<Screen> screen_;             /**< Terminal/session owner. */
+  Screen* screen_ = nullptr;                   /**< AppState-owned presenter. */
   std::unique_ptr<ParallelRenderer> renderer_; /**< Frame scheduler. */
   std::shared_ptr<Canvas> canvas_;             /**< Current screen Canvas. */
   std::shared_ptr<Layout::LayoutDescription>
@@ -1261,16 +1243,91 @@ int main(int argc, char** argv) {
     return 1;
   }
 
-  const std::string_view executable = argc > 0 && argv[0] != nullptr
-                                          ? std::string_view{argv[0]}
-                                          : std::string_view{};
-  puc::multithreading::JobQueue workers(kWorkerCount);
-  InputTestApplication application(workers, executable);
+  const std::string_view executable   = argc > 0 && argv[0] != nullptr
+                                            ? std::string_view{argv[0]}
+                                            : std::string_view{};
+  const std::filesystem::path primary = primary_config_root(executable);
+  const std::filesystem::path user    = user_config_root(primary);
+  const puc::config::Config configuration{primary, user};
+
+  puc::app::ApplicationSubsystemOptions subsystem_options{
+      .logger       = logger_config,
+      .worker_count = kWorkerCount,
+      .terminal =
+          puc::app::TerminalSubsystemOptions{
+              .input_fd            = STDIN_FILENO,
+              .output_fd           = STDOUT_FILENO,
+              .decoder_limits      = {},
+              .input_configuration = puc::config::Config{primary, user},
+              .terminal_name       = environment_value("TERM"),
+          },
+      .screen =
+          puc::app::ScreenSubsystemOptions{
+              .take_terminal = true,
+              .session_options =
+                  msg::ScreenSessionOptions{
+                      .preserve_signals     = true,
+                      .alternate_screen     = true,
+                      .hide_cursor          = true,
+                      .disable_auto_wrap    = true,
+                      .bracketed_paste      = true,
+                      .focus_reporting      = true,
+                      .mouse                = msg::ScreenMouseTracking::DRAG,
+                      .kitty_keyboard_flags = kKeyboardEnhancements,
+                  },
+          },
+  };
+  puc::app::AppState state;
+  puc::app::Status app_status = puc::app::register_application_subsystems(
+      state, std::move(subsystem_options));
+  if (!puc::app::is_ok(app_status)) {
+    Logger<ERROR> << "Could not register application subsystems: "
+                  << puc::app::status_message(app_status);
+    return 1;
+  }
+  app_status = state.initialize(puc::app::OperatingMode::TUI);
+  if (!puc::app::is_ok(app_status)) {
+    Logger<ERROR> << "Could not initialize application subsystems: "
+                  << puc::app::status_message(app_status);
+    return 1;
+  }
+  app_status = state.start();
+  if (!puc::app::is_ok(app_status)) {
+    Logger<ERROR> << "Could not start application subsystems: "
+                  << puc::app::status_message(app_status);
+    return 1;
+  }
+
+  puc::app::WorkerSubsystem* workers =
+      state.get_subsystem<puc::app::WorkerSubsystem>();
+  puc::app::TerminalSubsystem* terminal =
+      state.get_subsystem<puc::app::TerminalSubsystem>();
+  puc::app::ScreenSubsystem* screen =
+      state.get_subsystem<puc::app::ScreenSubsystem>();
+  puc::app::InputSubsystem* input =
+      state.get_subsystem<puc::app::InputSubsystem>();
+  if (workers == nullptr || workers->workers() == nullptr ||
+      terminal == nullptr || terminal->decoder() == nullptr ||
+      screen == nullptr || screen->screen() == nullptr || input == nullptr ||
+      input->input_frame() == nullptr) {
+    Logger<ERROR> << "Running application subsystem graph is incomplete";
+    return 1;
+  }
+
+  InputTestApplication application(*workers->workers(), *terminal->decoder(),
+                                   input->input_frame(), *screen->screen(),
+                                   configuration);
   bool success = application.setup();
   while (success && stop_requested == 0) {
     success = application.draw();
   }
-  success = application.shutdown() && success;
-  workers.wait();
+  success    = application.shutdown() && success;
+  app_status = state.terminate();
+  if (!puc::app::is_ok(app_status)) {
+    const std::string_view message = puc::app::status_message(app_status);
+    std::fprintf(stderr, "Could not terminate application subsystems: %.*s\n",
+                 static_cast<int>(message.size()), message.data());
+    success = false;
+  }
   return success ? 0 : 1;
 }

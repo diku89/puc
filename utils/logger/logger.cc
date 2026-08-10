@@ -93,4 +93,16 @@ std::shared_ptr<Logger> get_logger() {
   return global_logger;
 }
 
+bool clear_logger(const std::shared_ptr<Logger>& expected) noexcept {
+  if (expected == nullptr) {
+    return false;
+  }
+  const std::scoped_lock lock(global_logger_mutex);
+  if (global_logger != expected) {
+    return false;
+  }
+  global_logger.reset();
+  return true;
+}
+
 }  // namespace puc::logger

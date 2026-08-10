@@ -1,0 +1,436 @@
+/**
+ * @file adapters_test.cpp
+ * @brief Integration tests for concrete application subsystem adapters.
+ */
+
+#include <chrono>
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <optional>
+#include <span>
+#include <string>
+#include <thread>
+#include <utility>
+#include <vector>
+
+#include "commands/command.hpp"
+#include "gtest/gtest.h"
+#include "msgs/cmdframe_msgs.hpp"
+#include "msgs/screen_msgs.hpp"
+#include "puc-cli/state/bootstrap.hpp"
+#include "puc-cli/state/channels.hpp"
+#include "puc-cli/state/commands.hpp"
+#include "puc-cli/state/directory.hpp"
+#include "puc-cli/state/input.hpp"
+#include "puc-cli/state/lifecycle.hpp"
+#include "puc-cli/state/logger.hpp"
+#include "puc-cli/state/screen.hpp"
+#include "puc-cli/state/state.hpp"
+#include "puc-cli/state/terminal.hpp"
+#include "puc-cli/state/workers.hpp"
+#include "puc-cli/terminal/session.hpp"
+#include "puc-cli/tui/input_frame.hpp"
+#include "puc-cli/tui/screen.hpp"
+#include "utils/ipc/channel.hpp"
+#include "utils/ipc/directory.hpp"
+#include "utils/ipc/smem_channel.hpp"
+#include "utils/ipc/status.hpp"
+#include "utils/logger/logger.hpp"
+#include "utils/multithreading/job_queue.hpp"
+
+namespace puc::app {
+namespace {
+
+using namespace std::chrono_literals;
+
+/** Minimal registered command used to verify registry lifetime. */
+class AdapterCommand final : public command::CommandApp {
+ public:
+  command::Status run(command::CommonCommandArgs,
+                      std::span<const std::string>) override {
+    return command::Status::OK;
+  }
+
+  std::string get_description() const override { return "Adapter command"; }
+
+  std::string get_usage() const override { return {}; }
+};
+
+TEST(CoreAdaptersTest, CreatesStopsAndRestartsDirectoryAboveWorkers) {
+  AppState app;
+  auto directory = std::make_unique<DirectorySubsystem>();
+  DirectorySubsystem* directory_adapter = directory.get();
+  auto workers                          = std::make_unique<WorkerSubsystem>(2U);
+  WorkerSubsystem* worker_adapter       = workers.get();
+  auto logger                           = std::make_unique<LoggerSubsystem>();
+  LoggerSubsystem* logger_adapter       = logger.get();
+
+  // Registering dependents first is valid: topology, not insertion order,
+  // controls lifecycle execution.
+  ASSERT_EQ(app.register_subsystem(std::move(directory)), Status::OK);
+  ASSERT_EQ(app.register_subsystem(std::move(workers)), Status::OK);
+  ASSERT_EQ(app.register_subsystem(std::move(logger)), Status::OK);
+  ASSERT_EQ(app.initialize(OperatingMode::TEST), Status::OK);
+  ASSERT_NE(logger_adapter->logger(), nullptr);
+  EXPECT_EQ(logger::get_logger(), logger_adapter->logger());
+  EXPECT_EQ(worker_adapter->workers(), nullptr);
+  EXPECT_EQ(directory_adapter->directory(), nullptr);
+
+  ASSERT_EQ(app.start(), Status::OK);
+  ASSERT_NE(worker_adapter->workers(), nullptr);
+  ASSERT_NE(directory_adapter->directory(), nullptr);
+  EXPECT_TRUE(worker_adapter->workers()->active());
+  EXPECT_EQ(worker_adapter->workers()->worker_count(), 2U);
+  EXPECT_EQ(directory_adapter->directory()->delivery_worker_count(), 2U);
+
+  auto channel = std::make_shared<ipc::SmemChannel>(
+      "//test/adapters", ipc::kDefaultMaximumMessageBytes);
+  ipc::ChannelId channel_id = 0U;
+  EXPECT_EQ(directory_adapter->directory()->open_channel(channel, channel_id),
+            ipc::Status::OK);
+  EXPECT_NE(channel_id, 0U);
+  EXPECT_EQ(directory_adapter->directory()->size(), 1U);
+
+  ASSERT_EQ(app.stop(), Status::OK);
+  EXPECT_EQ(directory_adapter->directory(), nullptr);
+  EXPECT_EQ(worker_adapter->workers(), nullptr);
+  ASSERT_NE(logger_adapter->logger(), nullptr);
+  EXPECT_EQ(logger::get_logger(), logger_adapter->logger());
+
+  ASSERT_EQ(app.start(), Status::OK);
+  ASSERT_NE(logger_adapter->logger(), nullptr);
+  ASSERT_NE(worker_adapter->workers(), nullptr);
+  ASSERT_NE(directory_adapter->directory(), nullptr);
+  EXPECT_EQ(directory_adapter->directory()->size(), 0U);
+  EXPECT_EQ(directory_adapter->directory()->delivery_worker_count(), 2U);
+
+  EXPECT_EQ(app.terminate(), Status::OK);
+  EXPECT_EQ(directory_adapter->directory(), nullptr);
+  EXPECT_EQ(worker_adapter->workers(), nullptr);
+  EXPECT_EQ(logger_adapter->logger(), nullptr);
+  EXPECT_EQ(logger::get_logger(), nullptr);
+}
+
+TEST(CoreAdaptersTest, RejectsAZeroWorkerConfigurationDuringInitialization) {
+  AppState app;
+  auto workers                    = std::make_unique<WorkerSubsystem>(0U);
+  WorkerSubsystem* worker_adapter = workers.get();
+  ASSERT_EQ(app.register_subsystem(std::move(workers)), Status::OK);
+  ASSERT_EQ(app.register_subsystem(std::make_unique<LoggerSubsystem>()),
+            Status::OK);
+
+  EXPECT_EQ(app.initialize(OperatingMode::TEST), Status::INVALID_ARGUMENT);
+  EXPECT_EQ(app.lifecycle_state(), LifecycleState::CRASHED);
+  EXPECT_EQ(worker_adapter->workers(), nullptr);
+}
+
+TEST(CoreAdaptersTest, LoggerDoesNotClearANewerGlobalReplacement) {
+  AppState app;
+  auto logger                     = std::make_unique<LoggerSubsystem>();
+  LoggerSubsystem* logger_adapter = logger.get();
+  ASSERT_EQ(app.register_subsystem(std::move(logger)), Status::OK);
+  ASSERT_EQ(app.initialize(OperatingMode::TEST), Status::OK);
+  ASSERT_EQ(app.start(), Status::OK);
+  ASSERT_NE(logger_adapter->logger(), nullptr);
+
+  logger::init_logger(logger::LoggerConf{});
+  const std::shared_ptr<logger::Logger> replacement = logger::get_logger();
+  ASSERT_NE(replacement, nullptr);
+  ASSERT_NE(replacement, logger_adapter->logger());
+
+  EXPECT_EQ(app.stop(), Status::OK);
+  EXPECT_EQ(logger::get_logger(), replacement);
+  EXPECT_EQ(app.terminate(), Status::OK);
+  EXPECT_EQ(logger::get_logger(), replacement);
+  EXPECT_TRUE(logger::clear_logger(replacement));
+}
+
+TEST(CoreAdaptersTest, DirectoryRequiresARegisteredWorkerAdapter) {
+  AppState app;
+  ASSERT_EQ(app.register_subsystem(std::make_unique<DirectorySubsystem>()),
+            Status::OK);
+
+  EXPECT_EQ(app.initialize(OperatingMode::TEST), Status::MISSING_DEPENDENCY);
+  EXPECT_EQ(app.lifecycle_state(), LifecycleState::CRASHED);
+}
+
+TEST(ChannelAdaptersTest, OwnCanonicalRoutesForEachRunningGeneration) {
+  AppState app;
+  auto screen_channels = std::make_unique<ScreenChannelSubsystem>();
+  ScreenChannelSubsystem* screen_adapter = screen_channels.get();
+  auto command_notifications =
+      std::make_unique<CommandNotificationChannelSubsystem>();
+  CommandNotificationChannelSubsystem* command_adapter =
+      command_notifications.get();
+  auto directory = std::make_unique<DirectorySubsystem>();
+  DirectorySubsystem* directory_adapter = directory.get();
+
+  ASSERT_EQ(app.register_subsystem(std::move(screen_channels)), Status::OK);
+  ASSERT_EQ(app.register_subsystem(std::move(command_notifications)),
+            Status::OK);
+  ASSERT_EQ(app.register_subsystem(std::move(directory)), Status::OK);
+  ASSERT_EQ(app.register_subsystem(std::make_unique<WorkerSubsystem>(2U)),
+            Status::OK);
+  ASSERT_EQ(app.register_subsystem(std::make_unique<LoggerSubsystem>()),
+            Status::OK);
+  ASSERT_EQ(app.initialize(OperatingMode::TEST), Status::OK);
+  ASSERT_EQ(app.start(), Status::OK);
+
+  ASSERT_NE(directory_adapter->directory(), nullptr);
+  EXPECT_EQ(directory_adapter->directory()->size(), 3U);
+  EXPECT_NE(screen_adapter->command_channel_id(), 0U);
+  EXPECT_NE(screen_adapter->resize_channel_id(), 0U);
+  EXPECT_NE(command_adapter->channel_id(), 0U);
+  ASSERT_NE(screen_adapter->command_channel(), nullptr);
+  ASSERT_NE(screen_adapter->resize_channel(), nullptr);
+  ASSERT_NE(command_adapter->channel(), nullptr);
+  EXPECT_EQ(screen_adapter->command_channel()->channel_max_depth(),
+            std::optional<std::size_t>{3U});
+  EXPECT_EQ(screen_adapter->resize_channel()->channel_max_depth(),
+            std::optional<std::size_t>{1U});
+  EXPECT_EQ(command_adapter->channel()->channel_max_depth(),
+            std::optional<std::size_t>{1U});
+  EXPECT_EQ(directory_adapter->directory()
+                ->get_channel(msg::kScreenCommandChannel)
+                .get(),
+            screen_adapter->command_channel());
+  EXPECT_EQ(directory_adapter->directory()
+                ->get_channel(msg::kScreenResizeEventChannel)
+                .get(),
+            screen_adapter->resize_channel());
+  EXPECT_EQ(directory_adapter->directory()
+                ->get_channel(msg::kCmdFrameNotifyChannel)
+                .get(),
+            command_adapter->channel());
+
+  ASSERT_EQ(app.stop(), Status::OK);
+  EXPECT_EQ(screen_adapter->command_channel(), nullptr);
+  EXPECT_EQ(screen_adapter->resize_channel(), nullptr);
+  EXPECT_EQ(command_adapter->channel(), nullptr);
+  EXPECT_EQ(directory_adapter->directory(), nullptr);
+
+  ASSERT_EQ(app.start(), Status::OK);
+  ASSERT_NE(directory_adapter->directory(), nullptr);
+  EXPECT_EQ(directory_adapter->directory()->size(), 3U);
+  EXPECT_EQ(app.terminate(), Status::OK);
+}
+
+TEST(TerminalAdapterTest, RetainsMechanismsAndRebindsAcrossRestarts) {
+  AppState app;
+  auto terminal                       = std::make_unique<TerminalSubsystem>();
+  TerminalSubsystem* terminal_adapter = terminal.get();
+
+  ASSERT_EQ(app.register_subsystem(std::move(terminal)), Status::OK);
+  ASSERT_EQ(app.register_subsystem(std::make_unique<ScreenChannelSubsystem>()),
+            Status::OK);
+  ASSERT_EQ(app.register_subsystem(std::make_unique<DirectorySubsystem>()),
+            Status::OK);
+  ASSERT_EQ(app.register_subsystem(std::make_unique<WorkerSubsystem>(2U)),
+            Status::OK);
+  ASSERT_EQ(app.register_subsystem(std::make_unique<LoggerSubsystem>()),
+            Status::OK);
+
+  ASSERT_EQ(app.initialize(OperatingMode::TEST), Status::OK);
+  ASSERT_NE(terminal_adapter->session(), nullptr);
+  ASSERT_NE(terminal_adapter->decoder(), nullptr);
+  EXPECT_FALSE(terminal_adapter->session()->screen_channels_bound());
+
+  ASSERT_EQ(app.start(), Status::OK);
+  EXPECT_TRUE(terminal_adapter->session()->screen_channels_bound());
+
+  ASSERT_EQ(app.stop(), Status::OK);
+  ASSERT_NE(terminal_adapter->session(), nullptr);
+  ASSERT_NE(terminal_adapter->decoder(), nullptr);
+  EXPECT_FALSE(terminal_adapter->session()->screen_channels_bound());
+
+  ASSERT_EQ(app.start(), Status::OK);
+  EXPECT_TRUE(terminal_adapter->session()->screen_channels_bound());
+  ASSERT_EQ(app.terminate(), Status::OK);
+  EXPECT_EQ(terminal_adapter->session(), nullptr);
+  EXPECT_EQ(terminal_adapter->decoder(), nullptr);
+}
+
+TEST(ScreenAdapterTest, BorrowsLifecycleOwnedTerminalAndDirectory) {
+  AppState app;
+  auto screen                         = std::make_unique<ScreenSubsystem>();
+  ScreenSubsystem* screen_adapter     = screen.get();
+  auto terminal                       = std::make_unique<TerminalSubsystem>();
+  TerminalSubsystem* terminal_adapter = terminal.get();
+  auto directory                      = std::make_unique<DirectorySubsystem>();
+  DirectorySubsystem* directory_adapter = directory.get();
+
+  ASSERT_EQ(app.register_subsystem(std::move(screen)), Status::OK);
+  ASSERT_EQ(app.register_subsystem(std::move(terminal)), Status::OK);
+  ASSERT_EQ(app.register_subsystem(std::make_unique<ScreenChannelSubsystem>()),
+            Status::OK);
+  ASSERT_EQ(app.register_subsystem(std::move(directory)), Status::OK);
+  ASSERT_EQ(app.register_subsystem(std::make_unique<WorkerSubsystem>(2U)),
+            Status::OK);
+  ASSERT_EQ(app.register_subsystem(std::make_unique<LoggerSubsystem>()),
+            Status::OK);
+
+  ASSERT_EQ(app.initialize(OperatingMode::TEST), Status::OK);
+  EXPECT_EQ(screen_adapter->screen(), nullptr);
+  ASSERT_EQ(app.start(), Status::OK);
+  ASSERT_NE(screen_adapter->screen(), nullptr);
+  EXPECT_EQ(screen_adapter->screen_status(), tui::Status::OK);
+  EXPECT_EQ(&screen_adapter->screen()->ipc_directory(),
+            directory_adapter->directory());
+  ASSERT_NE(terminal_adapter->session(), nullptr);
+  EXPECT_TRUE(terminal_adapter->session()->screen_channels_bound());
+
+  ASSERT_EQ(app.stop(), Status::OK);
+  EXPECT_EQ(screen_adapter->screen(), nullptr);
+  EXPECT_FALSE(terminal_adapter->session()->screen_channels_bound());
+  ASSERT_EQ(app.start(), Status::OK);
+  EXPECT_NE(screen_adapter->screen(), nullptr);
+  EXPECT_EQ(app.terminate(), Status::OK);
+  EXPECT_EQ(screen_adapter->screen(), nullptr);
+}
+
+TEST(CommandAdapterTest, RetainsRegistryAndResolvesCurrentBorrowedServices) {
+  AppState app;
+  auto commands                     = std::make_unique<CommandSubsystem>();
+  CommandSubsystem* command_adapter = commands.get();
+  auto directory                    = std::make_unique<DirectorySubsystem>();
+  DirectorySubsystem* directory_adapter = directory.get();
+  auto workers                          = std::make_unique<WorkerSubsystem>(2U);
+  WorkerSubsystem* worker_adapter       = workers.get();
+  auto screen                           = std::make_unique<ScreenSubsystem>();
+  ScreenSubsystem* screen_adapter       = screen.get();
+
+  ASSERT_EQ(app.register_subsystem(std::move(commands)), Status::OK);
+  ASSERT_EQ(app.register_subsystem(
+                std::make_unique<CommandNotificationChannelSubsystem>()),
+            Status::OK);
+  ASSERT_EQ(app.register_subsystem(std::move(screen)), Status::OK);
+  ASSERT_EQ(app.register_subsystem(std::make_unique<TerminalSubsystem>()),
+            Status::OK);
+  ASSERT_EQ(app.register_subsystem(std::make_unique<ScreenChannelSubsystem>()),
+            Status::OK);
+  ASSERT_EQ(app.register_subsystem(std::move(directory)), Status::OK);
+  ASSERT_EQ(app.register_subsystem(std::move(workers)), Status::OK);
+  ASSERT_EQ(app.register_subsystem(std::make_unique<LoggerSubsystem>()),
+            Status::OK);
+
+  ASSERT_EQ(app.initialize(OperatingMode::TEST), Status::OK);
+  ASSERT_NE(command_adapter->dispatcher(), nullptr);
+  ASSERT_EQ(command_adapter->dispatcher()->register_command(
+                "adapter", {}, std::make_shared<AdapterCommand>()),
+            command::Status::OK);
+  ASSERT_EQ(app.start(), Status::OK);
+
+  const command::CommonCommandArgs args = command_adapter->common_args(app);
+  EXPECT_EQ(args.workers, worker_adapter->workers());
+  EXPECT_EQ(args.directory, directory_adapter->directory());
+  EXPECT_EQ(args.screen, screen_adapter->screen());
+  EXPECT_EQ(args.state, &app);
+
+  ASSERT_EQ(app.stop(), Status::OK);
+  ASSERT_NE(command_adapter->dispatcher(), nullptr);
+  EXPECT_TRUE(command_adapter->dispatcher()->contains("adapter"));
+  ASSERT_EQ(app.start(), Status::OK);
+  EXPECT_TRUE(command_adapter->dispatcher()->contains("adapter"));
+  ASSERT_EQ(app.terminate(), Status::OK);
+  EXPECT_EQ(command_adapter->dispatcher(), nullptr);
+}
+
+TEST(InputAdapterTest, ConsumesTypedNotificationsAcrossRestarts) {
+  AppState app;
+  auto input                        = std::make_unique<InputSubsystem>();
+  InputSubsystem* input_adapter     = input.get();
+  auto commands                     = std::make_unique<CommandSubsystem>();
+  CommandSubsystem* command_adapter = commands.get();
+  auto screen                       = std::make_unique<ScreenSubsystem>();
+  ScreenSubsystem* screen_adapter   = screen.get();
+
+  ASSERT_EQ(app.register_subsystem(std::move(input)), Status::OK);
+  ASSERT_EQ(app.register_subsystem(std::move(commands)), Status::OK);
+  ASSERT_EQ(app.register_subsystem(
+                std::make_unique<CommandNotificationChannelSubsystem>()),
+            Status::OK);
+  ASSERT_EQ(app.register_subsystem(std::move(screen)), Status::OK);
+  ASSERT_EQ(app.register_subsystem(std::make_unique<TerminalSubsystem>()),
+            Status::OK);
+  ASSERT_EQ(app.register_subsystem(std::make_unique<ScreenChannelSubsystem>()),
+            Status::OK);
+  ASSERT_EQ(app.register_subsystem(std::make_unique<DirectorySubsystem>()),
+            Status::OK);
+  ASSERT_EQ(app.register_subsystem(std::make_unique<WorkerSubsystem>(2U)),
+            Status::OK);
+  ASSERT_EQ(app.register_subsystem(std::make_unique<LoggerSubsystem>()),
+            Status::OK);
+
+  ASSERT_EQ(app.initialize(OperatingMode::TEST), Status::OK);
+  std::shared_ptr<tui::InputFrame> frame = input_adapter->input_frame();
+  ASSERT_NE(frame, nullptr);
+  EXPECT_FALSE(input_adapter->notification_consumer_active());
+  ASSERT_EQ(app.start(), Status::OK);
+  EXPECT_TRUE(input_adapter->notification_consumer_active());
+
+  command::CommonCommandArgs args = command_adapter->common_args(app);
+  ASSERT_NE(screen_adapter->screen(), nullptr);
+  EXPECT_EQ(args.screen, screen_adapter->screen());
+  ASSERT_EQ(command::send_notification(args, "adapter notification ✓"),
+            command::Status::OK);
+  const auto deadline = std::chrono::steady_clock::now() + 2s;
+  while (frame->snapshot().notification != "adapter notification ✓" &&
+         std::chrono::steady_clock::now() < deadline) {
+    std::this_thread::sleep_for(1ms);
+  }
+  EXPECT_EQ(frame->snapshot().notification, "adapter notification ✓");
+
+  ASSERT_EQ(app.stop(), Status::OK);
+  EXPECT_FALSE(input_adapter->notification_consumer_active());
+  EXPECT_EQ(input_adapter->input_frame(), frame);
+  ASSERT_EQ(app.start(), Status::OK);
+  EXPECT_TRUE(input_adapter->notification_consumer_active());
+  ASSERT_EQ(command::send_notification(command_adapter->common_args(app),
+                                       "second generation"),
+            command::Status::OK);
+  const auto restart_deadline = std::chrono::steady_clock::now() + 2s;
+  while (frame->snapshot().notification != "second generation" &&
+         std::chrono::steady_clock::now() < restart_deadline) {
+    std::this_thread::sleep_for(1ms);
+  }
+  EXPECT_EQ(frame->snapshot().notification, "second generation");
+
+  frame.reset();
+  ASSERT_EQ(app.terminate(), Status::OK);
+  EXPECT_EQ(input_adapter->input_frame(), nullptr);
+}
+
+TEST(AdapterBootstrapTest, RegistersAndRunsTheCompleteCanonicalGraph) {
+  AppState app;
+  ApplicationSubsystemOptions options;
+  options.worker_count = 2U;
+  ASSERT_EQ(register_application_subsystems(app, std::move(options)),
+            Status::OK);
+  EXPECT_EQ(app.size(), kApplicationSubsystemCount);
+  EXPECT_EQ(register_application_subsystems(app), Status::INVALID_ARGUMENT);
+
+  EXPECT_NE(app.get_subsystem<LoggerSubsystem>(), nullptr);
+  EXPECT_NE(app.get_subsystem<WorkerSubsystem>(), nullptr);
+  EXPECT_NE(app.get_subsystem<DirectorySubsystem>(), nullptr);
+  EXPECT_NE(app.get_subsystem<ScreenChannelSubsystem>(), nullptr);
+  EXPECT_NE(app.get_subsystem<CommandNotificationChannelSubsystem>(), nullptr);
+  EXPECT_NE(app.get_subsystem<TerminalSubsystem>(), nullptr);
+  EXPECT_NE(app.get_subsystem<ScreenSubsystem>(), nullptr);
+  EXPECT_NE(app.get_subsystem<CommandSubsystem>(), nullptr);
+  EXPECT_NE(app.get_subsystem<InputSubsystem>(), nullptr);
+
+  ASSERT_EQ(app.initialize(OperatingMode::TEST), Status::OK);
+  ASSERT_EQ(app.start(), Status::OK);
+  const DirectorySubsystem* directory = app.get_subsystem<DirectorySubsystem>();
+  ASSERT_NE(directory, nullptr);
+  ASSERT_NE(directory->directory(), nullptr);
+  EXPECT_EQ(directory->directory()->size(), 3U);
+  EXPECT_TRUE(
+      app.get_subsystem<InputSubsystem>()->notification_consumer_active());
+  EXPECT_EQ(app.terminate(), Status::OK);
+  EXPECT_EQ(app.lifecycle_state(), LifecycleState::TERMINATED);
+}
+
+}  // namespace
+}  // namespace puc::app

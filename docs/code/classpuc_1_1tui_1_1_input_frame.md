@@ -10,7 +10,7 @@ The supplied rectangle is the outermost frame. Its first row is a gap and its la
 
 Mutable editor state is synchronized because rendering may run on a worker while the application's input loop processes an event.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L70)
+[Source](../../puc-cli/tui/input_frame.hpp#L71)
 
 ## Related symbols
 
@@ -28,7 +28,7 @@ using puc::tui::InputFrame::Clock = std::chrono::steady_clock
 
 Monotonic clock used to recognize a double Escape.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L73)
+[Source](../../puc-cli/tui/input_frame.hpp#L74)
 
 ## Public static data members
 
@@ -42,7 +42,7 @@ std::size_t puc::tui::InputFrame::kMinimumWidth
 
 Smallest supported outermost width in terminal cells.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L76)
+[Source](../../puc-cli/tui/input_frame.hpp#L77)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1a91a62d01c2d63f56b57d1ead111641f1"></a>
 
@@ -54,7 +54,7 @@ std::size_t puc::tui::InputFrame::kMinimumHeight
 
 Smallest supported outermost height in terminal cells.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L78)
+[Source](../../puc-cli/tui/input_frame.hpp#L79)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1aca1d23100745b5c08229e183aea54aaa"></a>
 
@@ -66,7 +66,7 @@ std::size_t puc::tui::InputFrame::kTerminalMinimumHeight
 
 Smallest outer height that can contain libtmt's two required rows.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L80)
+[Source](../../puc-cli/tui/input_frame.hpp#L81)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1a985433f692e4e260e4576ed64e7dfd38"></a>
 
@@ -78,7 +78,7 @@ std::size_t puc::tui::InputFrame::kBaselineMaximumHeight
 
 Baseline maximum height before the 20-percent allowance becomes larger.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L82)
+[Source](../../puc-cli/tui/input_frame.hpp#L83)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1a81c4fb2a4c2ff2eed62ecdc7f2414a46"></a>
 
@@ -90,7 +90,7 @@ std::chrono::milliseconds puc::tui::InputFrame::kDoubleEscapeInterval
 
 Maximum interval between Escape presses in one double-Escape gesture.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L84)
+[Source](../../puc-cli/tui/input_frame.hpp#L85)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1add608550f133e1bb3aea0815c7313594"></a>
 
@@ -102,7 +102,7 @@ std::string_view puc::tui::InputFrame::kClearPrompt
 
 Prompt drawn into the input box's bottom margin after one Escape.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L86)
+[Source](../../puc-cli/tui/input_frame.hpp#L87)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1a166596e14aeedd90e2f8663ff2f3ded8"></a>
 
@@ -114,7 +114,7 @@ std::string_view puc::tui::InputFrame::kExitCommandPrompt
 
 Command-mode counterpart to kClearPrompt.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L89)
+[Source](../../puc-cli/tui/input_frame.hpp#L90)
 
 ## Private data members
 
@@ -128,7 +128,7 @@ std::unique_ptr<Impl> puc::tui::InputFrame::impl_
 
 Hidden synchronized editor state.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L213)
+[Source](../../puc-cli/tui/input_frame.hpp#L214)
 
 ## Public functions
 
@@ -146,7 +146,7 @@ Construct an empty normal-mode editor.
 
 - `name` (in) — Human-readable [Frame](classpuc_1_1tui_1_1_frame.md) name.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L97)
+[Source](../../puc-cli/tui/input_frame.hpp#L98)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1ae279b9a5a6446359e5989d126ed1cba7"></a>
 
@@ -156,7 +156,7 @@ Construct an empty normal-mode editor.
 puc::tui::InputFrame::InputFrame(const InputFrame &)=delete
 ```
 
-[Source](../../puc-cli/tui/input_frame.hpp#L99)
+[Source](../../puc-cli/tui/input_frame.hpp#L100)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1af7c596ec5d68d66a63b2b823d4444005"></a>
 
@@ -166,7 +166,7 @@ puc::tui::InputFrame::InputFrame(const InputFrame &)=delete
 InputFrame & puc::tui::InputFrame::operator=(const InputFrame &)=delete
 ```
 
-[Source](../../puc-cli/tui/input_frame.hpp#L100)
+[Source](../../puc-cli/tui/input_frame.hpp#L101)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1ab496abde0840835cd2b598aa8585068a"></a>
 
@@ -176,7 +176,7 @@ InputFrame & puc::tui::InputFrame::operator=(const InputFrame &)=delete
 puc::tui::InputFrame::InputFrame(InputFrame &&)=delete
 ```
 
-[Source](../../puc-cli/tui/input_frame.hpp#L101)
+[Source](../../puc-cli/tui/input_frame.hpp#L102)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1a0f4d5512dc3a7cd3c5b4b89dc6d38dc5"></a>
 
@@ -186,7 +186,7 @@ puc::tui::InputFrame::InputFrame(InputFrame &&)=delete
 InputFrame & puc::tui::InputFrame::operator=(InputFrame &&)=delete
 ```
 
-[Source](../../puc-cli/tui/input_frame.hpp#L102)
+[Source](../../puc-cli/tui/input_frame.hpp#L103)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1ab046fa523e6cb25eb87e9fc847f86376"></a>
 
@@ -198,7 +198,7 @@ puc::tui::InputFrame::~InputFrame() override
 
 Destroy the hidden editor representation.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L105)
+[Source](../../puc-cli/tui/input_frame.hpp#L106)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1a2a96617d759a83fb851eee9878383fbb"></a>
 
@@ -210,7 +210,7 @@ std::size_t puc::tui::InputFrame::minimum_height() const noexcept
 
 Return the active mode's minimum supported outer height.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L119)
+[Source](../../puc-cli/tui/input_frame.hpp#L120)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1a721793932e7132e33f559a158e1ec3db"></a>
 
@@ -224,7 +224,7 @@ Return the content-driven height this frame would prefer.
 
 The result includes the gap, notification row, and box margins, and is clamped between kMinimumHeight and [maximum\_height()](#symbol-classpuc_1_1tui_1_1_input_frame_1aceaac3a15a40164d500ac8c32daddcf7). `screen_width` is used to account for wrapping and may be below kMinimumWidth during fallback layout calculation.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L129)
+[Source](../../puc-cli/tui/input_frame.hpp#L130)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1a9008eebbabd29066388b83b1abdd82f8"></a>
 
@@ -238,7 +238,7 @@ Apply one decoded terminal event at a caller-supplied monotonic time.
 
 Release-only key events and event alternatives unrelated to editing are harmless no-ops. Paste BEGIN/DATA/END is transactional: CANCEL restores the buffer as it was at BEGIN.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L139)
+[Source](../../puc-cli/tui/input_frame.hpp#L140)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1aa0b129287954dc4e7073ca214969f65e"></a>
 
@@ -250,7 +250,7 @@ Status puc::tui::InputFrame::handle_event(const terminal::Event &event)
 
 Apply one event using Clock::now().
 
-[Source](../../puc-cli/tui/input_frame.hpp#L142)
+[Source](../../puc-cli/tui/input_frame.hpp#L143)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1ab45a76bf27e2ef567df65e2dfa74d1ac"></a>
 
@@ -262,7 +262,7 @@ void puc::tui::InputFrame::advance_time(Clock::time_point now)
 
 Expire the one-Escape prompt after kDoubleEscapeInterval elapses.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L145)
+[Source](../../puc-cli/tui/input_frame.hpp#L146)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1a9d7d109e8fc634085f5e706fb9746a24"></a>
 
@@ -274,7 +274,7 @@ void puc::tui::InputFrame::set_notification(std::string notification)
 
 Replace the UTF-8 message drawn in the bottom notification row.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L148)
+[Source](../../puc-cli/tui/input_frame.hpp#L149)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1a6b57b7a04533a82ea2a5b3a44c9b399d"></a>
 
@@ -288,7 +288,7 @@ Feed process output to the persistent libtmt terminal surface.
 
 Bytes written before the first terminal-mode draw are retained and replayed once the inner surface has dimensions. This API consumes process output, not keyboard input intended for a child process.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L157)
+[Source](../../puc-cli/tui/input_frame.hpp#L158)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1a85ee4b3d62bf64540055e08077d08a4b"></a>
 
@@ -302,7 +302,7 @@ Take terminal replies generated by libtmt (for example a DSR response).
 
 The returned bytes should be forwarded to the process that owns the terminal. Reading consumes the accumulated replies.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L165)
+[Source](../../puc-cli/tui/input_frame.hpp#L166)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1af7dce20239712b4f60fd33692619b545"></a>
 
@@ -314,7 +314,7 @@ void puc::tui::InputFrame::reset_terminal()
 
 Reset the current libtmt display without replacing its owning process.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L168)
+[Source](../../puc-cli/tui/input_frame.hpp#L169)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1af9520ac8b067aaa4c55a0c17357486ef"></a>
 
@@ -328,7 +328,7 @@ Request a fresh terminal session and show its cleared surface.
 
 The generation in [snapshot()](#symbol-classpuc_1_1tui_1_1_input_frame_1acacb9dbe434141a389431fc0f4aadf11) advances so the external PTY owner can replace any running child process.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L176)
+[Source](../../puc-cli/tui/input_frame.hpp#L177)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1a6b97cdf3001af5159a6769e6bc3ba933"></a>
 
@@ -342,7 +342,7 @@ Mark the terminal session closed and return a visible terminal to normal.
 
 PTY owners call this when the child exits; command mode can use the same operation for an explicit close command later.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L184)
+[Source](../../puc-cli/tui/input_frame.hpp#L185)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1ad083880c695b0d2f4dd8d7f85548fa99"></a>
 
@@ -354,7 +354,7 @@ void puc::tui::InputFrame::clear()
 
 Clear the active buffer without changing modes.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L187)
+[Source](../../puc-cli/tui/input_frame.hpp#L188)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1acacb9dbe434141a389431fc0f4aadf11"></a>
 
@@ -366,7 +366,7 @@ InputFrameSnapshot puc::tui::InputFrame::snapshot() const
 
 Return a consistent copy of the externally useful editor state.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L190)
+[Source](../../puc-cli/tui/input_frame.hpp#L191)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1abbb142ff592e2fd3326b72499819aab9"></a>
 
@@ -378,7 +378,7 @@ Status puc::tui::InputFrame::draw(const Theme &theme, Canvas &canvas, const Canv
 
 Draw the complete composite frame into its assigned rectangle.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L193)
+[Source](../../puc-cli/tui/input_frame.hpp#L194)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1aa831f3d7a7a29dd702c0a51c8c4a0569"></a>
 
@@ -390,7 +390,7 @@ bool puc::tui::InputFrame::is_selectable() const noexcept override
 
 Input text participates in [Screen](classpuc_1_1tui_1_1_screen.md)'s logical selection routing.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L197)
+[Source](../../puc-cli/tui/input_frame.hpp#L198)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1a8085d25742ee48e89f9bd2b0deeab581"></a>
 
@@ -402,7 +402,7 @@ Status puc::tui::InputFrame::update_selection(const SelectionEvent &event) overr
 
 Apply a drag, word, line, all-text, or reset operation to the buffer.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L200)
+[Source](../../puc-cli/tui/input_frame.hpp#L201)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1add53ce67ce867696d6218cb83ea75420"></a>
 
@@ -414,7 +414,7 @@ Status puc::tui::InputFrame::selected_text(std::string &output) const override
 
 Extract the active buffer's selected logical UTF-8 text.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L203)
+[Source](../../puc-cli/tui/input_frame.hpp#L204)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1ae5db4cdd18ea8e7784abcbd31dfa8571"></a>
 
@@ -426,7 +426,7 @@ bool puc::tui::InputFrame::accepts_cursor_placement() const noexcept override
 
 [InputFrame](#) supports [Screen](classpuc_1_1tui_1_1_screen.md)'s stationary single-click caret operation.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L206)
+[Source](../../puc-cli/tui/input_frame.hpp#L207)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1a333bbd1b908b67857799df17c62b5cf1"></a>
 
@@ -438,7 +438,7 @@ Status puc::tui::InputFrame::place_cursor(SelectionPosition position) override
 
 Move the caret to a character addressed in frame-local cells.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L209)
+[Source](../../puc-cli/tui/input_frame.hpp#L210)
 
 ## Public static functions
 
@@ -454,7 +454,7 @@ Return the largest permitted frame height for a screen.
 
 The result is `max(20% of screen height, 7)`, clamped to the actual screen height. Integer percentages round down to complete terminal rows.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L113)
+[Source](../../puc-cli/tui/input_frame.hpp#L114)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1a4f0f49086bc2b62236e3e9323aad775a"></a>
 
@@ -466,4 +466,4 @@ std::size_t puc::tui::InputFrame::terminal_height(std::size_t screen_height) noe
 
 Return the lower sixty-percent height used by terminal mode.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L116)
+[Source](../../puc-cli/tui/input_frame.hpp#L117)

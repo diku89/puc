@@ -27,19 +27,31 @@ std::shared_ptr<Canvas> puc::tui::Screen::canvas_
 
 Current published [Canvas](classpuc_1_1tui_1_1_canvas.md), owned on the caller's presentation thread.
 
-[Source](../../puc-cli/tui/screen.hpp#L246)
+[Source](../../puc-cli/tui/screen.hpp#L259)
 
-<a id="symbol-classpuc_1_1tui_1_1_screen_1a5e0760e29fe8012a08a47a7d317e72de"></a>
+<a id="symbol-classpuc_1_1tui_1_1_screen_1a02d5d7ba6855410c48951b42f1bf6b82"></a>
+
+### `owned_terminal_session_`
+
+```cpp
+std::unique_ptr<terminal::TerminalSession> puc::tui::Screen::owned_terminal_session_
+```
+
+TerminalSession owned only by standalone [Screen](#) constructors.
+
+[Source](../../puc-cli/tui/screen.hpp#L261)
+
+<a id="symbol-classpuc_1_1tui_1_1_screen_1a10110bd74ccd73e69756388eae60ffd3"></a>
 
 ### `terminal_session_`
 
 ```cpp
-terminal::TerminalSession puc::tui::Screen::terminal_session_
+terminal::TerminalSession* puc::tui::Screen::terminal_session_
 ```
 
-Mechanism adapter invoked only through the command-channel callback.
+Borrowed active terminal mechanism.
 
-[Source](../../puc-cli/tui/screen.hpp#L248)
+[Source](../../puc-cli/tui/screen.hpp#L263)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1abde439dc982cc09f74137f4290a4535d"></a>
 
@@ -51,7 +63,7 @@ std::shared_ptr<ipc::Channel> puc::tui::Screen::command_channel_
 
 Shared-memory channel carrying bounded one-way [Screen](#) commands.
 
-[Source](../../puc-cli/tui/screen.hpp#L250)
+[Source](../../puc-cli/tui/screen.hpp#L265)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a1e096ad05f8392e5cb641774168bde74"></a>
 
@@ -63,7 +75,7 @@ std::shared_ptr<ipc::Channel> puc::tui::Screen::resize_channel_
 
 Shared-memory channel carrying latest-only geometry observations.
 
-[Source](../../puc-cli/tui/screen.hpp#L252)
+[Source](../../puc-cli/tui/screen.hpp#L267)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a7b7ae217d7b804083a009a0acfba0ef8"></a>
 
@@ -75,7 +87,7 @@ ipc::Subscription puc::tui::Screen::resize_subscription_
 
 Keeps [Screen](#)'s resize callback active for the [Screen](#) lifetime.
 
-[Source](../../puc-cli/tui/screen.hpp#L254)
+[Source](../../puc-cli/tui/screen.hpp#L269)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1abe999e820b039913f40624881d054563"></a>
 
@@ -87,7 +99,7 @@ std::mutex puc::tui::Screen::state_mutex_
 
 Protects desired ownership and asynchronously observed geometry.
 
-[Source](../../puc-cli/tui/screen.hpp#L256)
+[Source](../../puc-cli/tui/screen.hpp#L271)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1af245a8ab028317bac2ea9b01183023c4"></a>
 
@@ -99,7 +111,7 @@ std::optional<msg::ScreenResizeEvent> puc::tui::Screen::latest_size_
 
 Latest successfully decoded terminal geometry.
 
-[Source](../../puc-cli/tui/screen.hpp#L258)
+[Source](../../puc-cli/tui/screen.hpp#L273)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a5988243acd3189b126da15596316fdff"></a>
 
@@ -111,7 +123,7 @@ bool puc::tui::Screen::terminal_requested_
 
 Whether take has been requested without a later release request.
 
-[Source](../../puc-cli/tui/screen.hpp#L260)
+[Source](../../puc-cli/tui/screen.hpp#L275)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a36c9ff257aead2c34413aedb0a6e802a"></a>
 
@@ -123,7 +135,7 @@ Status puc::tui::Screen::setup_status_
 
 Persistent channel setup result recorded by the constructor.
 
-[Source](../../puc-cli/tui/screen.hpp#L262)
+[Source](../../puc-cli/tui/screen.hpp#L277)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a4200f70d54804326528f3c69b5f436a3"></a>
 
@@ -135,7 +147,7 @@ msg::ScreenCommandCodec puc::tui::Screen::command_codec_
 
 Typed command encoder.
 
-[Source](../../puc-cli/tui/screen.hpp#L264)
+[Source](../../puc-cli/tui/screen.hpp#L279)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1adfe1c2619cf7ac4bb69d04ca472beb18"></a>
 
@@ -147,7 +159,7 @@ msg::ScreenResizeEventCodec puc::tui::Screen::resize_codec_
 
 Typed resize-event decoder.
 
-[Source](../../puc-cli/tui/screen.hpp#L266)
+[Source](../../puc-cli/tui/screen.hpp#L281)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a8785275fc95f385bfb788d6fd1d4df9b"></a>
 
@@ -159,7 +171,7 @@ std::mutex puc::tui::Screen::selection_mutex_
 
 Serializes pointer recognition, [Frame](classpuc_1_1tui_1_1_frame.md) dispatch, and selection queries.
 
-[Source](../../puc-cli/tui/screen.hpp#L268)
+[Source](../../puc-cli/tui/screen.hpp#L283)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a2360e14daaa983c6f0169c4fc47a5184"></a>
 
@@ -171,7 +183,7 @@ SelectionStateMachine puc::tui::Screen::selection_state_machine_
 
 Applies semantic operations and retains the active selected [Frame](classpuc_1_1tui_1_1_frame.md).
 
-[Source](../../puc-cli/tui/screen.hpp#L270)
+[Source](../../puc-cli/tui/screen.hpp#L285)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1aa472e9371d84506df2062685fc06e2e0"></a>
 
@@ -183,7 +195,7 @@ std::optional<PointerSelectionGesture> puc::tui::Screen::pointer_selection_gestu
 
 Left-button press and capture currently awaiting release.
 
-[Source](../../puc-cli/tui/screen.hpp#L272)
+[Source](../../puc-cli/tui/screen.hpp#L287)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a2fc425c9c297295a035fb46685b051d9"></a>
 
@@ -195,7 +207,7 @@ std::optional<ClickHistory> puc::tui::Screen::click_history_
 
 Previous completed click used to recognize words and lines.
 
-[Source](../../puc-cli/tui/screen.hpp#L274)
+[Source](../../puc-cli/tui/screen.hpp#L289)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a4974ea62c078460a87a9001e14555dd3"></a>
 
@@ -207,7 +219,7 @@ std::uint64_t puc::tui::Screen::next_click_timeout_generation_
 
 Monotonically changing identity for multi-click timeout inputs.
 
-[Source](../../puc-cli/tui/screen.hpp#L276)
+[Source](../../puc-cli/tui/screen.hpp#L291)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a9aa724dcb2ddb904ee72aba2cd2c9dfa"></a>
 
@@ -219,19 +231,43 @@ std::optional<terminal::TimeoutInput> puc::tui::Screen::selection_timeout_
 
 Token accepted by [handle\_selection\_timeout()](#symbol-classpuc_1_1tui_1_1_screen_1a6995945ceb9b5cb192a9384540b8a6b8), if one is armed.
 
-[Source](../../puc-cli/tui/screen.hpp#L278)
+[Source](../../puc-cli/tui/screen.hpp#L293)
 
-<a id="symbol-classpuc_1_1tui_1_1_screen_1a52771c9d99e9ebd2759afb8564ece9e6"></a>
+<a id="symbol-classpuc_1_1tui_1_1_screen_1a7851cfeacc574b3cac59e9862365cfef"></a>
+
+### `owned_directory_`
+
+```cpp
+std::unique_ptr<ipc::Directory> puc::tui::Screen::owned_directory_
+```
+
+Directory owned only by standalone [Screen](#) constructors.
+
+[Source](../../puc-cli/tui/screen.hpp#L295)
+
+<a id="symbol-classpuc_1_1tui_1_1_screen_1a82145aee88826271607db01794012e3f"></a>
 
 ### `directory_`
 
 ```cpp
-std::unique_ptr<ipc::Directory> puc::tui::Screen::directory_
+ipc::Directory* puc::tui::Screen::directory_
 ```
 
-Directory is destroyed explicitly before TerminalSession and state fields, ensuring every asynchronous callback has quiesced first. Its borrowed worker pool must outlive [Screen](#) and remain active through destruction.
+Borrowed process-local channel directory.
 
-[Source](../../puc-cli/tui/screen.hpp#L284)
+[Source](../../puc-cli/tui/screen.hpp#L297)
+
+<a id="symbol-classpuc_1_1tui_1_1_screen_1a3c7c42d47369f881234c336c22af2092"></a>
+
+### `owns_channels_`
+
+```cpp
+bool puc::tui::Screen::owns_channels_
+```
+
+Whether this [Screen](#) registered and must close its protocol channels.
+
+[Source](../../puc-cli/tui/screen.hpp#L299)
 
 ## Public functions
 
@@ -259,6 +295,20 @@ Construct a [Screen](#) over descriptors using a caller-owned worker pool.
 
 [Source](../../puc-cli/tui/screen.hpp#L68)
 
+<a id="symbol-classpuc_1_1tui_1_1_screen_1ac11bed680bc2c512154a789d00c4b820"></a>
+
+### `Screen`
+
+```cpp
+puc::tui::Screen::Screen(ipc::Directory &directory, terminal::TerminalSession &session)
+```
+
+Construct over lifecycle-owned protocol and terminal mechanisms.
+
+Both borrowed objects must outlive this [Screen](#). The Directory must already contain the canonical [Screen](#) channels and the session must already own its command subscription. This [Screen](#) owns only its resize subscription and never closes or unbinds those shared mechanisms.
+
+[Source](../../puc-cli/tui/screen.hpp#L78)
+
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a058dcd9448d3e6d24afd7ef9037a18ec"></a>
 
 ### `Screen`
@@ -267,7 +317,7 @@ Construct a [Screen](#) over descriptors using a caller-owned worker pool.
 puc::tui::Screen::Screen(const Screen &)=delete
 ```
 
-[Source](../../puc-cli/tui/screen.hpp#L70)
+[Source](../../puc-cli/tui/screen.hpp#L80)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1ab00ad8f115d52005e651c540dd3ef4b0"></a>
 
@@ -277,7 +327,7 @@ puc::tui::Screen::Screen(const Screen &)=delete
 Screen & puc::tui::Screen::operator=(const Screen &)=delete
 ```
 
-[Source](../../puc-cli/tui/screen.hpp#L71)
+[Source](../../puc-cli/tui/screen.hpp#L81)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a735f61e34dc8c168b2d7f362d5f719fb"></a>
 
@@ -287,7 +337,7 @@ Screen & puc::tui::Screen::operator=(const Screen &)=delete
 puc::tui::Screen::Screen(Screen &&)=delete
 ```
 
-[Source](../../puc-cli/tui/screen.hpp#L72)
+[Source](../../puc-cli/tui/screen.hpp#L82)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a8984acf61b68670262ebe7bac97d0b95"></a>
 
@@ -297,7 +347,7 @@ puc::tui::Screen::Screen(Screen &&)=delete
 Screen & puc::tui::Screen::operator=(Screen &&)=delete
 ```
 
-[Source](../../puc-cli/tui/screen.hpp#L73)
+[Source](../../puc-cli/tui/screen.hpp#L83)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a4f473e228ea0629f7efc80759ab37eed"></a>
 
@@ -309,7 +359,7 @@ puc::tui::Screen::~Screen()
 
 Stop asynchronous delivery and restore an active terminal session.
 
-[Source](../../puc-cli/tui/screen.hpp#L76)
+[Source](../../puc-cli/tui/screen.hpp#L86)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a24d53c405ce697ee75a95cfce2cffc54"></a>
 
@@ -323,7 +373,7 @@ Request terminal ownership asynchronously.
 
 Success means the command channel accepted the request, not that terminal setup has completed. The initial resize event marks usable geometry.
 
-[Source](../../puc-cli/tui/screen.hpp#L84)
+[Source](../../puc-cli/tui/screen.hpp#L94)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a3fd6f8a5f9c1b3b6c1efe1f1563c657e"></a>
 
@@ -337,7 +387,7 @@ Request ownership with caller-selected input protocol modes.
 
 Presentation still uses [Screen](#)'s alternate-buffer clearing and final style reset. This overload exists for applications that consume mouse, focus, bracketed-paste, or enhanced-keyboard input while [Screen](#) owns the terminal.
 
-[Source](../../puc-cli/tui/screen.hpp#L93)
+[Source](../../puc-cli/tui/screen.hpp#L103)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a73f83169e01a31309c6daea74aa8903f"></a>
 
@@ -351,7 +401,7 @@ Request style reset and terminal restoration asynchronously.
 
 Success means the one-way request was accepted. Destruction remains a synchronous restoration backstop if queued work is discarded at teardown.
 
-[Source](../../puc-cli/tui/screen.hpp#L101)
+[Source](../../puc-cli/tui/screen.hpp#L111)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a783cd40011b2d9240fe1e74611c1cf94"></a>
 
@@ -363,7 +413,7 @@ Status puc::tui::Screen::get_dimensions(std::size_t &width, std::size_t &height)
 
 Read the most recently published character-cell dimensions.
 
-[Source](../../puc-cli/tui/screen.hpp#L104)
+[Source](../../puc-cli/tui/screen.hpp#L114)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a1c3714c7cb8fc9acef3763b03bb5081f"></a>
 
@@ -375,7 +425,7 @@ Status puc::tui::Screen::get_dimensions(std::size_t &width, std::size_t &height,
 
 Read the latest cell counts and reduced physical cell proportions.
 
-[Source](../../puc-cli/tui/screen.hpp#L107)
+[Source](../../puc-cli/tui/screen.hpp#L117)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a37f029de8d1d450474e5fae2a6b4def9"></a>
 
@@ -387,7 +437,7 @@ Status puc::tui::Screen::set_canvas(std::shared_ptr< Canvas > canvas) noexcept
 
 Select the valid [Canvas](classpuc_1_1tui_1_1_canvas.md) serialized by subsequent `draw()` calls.
 
-[Source](../../puc-cli/tui/screen.hpp#L111)
+[Source](../../puc-cli/tui/screen.hpp#L121)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1aac9e8fb0ecbd2a415a501e965d347344"></a>
 
@@ -399,7 +449,7 @@ Status puc::tui::Screen::draw() noexcept
 
 Render and enqueue the newest complete [Canvas](classpuc_1_1tui_1_1_canvas.md) image for presentation.
 
-[Source](../../puc-cli/tui/screen.hpp#L114)
+[Source](../../puc-cli/tui/screen.hpp#L124)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1ad2c3230e4323f7261ccefa314426261a"></a>
 
@@ -413,7 +463,7 @@ Read one available terminal block through the owned TerminalSession.
 
 Call only after the initial geometry observation proves `take()` has completed, and only when the input descriptor is known readable. The caller owns Decoder configuration and event routing; this mechanism call neither creates a second terminal session nor duplicates byte decoding.
 
-[Source](../../puc-cli/tui/screen.hpp#L124)
+[Source](../../puc-cli/tui/screen.hpp#L134)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1aa27a6987841deb4e1babc9ad07ab53d0"></a>
 
@@ -437,7 +487,7 @@ The [ZBuffer](classpuc_1_1tui_1_1_z_buffer.md) is inspected from front to back. 
 
 **Returns:** [Status::OK](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ae0aa021e21dddbd6d8cecec71e9cf564) for an applied or irrelevant event, or an error from coordinate conversion, state transition, or the selected [Frame](classpuc_1_1tui_1_1_frame.md).
 
-[Source](../../puc-cli/tui/screen.hpp#L150)
+[Source](../../puc-cli/tui/screen.hpp#L160)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1aec575026bd66e2fd03f4c03b08992f0d"></a>
 
@@ -458,7 +508,7 @@ This positionless keyboard operation uses the same state machine as mouse drags,
 
 **Returns:** [Status::OK](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ae0aa021e21dddbd6d8cecec71e9cf564) when all text was selected, [Status::NO\_SELECTION](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270aac6cf090b11c4b65dbddc0baa84e4e72) for an empty frame, or a validation/Frame error.
 
-[Source](../../puc-cli/tui/screen.hpp#L167)
+[Source](../../puc-cli/tui/screen.hpp#L177)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a16e8490bf5d75072882da39592ef7137"></a>
 
@@ -470,7 +520,7 @@ std::optional< terminal::TimeoutInput > puc::tui::Screen::pending_selection_time
 
 Return the current multi-click timeout token, if a click is pending.
 
-[Source](../../puc-cli/tui/screen.hpp#L171)
+[Source](../../puc-cli/tui/screen.hpp#L181)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a6995945ceb9b5cb192a9384540b8a6b8"></a>
 
@@ -482,7 +532,7 @@ Status puc::tui::Screen::handle_selection_timeout(terminal::TimeoutInput input) 
 
 Expire click-chain recognition when `input` names its current generation.
 
-[Source](../../puc-cli/tui/screen.hpp#L175)
+[Source](../../puc-cli/tui/screen.hpp#L185)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1aec1f62ab1a69c7e1550f889d595b1ba0"></a>
 
@@ -494,7 +544,7 @@ Status puc::tui::Screen::reset_selection()
 
 Reset the active selection and discard pending click/drag recognition.
 
-[Source](../../puc-cli/tui/screen.hpp#L178)
+[Source](../../puc-cli/tui/screen.hpp#L188)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a10e1d399ccfd4a7e2315b50b4f193409"></a>
 
@@ -506,7 +556,7 @@ SelectionPhase puc::tui::Screen::selection_phase() const noexcept
 
 Return the current Screen-owned selection lifecycle phase.
 
-[Source](../../puc-cli/tui/screen.hpp#L181)
+[Source](../../puc-cli/tui/screen.hpp#L191)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a5ad98b181884b0df18a31afb19c2d21d"></a>
 
@@ -518,7 +568,7 @@ std::optional< std::string > puc::tui::Screen::selected_frame_id() const
 
 Return the active selected frame id, if one exists.
 
-[Source](../../puc-cli/tui/screen.hpp#L184)
+[Source](../../puc-cli/tui/screen.hpp#L194)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1ae2bc288eec26aefeed07330e4574476b"></a>
 
@@ -530,7 +580,7 @@ Status puc::tui::Screen::selected_text(std::string &output) const
 
 Extract selected UTF-8 from the completed frame without clipboard I/O.
 
-[Source](../../puc-cli/tui/screen.hpp#L187)
+[Source](../../puc-cli/tui/screen.hpp#L197)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a69c5270c1f290d16266d822879165be7"></a>
 
@@ -544,7 +594,7 @@ Extract the completed logical selection and enqueue an OSC 52 write.
 
 Success means the one-way command was accepted; the terminal mechanism performs clipboard transport asynchronously on the borrowed worker pool.
 
-[Source](../../puc-cli/tui/screen.hpp#L195)
+[Source](../../puc-cli/tui/screen.hpp#L205)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a84b8042f09c2a77cb8f03b7704f64e31"></a>
 
@@ -556,7 +606,7 @@ bool puc::tui::Screen::is_taken() const noexcept
 
 Return whether [Screen](#) currently desires ownership of the terminal.
 
-[Source](../../puc-cli/tui/screen.hpp#L199)
+[Source](../../puc-cli/tui/screen.hpp#L209)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a140f48f83dce9c3773f58239ad4e49f6"></a>
 
@@ -568,7 +618,19 @@ ipc::Directory & puc::tui::Screen::ipc_directory() noexcept
 
 Return the process-local channel directory for additional subscribers.
 
-[Source](../../puc-cli/tui/screen.hpp#L202)
+[Source](../../puc-cli/tui/screen.hpp#L212)
+
+<a id="symbol-classpuc_1_1tui_1_1_screen_1a1ac1edef118a3a4fe0cadcb42d19894b"></a>
+
+### `setup_status`
+
+```cpp
+Status puc::tui::Screen::setup_status() const noexcept
+```
+
+Return the persistent channel/bootstrap result.
+
+[Source](../../puc-cli/tui/screen.hpp#L215)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a0aa0e96bbf42d4cd641f6f0829adf31f"></a>
 
@@ -580,7 +642,7 @@ std::size_t puc::tui::Screen::pending_commands() const noexcept
 
 Return the number of [Screen](#) commands currently pending delivery.
 
-[Source](../../puc-cli/tui/screen.hpp#L205)
+[Source](../../puc-cli/tui/screen.hpp#L218)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a65a14436296df6f47b263db553641428"></a>
 
@@ -592,7 +654,7 @@ std::uint64_t puc::tui::Screen::dropped_commands() const noexcept
 
 Return how many oldest pending [Screen](#) commands have been evicted.
 
-[Source](../../puc-cli/tui/screen.hpp#L208)
+[Source](../../puc-cli/tui/screen.hpp#L221)
 
 ## Private functions
 
@@ -606,7 +668,7 @@ void puc::tui::Screen::clear_click_history() noexcept
 
 Discard click recognition and invalidate any scheduled timeout token.
 
-[Source](../../puc-cli/tui/screen.hpp#L231)
+[Source](../../puc-cli/tui/screen.hpp#L244)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1aaf9fd6d56c87ff2352ecde172750f621"></a>
 
@@ -618,19 +680,19 @@ void puc::tui::Screen::arm_click_timeout() noexcept
 
 Retain click recognition and issue a fresh timeout generation.
 
-[Source](../../puc-cli/tui/screen.hpp#L234)
+[Source](../../puc-cli/tui/screen.hpp#L247)
 
-<a id="symbol-classpuc_1_1tui_1_1_screen_1a3f6b242adaa0a6c87d4769f90dcb9d24"></a>
+<a id="symbol-classpuc_1_1tui_1_1_screen_1adf5a8f8fcfec523e41fb8ecf1e33b6c8"></a>
 
 ### `setup_channels`
 
 ```cpp
-Status puc::tui::Screen::setup_channels()
+Status puc::tui::Screen::setup_channels(bool create_channels)
 ```
 
-Create channels, subscribe to resize state, and bind TerminalSession.
+Create or resolve channels, subscribe, and bind TerminalSession.
 
-[Source](../../puc-cli/tui/screen.hpp#L237)
+[Source](../../puc-cli/tui/screen.hpp#L250)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1a75c86d37ec9361c39322128df1479efc"></a>
 
@@ -642,7 +704,7 @@ Status puc::tui::Screen::send_command(const msg::ScreenCommand &command) noexcep
 
 Encode and transmit one command without waiting for its execution.
 
-[Source](../../puc-cli/tui/screen.hpp#L240)
+[Source](../../puc-cli/tui/screen.hpp#L253)
 
 <a id="symbol-classpuc_1_1tui_1_1_screen_1ac2d7e1f38c6f202aac3cfa2387456c70"></a>
 
@@ -654,4 +716,4 @@ void puc::tui::Screen::receive_resize_event(ipc::Channel::Bytes payload) noexcep
 
 Decode one asynchronously delivered geometry observation.
 
-[Source](../../puc-cli/tui/screen.hpp#L243)
+[Source](../../puc-cli/tui/screen.hpp#L256)
