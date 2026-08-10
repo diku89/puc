@@ -1,0 +1,2 @@
+# Repository-relative Git glob patterns excluded from formatting and linting.
+third_party/tmt/**

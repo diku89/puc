@@ -30,7 +30,7 @@ puc_license(
 
 puc_license_manifest(
     name = "licenses",
-    licenses = [
+    license_declarations = [
         ":tmt_license",
         ":tomlc17_license",
     ],

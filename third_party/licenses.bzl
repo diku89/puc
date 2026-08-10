@@ -139,7 +139,7 @@ def _puc_license_manifest_impl(ctx):
     repositories_by_path = {}
     symlinks = {}
     transitive_files = []
-    for target in ctx.attr.licenses:
+    for target in ctx.attr.license_declarations:
         info = target[PucLicenseInfo]
         entry = info.manifest_file_entry
         if entry.repository in entries_by_repository:
@@ -175,7 +175,7 @@ def _puc_license_manifest_impl(ctx):
 puc_license_manifest = rule(
     implementation = _puc_license_manifest_impl,
     attrs = {
-        "licenses": attr.label_list(
+        "license_declarations": attr.label_list(
             mandatory = True,
             providers = [[PucLicenseInfo]],
             doc = "License declarations to validate, install, and serialize.",
