@@ -152,6 +152,18 @@ UTF-8 notification-margin contents.
 
 [Source](../../puc-cli/tui/input_frame.cpp#L312)
 
+<a id="symbol-classpuc_1_1tui_1_1_input_frame_1_1_impl_1ab3d71da40e53fe20a9f2bbcbab843678"></a>
+
+### `command_help`
+
+```cpp
+std::vector<std::string> puc::tui::InputFrame::Impl::command_help
+```
+
+Completion/usage rows above command input.
+
+[Source](../../puc-cli/tui/input_frame.cpp#L314)
+
 ## Public functions
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1_1_impl_1a058221ba8485eb1b8a1f89c42ed31cbe"></a>

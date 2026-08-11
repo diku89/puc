@@ -2,12 +2,13 @@
 
 # File `bootstrap.hpp`
 
-Canonical registration of the complete application subsystem graph.
+Canonical registration of application subsystem graph profiles.
 
 [Source](../../puc-cli/state/bootstrap.hpp)
 
 ## Related symbols
 
+- [puc::app::ApplicationSubsystemSelection](structpuc_1_1app_1_1_application_subsystem_selection.md)
 - [puc::app::ApplicationSubsystemOptions](structpuc_1_1app_1_1_application_subsystem_options.md)
 - [puc](namespacepuc.md)
 - [puc::app](namespacepuc_1_1app.md)

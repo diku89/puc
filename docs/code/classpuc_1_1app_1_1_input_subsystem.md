@@ -44,7 +44,7 @@ Running-generation consumer handle.
 puc::app::InputSubsystem::InputSubsystem()
 ```
 
-Declare command and Screen presentation dependencies.
+Declare the notification-route and channel-directory dependencies.
 
 [Source](../../puc-cli/state/input.hpp#L31)
 

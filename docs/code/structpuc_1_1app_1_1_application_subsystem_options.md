@@ -4,7 +4,7 @@
 
 Configuration retained by the adapters in the canonical application graph.
 
-[Source](../../puc-cli/state/bootstrap.hpp#L23)
+[Source](../../puc-cli/state/bootstrap.hpp#L50)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ logger::LoggerConf puc::app::ApplicationSubsystemOptions::logger
 
 Process-wide logging policy.
 
-[Source](../../puc-cli/state/bootstrap.hpp#L24)
+[Source](../../puc-cli/state/bootstrap.hpp#L51)
 
 <a id="symbol-structpuc_1_1app_1_1_application_subsystem_options_1ae3154129a00f3c71cf74b3daf541fd5f"></a>
 
@@ -30,7 +30,19 @@ std::uint8_t puc::app::ApplicationSubsystemOptions::worker_count
 
 Shared worker-pool width.
 
-[Source](../../puc-cli/state/bootstrap.hpp#L25)
+[Source](../../puc-cli/state/bootstrap.hpp#L52)
+
+<a id="symbol-structpuc_1_1app_1_1_application_subsystem_options_1a582b1c07a9685e39e5d3f6908404fbfd"></a>
+
+### `configuration`
+
+```cpp
+ConfigurationSubsystemOptions puc::app::ApplicationSubsystemOptions::configuration
+```
+
+Application-wide configuration roots.
+
+[Source](../../puc-cli/state/bootstrap.hpp#L54)
 
 <a id="symbol-structpuc_1_1app_1_1_application_subsystem_options_1ac3c46616e47ef64dc23959bf199945e6"></a>
 
@@ -42,7 +54,7 @@ TerminalSubsystemOptions puc::app::ApplicationSubsystemOptions::terminal
 
 Terminal descriptors and decoding.
 
-[Source](../../puc-cli/state/bootstrap.hpp#L26)
+[Source](../../puc-cli/state/bootstrap.hpp#L55)
 
 <a id="symbol-structpuc_1_1app_1_1_application_subsystem_options_1a8e296cf6b9f1c8f6d9c0545760b76817"></a>
 
@@ -54,4 +66,28 @@ ScreenSubsystemOptions puc::app::ApplicationSubsystemOptions::screen
 
 Terminal presentation policy.
 
-[Source](../../puc-cli/state/bootstrap.hpp#L27)
+[Source](../../puc-cli/state/bootstrap.hpp#L56)
+
+<a id="symbol-structpuc_1_1app_1_1_application_subsystem_options_1a3a100aa41768d9fad0da5b1e66890d0d"></a>
+
+### `embedded_terminal`
+
+```cpp
+EmbeddedTerminalSubsystemOptions puc::app::ApplicationSubsystemOptions::embedded_terminal
+```
+
+Integrated-terminal child launch policy.
+
+[Source](../../puc-cli/state/bootstrap.hpp#L58)
+
+<a id="symbol-structpuc_1_1app_1_1_application_subsystem_options_1a58152c5c7724193d5ff845f7df0a6f7f"></a>
+
+### `selection`
+
+```cpp
+ApplicationSubsystemSelection puc::app::ApplicationSubsystemOptions::selection
+```
+
+Executable-specific optional subsystem profile.
+
+[Source](../../puc-cli/state/bootstrap.hpp#L60)

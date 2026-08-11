@@ -7,13 +7,23 @@
 ## Related symbols
 
 - [puc::app::ApplicationSubsystemOptions](structpuc_1_1app_1_1_application_subsystem_options.md)
+- [puc::app::ApplicationSubsystemSelection](structpuc_1_1app_1_1_application_subsystem_selection.md)
 - [puc::app::AppState](classpuc_1_1app_1_1_app_state.md)
 - [puc::app::AppSubsystem](classpuc_1_1app_1_1_app_subsystem.md)
+- [puc::app::CommandCompletion](structpuc_1_1app_1_1_command_completion.md)
+- [puc::app::CommandModeSnapshot](structpuc_1_1app_1_1_command_mode_snapshot.md)
+- [puc::app::CommandModeSubsystem](classpuc_1_1app_1_1_command_mode_subsystem.md)
 - [puc::app::CommandNotificationChannelSubsystem](classpuc_1_1app_1_1_command_notification_channel_subsystem.md)
 - [puc::app::CommandSubsystem](classpuc_1_1app_1_1_command_subsystem.md)
+- [puc::app::ConfigurationSubsystem](classpuc_1_1app_1_1_configuration_subsystem.md)
+- [puc::app::ConfigurationSubsystemOptions](structpuc_1_1app_1_1_configuration_subsystem_options.md)
 - [puc::app::DirectorySubsystem](classpuc_1_1app_1_1_directory_subsystem.md)
+- [puc::app::EmbeddedTerminalSubsystem](classpuc_1_1app_1_1_embedded_terminal_subsystem.md)
+- [puc::app::EmbeddedTerminalSubsystemOptions](structpuc_1_1app_1_1_embedded_terminal_subsystem_options.md)
 - [puc::app::InputSubsystem](classpuc_1_1app_1_1_input_subsystem.md)
 - [puc::app::LoggerSubsystem](classpuc_1_1app_1_1_logger_subsystem.md)
+- [puc::app::MetronomeSubsystem](classpuc_1_1app_1_1_metronome_subsystem.md)
+- [puc::app::PresentationSubsystem](classpuc_1_1app_1_1_presentation_subsystem.md)
 - [puc::app::ScreenChannelSubsystem](classpuc_1_1app_1_1_screen_channel_subsystem.md)
 - [puc::app::ScreenSubsystem](classpuc_1_1app_1_1_screen_subsystem.md)
 - [puc::app::ScreenSubsystemOptions](structpuc_1_1app_1_1_screen_subsystem_options.md)
@@ -52,13 +62,13 @@ Complete state of the application subsystem lifecycle.
 #### Values
 - <a id="symbol-lifecycle_8hpp_1a2f9d14f0bc41b83212de7d6b1c4cdfd1add652546039b18970b8dcf2cff824268"></a>`UNINITIALIZED` — Subsystems may still be registered.
 - <a id="symbol-lifecycle_8hpp_1a2f9d14f0bc41b83212de7d6b1c4cdfd1a86bf8c89d85949f8f45cde2f73fce113"></a>`INITIALIZING` — Dependency-first initialization is in progress.
-- <a id="symbol-lifecycle_8hpp_1a2f9d14f0bc41b83212de7d6b1c4cdfd1adee5f03c2c4e73657824e028494b18c0"></a>`INITIALIZED` — Every subsystem is initialized but not started.
+- <a id="symbol-lifecycle_8hpp_1a2f9d14f0bc41b83212de7d6b1c4cdfd1adee5f03c2c4e73657824e028494b18c0"></a>`INITIALIZED` — Durable state exists; no generation has started yet.
 - <a id="symbol-lifecycle_8hpp_1a2f9d14f0bc41b83212de7d6b1c4cdfd1a034312d8adc8099c1c6f53aaff745e26"></a>`STARTING` — Dependency-first startup is in progress.
 - <a id="symbol-lifecycle_8hpp_1a2f9d14f0bc41b83212de7d6b1c4cdfd1a43491564ebcfd38568918efbd6e840fd"></a>`RUNNING` — Every subsystem has started successfully.
 - <a id="symbol-lifecycle_8hpp_1a2f9d14f0bc41b83212de7d6b1c4cdfd1af6cdb3c6710b50ec65ee07f740847e10"></a>`STOPPING` — Dependent-first quiescence is in progress.
-- <a id="symbol-lifecycle_8hpp_1a2f9d14f0bc41b83212de7d6b1c4cdfd1a09d4d696b4e935115b9313e3c412509a"></a>`STOPPED` — Subsystems remain initialized but are not running.
+- <a id="symbol-lifecycle_8hpp_1a2f9d14f0bc41b83212de7d6b1c4cdfd1a09d4d696b4e935115b9313e3c412509a"></a>`STOPPED` — Durable state remains ready for another start cycle.
 - <a id="symbol-lifecycle_8hpp_1a2f9d14f0bc41b83212de7d6b1c4cdfd1ad5eba31b62286a540bf61e144bc1be77"></a>`TERMINATING` — Dependent-first resource release is in progress.
-- <a id="symbol-lifecycle_8hpp_1a2f9d14f0bc41b83212de7d6b1c4cdfd1a9d725163e44a2e9cf094059c0abfdef1"></a>`TERMINATED` — Every initialized subsystem has been released.
+- <a id="symbol-lifecycle_8hpp_1a2f9d14f0bc41b83212de7d6b1c4cdfd1a9d725163e44a2e9cf094059c0abfdef1"></a>`TERMINATED` — Final durable state release has completed exactly once.
 - <a id="symbol-lifecycle_8hpp_1a2f9d14f0bc41b83212de7d6b1c4cdfd1a9c51674930e03c276344d19f9e4398fb"></a>`CRASHED` — A lifecycle hook or dependency contract failed.
 
 [Source](../../puc-cli/state/lifecycle.hpp#L19)
@@ -113,9 +123,9 @@ Concrete C++ type used as one stable subsystem identity.
 std::size_t puc::app::kApplicationSubsystemCount
 ```
 
-Number of concrete adapters installed by register\_application\_subsystems.
+Number of concrete adapters in the complete default production graph.
 
-[Source](../../puc-cli/state/bootstrap.hpp#L19)
+[Source](../../puc-cli/state/bootstrap.hpp#L32)
 
 ## Functions
 
@@ -127,13 +137,25 @@ Number of concrete adapters installed by register\_application\_subsystems.
 Status puc::app::register_application_subsystems(AppState &app, ApplicationSubsystemOptions options)
 ```
 
-Register the complete concrete adapter graph into an empty [AppState](classpuc_1_1app_1_1_app_state.md).
+Register the selected concrete adapter graph into an empty [AppState](classpuc_1_1app_1_1_app_state.md).
 
-Registration is root-to-leaf for readability, although [AppState](classpuc_1_1app_1_1_app_state.md) derives the actual order from declared dependencies. The function does not initialize or start the graph. A nonempty [AppState](classpuc_1_1app_1_1_app_state.md) is rejected to avoid returning a misleading partial "default" graph.
+Registration is root-to-leaf for readability, although [AppState](classpuc_1_1app_1_1_app_state.md) derives the actual order from declared dependencies. The function does not initialize or start the graph. A nonempty [AppState](classpuc_1_1app_1_1_app_state.md) is rejected to avoid returning a misleading partial graph. Invalid leaf combinations, such as command mode without both command and input subsystems, are rejected before registration.
 
 **Returns:** [Status::OK](#symbol-lifecycle_8hpp_1a01c86981579ba6b89336774973c68d60ae0aa021e21dddbd6d8cecec71e9cf564), [Status::INVALID\_ARGUMENT](#symbol-lifecycle_8hpp_1a01c86981579ba6b89336774973c68d60af295a0c3e37c94f078e1c5476479132d) for a nonempty [AppState](classpuc_1_1app_1_1_app_state.md), or an unexpected registration failure.
 
-[Source](../../puc-cli/state/bootstrap.cpp#L22)
+[Source](../../puc-cli/state/bootstrap.cpp#L27)
+
+<a id="symbol-bootstrap_8hpp_1a77eff784c7ddbc35f6e049ec742ed604"></a>
+
+### `application_subsystem_count`
+
+```cpp
+std::size_t puc::app::application_subsystem_count(const ApplicationSubsystemSelection &selection) noexcept
+```
+
+Return the number of adapters selected by one executable profile.
+
+[Source](../../puc-cli/state/bootstrap.hpp#L35)
 
 <a id="symbol-lifecycle_8hpp_1a4b70db1608e49fb1b3c00c6b9f30ecbe"></a>
 

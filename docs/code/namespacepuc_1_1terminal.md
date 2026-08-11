@@ -2,7 +2,7 @@
 
 # Namespace `puc::terminal`
 
-[Source](../../puc-cli/state/terminal.hpp#L17)
+[Source](../../puc-cli/state/terminal.hpp#L15)
 
 ## Related symbols
 

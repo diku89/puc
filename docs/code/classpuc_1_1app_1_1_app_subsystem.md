@@ -132,7 +132,7 @@ Return concrete subsystem types that must precede this subsystem.
 virtual Status puc::app::AppSubsystem::initialize(AppState &app)=0
 ```
 
-Configure resources without beginning externally observable work.
+Configure durable resources once, without externally observable work.
 
 [Source](../../puc-cli/state/state.hpp#L63)
 
@@ -144,7 +144,7 @@ Configure resources without beginning externally observable work.
 virtual Status puc::app::AppSubsystem::start(AppState &app)=0
 ```
 
-Begin work after every declared dependency has started.
+Begin one restartable generation after every dependency has started.
 
 [Source](../../puc-cli/state/state.hpp#L66)
 
@@ -156,7 +156,7 @@ Begin work after every declared dependency has started.
 virtual Status puc::app::AppSubsystem::stop(AppState &app) noexcept=0
 ```
 
-Quiesce work before any declared dependency is stopped.
+Quiesce one generation before any declared dependency is stopped.
 
 [Source](../../puc-cli/state/state.hpp#L69)
 
@@ -168,6 +168,6 @@ Quiesce work before any declared dependency is stopped.
 virtual Status puc::app::AppSubsystem::terminate(AppState &app) noexcept=0
 ```
 
-Release resources before any declared dependency is terminated.
+Finally release durable resources before dependencies terminate.
 
 [Source](../../puc-cli/state/state.hpp#L72)

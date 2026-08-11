@@ -4,7 +4,7 @@
 
 Immutable construction and decoder setup inputs for [TerminalSubsystem](classpuc_1_1app_1_1_terminal_subsystem.md).
 
-[Source](../../puc-cli/state/terminal.hpp#L24)
+[Source](../../puc-cli/state/terminal.hpp#L22)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ int puc::app::TerminalSubsystemOptions::input_fd
 
 Borrowed terminal input descriptor.
 
-[Source](../../puc-cli/state/terminal.hpp#L25)
+[Source](../../puc-cli/state/terminal.hpp#L23)
 
 <a id="symbol-structpuc_1_1app_1_1_terminal_subsystem_options_1a271dcbb588346c4fa344d709f564ed8a"></a>
 
@@ -30,7 +30,7 @@ int puc::app::TerminalSubsystemOptions::output_fd
 
 Borrowed terminal output descriptor.
 
-[Source](../../puc-cli/state/terminal.hpp#L26)
+[Source](../../puc-cli/state/terminal.hpp#L24)
 
 <a id="symbol-structpuc_1_1app_1_1_terminal_subsystem_options_1aced581ec9393add947cd33e889de256e"></a>
 
@@ -42,19 +42,19 @@ terminal::DecoderLimits puc::app::TerminalSubsystemOptions::decoder_limits
 
 Untrusted-input limits.
 
-[Source](../../puc-cli/state/terminal.hpp#L27)
+[Source](../../puc-cli/state/terminal.hpp#L25)
 
-<a id="symbol-structpuc_1_1app_1_1_terminal_subsystem_options_1af8ea1faadb3eb948e91ccf7403b57ea6"></a>
+<a id="symbol-structpuc_1_1app_1_1_terminal_subsystem_options_1a6d1500363f4e14cdc5bbab86db4229ed"></a>
 
-### `input_configuration`
+### `configure_decoder`
 
 ```cpp
-std::optional<config::Config> puc::app::TerminalSubsystemOptions::input_configuration
+bool puc::app::TerminalSubsystemOptions::configure_decoder
 ```
 
-Merged configuration roots, when available.
+Load the input Trie from Configuration.
 
-[Source](../../puc-cli/state/terminal.hpp#L29)
+[Source](../../puc-cli/state/terminal.hpp#L26)
 
 <a id="symbol-structpuc_1_1app_1_1_terminal_subsystem_options_1ad635911f03bf1b7025b9638f9c740324"></a>
 
@@ -66,4 +66,4 @@ std::string puc::app::TerminalSubsystemOptions::terminal_name
 
 Explicit terminfo/profile name, or empty.
 
-[Source](../../puc-cli/state/terminal.hpp#L30)
+[Source](../../puc-cli/state/terminal.hpp#L28)
