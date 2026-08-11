@@ -27,7 +27,7 @@ namespace puc::app {
  */
 class InputSubsystem final : public AppSubsystem {
  public:
-  /** Declare command and Screen presentation dependencies. */
+  /** Declare the notification-route and channel-directory dependencies. */
   InputSubsystem();
 
   /** Destroy the released frame and inactive subscription. */

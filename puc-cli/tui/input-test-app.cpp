@@ -24,11 +24,7 @@
  * `PUC_TEST_SHELL` may replace the embedded `/bin/sh` used for terminal mode.
  */
 
-#include <fcntl.h>
 #include <poll.h>
-#include <sys/ioctl.h>
-#include <sys/wait.h>
-#include <termios.h>
 #include <unistd.h>
 
 #include <algorithm>
@@ -42,7 +38,6 @@
 #include <cstdlib>
 #include <filesystem>
 #include <initializer_list>
-#include <limits>
 #include <memory>
 #include <optional>
 #include <span>
@@ -53,19 +48,15 @@
 #include <variant>
 #include <vector>
 
-#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__OpenBSD__) ||      \
-    defined(__NetBSD__) || defined(__DragonFly__)
-#include <util.h>
-#else
-#include <pty.h>
-#endif
-
 #include "msgs/screen_msgs.hpp"
 #include "puc-cli/state/bootstrap.hpp"
+#include "puc-cli/state/command_mode.hpp"
+#include "puc-cli/state/configuration.hpp"
+#include "puc-cli/state/embedded_terminal.hpp"
 #include "puc-cli/state/input.hpp"
+#include "puc-cli/state/presentation.hpp"
 #include "puc-cli/state/screen.hpp"
 #include "puc-cli/state/terminal.hpp"
-#include "puc-cli/state/workers.hpp"
 #include "puc-cli/terminal/decoder.hpp"
 #include "puc-cli/terminal/timeouts.hpp"
 #include "puc-cli/tui/canvas.hpp"
@@ -77,7 +68,6 @@
 #include "puc-cli/tui/theme.hpp"
 #include "utils/config/config.hpp"
 #include "utils/logger/logger.hpp"
-#include "utils/multithreading/job_queue.hpp"
 
 /** @cond INPUT_TEST_APP_LOGGER_MODULE */
 LOGGER_MODULE("Input Test App");
@@ -211,396 +201,6 @@ std::filesystem::path user_config_root(
                             : std::filesystem::path{configured};
 }
 
-/** Append one Unicode scalar as UTF-8 terminal input. */
-void append_utf8(char32_t character, std::string& output) {
-  const std::uint32_t codepoint = static_cast<std::uint32_t>(character);
-  if (codepoint <= 0x7fU) {
-    output.push_back(static_cast<char>(codepoint));
-  } else if (codepoint <= 0x7ffU) {
-    output.push_back(static_cast<char>(0xc0U | (codepoint >> 6U)));
-    output.push_back(static_cast<char>(0x80U | (codepoint & 0x3fU)));
-  } else if (codepoint <= 0xffffU) {
-    output.push_back(static_cast<char>(0xe0U | (codepoint >> 12U)));
-    output.push_back(static_cast<char>(0x80U | ((codepoint >> 6U) & 0x3fU)));
-    output.push_back(static_cast<char>(0x80U | (codepoint & 0x3fU)));
-  } else {
-    output.push_back(static_cast<char>(0xf0U | (codepoint >> 18U)));
-    output.push_back(static_cast<char>(0x80U | ((codepoint >> 12U) & 0x3fU)));
-    output.push_back(static_cast<char>(0x80U | ((codepoint >> 6U) & 0x3fU)));
-    output.push_back(static_cast<char>(0x80U | (codepoint & 0x3fU)));
-  }
-}
-
-/** Return whether an enhanced key event describes only modifier state. */
-bool is_modifier_key(puc::terminal::NamedKey key) noexcept {
-  switch (key) {
-    case puc::terminal::NamedKey::LEFT_SHIFT:
-    case puc::terminal::NamedKey::LEFT_CONTROL:
-    case puc::terminal::NamedKey::LEFT_ALT:
-    case puc::terminal::NamedKey::LEFT_SUPER:
-    case puc::terminal::NamedKey::LEFT_HYPER:
-    case puc::terminal::NamedKey::LEFT_META:
-    case puc::terminal::NamedKey::RIGHT_SHIFT:
-    case puc::terminal::NamedKey::RIGHT_CONTROL:
-    case puc::terminal::NamedKey::RIGHT_ALT:
-    case puc::terminal::NamedKey::RIGHT_SUPER:
-    case puc::terminal::NamedKey::RIGHT_HYPER:
-    case puc::terminal::NamedKey::RIGHT_META:
-    case puc::terminal::NamedKey::ISO_LEVEL3_SHIFT:
-    case puc::terminal::NamedKey::ISO_LEVEL5_SHIFT:
-      return true;
-    default:
-      return false;
-  }
-}
-
-/** Encode an xterm cursor key, retaining modifiers useful to child programs. */
-void append_cursor_key(char final, puc::terminal::Modifiers modifiers,
-                       std::string& output) {
-  unsigned int parameter = 1U;
-  parameter += modifiers.contains(puc::terminal::Modifier::SHIFT) ? 1U : 0U;
-  parameter += modifiers.contains(puc::terminal::Modifier::ALT) ? 2U : 0U;
-  parameter += modifiers.contains(puc::terminal::Modifier::CONTROL) ? 4U : 0U;
-  parameter += modifiers.contains(puc::terminal::Modifier::SUPER) ? 8U : 0U;
-  parameter += modifiers.contains(puc::terminal::Modifier::HYPER) ? 16U : 0U;
-  parameter += modifiers.contains(puc::terminal::Modifier::META) ? 32U : 0U;
-  output.append("\x1b[");
-  if (parameter != 1U) {
-    output.append("1;");
-    output.append(std::to_string(parameter));
-  }
-  output.push_back(final);
-}
-
-/** Convert one decoded key press back to conventional PTY input bytes. */
-void append_terminal_key(const puc::terminal::KeyEvent& event,
-                         std::string& output) {
-  if (event.action == puc::terminal::KeyAction::RELEASE) {
-    return;
-  }
-  if (const auto* named =
-          std::get_if<puc::terminal::NamedKey>(&event.key.value)) {
-    if (is_modifier_key(*named)) {
-      return;
-    }
-    switch (*named) {
-      case puc::terminal::NamedKey::ESCAPE:
-        output.push_back('\x1b');
-        return;
-      case puc::terminal::NamedKey::ENTER:
-      case puc::terminal::NamedKey::KEYPAD_ENTER:
-        output.push_back('\r');
-        return;
-      case puc::terminal::NamedKey::TAB:
-        output.append(event.modifiers.contains(puc::terminal::Modifier::SHIFT)
-                          ? "\x1b[Z"
-                          : "\t");
-        return;
-      case puc::terminal::NamedKey::BACKSPACE:
-        output.push_back('\x7f');
-        return;
-      case puc::terminal::NamedKey::UP:
-      case puc::terminal::NamedKey::KEYPAD_UP:
-        append_cursor_key('A', event.modifiers, output);
-        return;
-      case puc::terminal::NamedKey::DOWN:
-      case puc::terminal::NamedKey::KEYPAD_DOWN:
-        append_cursor_key('B', event.modifiers, output);
-        return;
-      case puc::terminal::NamedKey::RIGHT:
-      case puc::terminal::NamedKey::KEYPAD_RIGHT:
-        append_cursor_key('C', event.modifiers, output);
-        return;
-      case puc::terminal::NamedKey::LEFT:
-      case puc::terminal::NamedKey::KEYPAD_LEFT:
-        append_cursor_key('D', event.modifiers, output);
-        return;
-      case puc::terminal::NamedKey::HOME:
-      case puc::terminal::NamedKey::KEYPAD_HOME:
-        output.append("\x1b[H");
-        return;
-      case puc::terminal::NamedKey::END:
-      case puc::terminal::NamedKey::KEYPAD_END:
-        output.append("\x1b[F");
-        return;
-      case puc::terminal::NamedKey::INSERT:
-      case puc::terminal::NamedKey::KEYPAD_INSERT:
-        output.append("\x1b[2~");
-        return;
-      case puc::terminal::NamedKey::DELETE_KEY:
-      case puc::terminal::NamedKey::KEYPAD_DELETE:
-        output.append("\x1b[3~");
-        return;
-      case puc::terminal::NamedKey::PAGE_UP:
-      case puc::terminal::NamedKey::KEYPAD_PAGE_UP:
-        output.append("\x1b[5~");
-        return;
-      case puc::terminal::NamedKey::PAGE_DOWN:
-      case puc::terminal::NamedKey::KEYPAD_PAGE_DOWN:
-        output.append("\x1b[6~");
-        return;
-      default:
-        return;
-    }
-  }
-
-  const auto* character = std::get_if<char32_t>(&event.key.value);
-  if (character == nullptr) {
-    return;
-  }
-  char32_t value = event.shifted_key.value_or(*character);
-  if (event.modifiers.contains(puc::terminal::Modifier::CONTROL)) {
-    if (value >= U'a' && value <= U'z') {
-      value -= U'a' - U'A';
-    }
-    if (value >= U'@' && value <= U'_') {
-      output.push_back(static_cast<char>(value & 0x1fU));
-    } else if (value == U'?') {
-      output.push_back('\x7f');
-    }
-    return;
-  }
-  if (event.modifiers.contains(puc::terminal::Modifier::ALT)) {
-    output.push_back('\x1b');
-  }
-  if (!event.text.empty()) {
-    output.append(event.text);
-  } else {
-    append_utf8(value, output);
-  }
-}
-
-/** Convert normalized application events into input for the embedded PTY. */
-std::string terminal_input(const puc::terminal::Event& event) {
-  std::string output;
-  if (const auto* text = std::get_if<puc::terminal::TextEvent>(&event)) {
-    output = text->utf8;
-  } else if (const auto* key = std::get_if<puc::terminal::KeyEvent>(&event)) {
-    append_terminal_key(*key, output);
-  } else if (const auto* paste = std::get_if<puc::terminal::PasteEvent>(&event);
-             paste != nullptr &&
-             paste->phase == puc::terminal::PastePhase::DATA) {
-    output = paste->data;
-  } else if (const auto* command =
-                 std::get_if<puc::terminal::CommandEvent>(&event)) {
-    switch (command->command) {
-      case puc::terminal::Command::MOVE_WORD_LEFT:
-        output.append(
-            "\x1b"
-            "b");
-        break;
-      case puc::terminal::Command::MOVE_WORD_RIGHT:
-        output.append(
-            "\x1b"
-            "f");
-        break;
-      case puc::terminal::Command::MOVE_ROW_START:
-        output.push_back('\x01');
-        break;
-      case puc::terminal::Command::MOVE_ROW_END:
-        output.push_back('\x05');
-        break;
-      case puc::terminal::Command::MOVE_PAGE_UP:
-        output.append("\x1b[5~");
-        break;
-      case puc::terminal::Command::MOVE_PAGE_DOWN:
-        output.append("\x1b[6~");
-        break;
-      case puc::terminal::Command::MOVE_BUFFER_START:
-      case puc::terminal::Command::MOVE_BUFFER_END:
-      case puc::terminal::Command::COPY:
-      case puc::terminal::Command::SELECT_ALL:
-      case puc::terminal::Command::ENTER_COMMAND_MODE:
-      case puc::terminal::Command::ENTER_TERMINAL_MODE:
-        break;
-    }
-  }
-  return output;
-}
-
-/** Own the child process and master side of one embedded pseudo-terminal. */
-class EmbeddedTerminalProcess {
- public:
-  /** Result of one nonblocking output/exit-status pump. */
-  enum class PumpResult { RUNNING, EXITED, FAILED };
-
-  EmbeddedTerminalProcess()                                          = default;
-  EmbeddedTerminalProcess(const EmbeddedTerminalProcess&)            = delete;
-  EmbeddedTerminalProcess& operator=(const EmbeddedTerminalProcess&) = delete;
-
-  /** Terminate and reap only the child process created by this object. */
-  ~EmbeddedTerminalProcess() { stop(); }
-
-  /** Start an interactive POSIX shell with the requested terminal geometry. */
-  bool start(std::size_t generation, std::size_t columns, std::size_t rows) {
-    const bool preserve_pending_input = !running();
-    std::string pending_input =
-        preserve_pending_input ? std::move(pending_input_) : std::string{};
-    stop();
-    pending_input_ = std::move(pending_input);
-    struct winsize size {};
-    size.ws_col = static_cast<unsigned short>(std::min<std::size_t>(
-        columns, std::numeric_limits<unsigned short>::max()));
-    size.ws_row = static_cast<unsigned short>(std::min<std::size_t>(
-        rows, std::numeric_limits<unsigned short>::max()));
-
-    const std::string configured_shell = environment_value("PUC_TEST_SHELL");
-    const std::string shell =
-        configured_shell.empty() ? "/bin/sh" : configured_shell;
-    int master_fd     = -1;
-    const pid_t child = ::forkpty(&master_fd, nullptr, nullptr, &size);
-    if (child < 0) {
-      Logger<ERROR> << "Could not create embedded terminal process";
-      return false;
-    }
-    if (child == 0) {
-      char* const arguments[]{const_cast<char*>(shell.c_str()),
-                              const_cast<char*>("-i"), nullptr};
-      ::execv(shell.c_str(), arguments);
-      ::_exit(127);
-    }
-
-    const int flags = ::fcntl(master_fd, F_GETFL, 0);
-    if (flags < 0 || ::fcntl(master_fd, F_SETFL, flags | O_NONBLOCK) != 0 ||
-        ::fcntl(master_fd, F_SETFD, FD_CLOEXEC) != 0) {
-      static_cast<void>(::close(master_fd));
-      static_cast<void>(::kill(child, SIGKILL));
-      static_cast<void>(::waitpid(child, nullptr, 0));
-      Logger<ERROR> << "Could not configure embedded terminal transport";
-      return false;
-    }
-
-    master_fd_  = master_fd;
-    child_pid_  = child;
-    generation_ = generation;
-    return flush_input();
-  }
-
-  /** Change the child terminal geometry and let the kernel deliver SIGWINCH. */
-  bool resize(std::size_t columns, std::size_t rows) const noexcept {
-    if (!running()) {
-      return true;
-    }
-    struct winsize size {};
-    size.ws_col = static_cast<unsigned short>(std::min<std::size_t>(
-        columns, std::numeric_limits<unsigned short>::max()));
-    size.ws_row = static_cast<unsigned short>(std::min<std::size_t>(
-        rows, std::numeric_limits<unsigned short>::max()));
-    return ::ioctl(master_fd_, TIOCSWINSZ, &size) == 0;
-  }
-
-  /** Queue bytes for the child and write as much as nonblocking I/O permits. */
-  bool send(std::string_view input) {
-    pending_input_.append(input);
-    return !running() || flush_input();
-  }
-
-  /** Read available output into libtmt and observe natural child termination.
-   */
-  PumpResult pump(InputFrame& frame) {
-    if (!running()) {
-      return PumpResult::EXITED;
-    }
-    char bytes[8192];
-    while (true) {
-      const ssize_t count = ::read(master_fd_, bytes, sizeof(bytes));
-      if (count > 0) {
-        if (!puc::tui::is_ok(frame.write_terminal(
-                std::string_view{bytes, static_cast<std::size_t>(count)}))) {
-          return PumpResult::FAILED;
-        }
-        continue;
-      }
-      if (count < 0 && errno == EINTR) {
-        continue;
-      }
-      if (count < 0 &&
-          (errno == EAGAIN || errno == EWOULDBLOCK || errno == EIO)) {
-        break;
-      }
-      if (count < 0) {
-        Logger<ERROR> << "Could not read embedded terminal output";
-        return PumpResult::FAILED;
-      }
-      break;
-    }
-    if (!flush_input()) {
-      return PumpResult::FAILED;
-    }
-
-    int child_status        = 0;
-    const pid_t wait_result = ::waitpid(child_pid_, &child_status, WNOHANG);
-    if (wait_result == 0) {
-      return PumpResult::RUNNING;
-    }
-    if (wait_result < 0 && errno == EINTR) {
-      return PumpResult::RUNNING;
-    }
-    if (wait_result < 0) {
-      Logger<ERROR> << "Could not observe embedded terminal child";
-      return PumpResult::FAILED;
-    }
-    finish_child();
-    return PumpResult::EXITED;
-  }
-
-  /** Close the PTY, terminate the owned child, and synchronously reap it. */
-  void stop() noexcept {
-    if (master_fd_ >= 0) {
-      static_cast<void>(::close(master_fd_));
-      master_fd_ = -1;
-    }
-    if (child_pid_ > 0) {
-      static_cast<void>(::kill(child_pid_, SIGHUP));
-      static_cast<void>(::kill(child_pid_, SIGKILL));
-      while (::waitpid(child_pid_, nullptr, 0) < 0 && errno == EINTR) {
-      }
-      child_pid_ = -1;
-    }
-    generation_ = 0U;
-    pending_input_.clear();
-  }
-
-  bool running() const noexcept { return master_fd_ >= 0 && child_pid_ > 0; }
-  std::size_t generation() const noexcept { return generation_; }
-
- private:
-  /** Flush the pending-input prefix while retaining an EAGAIN suffix. */
-  bool flush_input() {
-    while (running() && !pending_input_.empty()) {
-      const ssize_t count =
-          ::write(master_fd_, pending_input_.data(), pending_input_.size());
-      if (count > 0) {
-        pending_input_.erase(0U, static_cast<std::size_t>(count));
-      } else if (count < 0 && errno == EINTR) {
-        continue;
-      } else if (count < 0 && (errno == EAGAIN || errno == EWOULDBLOCK)) {
-        return true;
-      } else {
-        Logger<ERROR> << "Could not write embedded terminal input";
-        return false;
-      }
-    }
-    return true;
-  }
-
-  /** Release descriptors after waitpid has already reaped the child. */
-  void finish_child() noexcept {
-    if (master_fd_ >= 0) {
-      static_cast<void>(::close(master_fd_));
-    }
-    master_fd_  = -1;
-    child_pid_  = -1;
-    generation_ = 0U;
-    pending_input_.clear();
-  }
-
-  int master_fd_          = -1; /**< Nonblocking PTY master descriptor. */
-  pid_t child_pid_        = -1; /**< Shell process awaiting waitpid. */
-  std::size_t generation_ = 0U; /**< InputFrame session being served. */
-  std::string pending_input_;   /**< Unwritten nonblocking PTY input. */
-};
-
 /** Construct a complete terminal cell. */
 Canvas::Cell cell(char32_t character, std::uint32_t foreground,
                   std::uint32_t background) {
@@ -678,15 +278,19 @@ Status add_frame(Layout& layout,
 class InputTestApplication {
  public:
   /** Retain running subsystem mechanisms and timeout configuration. */
-  InputTestApplication(puc::multithreading::JobQueue& workers,
-                       puc::terminal::Decoder& decoder,
+  InputTestApplication(puc::terminal::Decoder& decoder,
                        std::shared_ptr<InputFrame> input_frame, Screen& screen,
+                       ParallelRenderer& renderer,
+                       puc::app::CommandModeSubsystem& command_mode,
+                       puc::app::EmbeddedTerminalSubsystem& embedded_terminal,
                        const puc::config::Config& configuration)
-      : workers_(workers),
-        decoder_(decoder),
+      : decoder_(decoder),
         configuration_(configuration),
         input_frame_(std::move(input_frame)),
-        screen_(&screen) {}
+        screen_(&screen),
+        renderer_(&renderer),
+        command_mode_(&command_mode),
+        embedded_terminal_(&embedded_terminal) {}
 
   InputTestApplication(const InputTestApplication&)            = delete;
   InputTestApplication& operator=(const InputTestApplication&) = delete;
@@ -705,13 +309,14 @@ class InputTestApplication {
     }
 
     configure_theme();
-    if (input_frame_ == nullptr || screen_ == nullptr) {
+    if (input_frame_ == nullptr || screen_ == nullptr || renderer_ == nullptr ||
+        command_mode_ == nullptr || embedded_terminal_ == nullptr) {
       Logger<ERROR> << "Input application mechanisms are unavailable";
       return false;
     }
-    input_frame_->set_notification(std::string{kNotification});
-    renderer_ = std::make_unique<ParallelRenderer>(workers_);
-
+    if (input_frame_->snapshot().notification.empty()) {
+      input_frame_->set_notification(std::string{kNotification});
+    }
     Status status = Status::OK;
     const auto geometry_deadline =
         std::chrono::steady_clock::now() + std::chrono::seconds{2};
@@ -810,13 +415,18 @@ class InputTestApplication {
     return true;
   }
 
-  /** Quiesce app-specific rendering and the embedded child process. */
+  /** Release generation bindings before their owning subsystems stop. */
   bool shutdown() noexcept {
-    renderer_.reset();
-    terminal_process_.stop();
+    bool quiesced = true;
+    if (renderer_ != nullptr) {
+      quiesced = puc::tui::is_ok(renderer_->wait());
+    }
     input_frame_.reset();
-    screen_ = nullptr;
-    return true;
+    screen_            = nullptr;
+    renderer_          = nullptr;
+    command_mode_      = nullptr;
+    embedded_terminal_ = nullptr;
+    return quiesced;
   }
 
  private:
@@ -941,49 +551,8 @@ class InputTestApplication {
 
   /** Start, resize, pump, or reap the PTY requested by InputFrame state. */
   bool synchronize_terminal_process() {
-    const puc::tui::InputFrameSnapshot state = input_frame_->snapshot();
-    if (!state.terminal_session_active) {
-      terminal_process_.stop();
-      return true;
-    }
-
-    const bool terminal_fits = width_ >= InputFrame::kMinimumWidth &&
-                               height_ >= InputFrame::kTerminalMinimumHeight;
-    const std::size_t outer_height = InputFrame::terminal_height(height_);
-    const std::size_t columns      = width_ > 5U ? width_ - 5U : 0U;
-    const std::size_t rows         = outer_height > 4U ? outer_height - 4U : 0U;
-    if ((!terminal_process_.running() ||
-         terminal_process_.generation() != state.terminal_generation) &&
-        terminal_fits) {
-      if (!terminal_process_.start(state.terminal_generation, columns, rows)) {
-        input_frame_->close_terminal();
-        return false;
-      }
-    }
-    if (terminal_process_.running() &&
-        state.mode == puc::tui::InputMode::TERMINAL &&
-        !terminal_process_.resize(columns, rows)) {
-      Logger<ERROR> << "Could not resize embedded terminal process";
-      return false;
-    }
-
-    const std::string responses = input_frame_->take_terminal_responses();
-    if (!responses.empty() && !terminal_process_.send(responses)) {
-      return false;
-    }
-    if (!terminal_process_.running()) {
-      return true;
-    }
-    switch (terminal_process_.pump(*input_frame_)) {
-      case EmbeddedTerminalProcess::PumpResult::RUNNING:
-        return true;
-      case EmbeddedTerminalProcess::PumpResult::EXITED:
-        input_frame_->close_terminal();
-        return true;
-      case EmbeddedTerminalProcess::PumpResult::FAILED:
-        return false;
-    }
-    return false;
+    return embedded_terminal_ != nullptr &&
+           puc::app::is_ok(embedded_terminal_->synchronize(width_, height_));
   }
 
   /** Read available bytes and route every normalized event into the editor. */
@@ -1059,7 +628,8 @@ class InputTestApplication {
       if (!frame_command && !selection_command &&
           !std::holds_alternative<puc::terminal::MouseEvent>(event) &&
           !std::holds_alternative<puc::terminal::ScrollEvent>(event)) {
-        return terminal_process_.send(terminal_input(event));
+        return embedded_terminal_ != nullptr &&
+               puc::app::is_ok(embedded_terminal_->send_event(event));
       }
     }
 
@@ -1099,7 +669,9 @@ class InputTestApplication {
     }
 
     const Status status =
-        input_frame_->handle_event(event, InputFrame::Clock::now());
+        command_mode_ == nullptr
+            ? Status::INVALID_ARGUMENT
+            : command_mode_->handle_event(event, InputFrame::Clock::now());
     if (!puc::tui::is_ok(status)) {
       Logger<ERROR> << "Could not apply input event: "
                     << puc::tui::status_message(status);
@@ -1186,16 +758,19 @@ class InputTestApplication {
     return true;
   }
 
-  puc::multithreading::JobQueue& workers_; /**< Main-owned shared workers. */
   puc::terminal::Decoder&
       decoder_; /**< AppState-owned configured input Trie. */
   const puc::config::Config& configuration_; /**< Timeout configuration. */
   puc::terminal::TimeoutSettings timeout_settings_; /**< Input timing policy. */
-  std::shared_ptr<InputFrame> input_frame_;    /**< Editor under manual test. */
-  EmbeddedTerminalProcess terminal_process_;   /**< PTY child behind libtmt. */
-  Screen* screen_ = nullptr;                   /**< AppState-owned presenter. */
-  std::unique_ptr<ParallelRenderer> renderer_; /**< Frame scheduler. */
-  std::shared_ptr<Canvas> canvas_;             /**< Current screen Canvas. */
+  std::shared_ptr<InputFrame> input_frame_; /**< Editor under manual test. */
+  Screen* screen_ = nullptr;                /**< AppState-owned presenter. */
+  ParallelRenderer* renderer_ =
+      nullptr; /**< Lifecycle-owned frame scheduler. */
+  puc::app::CommandModeSubsystem* command_mode_ =
+      nullptr; /**< Lifecycle-owned command coordinator. */
+  puc::app::EmbeddedTerminalSubsystem* embedded_terminal_ =
+      nullptr;                     /**< Lifecycle-owned PTY child/pump. */
+  std::shared_ptr<Canvas> canvas_; /**< Current screen Canvas. */
   std::shared_ptr<Layout::LayoutDescription>
       layout_description_; /**< Bottom-anchored editor layout. */
   std::shared_ptr<Layout::LayoutDescription>
@@ -1217,6 +792,82 @@ class InputTestApplication {
       pending_selection_timeout_; /**< Current click-chain timeout. */
 };
 
+/** Bind the input manual-test loop to restartable shared subsystem generations.
+ */
+class InputTestRuntimeSubsystem final : public puc::app::AppSubsystem {
+ public:
+  /** Declare every shared mechanism consumed by one interactive generation. */
+  InputTestRuntimeSubsystem()
+      : AppSubsystem(
+            "input-test-runtime",
+            puc::app::subsystem_dependencies<
+                puc::app::ConfigurationSubsystem, puc::app::TerminalSubsystem,
+                puc::app::ScreenSubsystem, puc::app::PresentationSubsystem,
+                puc::app::InputSubsystem, puc::app::CommandModeSubsystem,
+                puc::app::EmbeddedTerminalSubsystem>()) {}
+
+  /** The durable mechanisms are already constructed by their owning adapters.
+   */
+  puc::app::Status initialize(puc::app::AppState& app) override {
+    static_cast<void>(app);
+    return puc::app::Status::OK;
+  }
+
+  /** Bind the current running generation and construct its layouts and Canvas.
+   */
+  puc::app::Status start(puc::app::AppState& app) override {
+    auto* configuration = app.get_subsystem<puc::app::ConfigurationSubsystem>();
+    auto* terminal      = app.get_subsystem<puc::app::TerminalSubsystem>();
+    auto* screen        = app.get_subsystem<puc::app::ScreenSubsystem>();
+    auto* presentation  = app.get_subsystem<puc::app::PresentationSubsystem>();
+    auto* input         = app.get_subsystem<puc::app::InputSubsystem>();
+    auto* command_mode  = app.get_subsystem<puc::app::CommandModeSubsystem>();
+    auto* embedded = app.get_subsystem<puc::app::EmbeddedTerminalSubsystem>();
+    if (configuration == nullptr || configuration->configuration() == nullptr ||
+        terminal == nullptr || terminal->decoder() == nullptr ||
+        screen == nullptr || screen->screen() == nullptr ||
+        presentation == nullptr || presentation->renderer() == nullptr ||
+        input == nullptr || input->input_frame() == nullptr ||
+        command_mode == nullptr || embedded == nullptr) {
+      return puc::app::Status::SUBSYSTEM_FAILURE;
+    }
+
+    auto next = std::make_unique<InputTestApplication>(
+        *terminal->decoder(), input->input_frame(), *screen->screen(),
+        *presentation->renderer(), *command_mode, *embedded,
+        *configuration->configuration());
+    if (!next->setup()) {
+      static_cast<void>(next->shutdown());
+      return puc::app::Status::SUBSYSTEM_FAILURE;
+    }
+    application_ = std::move(next);
+    return puc::app::Status::OK;
+  }
+
+  /** Quiesce app-owned rendering before its shared dependencies stop. */
+  puc::app::Status stop(puc::app::AppState& app) noexcept override {
+    static_cast<void>(app);
+    if (application_ == nullptr) {
+      return puc::app::Status::OK;
+    }
+    const bool stopped = application_->shutdown();
+    application_.reset();
+    return stopped ? puc::app::Status::OK : puc::app::Status::SUBSYSTEM_FAILURE;
+  }
+
+  /** Release any generation retained after partial lifecycle progress. */
+  puc::app::Status terminate(puc::app::AppState& app) noexcept override {
+    return stop(app);
+  }
+
+  /** Draw one frame through the currently running generation. */
+  bool draw() { return application_ != nullptr && application_->draw(); }
+
+ private:
+  std::unique_ptr<InputTestApplication>
+      application_; /**< Runtime state for the current start/stop generation. */
+};
+
 }  // namespace
 
 /**
@@ -1230,16 +881,16 @@ int main(int argc, char** argv) {
   const puc::logger::LoggerConf logger_config{
       .global_level = puc::logger::LogLevel::WARN,
   };
-  LOGGER_INIT(logger_config);
 
   if (std::setlocale(LC_CTYPE, "") == nullptr) {
-    Logger<WARN> << "Could not activate the environment's character encoding; "
-                    "embedded terminal output may replace non-ASCII text";
+    std::fprintf(stderr,
+                 "Could not activate the environment's character encoding; "
+                 "embedded terminal output may replace non-ASCII text\n");
   }
 
   if (std::signal(SIGINT, request_stop) == SIG_ERR ||
       std::signal(SIGTERM, request_stop) == SIG_ERR) {
-    Logger<ERROR> << "Could not install termination signal handlers";
+    std::fprintf(stderr, "Could not install termination signal handlers\n");
     return 1;
   }
 
@@ -1248,18 +899,22 @@ int main(int argc, char** argv) {
                                             : std::string_view{};
   const std::filesystem::path primary = primary_config_root(executable);
   const std::filesystem::path user    = user_config_root(primary);
-  const puc::config::Config configuration{primary, user};
-
+  const std::string configured_shell  = environment_value("PUC_TEST_SHELL");
   puc::app::ApplicationSubsystemOptions subsystem_options{
       .logger       = logger_config,
       .worker_count = kWorkerCount,
+      .configuration =
+          puc::app::ConfigurationSubsystemOptions{
+              .primary_root        = primary,
+              .user_overrides_root = user,
+          },
       .terminal =
           puc::app::TerminalSubsystemOptions{
-              .input_fd            = STDIN_FILENO,
-              .output_fd           = STDOUT_FILENO,
-              .decoder_limits      = {},
-              .input_configuration = puc::config::Config{primary, user},
-              .terminal_name       = environment_value("TERM"),
+              .input_fd          = STDIN_FILENO,
+              .output_fd         = STDOUT_FILENO,
+              .decoder_limits    = {},
+              .configure_decoder = true,
+              .terminal_name     = environment_value("TERM"),
           },
       .screen =
           puc::app::ScreenSubsystemOptions{
@@ -1276,52 +931,54 @@ int main(int argc, char** argv) {
                       .kitty_keyboard_flags = kKeyboardEnhancements,
                   },
           },
+      .embedded_terminal =
+          puc::app::EmbeddedTerminalSubsystemOptions{
+              .shell = configured_shell.empty() ? "/bin/sh" : configured_shell,
+          },
   };
   puc::app::AppState state;
   puc::app::Status app_status = puc::app::register_application_subsystems(
       state, std::move(subsystem_options));
   if (!puc::app::is_ok(app_status)) {
-    Logger<ERROR> << "Could not register application subsystems: "
-                  << puc::app::status_message(app_status);
+    const std::string_view message = puc::app::status_message(app_status);
+    std::fprintf(stderr, "Could not register application subsystems: %.*s\n",
+                 static_cast<int>(message.size()), message.data());
+    return 1;
+  }
+  auto runtime = std::make_unique<InputTestRuntimeSubsystem>();
+  InputTestRuntimeSubsystem* runtime_view = runtime.get();
+  app_status = state.register_subsystem(std::move(runtime));
+  if (!puc::app::is_ok(app_status)) {
+    const std::string_view message = puc::app::status_message(app_status);
+    std::fprintf(stderr, "Could not register input runtime: %.*s\n",
+                 static_cast<int>(message.size()), message.data());
     return 1;
   }
   app_status = state.initialize(puc::app::OperatingMode::TUI);
   if (!puc::app::is_ok(app_status)) {
-    Logger<ERROR> << "Could not initialize application subsystems: "
-                  << puc::app::status_message(app_status);
+    const std::string_view message = puc::app::status_message(app_status);
+    std::fprintf(stderr, "Could not initialize application subsystems: %.*s\n",
+                 static_cast<int>(message.size()), message.data());
+    static_cast<void>(state.terminate());
     return 1;
   }
   app_status = state.start();
   if (!puc::app::is_ok(app_status)) {
-    Logger<ERROR> << "Could not start application subsystems: "
-                  << puc::app::status_message(app_status);
+    const std::string_view message = puc::app::status_message(app_status);
+    std::fprintf(stderr, "Could not start application subsystems: %.*s\n",
+                 static_cast<int>(message.size()), message.data());
+    static_cast<void>(state.terminate());
     return 1;
   }
 
-  puc::app::WorkerSubsystem* workers =
-      state.get_subsystem<puc::app::WorkerSubsystem>();
-  puc::app::TerminalSubsystem* terminal =
-      state.get_subsystem<puc::app::TerminalSubsystem>();
-  puc::app::ScreenSubsystem* screen =
-      state.get_subsystem<puc::app::ScreenSubsystem>();
-  puc::app::InputSubsystem* input =
-      state.get_subsystem<puc::app::InputSubsystem>();
-  if (workers == nullptr || workers->workers() == nullptr ||
-      terminal == nullptr || terminal->decoder() == nullptr ||
-      screen == nullptr || screen->screen() == nullptr || input == nullptr ||
-      input->input_frame() == nullptr) {
-    Logger<ERROR> << "Running application subsystem graph is incomplete";
-    return 1;
-  }
-
-  InputTestApplication application(*workers->workers(), *terminal->decoder(),
-                                   input->input_frame(), *screen->screen(),
-                                   configuration);
-  bool success = application.setup();
+  bool success = true;
   while (success && stop_requested == 0) {
-    success = application.draw();
+    success = runtime_view->draw();
   }
-  success    = application.shutdown() && success;
+  app_status = state.stop();
+  if (!puc::app::is_ok(app_status)) {
+    success = false;
+  }
   app_status = state.terminate();
   if (!puc::app::is_ok(app_status)) {
     const std::string_view message = puc::app::status_message(app_status);

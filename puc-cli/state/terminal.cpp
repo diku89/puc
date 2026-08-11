@@ -9,6 +9,7 @@
 #include <utility>
 
 #include "puc-cli/state/channels.hpp"
+#include "puc-cli/state/configuration.hpp"
 #include "puc-cli/state/directory.hpp"
 #include "puc-cli/terminal/session.hpp"
 #include "puc-cli/terminal/status.hpp"
@@ -17,24 +18,33 @@
 namespace puc::app {
 
 TerminalSubsystem::TerminalSubsystem(TerminalSubsystemOptions options)
-    : AppSubsystem("terminal",
-                   subsystem_dependencies<ScreenChannelSubsystem>()),
+    : AppSubsystem(
+          "terminal",
+          subsystem_dependencies<ScreenChannelSubsystem, ConfigurationSubsystem,
+                                 DirectorySubsystem>()),
       options_(std::move(options)) {}
 
 TerminalSubsystem::~TerminalSubsystem() = default;
 
 Status TerminalSubsystem::initialize(AppState& app) {
-  static_cast<void>(app);
   session_ = std::make_unique<terminal::TerminalSession>(options_.input_fd,
                                                          options_.output_fd);
   decoder_ = std::make_unique<terminal::Decoder>(options_.decoder_limits);
   terminal_status_ = terminal::Status::OK;
-  if (!options_.input_configuration.has_value()) {
+  if (!options_.configure_decoder) {
     return Status::OK;
   }
 
+  ConfigurationSubsystem* configuration =
+      app.get_subsystem<ConfigurationSubsystem>();
+  if (configuration == nullptr || configuration->configuration() == nullptr) {
+    decoder_.reset();
+    session_.reset();
+    return Status::SUBSYSTEM_FAILURE;
+  }
+
   terminal_status_ =
-      decoder_->setup(*options_.input_configuration, options_.terminal_name,
+      decoder_->setup(*configuration->configuration(), options_.terminal_name,
                       options_.output_fd);
   if (!terminal::is_ok(terminal_status_)) {
     decoder_.reset();

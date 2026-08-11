@@ -59,16 +59,16 @@ class AppSubsystem {
     return dependencies_;
   }
 
-  /** Configure resources without beginning externally observable work. */
+  /** Configure durable resources once, without externally observable work. */
   virtual Status initialize(AppState& app) = 0;
 
-  /** Begin work after every declared dependency has started. */
+  /** Begin one restartable generation after every dependency has started. */
   virtual Status start(AppState& app) = 0;
 
-  /** Quiesce work before any declared dependency is stopped. */
+  /** Quiesce one generation before any declared dependency is stopped. */
   virtual Status stop(AppState& app) noexcept = 0;
 
-  /** Release resources before any declared dependency is terminated. */
+  /** Finally release durable resources before dependencies terminate. */
   virtual Status terminate(AppState& app) noexcept = 0;
 
  private:
@@ -98,9 +98,13 @@ std::vector<SubsystemId> subsystem_dependencies() {
  * currently run synchronously in registration order so bootstrap facilities,
  * including the worker pool itself, do not depend on an already-running pool.
  *
- * Lifecycle calls are serialized and may safely resolve other subsystems from
- * inside a hook. Lookup pointers remain valid through AppState destruction;
- * callers must not retain them beyond that boundary.
+ * initialize() and terminate() form the one durable application lifetime and
+ * invoke each corresponding hook at most once. Any number of start()/stop()
+ * cycles may occur between them, with fresh active resources acquired and
+ * quiesced on each cycle. Lifecycle calls are serialized and may safely
+ * resolve other subsystems from inside a hook. Lookup pointers remain valid
+ * through AppState destruction; callers must not retain them beyond that
+ * boundary.
  */
 class AppState final {
  public:

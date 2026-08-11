@@ -6,13 +6,12 @@
  * This executable is a manual smoke test rather than an automated unit test. It
  * exercises the integration between Screen, Canvas, Layout, ZBuffer, Frame,
  * Theme, TerminalSession, bounded IPC channels, terminal resize events,
- * Unicode rendering, true color, and parallel Canvas publication. `main()`
- * owns one four-thread worker pool shared by terminal messages and
- * ParallelRenderer; all consumers merely borrow it, and `main()` destroys
- * those consumers before stopping and joining the workers. Every ready frame
- * in the layout is rendered as an independent job, and the last real frame to
- * complete publishes the Canvas A/B transaction. Run it from a real terminal
- * with:
+ * Unicode rendering, true color, and parallel Canvas publication. AppState
+ * owns the worker, channel, terminal, Screen, renderer, and executable-runtime
+ * subsystems and orders their lifecycle from declared dependencies. Every ready
+ * frame in the layout is rendered as an independent job, and the last real
+ * frame to complete publishes the Canvas A/B transaction. Run it from a real
+ * terminal with:
  *
  *     bazel run //puc-cli/tui:test-app
  *
@@ -74,6 +73,7 @@
 #include <csignal>
 #include <cstddef>
 #include <cstdint>
+#include <cstdio>
 #include <initializer_list>
 #include <iomanip>
 #include <memory>
@@ -87,6 +87,9 @@
 #include <utility>
 #include <vector>
 
+#include "puc-cli/state/bootstrap.hpp"
+#include "puc-cli/state/presentation.hpp"
+#include "puc-cli/state/screen.hpp"
 #include "puc-cli/tui/canvas.hpp"
 #include "puc-cli/tui/frame.hpp"
 #include "puc-cli/tui/layout.hpp"
@@ -95,7 +98,6 @@
 #include "puc-cli/tui/status.hpp"
 #include "puc-cli/tui/theme.hpp"
 #include "utils/logger/logger.hpp"
-#include "utils/multithreading/job_queue.hpp"
 
 /** @cond TUI_LOGGER_MODULE */
 LOGGER_MODULE("TUI Test App");
@@ -103,7 +105,6 @@ LOGGER_MODULE("TUI Test App");
 
 namespace {
 
-using puc::multithreading::JobQueue;
 using puc::tui::Canvas;
 using puc::tui::CellDimensions;
 using puc::tui::Frame;
@@ -124,10 +125,10 @@ constexpr std::string_view kScreenTooSmall = "Screen too small";
 /** Shared worker budget for frame rendering and terminal message delivery. */
 constexpr std::uint8_t kWorkerCount = 4U;
 
-/** Terminal session owned for the lifetime of the application. */
-std::unique_ptr<Screen> screen;
-/** Parallel frame coordinator borrowing main's worker pool. */
-std::unique_ptr<ParallelRenderer> renderer;
+/** Screen borrowed from ScreenSubsystem during a running generation. */
+Screen* screen = nullptr;
+/** Parallel frame coordinator borrowed from PresentationSubsystem. */
+ParallelRenderer* renderer = nullptr;
 /** Canvas matching the current terminal cell dimensions. */
 std::shared_ptr<Canvas> canvas;
 /** Declarative description of every smoke-test frame. */
@@ -149,7 +150,7 @@ struct TestAppState {
 };
 
 /** Typed application state captured only by frames that consume it. */
-std::shared_ptr<TestAppState> state = std::make_shared<TestAppState>();
+std::shared_ptr<TestAppState> state;
 /** Physical proportions reported for the current terminal cells. */
 CellDimensions cell_dimensions = puc::tui::kDefaultCellDimensions;
 /** Semantic palette used by smoke-test frames. */
@@ -653,18 +654,15 @@ Status update_absolute_layout() {
 /**
  * Initialize terminal ownership, palette, Canvas, layout, and timing state.
  *
- * @param[in] workers Main's worker pool, which outlives all initialized users.
+ * @param[in,out] active_screen Screen for the current running generation.
+ * @param[in,out] active_renderer Renderer borrowing the current worker pool.
  * @return Status::OK when the draw loop can begin, otherwise the first setup
- *         error. The caller remains responsible for releasing a taken Screen.
+ *         error. AppState remains responsible for stopping shared mechanisms.
  */
-Status setup(JobQueue& workers) {
-  screen        = std::make_unique<Screen>(workers);
-  renderer      = std::make_unique<ParallelRenderer>(workers);
-  Status status = screen->take();
-  if (!puc::tui::is_ok(status)) {
-    return status;
-  }
-
+Status setup(Screen& active_screen, ParallelRenderer& active_renderer) {
+  screen        = &active_screen;
+  renderer      = &active_renderer;
+  Status status = Status::OK;
   Theme::Colors colors{};
   colors.primary              = kRed;
   colors.highlight_background = 0x264f78U;
@@ -713,6 +711,21 @@ Status setup(JobQueue& workers) {
 
   frame_rate_sample = std::chrono::steady_clock::now();
   return Status::OK;
+}
+
+/** Quiesce app-owned render state before Screen and workers stop. */
+Status stop_runtime() noexcept {
+  Status status = renderer == nullptr ? Status::OK : renderer->wait();
+  canvas.reset();
+  layout_description.reset();
+  small_layout_description.reset();
+  absolute_layout          = {};
+  small_absolute_layout    = {};
+  frames_since_sample      = 0U;
+  showing_screen_too_small = false;
+  screen                   = nullptr;
+  renderer                 = nullptr;
+  return status;
 }
 
 /**
@@ -801,6 +814,55 @@ Status draw() {
   return Status::OK;
 }
 
+/** Lifecycle boundary for this executable's visual smoke-test state. */
+class TuiTestRuntimeSubsystem final : public puc::app::AppSubsystem {
+ public:
+  /** Run only after the shared Screen and renderer generation are available. */
+  TuiTestRuntimeSubsystem()
+      : AppSubsystem(
+            "tui-test-runtime",
+            puc::app::subsystem_dependencies<
+                puc::app::ScreenSubsystem, puc::app::PresentationSubsystem>()) {
+  }
+
+  puc::app::Status initialize(puc::app::AppState& app) override {
+    static_cast<void>(app);
+    state = std::make_shared<TestAppState>();
+    return puc::app::Status::OK;
+  }
+
+  puc::app::Status start(puc::app::AppState& app) override {
+    auto* screen_subsystem = app.get_subsystem<puc::app::ScreenSubsystem>();
+    auto* presentation = app.get_subsystem<puc::app::PresentationSubsystem>();
+    if (screen_subsystem == nullptr || screen_subsystem->screen() == nullptr ||
+        presentation == nullptr || presentation->renderer() == nullptr) {
+      return puc::app::Status::SUBSYSTEM_FAILURE;
+    }
+    const Status status =
+        setup(*screen_subsystem->screen(), *presentation->renderer());
+    if (!puc::tui::is_ok(status)) {
+      static_cast<void>(stop_runtime());
+      return puc::app::Status::SUBSYSTEM_FAILURE;
+    }
+    return puc::app::Status::OK;
+  }
+
+  puc::app::Status stop(puc::app::AppState& app) noexcept override {
+    static_cast<void>(app);
+    return puc::tui::is_ok(stop_runtime())
+               ? puc::app::Status::OK
+               : puc::app::Status::SUBSYSTEM_FAILURE;
+  }
+
+  puc::app::Status terminate(puc::app::AppState& app) noexcept override {
+    const puc::app::Status status = stop(app);
+    state.reset();
+    return status;
+  }
+
+  Status draw_frame() { return draw(); }
+};
+
 }  // namespace
 
 /**
@@ -813,33 +875,62 @@ int main() {
   const puc::logger::LoggerConf logger_config{
       .global_level = puc::logger::LogLevel::WARN,
   };
-  LOGGER_INIT(logger_config);
 
   if (std::signal(SIGINT, request_stop) == SIG_ERR ||
       std::signal(SIGTERM, request_stop) == SIG_ERR) {
-    Logger<ERROR> << "Could not install termination signal handlers";
+    std::fprintf(stderr, "Could not install termination signal handlers\n");
     return 1;
   }
 
-  JobQueue workers(kWorkerCount);
-  Status status = setup(workers);
-  if (!puc::tui::is_ok(status)) {
-    Logger<ERROR> << "Test app setup failed: "
-                  << puc::tui::status_message(status);
-    if (screen) {
-      static_cast<void>(screen->release());
-    }
-    renderer.reset();
-    screen.reset();
-    workers.wait();
+  puc::app::ApplicationSubsystemOptions options{
+      .logger       = logger_config,
+      .worker_count = kWorkerCount,
+      .screen =
+          puc::app::ScreenSubsystemOptions{
+              .take_terminal = true,
+          },
+      .selection =
+          puc::app::ApplicationSubsystemSelection{
+              .metronome         = false,
+              .presentation      = true,
+              .commands          = false,
+              .input             = false,
+              .command_mode      = false,
+              .embedded_terminal = false,
+          },
+  };
+  puc::app::AppState app;
+  puc::app::Status app_status =
+      puc::app::register_application_subsystems(app, std::move(options));
+  auto runtime = std::make_unique<TuiTestRuntimeSubsystem>();
+  TuiTestRuntimeSubsystem* runtime_view = runtime.get();
+  if (puc::app::is_ok(app_status)) {
+    app_status = app.register_subsystem(std::move(runtime));
+  }
+  if (!puc::app::is_ok(app_status)) {
+    const std::string_view message = puc::app::status_message(app_status);
+    std::fprintf(stderr, "Could not register TUI test subsystems: %.*s\n",
+                 static_cast<int>(message.size()), message.data());
+    return 1;
+  }
+  app_status = app.initialize(puc::app::OperatingMode::TUI);
+  if (puc::app::is_ok(app_status)) {
+    app_status = app.start();
+  }
+  if (!puc::app::is_ok(app_status)) {
+    const std::string_view message = puc::app::status_message(app_status);
+    std::fprintf(stderr, "Could not start TUI test subsystems: %.*s\n",
+                 static_cast<int>(message.size()), message.data());
+    static_cast<void>(app.terminate());
     return 1;
   }
 
+  Status status = Status::OK;
   while (true) {
     if (stop_requested != 0) {
       break;
     }
-    status = draw();
+    status = runtime_view->draw_frame();
     if (!puc::tui::is_ok(status)) {
       Logger<ERROR> << "Test app draw failed: "
                     << puc::tui::status_message(status);
@@ -847,9 +938,10 @@ int main() {
     }
   }
 
-  const Status release_status = screen->release();
-  renderer.reset();
-  screen.reset();
-  workers.wait();
-  return puc::tui::is_ok(status) && puc::tui::is_ok(release_status) ? 0 : 1;
+  const puc::app::Status stop_status      = app.stop();
+  const puc::app::Status terminate_status = app.terminate();
+  return puc::tui::is_ok(status) && puc::app::is_ok(stop_status) &&
+                 puc::app::is_ok(terminate_status)
+             ? 0
+             : 1;
 }

@@ -64,8 +64,8 @@ cc_binary(
     srcs = ["test-app.cpp"],
     deps = [
         ":tui",
+        "//puc-cli/state:adapters",
         "//utils/logger",
-        "//utils/multithreading",
     ],
 )
 
@@ -91,7 +91,6 @@ cc_binary(
         "//puc-cli/terminal",
         "//utils/config",
         "//utils/logger",
-        "//utils/multithreading",
     ],
 )
 

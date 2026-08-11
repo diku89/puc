@@ -10,6 +10,7 @@
 #include <memory>
 #include <string>
 #include <string_view>
+#include <vector>
 
 #include "puc-cli/terminal/event.hpp"
 #include "puc-cli/tui/frame.hpp"
@@ -34,9 +35,11 @@ struct InputFrameSnapshot {
   std::string input_text;             /**< Preserved normal-mode UTF-8 text. */
   std::string command_text;           /**< Current command-mode UTF-8 text. */
   std::string notification;           /**< Bottom-row command/status text. */
-  InputCursor cursor;                 /**< Caret in the active buffer. */
-  std::size_t scroll_row = 0U;        /**< First visible wrapped content row. */
-  bool escape_armed      = false;     /**< Whether one Escape is pending. */
+  std::vector<std::string>
+      command_help;   /**< Completion or usage rows above command input. */
+  InputCursor cursor; /**< Caret in the active buffer. */
+  std::size_t scroll_row = 0U;    /**< First visible wrapped content row. */
+  bool escape_armed      = false; /**< Whether one Escape is pending. */
   bool paste_in_progress = false; /**< Whether a paste transaction is open. */
   std::size_t terminal_rows    = 0U; /**< Allocated virtual-terminal rows. */
   std::size_t terminal_columns = 0U; /**< Allocated virtual-terminal columns. */
@@ -147,6 +150,15 @@ class InputFrame final : public Frame {
 
   /** Replace the UTF-8 message drawn in the bottom notification row. */
   void set_notification(std::string notification);
+
+  /** Replace command completion/usage rows displayed above the command box. */
+  void set_command_help(std::vector<std::string> help);
+
+  /** Replace the command buffer and place its caret after the supplied text. */
+  Status replace_command_text(std::string text);
+
+  /** Return from command mode to the preserved normal input buffer. */
+  void leave_command_mode();
 
   /**
    * Feed process output to the persistent libtmt terminal surface.

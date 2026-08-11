@@ -11,9 +11,8 @@
 
 #include "msgs/cmdframe_msgs.hpp"
 #include "msgs/status.hpp"
-#include "puc-cli/state/commands.hpp"
+#include "puc-cli/state/channels.hpp"
 #include "puc-cli/state/directory.hpp"
-#include "puc-cli/state/screen.hpp"
 #include "puc-cli/tui/input_frame.hpp"
 #include "utils/ipc/directory.hpp"
 #include "utils/ipc/status.hpp"
@@ -21,9 +20,9 @@
 namespace puc::app {
 
 InputSubsystem::InputSubsystem()
-    : AppSubsystem(
-          "input",
-          subsystem_dependencies<CommandSubsystem, ScreenSubsystem>()) {}
+    : AppSubsystem("input",
+                   subsystem_dependencies<CommandNotificationChannelSubsystem,
+                                          DirectorySubsystem>()) {}
 
 InputSubsystem::~InputSubsystem() = default;
 

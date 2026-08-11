@@ -4,6 +4,11 @@ load("//docs:code_sources.bzl", "code_docs_sources")
 
 code_docs_sources()
 
+config_setting(
+    name = "linux",
+    constraint_values = ["@platforms//os:linux"],
+)
+
 cc_library(
     name = "state",
     srcs = ["state.cpp"],
@@ -20,10 +25,15 @@ cc_library(
     srcs = [
         "bootstrap.cpp",
         "channels.cpp",
+        "command_mode.cpp",
         "commands.cpp",
+        "configuration.cpp",
         "directory.cpp",
+        "embedded_terminal.cpp",
         "input.cpp",
         "logger.cpp",
+        "metronome.cpp",
+        "presentation.cpp",
         "screen.cpp",
         "terminal.cpp",
         "workers.cpp",
@@ -32,14 +42,23 @@ cc_library(
         "adapters.hpp",
         "bootstrap.hpp",
         "channels.hpp",
+        "command_mode.hpp",
         "commands.hpp",
+        "configuration.hpp",
         "directory.hpp",
+        "embedded_terminal.hpp",
         "input.hpp",
         "logger.hpp",
+        "metronome.hpp",
+        "presentation.hpp",
         "screen.hpp",
         "terminal.hpp",
         "workers.hpp",
     ],
+    linkopts = select({
+        ":linux": ["-lutil"],
+        "//conditions:default": [],
+    }),
     visibility = ["//visibility:public"],
     deps = [
         ":state",
@@ -50,6 +69,7 @@ cc_library(
         "//utils/config",
         "//utils/ipc",
         "//utils/logger",
+        "//utils/metronome",
         "//utils/multithreading",
     ],
 )

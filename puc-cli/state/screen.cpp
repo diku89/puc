@@ -17,7 +17,9 @@
 namespace puc::app {
 
 ScreenSubsystem::ScreenSubsystem(ScreenSubsystemOptions options)
-    : AppSubsystem("screen", subsystem_dependencies<TerminalSubsystem>()),
+    : AppSubsystem(
+          "screen",
+          subsystem_dependencies<TerminalSubsystem, DirectorySubsystem>()),
       options_(std::move(options)) {}
 
 ScreenSubsystem::~ScreenSubsystem() = default;

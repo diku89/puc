@@ -17,7 +17,8 @@ namespace puc::app {
 CommandSubsystem::CommandSubsystem()
     : AppSubsystem("commands",
                    subsystem_dependencies<CommandNotificationChannelSubsystem,
-                                          ScreenSubsystem>()) {}
+                                          ScreenSubsystem, WorkerSubsystem,
+                                          DirectorySubsystem>()) {}
 
 Status CommandSubsystem::initialize(AppState& app) {
   static_cast<void>(app);

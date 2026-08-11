@@ -5,6 +5,7 @@
 
 #include "puc-cli/state/state.hpp"
 
+#include <cstddef>
 #include <memory>
 #include <stdexcept>
 #include <string>
@@ -246,6 +247,30 @@ TEST(AppStateTest, RunsForwardAndReverseDependencyLayers) {
   EXPECT_EQ(trace.calls,
             (std::vector<std::string>{"leaf.terminate", "left.terminate",
                                       "right.terminate", "root.terminate"}));
+}
+
+TEST(AppStateTest, InitializesAndTerminatesOnceAcrossRepeatedRunCycles) {
+  Trace trace;
+  AppState app;
+  ASSERT_EQ(app.register_subsystem(std::make_unique<RootSubsystem>(trace)),
+            Status::OK);
+
+  ASSERT_EQ(app.initialize(OperatingMode::TEST), Status::OK);
+  for (std::size_t generation = 0U; generation < 3U; ++generation) {
+    ASSERT_EQ(app.start(), Status::OK);
+    EXPECT_EQ(app.lifecycle_state(), LifecycleState::RUNNING);
+    ASSERT_EQ(app.stop(), Status::OK);
+    EXPECT_EQ(app.lifecycle_state(), LifecycleState::STOPPED);
+  }
+  ASSERT_EQ(app.terminate(), Status::OK);
+  EXPECT_EQ(app.terminate(), Status::OK);
+  EXPECT_EQ(app.initialize(OperatingMode::TEST),
+            Status::INVALID_LIFECYCLE_TRANSITION);
+
+  EXPECT_EQ(trace.calls,
+            (std::vector<std::string>{
+                "root.initialize", "root.start", "root.stop", "root.start",
+                "root.stop", "root.start", "root.stop", "root.terminate"}));
 }
 
 TEST(AppStateTest, FreezesRegistrationAtInitialization) {

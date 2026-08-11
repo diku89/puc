@@ -6,13 +6,11 @@
  */
 
 #include <memory>
-#include <optional>
 #include <string>
 
 #include "puc-cli/state/state.hpp"
 #include "puc-cli/terminal/decoder.hpp"
 #include "puc-cli/terminal/status.hpp"
-#include "utils/config/config.hpp"
 
 namespace puc::terminal {
 class TerminalSession;
@@ -25,8 +23,8 @@ struct TerminalSubsystemOptions {
   int input_fd  = 0; /**< Borrowed terminal input descriptor. */
   int output_fd = 1; /**< Borrowed terminal output descriptor. */
   terminal::DecoderLimits decoder_limits; /**< Untrusted-input limits. */
-  std::optional<config::Config>
-      input_configuration;   /**< Merged configuration roots, when available. */
+  bool configure_decoder =
+      false;                 /**< Load the input Trie from Configuration. */
   std::string terminal_name; /**< Explicit terminfo/profile name, or empty. */
 };
 

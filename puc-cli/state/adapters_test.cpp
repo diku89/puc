@@ -20,11 +20,16 @@
 #include "msgs/screen_msgs.hpp"
 #include "puc-cli/state/bootstrap.hpp"
 #include "puc-cli/state/channels.hpp"
+#include "puc-cli/state/command_mode.hpp"
 #include "puc-cli/state/commands.hpp"
+#include "puc-cli/state/configuration.hpp"
 #include "puc-cli/state/directory.hpp"
+#include "puc-cli/state/embedded_terminal.hpp"
 #include "puc-cli/state/input.hpp"
 #include "puc-cli/state/lifecycle.hpp"
 #include "puc-cli/state/logger.hpp"
+#include "puc-cli/state/metronome.hpp"
+#include "puc-cli/state/presentation.hpp"
 #include "puc-cli/state/screen.hpp"
 #include "puc-cli/state/state.hpp"
 #include "puc-cli/state/terminal.hpp"
@@ -32,6 +37,7 @@
 #include "puc-cli/terminal/session.hpp"
 #include "puc-cli/tui/input_frame.hpp"
 #include "puc-cli/tui/screen.hpp"
+#include "utils/config/config.hpp"
 #include "utils/ipc/channel.hpp"
 #include "utils/ipc/directory.hpp"
 #include "utils/ipc/smem_channel.hpp"
@@ -54,7 +60,7 @@ class AdapterCommand final : public command::CommandApp {
 
   std::string get_description() const override { return "Adapter command"; }
 
-  std::string get_usage() const override { return {}; }
+  std::string get_usage() const override { return "--verbose"; }
 };
 
 TEST(CoreAdaptersTest, CreatesStopsAndRestartsDirectoryAboveWorkers) {
@@ -228,6 +234,8 @@ TEST(TerminalAdapterTest, RetainsMechanismsAndRebindsAcrossRestarts) {
             Status::OK);
   ASSERT_EQ(app.register_subsystem(std::make_unique<WorkerSubsystem>(2U)),
             Status::OK);
+  ASSERT_EQ(app.register_subsystem(std::make_unique<ConfigurationSubsystem>()),
+            Status::OK);
   ASSERT_EQ(app.register_subsystem(std::make_unique<LoggerSubsystem>()),
             Status::OK);
 
@@ -266,6 +274,8 @@ TEST(ScreenAdapterTest, BorrowsLifecycleOwnedTerminalAndDirectory) {
             Status::OK);
   ASSERT_EQ(app.register_subsystem(std::move(directory)), Status::OK);
   ASSERT_EQ(app.register_subsystem(std::make_unique<WorkerSubsystem>(2U)),
+            Status::OK);
+  ASSERT_EQ(app.register_subsystem(std::make_unique<ConfigurationSubsystem>()),
             Status::OK);
   ASSERT_EQ(app.register_subsystem(std::make_unique<LoggerSubsystem>()),
             Status::OK);
@@ -311,6 +321,8 @@ TEST(CommandAdapterTest, RetainsRegistryAndResolvesCurrentBorrowedServices) {
             Status::OK);
   ASSERT_EQ(app.register_subsystem(std::move(directory)), Status::OK);
   ASSERT_EQ(app.register_subsystem(std::move(workers)), Status::OK);
+  ASSERT_EQ(app.register_subsystem(std::make_unique<ConfigurationSubsystem>()),
+            Status::OK);
   ASSERT_EQ(app.register_subsystem(std::make_unique<LoggerSubsystem>()),
             Status::OK);
 
@@ -359,6 +371,8 @@ TEST(InputAdapterTest, ConsumesTypedNotificationsAcrossRestarts) {
             Status::OK);
   ASSERT_EQ(app.register_subsystem(std::make_unique<WorkerSubsystem>(2U)),
             Status::OK);
+  ASSERT_EQ(app.register_subsystem(std::make_unique<ConfigurationSubsystem>()),
+            Status::OK);
   ASSERT_EQ(app.register_subsystem(std::make_unique<LoggerSubsystem>()),
             Status::OK);
 
@@ -401,6 +415,123 @@ TEST(InputAdapterTest, ConsumesTypedNotificationsAcrossRestarts) {
   EXPECT_EQ(input_adapter->input_frame(), nullptr);
 }
 
+TEST(CommandModeAdapterTest,
+     CompletesDispatchesAndAcknowledgesAcrossARestartCycle) {
+  AppState app;
+  ApplicationSubsystemOptions options;
+  options.worker_count                = 2U;
+  options.selection.metronome         = false;
+  options.selection.embedded_terminal = false;
+  ASSERT_EQ(register_application_subsystems(app, std::move(options)),
+            Status::OK);
+  ASSERT_EQ(app.initialize(OperatingMode::TEST), Status::OK);
+
+  CommandSubsystem* commands = app.get_subsystem<CommandSubsystem>();
+  CommandModeSubsystem* command_mode =
+      app.get_subsystem<CommandModeSubsystem>();
+  InputSubsystem* input = app.get_subsystem<InputSubsystem>();
+  ASSERT_NE(commands, nullptr);
+  ASSERT_NE(command_mode, nullptr);
+  ASSERT_NE(input, nullptr);
+  const std::shared_ptr<AdapterCommand> adapter_command =
+      std::make_shared<AdapterCommand>();
+  ASSERT_EQ(
+      commands->dispatcher()->register_command("status", {}, adapter_command),
+      command::Status::OK);
+  ASSERT_EQ(
+      commands->dispatcher()->register_command("start", {}, adapter_command),
+      command::Status::OK);
+  ASSERT_EQ(app.start(), Status::OK);
+
+  ASSERT_EQ(command_mode->handle_event(terminal::Event{terminal::CommandEvent{
+                .command = terminal::Command::ENTER_COMMAND_MODE}}),
+            tui::Status::OK);
+  ASSERT_EQ(command_mode->handle_event(
+                terminal::Event{terminal::TextEvent{.utf8 = "st"}}),
+            tui::Status::OK);
+  CommandModeSnapshot snapshot = command_mode->snapshot();
+  ASSERT_EQ(snapshot.completions.size(), 2U);
+  EXPECT_EQ(input->input_frame()->snapshot().command_help.size(), 2U);
+
+  ASSERT_EQ(command_mode->handle_event(terminal::Event{terminal::KeyEvent{
+                .key = terminal::KeyCode{terminal::NamedKey::DOWN}}}),
+            tui::Status::OK);
+  snapshot = command_mode->snapshot();
+  ASSERT_LT(snapshot.selected_completion, snapshot.completions.size());
+  const std::string selected =
+      snapshot.completions[snapshot.selected_completion].command;
+  ASSERT_EQ(command_mode->handle_event(terminal::Event{terminal::KeyEvent{
+                .key = terminal::KeyCode{terminal::NamedKey::TAB}}}),
+            tui::Status::OK);
+  EXPECT_EQ(input->input_frame()->snapshot().command_text, selected + " ");
+  EXPECT_EQ(command_mode->snapshot().usage, "--verbose");
+
+  ASSERT_EQ(command_mode->handle_event(terminal::Event{terminal::KeyEvent{
+                .key = terminal::KeyCode{terminal::NamedKey::ENTER}}}),
+            tui::Status::OK);
+  EXPECT_TRUE(command_mode->snapshot().waiting_for_acknowledgement);
+  EXPECT_EQ(input->input_frame()->snapshot().mode, tui::InputMode::COMMAND);
+
+  ASSERT_EQ(app.stop(), Status::OK);
+  EXPECT_FALSE(command_mode->snapshot().active);
+  EXPECT_TRUE(command_mode->snapshot().waiting_for_acknowledgement);
+  ASSERT_EQ(app.start(), Status::OK);
+  EXPECT_TRUE(command_mode->snapshot().active);
+  EXPECT_TRUE(command_mode->snapshot().waiting_for_acknowledgement);
+  EXPECT_EQ(input->input_frame()->snapshot().mode, tui::InputMode::COMMAND);
+  ASSERT_EQ(command_mode->handle_event(terminal::Event{terminal::KeyEvent{
+                .key = terminal::KeyCode{terminal::NamedKey::TAB}}}),
+            tui::Status::OK);
+  EXPECT_EQ(input->input_frame()->snapshot().mode, tui::InputMode::NORMAL);
+  EXPECT_FALSE(command_mode->snapshot().waiting_for_acknowledgement);
+
+  EXPECT_EQ(app.terminate(), Status::OK);
+}
+
+TEST(EmbeddedTerminalAdapterTest, ReapsAndRecreatesItsChildAcrossRunCycles) {
+  AppState app;
+  ApplicationSubsystemOptions options;
+  options.worker_count            = 2U;
+  options.embedded_terminal.shell = "/bin/sh";
+  options.selection               = ApplicationSubsystemSelection{
+                    .metronome         = false,
+                    .presentation      = false,
+                    .commands          = false,
+                    .input             = true,
+                    .command_mode      = false,
+                    .embedded_terminal = true,
+  };
+  ASSERT_EQ(register_application_subsystems(app, std::move(options)),
+            Status::OK);
+  ASSERT_EQ(app.initialize(OperatingMode::TEST), Status::OK);
+  ASSERT_EQ(app.start(), Status::OK);
+
+  EmbeddedTerminalSubsystem* embedded =
+      app.get_subsystem<EmbeddedTerminalSubsystem>();
+  InputSubsystem* input = app.get_subsystem<InputSubsystem>();
+  ASSERT_NE(embedded, nullptr);
+  ASSERT_NE(input, nullptr);
+  ASSERT_EQ(
+      input->input_frame()->handle_event(terminal::Event{terminal::CommandEvent{
+          .command = terminal::Command::ENTER_TERMINAL_MODE}}),
+      tui::Status::OK);
+  const std::size_t generation =
+      input->input_frame()->snapshot().terminal_generation;
+  ASSERT_EQ(embedded->synchronize(80U, 24U), Status::OK);
+  EXPECT_TRUE(embedded->child_running());
+  EXPECT_EQ(embedded->child_generation(), generation);
+
+  ASSERT_EQ(app.stop(), Status::OK);
+  EXPECT_FALSE(embedded->child_running());
+  ASSERT_EQ(app.start(), Status::OK);
+  ASSERT_EQ(embedded->synchronize(80U, 24U), Status::OK);
+  EXPECT_TRUE(embedded->child_running());
+  EXPECT_EQ(embedded->child_generation(), generation);
+
+  ASSERT_EQ(app.terminate(), Status::OK);
+  EXPECT_FALSE(embedded->child_running());
+}
+
 TEST(AdapterBootstrapTest, RegistersAndRunsTheCompleteCanonicalGraph) {
   AppState app;
   ApplicationSubsystemOptions options;
@@ -411,6 +542,7 @@ TEST(AdapterBootstrapTest, RegistersAndRunsTheCompleteCanonicalGraph) {
   EXPECT_EQ(register_application_subsystems(app), Status::INVALID_ARGUMENT);
 
   EXPECT_NE(app.get_subsystem<LoggerSubsystem>(), nullptr);
+  EXPECT_NE(app.get_subsystem<ConfigurationSubsystem>(), nullptr);
   EXPECT_NE(app.get_subsystem<WorkerSubsystem>(), nullptr);
   EXPECT_NE(app.get_subsystem<DirectorySubsystem>(), nullptr);
   EXPECT_NE(app.get_subsystem<ScreenChannelSubsystem>(), nullptr);
@@ -419,17 +551,87 @@ TEST(AdapterBootstrapTest, RegistersAndRunsTheCompleteCanonicalGraph) {
   EXPECT_NE(app.get_subsystem<ScreenSubsystem>(), nullptr);
   EXPECT_NE(app.get_subsystem<CommandSubsystem>(), nullptr);
   EXPECT_NE(app.get_subsystem<InputSubsystem>(), nullptr);
+  EXPECT_NE(app.get_subsystem<MetronomeSubsystem>(), nullptr);
+  EXPECT_NE(app.get_subsystem<PresentationSubsystem>(), nullptr);
+  EXPECT_NE(app.get_subsystem<CommandModeSubsystem>(), nullptr);
+  EXPECT_NE(app.get_subsystem<EmbeddedTerminalSubsystem>(), nullptr);
 
   ASSERT_EQ(app.initialize(OperatingMode::TEST), Status::OK);
+  ConfigurationSubsystem* configuration =
+      app.get_subsystem<ConfigurationSubsystem>();
+  ASSERT_NE(configuration->configuration(), nullptr);
+  config::Config* configuration_generation = configuration->configuration();
   ASSERT_EQ(app.start(), Status::OK);
   const DirectorySubsystem* directory = app.get_subsystem<DirectorySubsystem>();
   ASSERT_NE(directory, nullptr);
   ASSERT_NE(directory->directory(), nullptr);
-  EXPECT_EQ(directory->directory()->size(), 3U);
+  EXPECT_EQ(directory->directory()->size(), 4U);
   EXPECT_TRUE(
       app.get_subsystem<InputSubsystem>()->notification_consumer_active());
+  EXPECT_NE(app.get_subsystem<PresentationSubsystem>()->renderer(), nullptr);
+  EXPECT_NE(app.get_subsystem<MetronomeSubsystem>()->metronome(), nullptr);
+  EXPECT_TRUE(app.get_subsystem<CommandModeSubsystem>()->snapshot().active);
+  EXPECT_FALSE(app.get_subsystem<EmbeddedTerminalSubsystem>()->child_running());
+
+  ASSERT_EQ(app.stop(), Status::OK);
+  EXPECT_EQ(configuration->configuration(), configuration_generation);
+  EXPECT_EQ(app.get_subsystem<PresentationSubsystem>()->renderer(), nullptr);
+  EXPECT_EQ(app.get_subsystem<MetronomeSubsystem>()->metronome(), nullptr);
+  EXPECT_FALSE(app.get_subsystem<CommandModeSubsystem>()->snapshot().active);
+  ASSERT_EQ(app.start(), Status::OK);
+  EXPECT_EQ(configuration->configuration(), configuration_generation);
+  EXPECT_NE(app.get_subsystem<PresentationSubsystem>()->renderer(), nullptr);
+  EXPECT_NE(app.get_subsystem<MetronomeSubsystem>()->metronome(), nullptr);
   EXPECT_EQ(app.terminate(), Status::OK);
+  EXPECT_EQ(configuration->configuration(), nullptr);
   EXPECT_EQ(app.lifecycle_state(), LifecycleState::TERMINATED);
+}
+
+TEST(AdapterBootstrapTest, RegistersExecutableSpecificLeafProfiles) {
+  AppState app;
+  ApplicationSubsystemOptions options;
+  options.worker_count = 2U;
+  options.selection    = ApplicationSubsystemSelection{
+         .metronome         = false,
+         .presentation      = true,
+         .commands          = false,
+         .input             = false,
+         .command_mode      = false,
+         .embedded_terminal = false,
+  };
+  const std::size_t expected = application_subsystem_count(options.selection);
+  ASSERT_EQ(register_application_subsystems(app, std::move(options)),
+            Status::OK);
+  EXPECT_EQ(app.size(), expected);
+  EXPECT_NE(app.get_subsystem<PresentationSubsystem>(), nullptr);
+  EXPECT_EQ(app.get_subsystem<MetronomeSubsystem>(), nullptr);
+  EXPECT_EQ(app.get_subsystem<CommandSubsystem>(), nullptr);
+  EXPECT_EQ(app.get_subsystem<InputSubsystem>(), nullptr);
+  EXPECT_EQ(app.get_subsystem<CommandModeSubsystem>(), nullptr);
+  EXPECT_EQ(app.get_subsystem<EmbeddedTerminalSubsystem>(), nullptr);
+  ASSERT_EQ(app.initialize(OperatingMode::TEST), Status::OK);
+  ASSERT_EQ(app.start(), Status::OK);
+  EXPECT_EQ(app.terminate(), Status::OK);
+}
+
+TEST(AdapterBootstrapTest, RejectsProfilesWithMissingLeafDependencies) {
+  {
+    AppState app;
+    ApplicationSubsystemOptions options;
+    options.selection.commands = false;
+    EXPECT_EQ(register_application_subsystems(app, std::move(options)),
+              Status::INVALID_ARGUMENT);
+    EXPECT_EQ(app.size(), 0U);
+  }
+  {
+    AppState app;
+    ApplicationSubsystemOptions options;
+    options.selection.input        = false;
+    options.selection.command_mode = false;
+    EXPECT_EQ(register_application_subsystems(app, std::move(options)),
+              Status::INVALID_ARGUMENT);
+    EXPECT_EQ(app.size(), 0U);
+  }
 }
 
 }  // namespace

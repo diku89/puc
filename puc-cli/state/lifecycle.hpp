@@ -19,13 +19,13 @@ enum class OperatingMode {
 enum class LifecycleState {
   UNINITIALIZED, /**< Subsystems may still be registered. */
   INITIALIZING,  /**< Dependency-first initialization is in progress. */
-  INITIALIZED,   /**< Every subsystem is initialized but not started. */
+  INITIALIZED,   /**< Durable state exists; no generation has started yet. */
   STARTING,      /**< Dependency-first startup is in progress. */
   RUNNING,       /**< Every subsystem has started successfully. */
   STOPPING,      /**< Dependent-first quiescence is in progress. */
-  STOPPED,       /**< Subsystems remain initialized but are not running. */
+  STOPPED,       /**< Durable state remains ready for another start cycle. */
   TERMINATING,   /**< Dependent-first resource release is in progress. */
-  TERMINATED,    /**< Every initialized subsystem has been released. */
+  TERMINATED,    /**< Final durable state release has completed exactly once. */
   CRASHED,       /**< A lifecycle hook or dependency contract failed. */
 };
 

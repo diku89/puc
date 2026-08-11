@@ -106,12 +106,12 @@ cc_binary(
     deps = [
         ":terminal",
         "//msgs",
+        "//puc-cli/state:adapters",
         "//puc-cli/tui",
         "//utils/config",
         "//utils/ipc",
         "//utils/logger",
         "//utils/metronome",
-        "//utils/multithreading",
     ],
 )
 

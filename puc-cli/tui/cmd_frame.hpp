@@ -41,6 +41,9 @@ class CmdFrame final : public Frame {
   /** Clear the disposable command buffer. */
   void clear();
 
+  /** Replace the complete command buffer and place the caret at its end. */
+  Status replace_text(std::string text);
+
   /** Return a consistent copy of command-editor state. */
   TextEditorSnapshot snapshot() const;
 

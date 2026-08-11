@@ -56,6 +56,15 @@ Status CmdFrame::handle_event(const terminal::Event& event) {
 
 void CmdFrame::clear() { impl_->input->clear(); }
 
+Status CmdFrame::replace_text(std::string text) {
+  impl_->input->clear();
+  if (text.empty()) {
+    return Status::OK;
+  }
+  return impl_->input->handle_event(
+      terminal::Event{terminal::TextEvent{.utf8 = std::move(text)}});
+}
+
 TextEditorSnapshot CmdFrame::snapshot() const {
   return impl_->input->snapshot();
 }
