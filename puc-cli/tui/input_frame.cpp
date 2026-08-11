@@ -310,6 +310,8 @@ class InputFrame::Impl {
   std::optional<Clock::time_point>
       escape_started;       /**< Time at which the first Escape arrived. */
   std::string notification; /**< UTF-8 notification-margin contents. */
+  std::vector<std::string>
+      command_help; /**< Completion/usage rows above command input. */
 };
 
 InputFrame::InputFrame(std::string name)
@@ -355,10 +357,18 @@ std::size_t InputFrame::preferred_height(std::size_t screen_width,
         bounded_width > gutter ? bounded_width - gutter : 1U;
     content_rows = impl_->normal_input->preferred_rows(text_width);
   }
-  const std::size_t desired =
-      content_rows > std::numeric_limits<std::size_t>::max() - 4U
+  const std::size_t help_rows =
+      impl_->mode == InputMode::COMMAND ? impl_->command_help.size() : 0U;
+  const std::size_t fixed_rows =
+      help_rows > std::numeric_limits<std::size_t>::max() - 4U
           ? std::numeric_limits<std::size_t>::max()
-          : content_rows + 4U;
+          : 4U + help_rows;
+  const std::size_t desired =
+      fixed_rows == std::numeric_limits<std::size_t>::max() ||
+              content_rows >
+                  std::numeric_limits<std::size_t>::max() - fixed_rows
+          ? std::numeric_limits<std::size_t>::max()
+          : content_rows + fixed_rows;
   const std::size_t maximum = maximum_height(screen_height);
   if (maximum < kMinimumHeight) {
     return maximum;
@@ -420,6 +430,25 @@ void InputFrame::set_notification(std::string notification) {
   impl_->notification = std::move(notification);
 }
 
+void InputFrame::set_command_help(std::vector<std::string> help) {
+  const std::unique_lock lock(impl_->mutex);
+  impl_->command_help = std::move(help);
+}
+
+Status InputFrame::replace_command_text(std::string text) {
+  const std::unique_lock lock(impl_->mutex);
+  return impl_->command->replace_text(std::move(text));
+}
+
+void InputFrame::leave_command_mode() {
+  const std::unique_lock lock(impl_->mutex);
+  if (impl_->mode == InputMode::COMMAND) {
+    impl_->mode = InputMode::NORMAL;
+  }
+  impl_->command_help.clear();
+  impl_->escape_started.reset();
+}
+
 Status InputFrame::write_terminal(std::string_view output) {
   return impl_->terminal->write(output);
 }
@@ -475,6 +504,8 @@ InputFrameSnapshot InputFrame::snapshot() const {
       .mode                    = impl_->mode,
       .input_text              = normal.text,
       .command_text            = command.text,
+      .notification            = impl_->notification,
+      .command_help            = impl_->command_help,
       .cursor                  = active.cursor,
       .scroll_row              = active.scroll_row,
       .escape_armed            = impl_->escape_started.has_value(),
@@ -508,6 +539,18 @@ Status InputFrame::draw(const Theme& theme, Canvas& canvas,
     return Status::INVALID_DIMENSIONS;
   }
   std::shared_ptr<BoundingFrame> active = impl_->active_bounding();
+  const std::size_t available_help_rows =
+      impl_->mode == InputMode::COMMAND && rect.height > kMinimumHeight
+          ? rect.height - kMinimumHeight
+          : 0U;
+  const std::size_t help_rows =
+      std::min(available_help_rows, impl_->command_help.size());
+  if (impl_->mode == InputMode::COMMAND) {
+    BoundingFrameConfiguration configuration =
+        editor_bounds(Theme::ColorTypes::TEXT_SUCCESS);
+    configuration.outer_margins.top += help_rows;
+    impl_->command_bounding->set_configuration(std::move(configuration));
+  }
   active->set_size_constraints(FrameSizeConstraints{
       .minimum_width             = kMinimumWidth,
       .minimum_height            = minimum,
@@ -520,6 +563,15 @@ Status InputFrame::draw(const Theme& theme, Canvas& canvas,
   }
 
   const Theme::Colors colors = theme.get_colors();
+  for (std::size_t row = 0U; row < help_rows; ++row) {
+    status = write_text_row(canvas, rect.x + 2U, rect.y + row,
+                            rect.width > 4U ? rect.width - 4U : 0U,
+                            text_editor::decode_utf8(impl_->command_help[row]),
+                            colors.text_muted, colors.background);
+    if (!is_ok(status)) {
+      return status;
+    }
+  }
   if (impl_->escape_started.has_value()) {
     const std::string_view prompt =
         impl_->mode == InputMode::COMMAND ? kExitCommandPrompt : kClearPrompt;

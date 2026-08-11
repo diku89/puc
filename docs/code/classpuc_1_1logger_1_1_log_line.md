@@ -4,13 +4,13 @@
 
 Accumulates one stream-style log line and emits it at end of expression.
 
-Applications normally create log lines through the [Logger](classpuc_1_1logger_1_1_logger.md) variable template declared by [LOGGER\_MODULE()](logger_8hpp.md#symbol-logger_8hpp_1afe144fc32be52607c8eac7e98ecdbc8b), rather than constructing this class directly.
+Applications normally create log lines through the [Logger](classpuc_1_1logger_1_1_logger.md) variable template declared by [LOGGER\_MODULE()](utils_2logger_2logger_8hpp.md#symbol-utils_2logger_2logger_8hpp_1afe144fc32be52607c8eac7e98ecdbc8b), rather than constructing this class directly.
 
 **Template parameters**
 
 - `Level` — Log level assigned to the line.
 
-[Source](../../utils/logger/logger.hpp#L136)
+[Source](../../utils/logger/logger.hpp#L148)
 
 ## Private data members
 
@@ -24,7 +24,7 @@ ModuleConf puc::logger::LogLine< Level >::module_
 
 Module configuration associated with this line.
 
-[Source](../../utils/logger/logger.hpp#L182)
+[Source](../../utils/logger/logger.hpp#L194)
 
 <a id="symbol-classpuc_1_1logger_1_1_log_line_1aa8b9859529b641c8b2294e3d6693bfb6"></a>
 
@@ -36,7 +36,7 @@ std::ostringstream puc::logger::LogLine< Level >::stream_
 
 Buffer holding the message until the line is emitted.
 
-[Source](../../utils/logger/logger.hpp#L185)
+[Source](../../utils/logger/logger.hpp#L197)
 
 ## Public functions
 
@@ -59,7 +59,7 @@ Construct a log line and append its first value.
 - `module` (in) — Module configuration associated with the line.
 - `value` (in) — First value to append.
 
-[Source](../../utils/logger/logger.hpp#L146)
+[Source](../../utils/logger/logger.hpp#L158)
 
 <a id="symbol-classpuc_1_1logger_1_1_log_line_1a820f3a5c090e27b3546ad8afe9266671"></a>
 
@@ -71,7 +71,7 @@ puc::logger::LogLine< Level >::LogLine(const LogLine &)=delete
 
 Log lines cannot be copied.
 
-[Source](../../utils/logger/logger.hpp#L151)
+[Source](../../utils/logger/logger.hpp#L163)
 
 <a id="symbol-classpuc_1_1logger_1_1_log_line_1ab14b6e68e0fcb1e5391281cdbd5b0c44"></a>
 
@@ -83,7 +83,7 @@ LogLine & puc::logger::LogLine< Level >::operator=(const LogLine &)=delete
 
 Log lines cannot be copy-assigned.
 
-[Source](../../utils/logger/logger.hpp#L154)
+[Source](../../utils/logger/logger.hpp#L166)
 
 <a id="symbol-classpuc_1_1logger_1_1_log_line_1a07b94441a6cff01ff7c0c46328e97478"></a>
 
@@ -95,7 +95,7 @@ puc::logger::LogLine< Level >::~LogLine() noexcept
 
 Emit the accumulated message without propagating logging failures.
 
-[Source](../../utils/logger/logger.hpp#L157)
+[Source](../../utils/logger/logger.hpp#L169)
 
 <a id="symbol-classpuc_1_1logger_1_1_log_line_1a67835e1cb14496ff585ba9aa6f06fbec"></a>
 
@@ -117,4 +117,4 @@ Append a value to this log line.
 
 **Returns:** This log line, allowing additional streaming operations.
 
-[Source](../../utils/logger/logger.hpp#L175)
+[Source](../../utils/logger/logger.hpp#L187)

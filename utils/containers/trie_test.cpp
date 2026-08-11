@@ -201,6 +201,43 @@ TEST(TrieTest, EraseRemovesOnlyTheExactValueAndRetainsItsPath) {
   EXPECT_FALSE(trie.erase({'z'}));
 }
 
+TEST(TrieTest, ReturnsCompleteSequencesBelowAnExplicitPrefix) {
+  StringTrie trie;
+  trie.insert(key("car"), "car");
+  trie.insert(key("cart"), "cart");
+  trie.insert(key("cat"), "cat");
+  trie.insert(key("dog"), "dog");
+
+  EXPECT_EQ(
+      trie.completions(key("ca")),
+      (std::vector<std::vector<char>>{key("car"), key("cart"), key("cat")}));
+  EXPECT_EQ(trie.completions(key("car")),
+            (std::vector<std::vector<char>>{key("car"), key("cart")}));
+  EXPECT_EQ(trie.completions(key("dog")),
+            (std::vector<std::vector<char>>{key("dog")}));
+  EXPECT_TRUE(trie.completions(key("missing")).empty());
+}
+
+TEST(TrieTest, EnumeratesTheRootWithoutIncludingItsSentinelKey) {
+  StringTrie trie;
+  trie.insert({}, "empty");
+  trie.insert(key("a"), "a");
+  trie.insert(key("ab"), "ab");
+
+  EXPECT_EQ(trie.completions(),
+            (std::vector<std::vector<char>>{{}, key("a"), key("ab")}));
+}
+
+TEST(TrieTest, OmitsErasedTerminalsButRetainsTheirCompletions) {
+  StringTrie trie;
+  trie.insert(key("run"), "run");
+  trie.insert(key("runner"), "runner");
+  ASSERT_TRUE(trie.erase(key("run")));
+
+  EXPECT_EQ(trie.completions(key("run")),
+            (std::vector<std::vector<char>>{key("runner")}));
+}
+
 TEST(TrieTest, NodeIndexesSurviveNodeVectorGrowth) {
   Trie<int, int> trie;
   const auto first = trie.insert({0}, 100);

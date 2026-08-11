@@ -6,9 +6,11 @@ doxygen(
     name = "code_xml",
     srcs = [
         "//:code_docs_srcs",
+        "//commands:code_docs_srcs",
         "//github/ci_tools:code_docs_srcs",
         "//msgs:code_docs_srcs",
         "//puc-cli:code_docs_srcs",
+        "//puc-cli/state:code_docs_srcs",
         "//puc-cli/terminal:code_docs_srcs",
         "//puc-cli/tui:code_docs_srcs",
         "//utils/config:code_docs_srcs",
@@ -19,6 +21,7 @@ doxygen(
         "//utils/metronome:code_docs_srcs",
         "//utils/multithreading:code_docs_srcs",
         "//utils/scripts:code_docs_srcs",
+        "//utils/utf8:code_docs_srcs",
     ],
     outs = ["xml"],
     # Communication contracts share one cross-reference page. The double-pipe

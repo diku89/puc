@@ -2,23 +2,11 @@
 
 # Struct `puc::execution_graph::ExecutionGraph::Impl::Node`
 
-One immutable identity/job plus topology and per-run readiness state.
+One immutable job plus copied topology and per-run readiness state.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L106)
+[Source](../../utils/execution_graph/execution_graph.hpp#L98)
 
 ## Public data members
-
-<a id="symbol-structpuc_1_1execution__graph_1_1_execution_graph_1_1_impl_1_1_node_1a6085109f8d00f7ca5d8c55402b0b6480"></a>
-
-### `value`
-
-```cpp
-NodeType puc::execution_graph::ExecutionGraph< NodeType >::Impl::Node::value
-```
-
-Caller-visible node identity.
-
-[Source](../../utils/execution_graph/execution_graph.hpp#L107)
 
 <a id="symbol-structpuc_1_1execution__graph_1_1_execution_graph_1_1_impl_1_1_node_1a8797db14220e960ecb13efeaf5dba17a"></a>
 
@@ -30,7 +18,7 @@ std::shared_ptr<multithreading::Job> puc::execution_graph::ExecutionGraph< NodeT
 
 Work invoked per run.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L108)
+[Source](../../utils/execution_graph/execution_graph.hpp#L99)
 
 <a id="symbol-structpuc_1_1execution__graph_1_1_execution_graph_1_1_impl_1_1_node_1a29b69eae68211c28f50c31f527cf1b88"></a>
 
@@ -42,7 +30,7 @@ std::vector<std::size_t> puc::execution_graph::ExecutionGraph< NodeType >::Impl:
 
 Outgoing directed edges.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L109)
+[Source](../../utils/execution_graph/execution_graph.hpp#L100)
 
 <a id="symbol-structpuc_1_1execution__graph_1_1_execution_graph_1_1_impl_1_1_node_1adcbfda25c8e2a47da6043b962f8ef1b9"></a>
 
@@ -54,7 +42,7 @@ std::size_t puc::execution_graph::ExecutionGraph< NodeType >::Impl::Node::depend
 
 Static incoming edge count.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L110)
+[Source](../../utils/execution_graph/execution_graph.hpp#L101)
 
 <a id="symbol-structpuc_1_1execution__graph_1_1_execution_graph_1_1_impl_1_1_node_1a2039ec8e6a3b9c59955e3e70258357c0"></a>
 
@@ -66,4 +54,4 @@ std::size_t puc::execution_graph::ExecutionGraph< NodeType >::Impl::Node::remain
 
 Current-run readiness.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L111)
+[Source](../../utils/execution_graph/execution_graph.hpp#L102)

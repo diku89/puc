@@ -2,7 +2,7 @@
 
 # Namespace `puc::config`
 
-[Source](../../puc-cli/terminal/timeouts.hpp#L14)
+[Source](../../puc-cli/state/configuration.hpp#L13)
 
 ## Related symbols
 
@@ -18,7 +18,7 @@
 
 ## Enumerations
 
-<a id="symbol-config_8hpp_1a22e10c0db0ee053eaca618763e0e28df"></a>
+<a id="symbol-utils_2config_2config_8hpp_1a22e10c0db0ee053eaca618763e0e28df"></a>
 
 ### `Status`
 
@@ -29,17 +29,17 @@ Status
 Result of locating and parsing one configuration file.
 
 #### Values
-- <a id="symbol-config_8hpp_1a22e10c0db0ee053eaca618763e0e28dfae0aa021e21dddbd6d8cecec71e9cf564"></a>`OK` — The configuration was loaded and parsed.
-- <a id="symbol-config_8hpp_1a22e10c0db0ee053eaca618763e0e28dfa8c02547a8a3b02382bac3557bcb2280d"></a>`NOT_FOUND` — The requested optional configuration does not exist.
-- <a id="symbol-config_8hpp_1a22e10c0db0ee053eaca618763e0e28dfab5247bd4dd13a33198e6997313a2bffc"></a>`INVALID_ROOT` — The configured root is not a readable directory.
-- <a id="symbol-config_8hpp_1a22e10c0db0ee053eaca618763e0e28dfac4a3ac542f825bb9d83b1506a69c077f"></a>`INVALID_PATH` — A path was empty, absolute, or escaped the root.
-- <a id="symbol-config_8hpp_1a22e10c0db0ee053eaca618763e0e28dfabf0ca2da14be0bfb44a59a9ac412a3ad"></a>`NOT_REGULAR_FILE` — The requested path does not name a regular file.
-- <a id="symbol-config_8hpp_1a22e10c0db0ee053eaca618763e0e28dfa198489bd72edc2407c15917c5323cd93"></a>`IO_ERROR` — The file could not be opened, read, or closed.
-- <a id="symbol-config_8hpp_1a22e10c0db0ee053eaca618763e0e28dfa551530ec1af53eaa77c1bde0ca457b4b"></a>`PARSE_ERROR` — The file is not valid TOML.
+- <a id="symbol-utils_2config_2config_8hpp_1a22e10c0db0ee053eaca618763e0e28dfae0aa021e21dddbd6d8cecec71e9cf564"></a>`OK` — The configuration was loaded and parsed.
+- <a id="symbol-utils_2config_2config_8hpp_1a22e10c0db0ee053eaca618763e0e28dfa8c02547a8a3b02382bac3557bcb2280d"></a>`NOT_FOUND` — The requested optional configuration does not exist.
+- <a id="symbol-utils_2config_2config_8hpp_1a22e10c0db0ee053eaca618763e0e28dfab5247bd4dd13a33198e6997313a2bffc"></a>`INVALID_ROOT` — The configured root is not a readable directory.
+- <a id="symbol-utils_2config_2config_8hpp_1a22e10c0db0ee053eaca618763e0e28dfac4a3ac542f825bb9d83b1506a69c077f"></a>`INVALID_PATH` — A path was empty, absolute, or escaped the root.
+- <a id="symbol-utils_2config_2config_8hpp_1a22e10c0db0ee053eaca618763e0e28dfabf0ca2da14be0bfb44a59a9ac412a3ad"></a>`NOT_REGULAR_FILE` — The requested path does not name a regular file.
+- <a id="symbol-utils_2config_2config_8hpp_1a22e10c0db0ee053eaca618763e0e28dfa198489bd72edc2407c15917c5323cd93"></a>`IO_ERROR` — The file could not be opened, read, or closed.
+- <a id="symbol-utils_2config_2config_8hpp_1a22e10c0db0ee053eaca618763e0e28dfa551530ec1af53eaa77c1bde0ca457b4b"></a>`PARSE_ERROR` — The file is not valid TOML.
 
 [Source](../../utils/config/config.hpp#L22)
 
-<a id="symbol-config_8hpp_1a6d6f4a02e466eec79eb03f5870d45664"></a>
+<a id="symbol-utils_2config_2config_8hpp_1a6d6f4a02e466eec79eb03f5870d45664"></a>
 
 ### `ValueType`
 
@@ -50,23 +50,23 @@ ValueType
 Public type of a TOML value.
 
 #### Values
-- <a id="symbol-config_8hpp_1a6d6f4a02e466eec79eb03f5870d45664ab50339a10e1de285ac99d4c3990b8693"></a>`NONE` — Missing value.
-- <a id="symbol-config_8hpp_1a6d6f4a02e466eec79eb03f5870d45664a63b588d5559f64f89a416e656880b949"></a>`STRING` — UTF-8 string.
-- <a id="symbol-config_8hpp_1a6d6f4a02e466eec79eb03f5870d45664a5d5cd46919fa987731fb2edefe0f2a0c"></a>`INTEGER` — Signed 64-bit integer.
-- <a id="symbol-config_8hpp_1a6d6f4a02e466eec79eb03f5870d45664ae738c26bf4ce1037fa81b039a915cbf6"></a>`FLOAT` — Double-precision floating-point number.
-- <a id="symbol-config_8hpp_1a6d6f4a02e466eec79eb03f5870d45664ac48d5da12d702e73d6966069f2687376"></a>`BOOLEAN` — Boolean value.
-- <a id="symbol-config_8hpp_1a6d6f4a02e466eec79eb03f5870d45664a633a6c7a6b9958f8174250094daf1e6a"></a>`DATE` — Local calendar date.
-- <a id="symbol-config_8hpp_1a6d6f4a02e466eec79eb03f5870d45664a346ff32eaa3c09983fb2ec057816d352"></a>`TIME` — Local wall-clock time.
-- <a id="symbol-config_8hpp_1a6d6f4a02e466eec79eb03f5870d45664a43354b9116100a9ffc05d385bd6eb65a"></a>`DATE_TIME` — Local date and time.
-- <a id="symbol-config_8hpp_1a6d6f4a02e466eec79eb03f5870d45664af4e7d17a45414f200112aef536c7a676"></a>`OFFSET_DATE_TIME` — [Date](structpuc_1_1config_1_1_date.md) and time carrying a UTC offset.
-- <a id="symbol-config_8hpp_1a6d6f4a02e466eec79eb03f5870d45664acb4fb1757fb37c43cded35d3eb857c43"></a>`ARRAY` — Ordered array of values.
-- <a id="symbol-config_8hpp_1a6d6f4a02e466eec79eb03f5870d45664a34bbae0aee41ddd6a73697584a20afc6"></a>`TABLE` — String-keyed table.
+- <a id="symbol-utils_2config_2config_8hpp_1a6d6f4a02e466eec79eb03f5870d45664ab50339a10e1de285ac99d4c3990b8693"></a>`NONE` — Missing value.
+- <a id="symbol-utils_2config_2config_8hpp_1a6d6f4a02e466eec79eb03f5870d45664a63b588d5559f64f89a416e656880b949"></a>`STRING` — UTF-8 string.
+- <a id="symbol-utils_2config_2config_8hpp_1a6d6f4a02e466eec79eb03f5870d45664a5d5cd46919fa987731fb2edefe0f2a0c"></a>`INTEGER` — Signed 64-bit integer.
+- <a id="symbol-utils_2config_2config_8hpp_1a6d6f4a02e466eec79eb03f5870d45664ae738c26bf4ce1037fa81b039a915cbf6"></a>`FLOAT` — Double-precision floating-point number.
+- <a id="symbol-utils_2config_2config_8hpp_1a6d6f4a02e466eec79eb03f5870d45664ac48d5da12d702e73d6966069f2687376"></a>`BOOLEAN` — Boolean value.
+- <a id="symbol-utils_2config_2config_8hpp_1a6d6f4a02e466eec79eb03f5870d45664a633a6c7a6b9958f8174250094daf1e6a"></a>`DATE` — Local calendar date.
+- <a id="symbol-utils_2config_2config_8hpp_1a6d6f4a02e466eec79eb03f5870d45664a346ff32eaa3c09983fb2ec057816d352"></a>`TIME` — Local wall-clock time.
+- <a id="symbol-utils_2config_2config_8hpp_1a6d6f4a02e466eec79eb03f5870d45664a43354b9116100a9ffc05d385bd6eb65a"></a>`DATE_TIME` — Local date and time.
+- <a id="symbol-utils_2config_2config_8hpp_1a6d6f4a02e466eec79eb03f5870d45664af4e7d17a45414f200112aef536c7a676"></a>`OFFSET_DATE_TIME` — [Date](structpuc_1_1config_1_1_date.md) and time carrying a UTC offset.
+- <a id="symbol-utils_2config_2config_8hpp_1a6d6f4a02e466eec79eb03f5870d45664acb4fb1757fb37c43cded35d3eb857c43"></a>`ARRAY` — Ordered array of values.
+- <a id="symbol-utils_2config_2config_8hpp_1a6d6f4a02e466eec79eb03f5870d45664a34bbae0aee41ddd6a73697584a20afc6"></a>`TABLE` — String-keyed table.
 
 [Source](../../utils/config/config.hpp#L57)
 
 ## Functions
 
-<a id="symbol-config_8hpp_1a57d2b0872970b8812974d9ad00d77962"></a>
+<a id="symbol-utils_2config_2config_8hpp_1a57d2b0872970b8812974d9ad00d77962"></a>
 
 ### `is_ok`
 
@@ -78,7 +78,7 @@ Return whether a configuration operation succeeded.
 
 [Source](../../utils/config/config.hpp#L33)
 
-<a id="symbol-config_8hpp_1a0996c368000d7e93c716d66e349b1d3c"></a>
+<a id="symbol-utils_2config_2config_8hpp_1a0996c368000d7e93c716d66e349b1d3c"></a>
 
 ### `status_message`
 

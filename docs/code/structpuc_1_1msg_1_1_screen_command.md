@@ -6,7 +6,7 @@ One ordered, fire-and-forget operation sent from Screen to TerminalSession.
 
 Commands intentionally contain no request identifier: the protocol has no completion or error reply. Recoverable terminal observations converge on a later command; an unrecoverable session failure terminates the process.
 
-**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000007):**
+**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000010):**
 
 **Kind:** Message  
 **Type:** [puc::msg::ScreenCommand](#)  

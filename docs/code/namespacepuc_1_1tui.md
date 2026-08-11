@@ -4,7 +4,7 @@
 
 Terminal user-interface primitives, layout, rendering, and terminal control.
 
-[Source](../../puc-cli/tui/annotated_text_frame.cpp#L22)
+[Source](../../commands/command.hpp#L30)
 
 ## Related symbols
 
@@ -63,7 +63,7 @@ Surface currently occupying the inner input frame.
 - <a id="symbol-namespacepuc_1_1tui_1a934fae8d8b59ef801802451dd8a56d86a26097a57f572fe88a7cdf80543422cb1"></a>`COMMAND` — Edit the temporary green command buffer.
 - <a id="symbol-namespacepuc_1_1tui_1a934fae8d8b59ef801802451dd8a56d86a6c7748bd0ad3fbdff996e81581ad64d6"></a>`TERMINAL` — Render the persistent libtmt virtual-terminal surface.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L21)
+[Source](../../puc-cli/tui/input_frame.hpp#L22)
 
 <a id="symbol-namespacepuc_1_1tui_1a6ec6e7ef6f90768da3386622a10eb37c"></a>
 
@@ -155,7 +155,7 @@ using puc::tui::InputCursor = TextCursor
 
 Backward-compatible name for the shared reusable editor caret type.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L28)
+[Source](../../puc-cli/tui/input_frame.hpp#L29)
 
 ## Variables
 

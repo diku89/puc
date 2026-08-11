@@ -5,23 +5,19 @@
  * @brief Reusable dependency-aware scheduling over a fixed JobQueue.
  */
 
-#include <algorithm>
 #include <concepts>
 #include <condition_variable>
 #include <cstddef>
 #include <cstdint>
 #include <exception>
-#include <functional>
 #include <memory>
 #include <mutex>
-#include <queue>
 #include <string_view>
 #include <type_traits>
-#include <unordered_map>
 #include <utility>
 #include <vector>
 
-#include "utils/execution_graph/status.hpp"
+#include "utils/execution_graph/dependency_graph.hpp"
 #include "utils/multithreading/job_queue.hpp"
 
 /** Generic dependency-graph construction and asynchronous execution. */
@@ -41,15 +37,11 @@ void log_transition(std::string_view operation,
 /**
  * Node identities accepted by ExecutionGraph.
  *
- * Values are copied into the graph, compared for equality, and indexed by
- * `std::hash`. The constraint deliberately says nothing about formatting,
- * ordering, inheritance, or the work performed by a node.
+ * This compatibility concept is the topology-only DependencyGraphNode
+ * contract under the execution scheduler's established public name.
  */
 template <typename NodeType>
-concept ExecutionGraphNode =
-    std::regular<NodeType> && requires(const NodeType& node) {
-      { std::hash<NodeType>{}(node) } -> std::convertible_to<std::size_t>;
-    };
+concept ExecutionGraphNode = DependencyGraphNode<NodeType>;
 
 /** A concrete worker job accepted as a graph node's executable body. */
 template <typename JobType>
@@ -59,7 +51,7 @@ concept ExecutionGraphJob =
 /**
  * Execute a reusable directed acyclic graph on a caller-owned worker pool.
  *
- * @tparam NodeType Regular, hashable identity used to declare graph edges.
+ * @tparam NodeType Copyable, equality-comparable, hashable graph identity.
  *
  * Each registered node owns a shared multithreading::Job. At `start()`, every
  * zero-dependency node is wrapped in an internal completion job and submitted.
@@ -102,9 +94,8 @@ class ExecutionGraph {
   /** Shared graph state retained independently by scheduled wrapper jobs. */
   class Impl : public std::enable_shared_from_this<Impl> {
    public:
-    /** One immutable identity/job plus topology and per-run readiness state. */
+    /** One immutable job plus copied topology and per-run readiness state. */
     struct Node {
-      NodeType value; /**< Caller-visible node identity. */
       std::shared_ptr<multithreading::Job> job; /**< Work invoked per run. */
       std::vector<std::size_t> dependents;      /**< Outgoing directed edges. */
       std::size_t dependency_count = 0U; /**< Static incoming edge count. */
@@ -130,13 +121,11 @@ class ExecutionGraph {
       if (state != RunState::IDLE) {
         return Status::EXECUTION_IN_PROGRESS;
       }
-      if (node_indices.contains(value)) {
-        return Status::DUPLICATE_NODE;
+      const Status topology_status = topology.add_node(value);
+      if (!is_ok(topology_status)) {
+        return topology_status;
       }
-      const std::size_t index = nodes.size();
-      node_indices.emplace(value, index);
-      nodes.push_back(Node{.value = std::move(value), .job = std::move(job)});
-      topology_valid = false;
+      nodes.push_back(Node{.job = std::move(job)});
       return Status::OK;
     }
 
@@ -146,23 +135,7 @@ class ExecutionGraph {
       if (state != RunState::IDLE) {
         return Status::EXECUTION_IN_PROGRESS;
       }
-      const auto prerequisite_entry = node_indices.find(prerequisite);
-      const auto dependent_entry    = node_indices.find(dependent);
-      if (prerequisite_entry == node_indices.end() ||
-          dependent_entry == node_indices.end()) {
-        return Status::NODE_NOT_FOUND;
-      }
-      std::vector<std::size_t>& dependents =
-          nodes[prerequisite_entry->second].dependents;
-      if (std::find(dependents.begin(), dependents.end(),
-                    dependent_entry->second) != dependents.end()) {
-        return Status::DUPLICATE_DEPENDENCY;
-      }
-      dependents.push_back(dependent_entry->second);
-      ++nodes[dependent_entry->second].dependency_count;
-      ++edge_count;
-      topology_valid = false;
-      return Status::OK;
+      return topology.add_dependency(prerequisite, dependent);
     }
 
     /** Validate the topology, initialize readiness, and schedule every root. */
@@ -179,7 +152,8 @@ class ExecutionGraph {
           detail::log_failure("start", Status::INVALID_ARGUMENT);
           return Status::INVALID_ARGUMENT;
         }
-        const Status validation = validate_topology_locked();
+        DependencyGraphSnapshot<NodeType> topology_snapshot;
+        const Status validation = topology.snapshot(topology_snapshot);
         if (!is_ok(validation)) {
           detail::log_failure("validate topology", validation);
           return validation;
@@ -193,7 +167,9 @@ class ExecutionGraph {
         running_jobs    = 0U;
         state           = RunState::RUNNING;
         for (std::size_t index = 0U; index < nodes.size(); ++index) {
-          Node& node                  = nodes[index];
+          Node& node      = nodes[index];
+          node.dependents = std::move(topology_snapshot.dependents[index]);
+          node.dependency_count = topology_snapshot.dependency_counts[index];
           node.remaining_dependencies = node.dependency_count;
           if (node.remaining_dependencies == 0U) {
             roots.push_back(index);
@@ -256,53 +232,19 @@ class ExecutionGraph {
     /** Return the number of registered nodes. */
     std::size_t size() const noexcept {
       const std::lock_guard lock(mutex);
-      return nodes.size();
+      return topology.size();
     }
 
     /** Return the number of registered directed edges. */
     std::size_t dependencies() const noexcept {
       const std::lock_guard lock(mutex);
-      return edge_count;
+      return topology.dependency_count();
     }
 
     /** Return the configured worker count. */
     std::size_t worker_count() const noexcept { return workers.worker_count(); }
 
    private:
-    /** Validate acyclicity once for the current immutable topology. */
-    Status validate_topology_locked() {
-      if (topology_valid) {
-        return Status::OK;
-      }
-      std::vector<std::size_t> remaining_dependencies;
-      remaining_dependencies.reserve(nodes.size());
-      std::queue<std::size_t> ready;
-      for (std::size_t index = 0U; index < nodes.size(); ++index) {
-        remaining_dependencies.push_back(nodes[index].dependency_count);
-        if (nodes[index].dependency_count == 0U) {
-          ready.push(index);
-        }
-      }
-
-      std::size_t visited = 0U;
-      while (!ready.empty()) {
-        const std::size_t index = ready.front();
-        ready.pop();
-        ++visited;
-        for (const std::size_t dependent : nodes[index].dependents) {
-          --remaining_dependencies[dependent];
-          if (remaining_dependencies[dependent] == 0U) {
-            ready.push(dependent);
-          }
-        }
-      }
-      if (visited != nodes.size()) {
-        return Status::DEPENDENCY_CYCLE;
-      }
-      topology_valid = true;
-      return Status::OK;
-    }
-
     /** Submit one ready node, converting queue rejection into run failure. */
     void schedule(std::size_t node_index,
                   std::uint64_t run_generation) noexcept {
@@ -389,14 +331,12 @@ class ExecutionGraph {
     multithreading::JobQueue& workers; /**< Borrowed caller-owned executor. */
     mutable std::mutex mutex; /**< Protects topology and all run state. */
     std::condition_variable finished; /**< Signals a collectable run result. */
-    std::vector<Node> nodes;          /**< Dense stable node storage. */
-    std::unordered_map<NodeType, std::size_t> node_indices; /**< Id index. */
-    std::size_t edge_count = 0U;    /**< Directed topology edge count. */
-    bool topology_valid    = false; /**< Acyclicity cache for current edges. */
-    RunState state         = RunState::IDLE; /**< Current lifecycle state. */
-    Status run_status      = Status::OK;     /**< Result of the active run. */
-    std::size_t remaining_nodes = 0U; /**< Nodes not completed this run. */
-    std::size_t running_jobs    = 0U; /**< Wrappers executing or queued. */
+    DependencyGraph<NodeType> topology; /**< Shared validated DAG mechanism. */
+    std::vector<Node> nodes;            /**< Dense stable node storage. */
+    RunState state    = RunState::IDLE; /**< Current lifecycle state. */
+    Status run_status = Status::OK;     /**< Result of the active run. */
+    std::size_t remaining_nodes = 0U;   /**< Nodes not completed this run. */
+    std::size_t running_jobs    = 0U;   /**< Wrappers executing or queued. */
     std::uint64_t generation    = 0U; /**< Rejects stale wrapper completion. */
   };
 

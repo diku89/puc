@@ -39,6 +39,8 @@
  * locates Bazel's `input_keys.toml` runfile and uses no user overlay.
  */
 
+#include "puc-cli/state/terminal.hpp"
+
 #include <poll.h>
 #include <sys/utsname.h>
 #include <unistd.h>
@@ -67,6 +69,12 @@
 
 #include "msgs/null_message.hpp"
 #include "msgs/screen_msgs.hpp"
+#include "puc-cli/state/bootstrap.hpp"
+#include "puc-cli/state/configuration.hpp"
+#include "puc-cli/state/metronome.hpp"
+#include "puc-cli/state/presentation.hpp"
+#include "puc-cli/state/screen.hpp"
+#include "puc-cli/state/terminal.hpp"
 #include "puc-cli/terminal/decoder.hpp"
 #include "puc-cli/terminal/sequences.hpp"
 #include "puc-cli/terminal/terminal_test_options.hpp"
@@ -83,7 +91,6 @@
 #include "utils/ipc/channel.hpp"
 #include "utils/logger/logger.hpp"
 #include "utils/metronome/metronome.hpp"
-#include "utils/multithreading/job_queue.hpp"
 
 /** @cond TERMINAL_TEST_LOGGER_MODULE */
 LOGGER_MODULE("Terminal Test App");
@@ -553,15 +560,15 @@ puc::tui::Status add_frame(
   return puc::tui::Status::OK;
 }
 
-/** Own one manual conformance run while borrowing main's worker pool. */
+/** Own one durable conformance plan over restartable shared services. */
 class TerminalTestApplication {
  public:
-  /** Capture environment and retain main's live worker pool. */
+  /** Capture environment and retain durable decoder/configuration services. */
   TerminalTestApplication(
-      puc::multithreading::JobQueue& workers, std::string_view executable,
+      puc::terminal::Decoder& decoder, const puc::config::Config& configuration,
       std::optional<puc::terminal::InputConformanceTest> selected_test)
-      : workers_(workers),
-        executable_(executable),
+      : decoder_(decoder),
+        configuration_(configuration),
         environment_(collect_environment()),
         runner_(InputConformanceRunner::kDefaultFeedbackDuration,
                 selected_test) {}
@@ -572,44 +579,24 @@ class TerminalTestApplication {
   /** Ensure terminal resources are quiesced before borrowed workers stop. */
   ~TerminalTestApplication() { static_cast<void>(shutdown()); }
 
-  /** Configure the trie, take the terminal, build frames, and start ticks. */
-  bool setup() {
-    const std::filesystem::path primary = primary_config_root(executable_);
-    const puc::config::Config configuration{primary, user_config_root(primary)};
-    const puc::terminal::Status decoder_status =
-        decoder_.setup(configuration, environment_.term, STDOUT_FILENO);
-    if (!puc::terminal::is_ok(decoder_status)) {
-      Logger<ERROR> << "Input decoder setup failed: "
-                    << puc::terminal::status_message(decoder_status);
-      return false;
-    }
+  /**
+   * Bind a running presentation generation, build frames, and subscribe.
+   *
+   * @param[in,out] active_screen Screen for the current run generation.
+   * @param[in,out] active_renderer Renderer for the current worker generation.
+   */
+  bool setup(Screen& active_screen, ParallelRenderer& active_renderer) {
     const puc::terminal::Status timeout_status =
-        puc::terminal::load_timeout_settings(configuration, timeout_settings_);
+        puc::terminal::load_timeout_settings(configuration_, timeout_settings_);
     if (!puc::terminal::is_ok(timeout_status)) {
       Logger<ERROR> << "Terminal timeout setup failed: "
                     << puc::terminal::status_message(timeout_status);
       return false;
     }
 
-    screen_   = std::make_unique<Screen>(workers_);
-    renderer_ = std::make_unique<ParallelRenderer>(workers_);
-    const msg::ScreenSessionOptions options{
-        .preserve_signals     = true,
-        .alternate_screen     = true,
-        .hide_cursor          = true,
-        .disable_auto_wrap    = true,
-        .bracketed_paste      = true,
-        .focus_reporting      = true,
-        .mouse                = msg::ScreenMouseTracking::DRAG,
-        .kitty_keyboard_flags = static_cast<std::uint32_t>(
-            puc::terminal::KeyboardEnhancement::DISAMBIGUATE_ESCAPE_CODES),
-    };
-    puc::tui::Status status = screen_->take(options);
-    if (!puc::tui::is_ok(status)) {
-      Logger<ERROR> << "Could not request terminal ownership: "
-                    << puc::tui::status_message(status);
-      return false;
-    }
+    screen_                 = &active_screen;
+    renderer_               = &active_renderer;
+    puc::tui::Status status = puc::tui::Status::OK;
 
     const auto geometry_deadline =
         std::chrono::steady_clock::now() + std::chrono::seconds{2};
@@ -633,14 +620,6 @@ class TerminalTestApplication {
       return false;
     }
 
-    metronome_ = std::make_unique<puc::metronome::Metronome>(
-        screen_->ipc_directory(), workers_);
-    const puc::metronome::Status metronome_status = metronome_->start();
-    if (!puc::metronome::is_ok(metronome_status)) {
-      Logger<ERROR> << "Could not start test countdown: "
-                    << puc::metronome::status_message(metronome_status);
-      return false;
-    }
     const puc::ipc::Status subscription_status =
         screen_->ipc_directory().subscribe(
             puc::metronome::kOneHertzChannel,
@@ -734,22 +713,21 @@ class TerminalTestApplication {
    */
   bool shutdown() noexcept {
     heartbeat_subscription_.reset();
-    if (metronome_ != nullptr) {
-      metronome_->stop();
-      metronome_.reset();
+    bool quiesced = true;
+    if (renderer_ != nullptr) {
+      quiesced = puc::tui::is_ok(renderer_->wait());
     }
-    renderer_.reset();
-    bool released = true;
-    if (screen_ != nullptr) {
-      const puc::tui::Status status = screen_->release();
-      released                      = puc::tui::is_ok(status);
-      if (!released) {
-        Logger<ERROR> << "Could not request terminal restoration: "
-                      << puc::tui::status_message(status);
-      }
-      screen_.reset();
-    }
-    return released;
+    canvas_.reset();
+    layout_description_.reset();
+    small_layout_description_.reset();
+    absolute_layout_       = {};
+    small_absolute_layout_ = {};
+    pending_decoder_timeout_.reset();
+    pending_selection_timeout_.reset();
+    screen_too_small_.store(false, std::memory_order_release);
+    screen_   = nullptr;
+    renderer_ = nullptr;
+    return quiesced;
   }
 
   /** Print the durable post-terminal report and return its pass count. */
@@ -1057,18 +1035,18 @@ class TerminalTestApplication {
     std::chrono::steady_clock::time_point deadline; /**< Delivery time. */
   };
 
-  puc::multithreading::JobQueue& workers_; /**< Main-owned shared workers. */
-  std::string executable_;        /**< argv[0] for runfiles fallback. */
+  puc::terminal::Decoder&
+      decoder_; /**< Lifecycle-owned configured input Trie. */
+  const puc::config::Config&
+      configuration_;             /**< Durable configuration roots. */
   EnvironmentInfo environment_;   /**< Stable terminal/host identity. */
   InputConformanceRunner runner_; /**< Timed event matcher. */
   std::shared_ptr<TerminalTestSelection> selection_state_ =
-      std::make_shared<TerminalTestSelection>(); /**< Typed prompt state. */
-  puc::terminal::Decoder decoder_; /**< Runtime-configured input Trie. */
+      std::make_shared<TerminalTestSelection>();    /**< Typed prompt state. */
   puc::terminal::TimeoutSettings timeout_settings_; /**< Layered durations. */
-  std::unique_ptr<Screen> screen_; /**< Presentation/session owner. */
-  std::unique_ptr<ParallelRenderer> renderer_; /**< Parallel frame scheduler. */
-  std::unique_ptr<puc::metronome::Metronome>
-      metronome_; /**< One-hertz publisher. */
+  Screen* screen_ = nullptr; /**< Lifecycle-owned presentation/session. */
+  ParallelRenderer* renderer_ =
+      nullptr; /**< Lifecycle-owned frame scheduler. */
   puc::ipc::Subscription
       heartbeat_subscription_;            /**< Tick callback lifetime. */
   puc::msg::NullMessageCodec null_codec_; /**< Heartbeat payload validator. */
@@ -1094,6 +1072,90 @@ class TerminalTestApplication {
       pending_selection_timeout_; /**< Current explicit click timeout. */
 };
 
+/** Preserve the conformance plan while rebinding restartable shared services.
+ */
+class TerminalTestRuntimeSubsystem final : public puc::app::AppSubsystem {
+ public:
+  /** Retain the selected plan until the one final terminate transition. */
+  explicit TerminalTestRuntimeSubsystem(
+      std::optional<puc::terminal::InputConformanceTest> selected_test)
+      : AppSubsystem(
+            "terminal-test-runtime",
+            puc::app::subsystem_dependencies<
+                puc::app::ConfigurationSubsystem, puc::app::TerminalSubsystem,
+                puc::app::ScreenSubsystem, puc::app::PresentationSubsystem,
+                puc::app::MetronomeSubsystem>()),
+        selected_test_(selected_test) {}
+
+  /** Construct the durable runner over durable configuration and Decoder. */
+  puc::app::Status initialize(puc::app::AppState& app) override {
+    auto* configuration = app.get_subsystem<puc::app::ConfigurationSubsystem>();
+    auto* terminal      = app.get_subsystem<puc::app::TerminalSubsystem>();
+    if (configuration == nullptr || configuration->configuration() == nullptr ||
+        terminal == nullptr || terminal->decoder() == nullptr) {
+      return puc::app::Status::SUBSYSTEM_FAILURE;
+    }
+    application_ = std::make_unique<TerminalTestApplication>(
+        *terminal->decoder(), *configuration->configuration(), selected_test_);
+    return puc::app::Status::OK;
+  }
+
+  /** Bind Screen, renderer, and heartbeat subscription for this generation. */
+  puc::app::Status start(puc::app::AppState& app) override {
+    auto* screen       = app.get_subsystem<puc::app::ScreenSubsystem>();
+    auto* presentation = app.get_subsystem<puc::app::PresentationSubsystem>();
+    auto* metronome    = app.get_subsystem<puc::app::MetronomeSubsystem>();
+    if (application_ == nullptr || screen == nullptr ||
+        screen->screen() == nullptr || presentation == nullptr ||
+        presentation->renderer() == nullptr || metronome == nullptr ||
+        metronome->metronome() == nullptr) {
+      return puc::app::Status::SUBSYSTEM_FAILURE;
+    }
+    if (!application_->setup(*screen->screen(), *presentation->renderer())) {
+      static_cast<void>(application_->shutdown());
+      return puc::app::Status::SUBSYSTEM_FAILURE;
+    }
+    return puc::app::Status::OK;
+  }
+
+  /** Drop subscriptions and Canvas bindings before shared services stop. */
+  puc::app::Status stop(puc::app::AppState& app) noexcept override {
+    static_cast<void>(app);
+    return application_ == nullptr || application_->shutdown()
+               ? puc::app::Status::OK
+               : puc::app::Status::SUBSYSTEM_FAILURE;
+  }
+
+  /** Release the durable conformance plan after the final report is consumed.
+   */
+  puc::app::Status terminate(puc::app::AppState& app) noexcept override {
+    const puc::app::Status status = stop(app);
+    application_.reset();
+    return status;
+  }
+
+  bool draw() { return application_ != nullptr && application_->draw(); }
+  bool finished() const {
+    return application_ == nullptr || application_->finished();
+  }
+  std::size_t print_report() const {
+    return application_ == nullptr ? 0U : application_->print_report();
+  }
+  std::size_t completed_count() const {
+    return application_ == nullptr ? 0U : application_->completed_count();
+  }
+  std::size_t planned_count() const {
+    return application_ == nullptr ? 0U : application_->planned_count();
+  }
+
+ private:
+  std::optional<puc::terminal::InputConformanceTest>
+      selected_test_; /**< Durable command-line plan selection. */
+  std::unique_ptr<TerminalTestApplication>
+      application_; /**< Durable runner and restartable presentation bindings.
+                     */
+};
+
 }  // namespace
 
 /**
@@ -1110,7 +1172,6 @@ int main(int argc, char** argv) {
   const puc::logger::LoggerConf logger_config{
       .global_level = puc::logger::LogLevel::WARN,
   };
-  LOGGER_INIT(logger_config);
 
   const std::string_view executable = argc > 0 && argv[0] != nullptr
                                           ? std::string_view{argv[0]}
@@ -1146,23 +1207,93 @@ int main(int argc, char** argv) {
 
   if (std::signal(SIGINT, request_stop) == SIG_ERR ||
       std::signal(SIGTERM, request_stop) == SIG_ERR) {
-    Logger<ERROR> << "Could not install termination signal handlers";
+    std::cerr << "Could not install termination signal handlers\n";
     return 1;
   }
 
-  puc::multithreading::JobQueue workers(kWorkerCount);
-  TerminalTestApplication application(workers, executable,
-                                      options.selected_test);
-  bool healthy = application.setup();
-  while (healthy && stop_requested == 0 && !application.finished()) {
-    healthy = application.draw();
+  const std::filesystem::path primary = primary_config_root(executable);
+  const std::filesystem::path user    = user_config_root(primary);
+  puc::app::ApplicationSubsystemOptions subsystem_options{
+      .logger       = logger_config,
+      .worker_count = kWorkerCount,
+      .configuration =
+          puc::app::ConfigurationSubsystemOptions{
+              .primary_root        = primary,
+              .user_overrides_root = user,
+          },
+      .terminal =
+          puc::app::TerminalSubsystemOptions{
+              .input_fd          = STDIN_FILENO,
+              .output_fd         = STDOUT_FILENO,
+              .decoder_limits    = {},
+              .configure_decoder = true,
+              .terminal_name     = environment_value("TERM"),
+          },
+      .screen =
+          puc::app::ScreenSubsystemOptions{
+              .take_terminal = true,
+              .session_options =
+                  msg::ScreenSessionOptions{
+                      .preserve_signals     = true,
+                      .alternate_screen     = true,
+                      .hide_cursor          = true,
+                      .disable_auto_wrap    = true,
+                      .bracketed_paste      = true,
+                      .focus_reporting      = true,
+                      .mouse                = msg::ScreenMouseTracking::DRAG,
+                      .kitty_keyboard_flags = static_cast<std::uint32_t>(
+                          puc::terminal::KeyboardEnhancement::
+                              DISAMBIGUATE_ESCAPE_CODES),
+                  },
+          },
+      .selection =
+          puc::app::ApplicationSubsystemSelection{
+              .metronome         = true,
+              .presentation      = true,
+              .commands          = false,
+              .input             = false,
+              .command_mode      = false,
+              .embedded_terminal = false,
+          },
+  };
+  puc::app::AppState app;
+  puc::app::Status app_status = puc::app::register_application_subsystems(
+      app, std::move(subsystem_options));
+  auto runtime =
+      std::make_unique<TerminalTestRuntimeSubsystem>(options.selected_test);
+  TerminalTestRuntimeSubsystem* runtime_view = runtime.get();
+  if (puc::app::is_ok(app_status)) {
+    app_status = app.register_subsystem(std::move(runtime));
+  }
+  if (!puc::app::is_ok(app_status)) {
+    std::cerr << "Could not register terminal-test subsystems: "
+              << puc::app::status_message(app_status) << '\n';
+    return 1;
+  }
+  app_status = app.initialize(puc::app::OperatingMode::TUI);
+  if (puc::app::is_ok(app_status)) {
+    app_status = app.start();
+  }
+  if (!puc::app::is_ok(app_status)) {
+    std::cerr << "Could not start terminal-test subsystems: "
+              << puc::app::status_message(app_status) << '\n';
+    static_cast<void>(app.terminate());
+    return 1;
   }
 
-  const bool restored         = application.shutdown();
-  const std::size_t passed    = application.print_report();
-  const std::size_t completed = application.completed_count();
-  const std::size_t planned   = application.planned_count();
-  workers.wait();
-  return healthy && restored && completed == planned && passed == planned ? 0
-                                                                          : 1;
+  bool healthy = true;
+  while (healthy && stop_requested == 0 && !runtime_view->finished()) {
+    healthy = runtime_view->draw();
+  }
+
+  const puc::app::Status stop_status      = app.stop();
+  const std::size_t passed                = runtime_view->print_report();
+  const std::size_t completed             = runtime_view->completed_count();
+  const std::size_t planned               = runtime_view->planned_count();
+  const puc::app::Status terminate_status = app.terminate();
+  return healthy && puc::app::is_ok(stop_status) &&
+                 puc::app::is_ok(terminate_status) && completed == planned &&
+                 passed == planned
+             ? 0
+             : 1;
 }

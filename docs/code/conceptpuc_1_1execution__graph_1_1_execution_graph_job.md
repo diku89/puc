@@ -4,4 +4,4 @@
 
 A concrete worker job accepted as a graph node's executable body.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L56)
+[Source](../../utils/execution_graph/execution_graph.hpp#L48)

@@ -6,4 +6,4 @@ Value contract accepted by Codec.
 
 Message values are ordinary regular C++ values. Each value type supplies a `std::formatter<T, char>` specialization whose default format is valid JSON. This keeps JSON next to the struct that defines the schema and lets the generic codec use `std::format("{}", value)` without a JSON dependency.
 
-[Source](../../msgs/codec.hpp#L77)
+[Source](../../msgs/codec.hpp#L88)

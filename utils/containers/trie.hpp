@@ -65,8 +65,9 @@ struct TrieNode {
  * remain valid only until the next insertion.
  *
  * The caller is responsible for synchronization when a trie is accessed from
- * multiple threads. Lookup methods perform no dynamic allocation or mutation;
- * node and child-vector growth occur only during `insert()`.
+ * multiple threads. Exact lookup methods perform no dynamic allocation or
+ * mutation; completion lookup allocates only its returned key sequences. Node
+ * and child-vector growth occur only during `insert()`.
  *
  * @tparam KeyType Regular sequence element supporting equality comparison.
  * @tparam ValueType Default-initializable, movable directly stored value.
@@ -236,7 +237,47 @@ class Trie {
     return node_index != kInvalidNode && nodes_[node_index].sequence_end;
   }
 
+  /**
+   * Return every stored sequence beginning with a prefix.
+   *
+   * Results are complete sequences from the root, ordered by the insertion
+   * order of each traversed branch. An exact prefix is included when it is a
+   * stored sequence, followed by any longer descendants. An empty prefix
+   * enumerates the entire trie, including the empty sequence when one was
+   * inserted.
+   *
+   * @param[in] prefix Sequence path whose terminal descendants to collect.
+   * @return Complete stored sequences below `prefix`, or an empty vector when
+   *         the prefix is absent.
+   */
+  std::vector<std::vector<KeyType>> completions(
+      const std::vector<KeyType>& prefix = {}) const {
+    std::vector<std::vector<KeyType>> result;
+    const NodeIndex prefix_node = find_node(prefix);
+    if (prefix_node == kInvalidNode) {
+      return result;
+    }
+
+    std::vector<KeyType> current_sequence = prefix;
+    collect_completions(prefix_node, current_sequence, result);
+    return result;
+  }
+
  private:
+  /** Append terminal descendants of one valid node in branch order. */
+  void collect_completions(
+      NodeIndex node_index, std::vector<KeyType>& current_sequence,
+      std::vector<std::vector<KeyType>>& completions) const {
+    if (nodes_[node_index].sequence_end) {
+      completions.push_back(current_sequence);
+    }
+    for (const NodeIndex child_index : nodes_[node_index].children) {
+      current_sequence.push_back(nodes_[child_index].key);
+      collect_completions(child_index, current_sequence, completions);
+      current_sequence.pop_back();
+    }
+  }
+
   /** Append-only storage whose indexes identify every node. */
   std::vector<Node> nodes_;
 };

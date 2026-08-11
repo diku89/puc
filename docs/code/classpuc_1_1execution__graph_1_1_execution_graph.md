@@ -6,13 +6,13 @@ Execute a reusable directed acyclic graph on a caller-owned worker pool.
 
 **Template parameters**
 
-- `NodeType` — Regular, hashable identity used to declare graph edges.
+- `NodeType` — Copyable, equality-comparable, hashable graph identity.
 
 Each registered node owns a shared [multithreading::Job](classpuc_1_1multithreading_1_1_job.md). At `start()`, every zero-dependency node is wrapped in an internal completion job and submitted. Completion decrements the remaining dependency count of each successor and submits successors precisely when they become unblocked. Thus every ready branch can run concurrently while no job starts before all prerequisites finish.
 
 Topology is validated only after it changes; subsequent runs reuse the same validated nodes, edges, and jobs. `wait()` consumes one run's result and returns the graph to its reusable idle state. Construction methods and lifecycle methods are thread-safe, although only one run may exist at once. Node jobs themselves retain their ordinary caller-defined synchronization responsibilities.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L79)
+[Source](../../utils/execution_graph/execution_graph.hpp#L71)
 
 ## Related symbols
 
@@ -31,7 +31,7 @@ std::shared_ptr<Impl> puc::execution_graph::ExecutionGraph< NodeType >::impl_
 
 State shared with scheduled wrappers.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L463)
+[Source](../../utils/execution_graph/execution_graph.hpp#L403)
 
 ## Public functions
 
@@ -47,7 +47,7 @@ Construct an empty reusable graph over one caller-owned worker pool.
 
 The pool must remain alive and accepting work until this graph has no active run and has been destroyed. [ExecutionGraph](#) never stops or joins it.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L410)
+[Source](../../utils/execution_graph/execution_graph.hpp#L350)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1aed9a54ae957d7d42852d640cc03fe7ac"></a>
 
@@ -57,7 +57,7 @@ The pool must remain alive and accepting work until this graph has no active run
 puc::execution_graph::ExecutionGraph< NodeType >::ExecutionGraph(const ExecutionGraph &)=delete
 ```
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L413)
+[Source](../../utils/execution_graph/execution_graph.hpp#L353)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1a06bc9f834262d7176b774c7c500c4452"></a>
 
@@ -67,7 +67,7 @@ puc::execution_graph::ExecutionGraph< NodeType >::ExecutionGraph(const Execution
 ExecutionGraph & puc::execution_graph::ExecutionGraph< NodeType >::operator=(const ExecutionGraph &)=delete
 ```
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L414)
+[Source](../../utils/execution_graph/execution_graph.hpp#L354)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1a485620a8f8ef635bd6fde916b7a059a4"></a>
 
@@ -77,7 +77,7 @@ ExecutionGraph & puc::execution_graph::ExecutionGraph< NodeType >::operator=(con
 puc::execution_graph::ExecutionGraph< NodeType >::ExecutionGraph(ExecutionGraph &&)=delete
 ```
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L415)
+[Source](../../utils/execution_graph/execution_graph.hpp#L355)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1a0f5eb1ea2a343bb04dbf659daddac2e5"></a>
 
@@ -87,7 +87,7 @@ puc::execution_graph::ExecutionGraph< NodeType >::ExecutionGraph(ExecutionGraph 
 ExecutionGraph & puc::execution_graph::ExecutionGraph< NodeType >::operator=(ExecutionGraph &&)=delete
 ```
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L416)
+[Source](../../utils/execution_graph/execution_graph.hpp#L356)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1a8d4104658667fc5ec2e4a0c9cff21194"></a>
 
@@ -99,7 +99,7 @@ puc::execution_graph::ExecutionGraph< NodeType >::~ExecutionGraph()
 
 Wait for any active run before releasing the graph facade.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L419)
+[Source](../../utils/execution_graph/execution_graph.hpp#L359)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1aa57dc5548a84edec22b4a9b5494d515f"></a>
 
@@ -113,7 +113,7 @@ Register one uniquely identified job node.
 
 Heterogeneous concrete Job types may coexist in one graph because the graph stores the [multithreading::Job](classpuc_1_1multithreading_1_1_job.md) interface after compile-time derivation checking.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L429)
+[Source](../../utils/execution_graph/execution_graph.hpp#L369)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1aafbbbae6cace0b93bcdc5368ac19285b"></a>
 
@@ -125,7 +125,7 @@ Status puc::execution_graph::ExecutionGraph< NodeType >::add_dependency(const No
 
 Declare that `dependent` may start only after `prerequisite` completes.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L436)
+[Source](../../utils/execution_graph/execution_graph.hpp#L376)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1a4fed4a160fd840ea9dc885e57926d668"></a>
 
@@ -137,7 +137,7 @@ Status puc::execution_graph::ExecutionGraph< NodeType >::start()
 
 Validate the current DAG and asynchronously schedule all ready roots.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L442)
+[Source](../../utils/execution_graph/execution_graph.hpp#L382)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1aef03da0ec504c47b9d0485c33b372fc7"></a>
 
@@ -149,7 +149,7 @@ Status puc::execution_graph::ExecutionGraph< NodeType >::wait() noexcept
 
 Wait for and consume the active run result, restoring reusable idle state.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L446)
+[Source](../../utils/execution_graph/execution_graph.hpp#L386)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1a8e42dd3b260cfa50c4edd35e444efa13"></a>
 
@@ -161,7 +161,7 @@ bool puc::execution_graph::ExecutionGraph< NodeType >::active() const noexcept
 
 Return whether a run is active or has an unconsumed result.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L449)
+[Source](../../utils/execution_graph/execution_graph.hpp#L389)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1a68b8a22534bf71eb940d8115ef0e819f"></a>
 
@@ -173,7 +173,7 @@ std::size_t puc::execution_graph::ExecutionGraph< NodeType >::size() const noexc
 
 Return the number of registered nodes.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L452)
+[Source](../../utils/execution_graph/execution_graph.hpp#L392)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1ad5ed031449c64cc06128aa581e717f27"></a>
 
@@ -185,7 +185,7 @@ std::size_t puc::execution_graph::ExecutionGraph< NodeType >::dependency_count()
 
 Return the number of registered directed dependency edges.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L455)
+[Source](../../utils/execution_graph/execution_graph.hpp#L395)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_graph_1a8bb19498c745753b8333710d4f449e98"></a>
 
@@ -197,4 +197,4 @@ std::size_t puc::execution_graph::ExecutionGraph< NodeType >::worker_count() con
 
 Return the fixed size of the borrowed worker pool.
 
-[Source](../../utils/execution_graph/execution_graph.hpp#L460)
+[Source](../../utils/execution_graph/execution_graph.hpp#L400)

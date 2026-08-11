@@ -4,10 +4,12 @@
 
 Generic dependency-graph construction and asynchronous execution.
 
-[Source](../../utils/execution_graph/execution_graph.cpp#L17)
+[Source](../../utils/execution_graph/dependency_graph.hpp#L19)
 
 ## Related symbols
 
+- [puc::execution\_graph::DependencyGraph](classpuc_1_1execution__graph_1_1_dependency_graph.md)
+- [puc::execution\_graph::DependencyGraphSnapshot](structpuc_1_1execution__graph_1_1_dependency_graph_snapshot.md)
 - [puc::execution\_graph::ExecutionGraph](classpuc_1_1execution__graph_1_1_execution_graph.md)
 - [puc::execution\_graph::detail](namespacepuc_1_1execution__graph_1_1detail.md)
 

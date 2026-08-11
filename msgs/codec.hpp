@@ -53,6 +53,17 @@ enum class MessageId : std::uint32_t {
    * \ref puc::tui::Screen "Screen" and subscribed geometry observers.}
    */
   SCREEN_RESIZE_EVENT = 2U,
+
+  /**
+   * Command-mode notification text.
+   *
+   * \msg_id{3||puc::msg::CmdFrameNotification||Selects the UTF-8 command
+   * notification schema published on //cmdframe/notify.||
+   * \ref puc::command::send_notification "Command notification producers".||
+   * The command-mode controller presenting \ref puc::tui::CmdFrame
+   * "CmdFrame".}
+   */
+  CMD_FRAME_NOTIFICATION = 3U,
 };
 
 /** Convert a payload schema identifier to its IPC wire representation. */

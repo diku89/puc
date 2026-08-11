@@ -4,10 +4,12 @@
 
 Typed payload serialization and JSON formatting above PUC IPC.
 
-[Source](../../msgs/codec.cpp#L25)
+[Source](../../msgs/cmdframe_msgs.cpp#L23)
 
 ## Related symbols
 
+- [puc::msg::CmdFrameNotification](structpuc_1_1msg_1_1_cmd_frame_notification.md)
+- [puc::msg::CmdFrameNotificationCodec](classpuc_1_1msg_1_1_cmd_frame_notification_codec.md)
 - [puc::msg::Codec](classpuc_1_1msg_1_1_codec.md)
 - [puc::msg::CodecBase](classpuc_1_1msg_1_1_codec_base.md)
 - [puc::msg::MessageCodecCollection](classpuc_1_1msg_1_1_message_codec_collection.md)
@@ -38,7 +40,7 @@ Globally registered payload schema identifiers.
 #### Values
 - <a id="symbol-namespacepuc_1_1msg_1a24b154890bf81939005e112918c3813fabba60353fe62a4eed8c486b71c20f573"></a>`NULL_MESSAGE` — Empty payload represented as an empty JSON object.
 
-**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000001):**
+**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000003):**
 
 **Kind:** Message ID  
 **ID:** `0`  
@@ -48,7 +50,7 @@ Globally registered payload schema identifiers.
 **Consumers:** Generic dispatch and components expecting an explicit no-data payload.
 - <a id="symbol-namespacepuc_1_1msg_1a24b154890bf81939005e112918c3813fa2762e0ac6a7a8de6eb1160ffeaa14043"></a>`SCREEN_COMMAND` — One-way command from Screen to TerminalSession.
 
-**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000002):**
+**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000004):**
 
 **Kind:** Message ID  
 **ID:** `1`  
@@ -58,7 +60,7 @@ Globally registered payload schema identifiers.
 **Consumers:** [TerminalSession](classpuc_1_1terminal_1_1_terminal_session.md).
 - <a id="symbol-namespacepuc_1_1msg_1a24b154890bf81939005e112918c3813fac6358684a996df7bd22732e2db736db5"></a>`SCREEN_RESIZE_EVENT` — Observed terminal geometry publication.
 
-**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000003):**
+**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000005):**
 
 **Kind:** Message ID  
 **ID:** `2`  
@@ -66,6 +68,16 @@ Globally registered payload schema identifiers.
 **Purpose:** Selects the fixed-width schema for the newest observed terminal geometry.  
 **Producers:** [TerminalSession](classpuc_1_1terminal_1_1_terminal_session.md).  
 **Consumers:** [Screen](classpuc_1_1tui_1_1_screen.md) and subscribed geometry observers.
+- <a id="symbol-namespacepuc_1_1msg_1a24b154890bf81939005e112918c3813fa927a4a1b4940c5412075641ddb1120b5"></a>`CMD_FRAME_NOTIFICATION` — Command-mode notification text.
+
+**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000006):**
+
+**Kind:** Message ID  
+**ID:** `3`  
+**Message:** [puc::msg::CmdFrameNotification](structpuc_1_1msg_1_1_cmd_frame_notification.md)  
+**Purpose:** Selects the UTF-8 command notification schema published on //cmdframe/notify.  
+**Producers:** [Command notification producers](namespacepuc_1_1command.md#symbol-command_8cpp_1aae6bb7ab5476027600e831b5731b57ea).  
+**Consumers:** The command-mode controller presenting [CmdFrame](classpuc_1_1tui_1_1_cmd_frame.md).
 
 [Source](../../msgs/codec.hpp#L26)
 
@@ -128,6 +140,26 @@ Result of a payload codec or codec-registry operation.
 
 ## Variables
 
+<a id="symbol-namespacepuc_1_1msg_1a2750e4faa0d4b6bedda2b4809e89a08a"></a>
+
+### `kCmdFrameNotifyChannel`
+
+```cpp
+std::string_view puc::msg::kCmdFrameNotifyChannel
+```
+
+Channel publishing the newest notification from an executing command.
+
+**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000001):**
+
+**Kind:** Channel  
+**Name:** `//cmdframe/notify`  
+**Purpose:** Publishes the newest UTF-8 command notification for display beneath the command editor. Pending stale notifications may be replaced before delivery.  
+**Producers:** [Command notification producers](namespacepuc_1_1command.md#symbol-command_8cpp_1aae6bb7ab5476027600e831b5731b57ea).  
+**Consumers:** The command-mode controller presenting [CmdFrame](classpuc_1_1tui_1_1_cmd_frame.md).
+
+[Source](../../msgs/cmdframe_msgs.hpp#L29)
+
 <a id="symbol-namespacepuc_1_1msg_1ab3c15431e3548f48110d613240af05d9"></a>
 
 ### `kScreenCommandChannel`
@@ -138,7 +170,7 @@ std::string_view puc::msg::kScreenCommandChannel
 
 Channel carrying commands from TUI presentation to terminal mechanism.
 
-**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000005):**
+**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000008):**
 
 **Kind:** Channel  
 **Name:** `//screen/commands`  
@@ -158,7 +190,7 @@ std::string_view puc::msg::kScreenResizeEventChannel
 
 Channel publishing terminal geometry whenever the observation changes.
 
-**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000006):**
+**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000009):**
 
 **Kind:** Channel  
 **Name:** `//screen/resize_events`  
@@ -170,6 +202,18 @@ Channel publishing terminal geometry whenever the observation changes.
 
 ## Functions
 
+<a id="symbol-namespacepuc_1_1msg_1abd9e58873eeeb77ca6f771f0dd8a0156"></a>
+
+### `register_cmdframe_codecs`
+
+```cpp
+Status puc::msg::register_cmdframe_codecs(MessageCodecCollection &codecs)
+```
+
+Register the command-frame notification schema in a collection.
+
+[Source](../../msgs/cmdframe_msgs.cpp#L50)
+
 <a id="symbol-namespacepuc_1_1msg_1af5130baaab5d570f9336d93d963c201a"></a>
 
 ### `to_wire_id`
@@ -180,7 +224,7 @@ std::uint32_t puc::msg::to_wire_id(MessageId message_id) noexcept
 
 Convert a payload schema identifier to its IPC wire representation.
 
-[Source](../../msgs/codec.hpp#L59)
+[Source](../../msgs/codec.hpp#L70)
 
 <a id="symbol-namespacepuc_1_1msg_1aacd082ba1fecf7c69c4c4ef12388c1bb"></a>
 
@@ -192,7 +236,7 @@ MessageId puc::msg::from_wire_id(std::uint32_t message_id) noexcept
 
 Convert an IPC wire identifier to a payload schema identifier.
 
-[Source](../../msgs/codec.hpp#L64)
+[Source](../../msgs/codec.hpp#L75)
 
 <a id="symbol-namespacepuc_1_1msg_1a781f11eb19137fb1f890dfd2e7386979"></a>
 
