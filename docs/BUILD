@@ -11,6 +11,8 @@ doxygen(
         "//msgs:code_docs_srcs",
         "//properties:code_docs_srcs",
         "//puc-cli:code_docs_srcs",
+        "//puc-cli/application:code_docs_srcs",
+        "//puc-cli/test_apps:code_docs_srcs",
         "//puc-cli/tui:code_docs_srcs",
         "//puc-cli/tui/terminal:code_docs_srcs",
         "//state:code_docs_srcs",

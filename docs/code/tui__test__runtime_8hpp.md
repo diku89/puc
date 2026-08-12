@@ -4,7 +4,7 @@
 
 Primary lifecycle-owned logic for the TUI rendering smoke test.
 
-[Source](../../puc-cli/tui/tui_test_runtime.hpp)
+[Source](../../puc-cli/test_apps/tui/tui_test_runtime.hpp)
 
 ## Related symbols
 

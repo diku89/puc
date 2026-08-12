@@ -6,7 +6,7 @@ Lifecycle entry point for the InputFrame manual test application.
 
 Primary application logic lives in InputTestRuntimeSubsystem. `main()` owns the process boundary: subsystem registration and the one initialize/start/stop/terminate lifetime.
 
-[Source](../../puc-cli/tui/input-test-app.cpp)
+[Source](../../puc-cli/test_apps/input/input-test-app.cpp)
 
 ## Functions
 
@@ -18,4 +18,4 @@ Primary application logic lives in InputTestRuntimeSubsystem. `main()` owns the 
 int main(int argc, char **argv)
 ```
 
-[Source](../../puc-cli/tui/input-test-app.cpp#L77)
+[Source](../../puc-cli/test_apps/input/input-test-app.cpp#L77)

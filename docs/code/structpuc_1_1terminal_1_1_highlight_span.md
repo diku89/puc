@@ -4,7 +4,7 @@
 
 One selected portion of a rendered line, with an inclusive final column.
 
-[Source](../../puc-cli/tui/terminal/terminal_test_selection.hpp#L31)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_selection.hpp#L31)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::size_t puc::terminal::HighlightSpan::line
 
 Selectable-line index.
 
-[Source](../../puc-cli/tui/terminal/terminal_test_selection.hpp#L32)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_selection.hpp#L32)
 
 <a id="symbol-structpuc_1_1terminal_1_1_highlight_span_1a3e93c5b0ee720a75396b7def338845f8"></a>
 
@@ -30,7 +30,7 @@ std::size_t puc::terminal::HighlightSpan::first
 
 First selected character.
 
-[Source](../../puc-cli/tui/terminal/terminal_test_selection.hpp#L33)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_selection.hpp#L33)
 
 <a id="symbol-structpuc_1_1terminal_1_1_highlight_span_1a6b80c580c9511bce66d2db433f279e4f"></a>
 
@@ -42,7 +42,7 @@ std::size_t puc::terminal::HighlightSpan::last
 
 Last selected character.
 
-[Source](../../puc-cli/tui/terminal/terminal_test_selection.hpp#L34)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_selection.hpp#L34)
 
 ## Public functions
 
@@ -56,4 +56,4 @@ bool puc::terminal::HighlightSpan::operator==(const HighlightSpan &) const noexc
 
 Compare line and inclusive character bounds.
 
-[Source](../../puc-cli/tui/terminal/terminal_test_selection.hpp#L37)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_selection.hpp#L37)

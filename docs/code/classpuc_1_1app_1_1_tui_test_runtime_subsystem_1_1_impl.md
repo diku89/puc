@@ -4,7 +4,7 @@
 
 Hidden ownership for one optional running smoke-test generation.
 
-[Source](../../puc-cli/tui/tui_test_runtime.cpp#L661)
+[Source](../../puc-cli/test_apps/tui/tui_test_runtime.cpp#L661)
 
 ## Public data members
 
@@ -18,4 +18,4 @@ std::unique_ptr<TuiTestApplication> puc::app::TuiTestRuntimeSubsystem::Impl::app
 
 Current app-specific running generation.
 
-[Source](../../puc-cli/tui/tui_test_runtime.cpp#L664)
+[Source](../../puc-cli/test_apps/tui/tui_test_runtime.cpp#L664)

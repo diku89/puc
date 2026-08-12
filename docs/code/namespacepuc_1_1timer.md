@@ -2,7 +2,7 @@
 
 # Namespace `puc::timer`
 
-[Source](../../state/timer.hpp#L12)
+[Source](../../utils/metronome/metronome.hpp#L17)
 
 ## Related symbols
 

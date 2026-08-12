@@ -6,7 +6,7 @@ Own the complete app-specific input-test generation.
 
 Shared terminal, screen, rendering, frame, theme, command, and embedded-PTY mechanisms remain in their dedicated subsystems. This runtime owns only the test app's layouts, [Canvas](classpuc_1_1app_1_1_canvas.md) generation, event-routing policy, and draw loop.
 
-[Source](../../puc-cli/tui/input_test_runtime.hpp#L21)
+[Source](../../puc-cli/test_apps/input/input_test_runtime.hpp#L21)
 
 ## Related symbols
 
@@ -24,7 +24,7 @@ std::unique_ptr<Impl> puc::app::InputTestRuntimeSubsystem::impl_
 
 Hidden app-specific runtime state.
 
-[Source](../../puc-cli/tui/input_test_runtime.hpp#L47)
+[Source](../../puc-cli/test_apps/input/input_test_runtime.hpp#L47)
 
 ## Public functions
 
@@ -38,7 +38,7 @@ puc::app::InputTestRuntimeSubsystem::InputTestRuntimeSubsystem()
 
 Declare every shared mechanism consumed by the test app.
 
-[Source](../../puc-cli/tui/input_test_runtime.hpp#L24)
+[Source](../../puc-cli/test_apps/input/input_test_runtime.hpp#L24)
 
 <a id="symbol-classpuc_1_1app_1_1_input_test_runtime_subsystem_1a4d58c67676c90132175798dd0e4f2807"></a>
 
@@ -50,7 +50,7 @@ puc::app::InputTestRuntimeSubsystem::~InputTestRuntimeSubsystem() override
 
 Destroy runtime state already released by [terminate()](#symbol-classpuc_1_1app_1_1_input_test_runtime_subsystem_1ab6657776c9c0a42517dcf7d8c02a5e0c).
 
-[Source](../../puc-cli/tui/input_test_runtime.hpp#L27)
+[Source](../../puc-cli/test_apps/input/input_test_runtime.hpp#L27)
 
 <a id="symbol-classpuc_1_1app_1_1_input_test_runtime_subsystem_1aec07be7866ba087e31786a6b57f26ec9"></a>
 
@@ -62,7 +62,7 @@ Status puc::app::InputTestRuntimeSubsystem::initialize(AppState &app) override
 
 Allocate durable runtime bookkeeping without starting I/O.
 
-[Source](../../puc-cli/tui/input_test_runtime.hpp#L30)
+[Source](../../puc-cli/test_apps/input/input_test_runtime.hpp#L30)
 
 <a id="symbol-classpuc_1_1app_1_1_input_test_runtime_subsystem_1aee911d61764895d748be941627aba431"></a>
 
@@ -74,7 +74,7 @@ Status puc::app::InputTestRuntimeSubsystem::start(AppState &app) override
 
 Bind the current subsystem generations and construct presentation state.
 
-[Source](../../puc-cli/tui/input_test_runtime.hpp#L34)
+[Source](../../puc-cli/test_apps/input/input_test_runtime.hpp#L34)
 
 <a id="symbol-classpuc_1_1app_1_1_input_test_runtime_subsystem_1a032854f9adcfab6469d2f256ba857d7a"></a>
 
@@ -86,7 +86,7 @@ Status puc::app::InputTestRuntimeSubsystem::stop(AppState &app) noexcept overrid
 
 Quiesce rendering and subscriptions before dependencies stop.
 
-[Source](../../puc-cli/tui/input_test_runtime.hpp#L37)
+[Source](../../puc-cli/test_apps/input/input_test_runtime.hpp#L37)
 
 <a id="symbol-classpuc_1_1app_1_1_input_test_runtime_subsystem_1ab6657776c9c0a42517dcf7d8c02a5e0c"></a>
 
@@ -98,7 +98,7 @@ Status puc::app::InputTestRuntimeSubsystem::terminate(AppState &app) noexcept ov
 
 Release all durable test-app state after the final generation.
 
-[Source](../../puc-cli/tui/input_test_runtime.hpp#L40)
+[Source](../../puc-cli/test_apps/input/input_test_runtime.hpp#L40)
 
 <a id="symbol-classpuc_1_1app_1_1_input_test_runtime_subsystem_1a7021c295f69363e89455958937e4e6ed"></a>
 
@@ -110,4 +110,4 @@ bool puc::app::InputTestRuntimeSubsystem::draw()
 
 Poll input and present one complete frame.
 
-[Source](../../puc-cli/tui/input_test_runtime.hpp#L43)
+[Source](../../puc-cli/test_apps/input/input_test_runtime.hpp#L43)

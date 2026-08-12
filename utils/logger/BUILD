@@ -11,6 +11,17 @@ cc_library(
     visibility = ["//visibility:public"],
 )
 
+cc_library(
+    name = "logger_subsystem",
+    srcs = ["logger_subsystem.cpp"],
+    hdrs = ["logger_subsystem.hpp"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":logger",
+        "//state",
+    ],
+)
+
 cc_test(
     name = "logger_test",
     size = "small",

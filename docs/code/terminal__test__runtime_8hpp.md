@@ -4,7 +4,7 @@
 
 Lifecycle-owned runtime for the terminal input conformance app.
 
-[Source](../../puc-cli/tui/terminal/terminal_test_runtime.hpp)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_runtime.hpp)
 
 ## Related symbols
 

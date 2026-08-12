@@ -4,7 +4,7 @@
 
 Lifecycle-owned logic for the interactive TUI rendering smoke test.
 
-This runtime backs a manual smoke test rather than an automated unit test. It exercises the integration between Screen, Canvas, Layout, ZBuffer, Frame, Theme, TerminalSession, bounded IPC channels, terminal resize events, Unicode rendering, true color, and parallel Canvas publication. AppState owns the worker, channel, terminal, Screen, renderer, and executable-runtime subsystems and orders their lifecycle from declared dependencies. Every ready frame in the layout is rendered as an independent job, and the last real frame to complete publishes the Canvas A/B transaction. Run it from a real terminal with: `bazel run //puc-cli/tui:test-app`
+This runtime backs a manual smoke test rather than an automated unit test. It exercises the integration between Screen, Canvas, Layout, ZBuffer, Frame, Theme, TerminalSession, bounded IPC channels, terminal resize events, Unicode rendering, true color, and parallel Canvas publication. AppState owns the worker, channel, terminal, Screen, renderer, and executable-runtime subsystems and orders their lifecycle from declared dependencies. Every ready frame in the layout is rendered as an independent job, and the last real frame to complete publishes the Canvas A/B transaction. Run it from a real terminal with: `bazel run //puc-cli/test_apps:test-app`
 
 The animation below demonstrates the normal layout, live terminal resizing, and the small-screen fallback:
 
@@ -31,7 +31,7 @@ If either terminal dimension is below the minimum required by the layout, the no
 
 **Note:** A terminal window can contain a thin strip of pixels that is smaller than one character cell, especially along its bottom edge. A cell-based TUI cannot draw into that strip; anchors should be judged against the terminal's addressable character grid.
 
-[Source](../../puc-cli/tui/tui_test_runtime.cpp)
+[Source](../../puc-cli/test_apps/tui/tui_test_runtime.cpp)
 
 ## Related symbols
 

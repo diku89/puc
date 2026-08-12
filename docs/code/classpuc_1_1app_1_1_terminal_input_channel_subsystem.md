@@ -6,7 +6,7 @@ Register the ordered `//terminal/input_events` producer channel.
 
 [TerminalSubsystem](classpuc_1_1app_1_1_terminal_subsystem.md) publishes decoded events through this route. [Screen](classpuc_1_1app_1_1_screen.md) owns the transport subscription and retains normalized events until an application drains them to apply only its mode-specific policy. No additional input-router mechanism is interposed.
 
-[Source](../../state/channels.hpp#L76)
+[Source](../../utils/ipc/channel_subsystems.hpp#L76)
 
 ## Private data members
 
@@ -20,7 +20,7 @@ ipc::Directory* puc::app::TerminalInputChannelSubsystem::directory_
 
 Borrowed while started.
 
-[Source](../../state/channels.hpp#L102)
+[Source](../../utils/ipc/channel_subsystems.hpp#L102)
 
 <a id="symbol-classpuc_1_1app_1_1_terminal_input_channel_subsystem_1a66716cc86a37e04c384fd8cfb13ef01e"></a>
 
@@ -32,7 +32,7 @@ std::shared_ptr<ipc::Channel> puc::app::TerminalInputChannelSubsystem::channel_
 
 Ordered event endpoint.
 
-[Source](../../state/channels.hpp#L103)
+[Source](../../utils/ipc/channel_subsystems.hpp#L103)
 
 <a id="symbol-classpuc_1_1app_1_1_terminal_input_channel_subsystem_1af69eb176ec1fe7e75a3f7023e6b1bf27"></a>
 
@@ -44,7 +44,7 @@ ipc::ChannelId puc::app::TerminalInputChannelSubsystem::channel_id_
 
 Directory-assigned endpoint id.
 
-[Source](../../state/channels.hpp#L104)
+[Source](../../utils/ipc/channel_subsystems.hpp#L104)
 
 ## Public functions
 
@@ -58,7 +58,7 @@ puc::app::TerminalInputChannelSubsystem::TerminalInputChannelSubsystem()
 
 Declare the channel-directory dependency.
 
-[Source](../../state/channels.hpp#L79)
+[Source](../../utils/ipc/channel_subsystems.hpp#L79)
 
 <a id="symbol-classpuc_1_1app_1_1_terminal_input_channel_subsystem_1a43b3d0ab8faec6c67879966d45f30ed4"></a>
 
@@ -70,7 +70,7 @@ Status puc::app::TerminalInputChannelSubsystem::initialize(AppState &app) overri
 
 Validate access to the registered [DirectorySubsystem](classpuc_1_1app_1_1_directory_subsystem.md).
 
-[Source](../../state/channels.hpp#L82)
+[Source](../../utils/ipc/channel_subsystems.hpp#L82)
 
 <a id="symbol-classpuc_1_1app_1_1_terminal_input_channel_subsystem_1ab0dbe68b3623ce0cff4dcad3fd626514"></a>
 
@@ -82,7 +82,7 @@ Status puc::app::TerminalInputChannelSubsystem::start(AppState &app) override
 
 Create and register the canonical terminal-input channel.
 
-[Source](../../state/channels.hpp#L85)
+[Source](../../utils/ipc/channel_subsystems.hpp#L85)
 
 <a id="symbol-classpuc_1_1app_1_1_terminal_input_channel_subsystem_1afa247ce70e077e51a0a5089cfc3ae735"></a>
 
@@ -94,7 +94,7 @@ Status puc::app::TerminalInputChannelSubsystem::stop(AppState &app) noexcept ove
 
 Close the route and release its endpoint.
 
-[Source](../../state/channels.hpp#L88)
+[Source](../../utils/ipc/channel_subsystems.hpp#L88)
 
 <a id="symbol-classpuc_1_1app_1_1_terminal_input_channel_subsystem_1a3a848ea2cddb4b79126ae1b0e96e3cc2"></a>
 
@@ -106,7 +106,7 @@ Status puc::app::TerminalInputChannelSubsystem::terminate(AppState &app) noexcep
 
 Release any endpoint retained after partial lifecycle progress.
 
-[Source](../../state/channels.hpp#L91)
+[Source](../../utils/ipc/channel_subsystems.hpp#L91)
 
 <a id="symbol-classpuc_1_1app_1_1_terminal_input_channel_subsystem_1a77efef51fd80d3fe6b8e2467e63bfbfa"></a>
 
@@ -118,7 +118,7 @@ ipc::Channel * puc::app::TerminalInputChannelSubsystem::channel() noexcept
 
 Return the terminal-input endpoint, or nullptr while stopped.
 
-[Source](../../state/channels.hpp#L94)
+[Source](../../utils/ipc/channel_subsystems.hpp#L94)
 
 <a id="symbol-classpuc_1_1app_1_1_terminal_input_channel_subsystem_1a04f29bca9f3db0b722af4ac5cb258db3"></a>
 
@@ -130,7 +130,7 @@ ipc::ChannelId puc::app::TerminalInputChannelSubsystem::channel_id() const noexc
 
 Return the assigned terminal-input identifier, or zero while stopped.
 
-[Source](../../state/channels.hpp#L97)
+[Source](../../utils/ipc/channel_subsystems.hpp#L97)
 
 ## Private functions
 
@@ -142,4 +142,4 @@ Return the assigned terminal-input identifier, or zero while stopped.
 Status puc::app::TerminalInputChannelSubsystem::close_channel() noexcept
 ```
 
-[Source](../../state/channels.hpp#L100)
+[Source](../../utils/ipc/channel_subsystems.hpp#L100)

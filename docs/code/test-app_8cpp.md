@@ -6,7 +6,7 @@ Lifecycle entry point for the interactive TUI rendering smoke test.
 
 Primary application logic lives in TuiTestRuntimeSubsystem. `main()` owns only command-independent process setup, graph registration, and the one initialize/start/stop/terminate lifetime.
 
-[Source](../../puc-cli/tui/test-app.cpp)
+[Source](../../puc-cli/test_apps/tui/test-app.cpp)
 
 ## Functions
 
@@ -27,4 +27,4 @@ Run the smoke test until application control requests termination.
 
 **Returns:** Zero when setup, drawing, and lifecycle teardown succeed; otherwise one.
 
-[Source](../../puc-cli/tui/test-app.cpp#L80)
+[Source](../../puc-cli/test_apps/tui/test-app.cpp#L80)

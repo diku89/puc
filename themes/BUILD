@@ -23,6 +23,18 @@ cc_library(
     ],
 )
 
+cc_library(
+    name = "theme_subsystem",
+    srcs = ["theme_subsystem.cpp"],
+    hdrs = ["theme_subsystem.hpp"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":themes",
+        "//properties:properties_subsystem",
+        "//state",
+    ],
+)
+
 cc_test(
     name = "themes_test",
     size = "small",

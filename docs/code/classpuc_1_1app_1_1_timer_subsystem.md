@@ -6,7 +6,7 @@ Own the timer scheduler facade for each running worker-pool generation.
 
 Pure deadline and polling utilities have no lifecycle state. Scheduled work does borrow live workers, so this adapter recreates its Scheduler on every start and releases it before [WorkerSubsystem](classpuc_1_1app_1_1_worker_subsystem.md) stops.
 
-[Source](../../state/timer.hpp#L25)
+[Source](../../utils/timer/timer_subsystem.hpp#L25)
 
 ## Private data members
 
@@ -20,7 +20,7 @@ std::unique_ptr<timer::Scheduler> puc::app::TimerSubsystem::scheduler_
 
 Facade over the current worker generation.
 
-[Source](../../state/timer.hpp#L55)
+[Source](../../utils/timer/timer_subsystem.hpp#L55)
 
 ## Public functions
 
@@ -34,7 +34,7 @@ puc::app::TimerSubsystem::TimerSubsystem()
 
 Declare the worker-generation dependency.
 
-[Source](../../state/timer.hpp#L28)
+[Source](../../utils/timer/timer_subsystem.hpp#L28)
 
 <a id="symbol-classpuc_1_1app_1_1_timer_subsystem_1a40effccbed78cf4ae27881d40192fe9b"></a>
 
@@ -46,7 +46,7 @@ puc::app::TimerSubsystem::~TimerSubsystem() override
 
 Destroy a scheduler already released by [stop()](#symbol-classpuc_1_1app_1_1_timer_subsystem_1a64ff30022824f2f9a751dcf72294fdf6).
 
-[Source](../../state/timer.hpp#L31)
+[Source](../../utils/timer/timer_subsystem.hpp#L31)
 
 <a id="symbol-classpuc_1_1app_1_1_timer_subsystem_1a7529a8feea2bcbdc77ff59eb8ff243bc"></a>
 
@@ -58,7 +58,7 @@ Status puc::app::TimerSubsystem::initialize(AppState &app) override
 
 Validate that [WorkerSubsystem](classpuc_1_1app_1_1_worker_subsystem.md) is registered.
 
-[Source](../../state/timer.hpp#L34)
+[Source](../../utils/timer/timer_subsystem.hpp#L34)
 
 <a id="symbol-classpuc_1_1app_1_1_timer_subsystem_1adcc16249f795d3b029dacf5d1c734df2"></a>
 
@@ -70,7 +70,7 @@ Status puc::app::TimerSubsystem::start(AppState &app) override
 
 Bind a fresh Scheduler to the current worker generation.
 
-[Source](../../state/timer.hpp#L37)
+[Source](../../utils/timer/timer_subsystem.hpp#L37)
 
 <a id="symbol-classpuc_1_1app_1_1_timer_subsystem_1a64ff30022824f2f9a751dcf72294fdf6"></a>
 
@@ -82,7 +82,7 @@ Status puc::app::TimerSubsystem::stop(AppState &app) noexcept override
 
 Release the Scheduler before workers are stopped.
 
-[Source](../../state/timer.hpp#L40)
+[Source](../../utils/timer/timer_subsystem.hpp#L40)
 
 <a id="symbol-classpuc_1_1app_1_1_timer_subsystem_1a90ff27882059bc1cdd9dd47d5a072a31"></a>
 
@@ -94,7 +94,7 @@ Status puc::app::TimerSubsystem::terminate(AppState &app) noexcept override
 
 Release any Scheduler retained after partial lifecycle progress.
 
-[Source](../../state/timer.hpp#L43)
+[Source](../../utils/timer/timer_subsystem.hpp#L43)
 
 <a id="symbol-classpuc_1_1app_1_1_timer_subsystem_1ac5920ca1cb85678310462e9ff5b85f7b"></a>
 
@@ -106,7 +106,7 @@ timer::Scheduler * puc::app::TimerSubsystem::scheduler() noexcept
 
 Return the running timer scheduler, or nullptr while stopped.
 
-[Source](../../state/timer.hpp#L46)
+[Source](../../utils/timer/timer_subsystem.hpp#L46)
 
 <a id="symbol-classpuc_1_1app_1_1_timer_subsystem_1a1a22fc88719f5ce2e769d5669c711810"></a>
 
@@ -118,4 +118,4 @@ const timer::Scheduler * puc::app::TimerSubsystem::scheduler() const noexcept
 
 Return the running timer scheduler, or nullptr while stopped.
 
-[Source](../../state/timer.hpp#L49)
+[Source](../../utils/timer/timer_subsystem.hpp#L49)

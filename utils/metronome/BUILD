@@ -20,6 +20,21 @@ cc_library(
     ],
 )
 
+cc_library(
+    name = "metronome_subsystem",
+    srcs = ["metronome_subsystem.cpp"],
+    hdrs = ["metronome_subsystem.hpp"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":metronome",
+        "//state",
+        "//utils/ipc",
+        "//utils/ipc:ipc_subsystems",
+        "//utils/timer",
+        "//utils/timer:timer_subsystem",
+    ],
+)
+
 exports_files(["README.md"])
 
 cc_test(

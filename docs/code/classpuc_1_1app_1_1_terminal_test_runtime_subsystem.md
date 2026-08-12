@@ -6,7 +6,7 @@ Preserve one conformance plan while rebinding restartable shared services.
 
 Terminal decoding, screen ownership, presentation, theme, metronome, timer, and process-exit handling remain in reusable subsystems. This adapter owns only the manual test runner, its frames/layouts, selection state, and report.
 
-[Source](../../puc-cli/tui/terminal/terminal_test_runtime.hpp#L23)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_runtime.hpp#L23)
 
 ## Related symbols
 
@@ -24,7 +24,7 @@ std::unique_ptr<Impl> puc::app::TerminalTestRuntimeSubsystem::impl_
 
 Hidden durable conformance state.
 
-[Source](../../puc-cli/tui/terminal/terminal_test_runtime.hpp#L55)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_runtime.hpp#L55)
 
 ## Public functions
 
@@ -38,7 +38,7 @@ puc::app::TerminalTestRuntimeSubsystem::TerminalTestRuntimeSubsystem(std::option
 
 Retain the complete plan, or one selected test, until [terminate()](#symbol-classpuc_1_1app_1_1_terminal_test_runtime_subsystem_1aa01364c56eacb226736e4ddc6c48e8e1).
 
-[Source](../../puc-cli/tui/terminal/terminal_test_runtime.hpp#L26)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_runtime.hpp#L26)
 
 <a id="symbol-classpuc_1_1app_1_1_terminal_test_runtime_subsystem_1adf7ca5087f6ac89855b1aeb665e88b86"></a>
 
@@ -50,7 +50,7 @@ puc::app::TerminalTestRuntimeSubsystem::~TerminalTestRuntimeSubsystem() override
 
 Destroy runtime state already released by [terminate()](#symbol-classpuc_1_1app_1_1_terminal_test_runtime_subsystem_1aa01364c56eacb226736e4ddc6c48e8e1).
 
-[Source](../../puc-cli/tui/terminal/terminal_test_runtime.hpp#L30)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_runtime.hpp#L30)
 
 <a id="symbol-classpuc_1_1app_1_1_terminal_test_runtime_subsystem_1a5f68bbe1c3d4f75434f7950ed216a1c7"></a>
 
@@ -62,7 +62,7 @@ Status puc::app::TerminalTestRuntimeSubsystem::initialize(AppState &app) overrid
 
 Construct the durable conformance plan over initialized dependencies.
 
-[Source](../../puc-cli/tui/terminal/terminal_test_runtime.hpp#L33)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_runtime.hpp#L33)
 
 <a id="symbol-classpuc_1_1app_1_1_terminal_test_runtime_subsystem_1aecae29d509518937f4972ff6962a6727"></a>
 
@@ -74,7 +74,7 @@ Status puc::app::TerminalTestRuntimeSubsystem::start(AppState &app) override
 
 Bind the current [Screen](classpuc_1_1app_1_1_screen.md), renderer, theme, and heartbeat generation.
 
-[Source](../../puc-cli/tui/terminal/terminal_test_runtime.hpp#L36)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_runtime.hpp#L36)
 
 <a id="symbol-classpuc_1_1app_1_1_terminal_test_runtime_subsystem_1ac8c50fa91fcb9e50a7a71ee6672f8f7c"></a>
 
@@ -86,7 +86,7 @@ Status puc::app::TerminalTestRuntimeSubsystem::stop(AppState &app) noexcept over
 
 Release subscriptions and generation-bound presentation state.
 
-[Source](../../puc-cli/tui/terminal/terminal_test_runtime.hpp#L39)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_runtime.hpp#L39)
 
 <a id="symbol-classpuc_1_1app_1_1_terminal_test_runtime_subsystem_1aa01364c56eacb226736e4ddc6c48e8e1"></a>
 
@@ -98,7 +98,7 @@ Status puc::app::TerminalTestRuntimeSubsystem::terminate(AppState &app) noexcept
 
 Release the durable plan after its final report has been consumed.
 
-[Source](../../puc-cli/tui/terminal/terminal_test_runtime.hpp#L42)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_runtime.hpp#L42)
 
 <a id="symbol-classpuc_1_1app_1_1_terminal_test_runtime_subsystem_1aef20d22b4a80db39810303a529d7be3f"></a>
 
@@ -110,7 +110,7 @@ bool puc::app::TerminalTestRuntimeSubsystem::draw()
 
 Poll terminal input and present one conformance frame.
 
-[Source](../../puc-cli/tui/terminal/terminal_test_runtime.hpp#L45)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_runtime.hpp#L45)
 
 <a id="symbol-classpuc_1_1app_1_1_terminal_test_runtime_subsystem_1a4de74f7392779daee629f9b67e7f613d"></a>
 
@@ -122,7 +122,7 @@ bool puc::app::TerminalTestRuntimeSubsystem::finished() const
 
 Return whether every selected check has produced a result.
 
-[Source](../../puc-cli/tui/terminal/terminal_test_runtime.hpp#L48)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_runtime.hpp#L48)
 
 <a id="symbol-classpuc_1_1app_1_1_terminal_test_runtime_subsystem_1a58470683f46c8b63efcd9f3d4ac80232"></a>
 
@@ -134,4 +134,4 @@ bool puc::app::TerminalTestRuntimeSubsystem::print_report() const
 
 Print the durable report and return whether every planned check passed.
 
-[Source](../../puc-cli/tui/terminal/terminal_test_runtime.hpp#L51)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_runtime.hpp#L51)

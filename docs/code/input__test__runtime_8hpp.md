@@ -4,7 +4,7 @@
 
 Primary lifecycle-owned logic for the InputFrame manual test app.
 
-[Source](../../puc-cli/tui/input_test_runtime.hpp)
+[Source](../../puc-cli/test_apps/input/input_test_runtime.hpp)
 
 ## Related symbols
 

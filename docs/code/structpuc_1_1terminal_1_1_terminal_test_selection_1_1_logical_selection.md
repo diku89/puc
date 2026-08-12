@@ -4,7 +4,7 @@
 
 Inclusive range in reading order.
 
-[Source](../../puc-cli/tui/terminal/terminal_test_selection.hpp#L79)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_selection.hpp#L79)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ LogicalPosition puc::terminal::TerminalTestSelection::LogicalSelection::first
 
 First selected character.
 
-[Source](../../puc-cli/tui/terminal/terminal_test_selection.hpp#L80)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_selection.hpp#L80)
 
 <a id="symbol-structpuc_1_1terminal_1_1_terminal_test_selection_1_1_logical_selection_1a33c010fd4ae2294540bfd76e0ab7f66c"></a>
 
@@ -30,4 +30,4 @@ LogicalPosition puc::terminal::TerminalTestSelection::LogicalSelection::last
 
 Last selected character.
 
-[Source](../../puc-cli/tui/terminal/terminal_test_selection.hpp#L81)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_selection.hpp#L81)

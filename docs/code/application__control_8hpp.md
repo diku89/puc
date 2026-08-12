@@ -4,7 +4,7 @@
 
 Thread-safe deferred application-exit requests.
 
-[Source](../../state/application_control.hpp)
+[Source](../../puc-cli/application/application_control.hpp)
 
 ## Related symbols
 

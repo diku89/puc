@@ -6,7 +6,7 @@ Own the conformance frame's logical range independently of visual padding.
 
 The interactive test renders deliberately printable ASCII, so each byte is one Canvas cell. Production Unicode frames remain free to implement their own grapheme/cell mapping behind the same Frame selection interface.
 
-[Source](../../puc-cli/tui/terminal/terminal_test_selection.hpp#L47)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_selection.hpp#L47)
 
 ## Related symbols
 
@@ -25,7 +25,7 @@ std::shared_mutex puc::terminal::TerminalTestSelection::mutex_
 
 Synchronizes input and rendering.
 
-[Source](../../puc-cli/tui/terminal/terminal_test_selection.hpp#L88)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_selection.hpp#L88)
 
 <a id="symbol-classpuc_1_1terminal_1_1_terminal_test_selection_1aa26a977c63bd48b749cbd60d97ede915"></a>
 
@@ -37,7 +37,7 @@ std::vector<SelectableLine> puc::terminal::TerminalTestSelection::lines_
 
 Current rendered logical lines.
 
-[Source](../../puc-cli/tui/terminal/terminal_test_selection.hpp#L89)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_selection.hpp#L89)
 
 <a id="symbol-classpuc_1_1terminal_1_1_terminal_test_selection_1a62921cfbb8debf1c0d9736a98c81464c"></a>
 
@@ -49,7 +49,7 @@ std::optional<LogicalSelection> puc::terminal::TerminalTestSelection::selection_
 
 Current inclusive range.
 
-[Source](../../puc-cli/tui/terminal/terminal_test_selection.hpp#L90)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_selection.hpp#L90)
 
 ## Public functions
 
@@ -65,7 +65,7 @@ Replace logical lines and clear a selection invalidated by any change.
 
 Empty entries represent visual padding rather than selectable text and are discarded before the new snapshot is compared with the old one.
 
-[Source](../../puc-cli/tui/terminal/terminal_test_selection.hpp#L55)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_selection.hpp#L55)
 
 <a id="symbol-classpuc_1_1terminal_1_1_terminal_test_selection_1a38e79f3720c1f7bac4966045ab5e6cdb"></a>
 
@@ -77,7 +77,7 @@ tui::Status puc::terminal::TerminalTestSelection::update(const tui::SelectionEve
 
 Apply one semantic frame-local selection event.
 
-[Source](../../puc-cli/tui/terminal/terminal_test_selection.hpp#L58)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_selection.hpp#L58)
 
 <a id="symbol-classpuc_1_1terminal_1_1_terminal_test_selection_1a988e3b0e68bea1ba37dec26c48dbdfe6"></a>
 
@@ -89,7 +89,7 @@ std::vector< HighlightSpan > puc::terminal::TerminalTestSelection::highlight_spa
 
 Return inclusive spans used to render semantic highlight colors.
 
-[Source](../../puc-cli/tui/terminal/terminal_test_selection.hpp#L61)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_selection.hpp#L61)
 
 <a id="symbol-classpuc_1_1terminal_1_1_terminal_test_selection_1abe70bbb89abe8e931c13ef79f1cb1969"></a>
 
@@ -101,7 +101,7 @@ tui::Status puc::terminal::TerminalTestSelection::selected_text(std::string &out
 
 Extract selected logical bytes without visual padding or decorations.
 
-[Source](../../puc-cli/tui/terminal/terminal_test_selection.hpp#L64)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_selection.hpp#L64)
 
 ## Private functions
 
@@ -115,4 +115,4 @@ std::optional< TerminalTestSelection::LogicalPosition > puc::terminal::TerminalT
 
 Map a signed frame-local cell to the nearest real logical character.
 
-[Source](../../puc-cli/tui/terminal/terminal_test_selection.hpp#L85)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_selection.hpp#L85)

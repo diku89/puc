@@ -2,7 +2,7 @@
 
 # Namespace `puc`
 
-[Source](../../commands/command.cpp#L29)
+[Source](../../commands/builtin_command_subsystem.cpp#L18)
 
 ## Related symbols
 

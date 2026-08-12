@@ -2,7 +2,7 @@
 
 # Namespace `puc::app`
 
-[Source](../../commands/command.hpp#L30)
+[Source](../../commands/builtin_command_subsystem.cpp#L18)
 
 ## Related symbols
 
@@ -140,7 +140,7 @@ std::size_t puc::app::kApplicationSubsystemCount
 
 Number of concrete adapters in the complete default production graph.
 
-[Source](../../state/bootstrap.hpp#L31)
+[Source](../../puc-cli/application/bootstrap.hpp#L31)
 
 ## Functions
 
@@ -158,7 +158,7 @@ Registration is root-to-leaf for readability, although [AppState](classpuc_1_1ap
 
 **Returns:** [Status::OK](#symbol-lifecycle_8hpp_1a01c86981579ba6b89336774973c68d60ae0aa021e21dddbd6d8cecec71e9cf564), [Status::INVALID\_ARGUMENT](#symbol-lifecycle_8hpp_1a01c86981579ba6b89336774973c68d60af295a0c3e37c94f078e1c5476479132d) for a nonempty [AppState](classpuc_1_1app_1_1_app_state.md), or an unexpected registration failure.
 
-[Source](../../state/bootstrap.cpp#L31)
+[Source](../../puc-cli/application/bootstrap.cpp#L31)
 
 <a id="symbol-bootstrap_8hpp_1a77eff784c7ddbc35f6e049ec742ed604"></a>
 
@@ -170,7 +170,7 @@ std::size_t puc::app::application_subsystem_count(const ApplicationSubsystemSele
 
 Return the number of adapters selected by one executable profile.
 
-[Source](../../state/bootstrap.hpp#L34)
+[Source](../../puc-cli/application/bootstrap.hpp#L34)
 
 <a id="symbol-lifecycle_8hpp_1a4b70db1608e49fb1b3c00c6b9f30ecbe"></a>
 

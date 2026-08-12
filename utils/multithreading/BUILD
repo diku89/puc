@@ -16,6 +16,18 @@ cc_library(
     deps = ["//utils/logger"],
 )
 
+cc_library(
+    name = "worker_subsystem",
+    srcs = ["worker_subsystem.cpp"],
+    hdrs = ["worker_subsystem.hpp"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":multithreading",
+        "//state",
+        "//utils/logger:logger_subsystem",
+    ],
+)
+
 exports_files(["README.md"])
 
 cc_test(

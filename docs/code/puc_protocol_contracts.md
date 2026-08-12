@@ -2,7 +2,7 @@
 
 # PUC Protocol Contracts
 
-## Member [puc::metronome::kOneHertzChannel](namespacepuc_1_1metronome.md#symbol-utils_2metronome_2metronome_8hpp_1ad712d1722112c3e9598cb3e96ee87db6)
+## Member [puc::metronome::kOneHertzChannel](namespacepuc_1_1metronome.md#symbol-metronome_8hpp_1ad712d1722112c3e9598cb3e96ee87db6)
 
 <a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000015"></a> **Kind:** Channel  
 **Name:** `//metronome/1hz`  

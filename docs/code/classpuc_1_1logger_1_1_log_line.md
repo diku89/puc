@@ -4,7 +4,7 @@
 
 Accumulates one stream-style log line and emits it at end of expression.
 
-Applications normally create log lines through the [Logger](classpuc_1_1logger_1_1_logger.md) variable template declared by [LOGGER\_MODULE()](utils_2logger_2logger_8hpp.md#symbol-utils_2logger_2logger_8hpp_1afe144fc32be52607c8eac7e98ecdbc8b), rather than constructing this class directly.
+Applications normally create log lines through the [Logger](classpuc_1_1logger_1_1_logger.md) variable template declared by [LOGGER\_MODULE()](logger_8hpp.md#symbol-logger_8hpp_1afe144fc32be52607c8eac7e98ecdbc8b), rather than constructing this class directly.
 
 **Template parameters**
 

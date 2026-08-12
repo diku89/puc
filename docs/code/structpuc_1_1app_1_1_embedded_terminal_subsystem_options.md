@@ -4,7 +4,7 @@
 
 Stable launch policy retained across embedded-terminal generations.
 
-[Source](../../state/embedded_terminal.hpp#L23)
+[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.hpp#L23)
 
 ## Public data members
 
@@ -18,4 +18,4 @@ std::string puc::app::EmbeddedTerminalSubsystemOptions::shell
 
 Interactive shell executable.
 
-[Source](../../state/embedded_terminal.hpp#L24)
+[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.hpp#L24)

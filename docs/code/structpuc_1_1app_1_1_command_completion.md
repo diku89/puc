@@ -4,7 +4,7 @@
 
 One command-name completion and the description shown beside it.
 
-[Source](../../state/command_mode.hpp#L30)
+[Source](../../commands/command_mode_subsystem.hpp#L30)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::string puc::app::CommandCompletion::command
 
 Registered command spelling or alias.
 
-[Source](../../state/command_mode.hpp#L31)
+[Source](../../commands/command_mode_subsystem.hpp#L31)
 
 <a id="symbol-structpuc_1_1app_1_1_command_completion_1a3557d9580d8d9e99fbb6633fb0da8fe8"></a>
 
@@ -30,7 +30,7 @@ std::string puc::app::CommandCompletion::description
 
 Short command description.
 
-[Source](../../state/command_mode.hpp#L32)
+[Source](../../commands/command_mode_subsystem.hpp#L32)
 
 ## Public functions
 
@@ -44,4 +44,4 @@ bool puc::app::CommandCompletion::operator==(const CommandCompletion &) const =d
 
 Compare completion text and metadata.
 
-[Source](../../state/command_mode.hpp#L35)
+[Source](../../commands/command_mode_subsystem.hpp#L35)

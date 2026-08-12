@@ -6,7 +6,7 @@ Carry a durable exit request without re-entering [AppState](classpuc_1_1app_1_1_
 
 Commands and other event handlers may request exit while they are executing inside a running subsystem. The outer application loop observes the request after the handler returns and performs the ordinary stop/terminate sequence. A request remains set across suspend-style stop/start cycles.
 
-[Source](../../state/application_control.hpp#L20)
+[Source](../../puc-cli/application/application_control.hpp#L20)
 
 ## Private data members
 
@@ -20,7 +20,7 @@ std::atomic<bool> puc::app::ApplicationControl::exit_requested_
 
 Durable one-way request.
 
-[Source](../../state/application_control.hpp#L33)
+[Source](../../puc-cli/application/application_control.hpp#L33)
 
 ## Public functions
 
@@ -34,7 +34,7 @@ void puc::app::ApplicationControl::request_exit() noexcept
 
 Record a process-exit request; safe to call repeatedly.
 
-[Source](../../state/application_control.hpp#L23)
+[Source](../../puc-cli/application/application_control.hpp#L23)
 
 <a id="symbol-classpuc_1_1app_1_1_application_control_1a2715ddc9b8c692d2122345253b262498"></a>
 
@@ -46,4 +46,4 @@ bool puc::app::ApplicationControl::exit_requested() const noexcept
 
 Return whether any component has requested final application exit.
 
-[Source](../../state/application_control.hpp#L28)
+[Source](../../puc-cli/application/application_control.hpp#L28)

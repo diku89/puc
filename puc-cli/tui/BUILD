@@ -1,4 +1,3 @@
-load("@rules_cc//cc:cc_binary.bzl", "cc_binary")
 load("@rules_cc//cc:cc_library.bzl", "cc_library")
 load("@rules_cc//cc:cc_test.bzl", "cc_test")
 load("//docs:code_sources.bzl", "code_docs_sources")
@@ -61,50 +60,40 @@ cc_library(
     ],
 )
 
-cc_binary(
-    name = "test-app",
-    srcs = [
-        "test-app.cpp",
-        "tui_test_runtime.cpp",
-        "tui_test_runtime.hpp",
-    ],
-    data = ["//themes:default_dark_config"],
-    deps = [
-        ":tui",
-        "//state:adapters",
-        "//utils/logger",
-        "//utils/timer",
-    ],
-)
-
-cc_binary(
-    name = "input-test-app",
-    srcs = [
-        "input-test-app.cpp",
-        "input_test_runtime.cpp",
-        "input_test_runtime.hpp",
-    ],
-    data = [
-        "//puc-cli/tui/terminal:bsd_defaults_config",
-        "//puc-cli/tui/terminal:darwin_defaults_config",
-        "//puc-cli/tui/terminal:input_config",
-        "//puc-cli/tui/terminal:linux_defaults_config",
-        "//puc-cli/tui/terminal:timeout_config",
-        "//puc-cli/tui/terminal:xterm_ghostty_defaults_config",
-        "//themes:default_dark_config",
-    ],
-    linkopts = select({
-        ":linux": ["-lutil"],
-        "//conditions:default": [],
-    }),
+cc_library(
+    name = "input_subsystem",
+    srcs = ["frames/input_subsystem.cpp"],
+    hdrs = ["frames/input_subsystem.hpp"],
+    visibility = ["//visibility:public"],
     deps = [
         ":tui",
         "//msgs",
-        "//puc-cli/tui/terminal",
-        "//state:adapters",
+        "//state",
         "//utils/ipc",
-        "//utils/logger",
-        "//utils/timer",
+        "//utils/ipc:ipc_subsystems",
+    ],
+)
+
+cc_library(
+    name = "rendering_subsystems",
+    srcs = [
+        "rendering/presentation_subsystem.cpp",
+        "rendering/screen_subsystem.cpp",
+    ],
+    hdrs = [
+        "rendering/presentation_subsystem.hpp",
+        "rendering/screen_subsystem.hpp",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":tui",
+        "//puc-cli/tui/terminal",
+        "//puc-cli/tui/terminal:terminal_subsystems",
+        "//state",
+        "//utils/ipc",
+        "//utils/ipc:ipc_subsystems",
+        "//utils/multithreading",
+        "//utils/multithreading:worker_subsystem",
     ],
 )
 

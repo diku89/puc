@@ -4,7 +4,7 @@
 
 Validated command-line selection plus optional error context.
 
-[Source](../../puc-cli/tui/terminal/terminal_test_options.hpp#L34)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_options.hpp#L34)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ TerminalTestCommand puc::terminal::TerminalTestOptions::command
 
 Operation.
 
-[Source](../../puc-cli/tui/terminal/terminal_test_options.hpp#L35)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_options.hpp#L35)
 
 <a id="symbol-structpuc_1_1terminal_1_1_terminal_test_options_1ac8b2107eed389a664e391127f314dd89"></a>
 
@@ -30,7 +30,7 @@ std::optional<InputConformanceTest> puc::terminal::TerminalTestOptions::selected
 
 The sole test for RUN, or all tests when empty.
 
-[Source](../../puc-cli/tui/terminal/terminal_test_options.hpp#L37)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_options.hpp#L37)
 
 <a id="symbol-structpuc_1_1terminal_1_1_terminal_test_options_1a9be66279bb1c7f117dc1d243c427225d"></a>
 
@@ -42,7 +42,7 @@ std::string_view puc::terminal::TerminalTestOptions::argument
 
 Argument associated with a parse failure.
 
-[Source](../../puc-cli/tui/terminal/terminal_test_options.hpp#L38)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_options.hpp#L38)
 
 ## Public functions
 
@@ -56,4 +56,4 @@ bool puc::terminal::TerminalTestOptions::operator==(const TerminalTestOptions &)
 
 Compare the complete parsed value.
 
-[Source](../../puc-cli/tui/terminal/terminal_test_options.hpp#L41)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_options.hpp#L41)

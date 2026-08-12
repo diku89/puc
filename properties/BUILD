@@ -12,6 +12,18 @@ cc_library(
     deps = ["//utils/config"],
 )
 
+cc_library(
+    name = "properties_subsystem",
+    srcs = ["properties_subsystem.cpp"],
+    hdrs = ["properties_subsystem.hpp"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":properties",
+        "//state",
+        "//utils/logger:logger_subsystem",
+    ],
+)
+
 cc_test(
     name = "properties_test",
     size = "small",

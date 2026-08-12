@@ -4,7 +4,7 @@
 
 Deterministic state machine for the interactive input conformance app.
 
-[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_runner.hpp)
 
 ## Related symbols
 

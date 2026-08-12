@@ -6,7 +6,7 @@ Own the app-specific state for each visual smoke-test generation.
 
 [Screen](classpuc_1_1app_1_1_screen.md), presentation, theme, workers, terminal ownership, and process-exit handling remain in their reusable lifecycle subsystems. This adapter owns only the smoke test's frames, layouts, [Canvas](classpuc_1_1app_1_1_canvas.md), metrics, and draw policy.
 
-[Source](../../puc-cli/tui/tui_test_runtime.hpp#L21)
+[Source](../../puc-cli/test_apps/tui/tui_test_runtime.hpp#L21)
 
 ## Related symbols
 
@@ -24,7 +24,7 @@ std::unique_ptr<Impl> puc::app::TuiTestRuntimeSubsystem::impl_
 
 Hidden app-specific runtime state.
 
-[Source](../../puc-cli/tui/tui_test_runtime.hpp#L46)
+[Source](../../puc-cli/test_apps/tui/tui_test_runtime.hpp#L46)
 
 ## Public functions
 
@@ -38,7 +38,7 @@ puc::app::TuiTestRuntimeSubsystem::TuiTestRuntimeSubsystem()
 
 Declare the [Screen](classpuc_1_1app_1_1_screen.md), presentation, and theme dependencies.
 
-[Source](../../puc-cli/tui/tui_test_runtime.hpp#L24)
+[Source](../../puc-cli/test_apps/tui/tui_test_runtime.hpp#L24)
 
 <a id="symbol-classpuc_1_1app_1_1_tui_test_runtime_subsystem_1a5da3ddbcd767eb8ccb17d08838ee7c63"></a>
 
@@ -50,7 +50,7 @@ puc::app::TuiTestRuntimeSubsystem::~TuiTestRuntimeSubsystem() override
 
 Destroy runtime state already released by [terminate()](#symbol-classpuc_1_1app_1_1_tui_test_runtime_subsystem_1af2acea30fab68d4d9c1f2824988b1ad8).
 
-[Source](../../puc-cli/tui/tui_test_runtime.hpp#L27)
+[Source](../../puc-cli/test_apps/tui/tui_test_runtime.hpp#L27)
 
 <a id="symbol-classpuc_1_1app_1_1_tui_test_runtime_subsystem_1a3483455aeea2d2e0109015a4daff173e"></a>
 
@@ -62,7 +62,7 @@ puc::app::Status puc::app::TuiTestRuntimeSubsystem::initialize(AppState &app) ov
 
 Allocate durable adapter bookkeeping without acquiring resources.
 
-[Source](../../puc-cli/tui/tui_test_runtime.hpp#L30)
+[Source](../../puc-cli/test_apps/tui/tui_test_runtime.hpp#L30)
 
 <a id="symbol-classpuc_1_1app_1_1_tui_test_runtime_subsystem_1a1fcc26bbeabec382135cf68706e20ae7"></a>
 
@@ -74,7 +74,7 @@ puc::app::Status puc::app::TuiTestRuntimeSubsystem::start(AppState &app) overrid
 
 Construct app-specific state over the current running generation.
 
-[Source](../../puc-cli/tui/tui_test_runtime.hpp#L33)
+[Source](../../puc-cli/test_apps/tui/tui_test_runtime.hpp#L33)
 
 <a id="symbol-classpuc_1_1app_1_1_tui_test_runtime_subsystem_1a2ac1a2ef899f7ab7afd224b8a4f8ca49"></a>
 
@@ -86,7 +86,7 @@ puc::app::Status puc::app::TuiTestRuntimeSubsystem::stop(AppState &app) noexcept
 
 Quiesce rendering and release generation-bound app state.
 
-[Source](../../puc-cli/tui/tui_test_runtime.hpp#L36)
+[Source](../../puc-cli/test_apps/tui/tui_test_runtime.hpp#L36)
 
 <a id="symbol-classpuc_1_1app_1_1_tui_test_runtime_subsystem_1af2acea30fab68d4d9c1f2824988b1ad8"></a>
 
@@ -98,7 +98,7 @@ puc::app::Status puc::app::TuiTestRuntimeSubsystem::terminate(AppState &app) noe
 
 Release all adapter bookkeeping after the final generation.
 
-[Source](../../puc-cli/tui/tui_test_runtime.hpp#L39)
+[Source](../../puc-cli/test_apps/tui/tui_test_runtime.hpp#L39)
 
 <a id="symbol-classpuc_1_1app_1_1_tui_test_runtime_subsystem_1a33feac0bb61f89387e46266d42ad57d1"></a>
 
@@ -110,4 +110,4 @@ bool puc::app::TuiTestRuntimeSubsystem::draw()
 
 Present one complete visual smoke-test frame.
 
-[Source](../../puc-cli/tui/tui_test_runtime.hpp#L42)
+[Source](../../puc-cli/test_apps/tui/tui_test_runtime.hpp#L42)

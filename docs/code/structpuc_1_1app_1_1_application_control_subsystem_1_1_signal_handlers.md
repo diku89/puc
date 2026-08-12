@@ -2,7 +2,7 @@
 
 # Struct `puc::app::ApplicationControlSubsystem::SignalHandlers`
 
-[Source](../../state/control.cpp#L16)
+[Source](../../puc-cli/application/application_control_subsystem.cpp#L16)
 
 ## Public types
 
@@ -14,7 +14,7 @@
 using puc::app::ApplicationControlSubsystem::SignalHandlers::Action = struct sigaction
 ```
 
-[Source](../../state/control.cpp#L17)
+[Source](../../puc-cli/application/application_control_subsystem.cpp#L17)
 
 ## Public data members
 
@@ -28,7 +28,7 @@ Action puc::app::ApplicationControlSubsystem::SignalHandlers::interrupt
 
 Disposition preceding SIGINT ownership.
 
-[Source](../../state/control.cpp#L19)
+[Source](../../puc-cli/application/application_control_subsystem.cpp#L19)
 
 <a id="symbol-structpuc_1_1app_1_1_application_control_subsystem_1_1_signal_handlers_1a2968009a95648bd50ee43fedfeba27c7"></a>
 
@@ -40,4 +40,4 @@ Action puc::app::ApplicationControlSubsystem::SignalHandlers::termination
 
 Disposition preceding SIGTERM ownership.
 
-[Source](../../state/control.cpp#L20)
+[Source](../../puc-cli/application/application_control_subsystem.cpp#L20)

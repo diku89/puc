@@ -19,7 +19,7 @@
 #include "commands/quit.hpp"
 #include "gtest/gtest.h"
 #include "msgs/cmdframe_msgs.hpp"
-#include "state/application_control.hpp"
+#include "puc-cli/application/application_control.hpp"
 #include "utils/ipc/channel.hpp"
 #include "utils/ipc/directory.hpp"
 #include "utils/ipc/smem_channel.hpp"

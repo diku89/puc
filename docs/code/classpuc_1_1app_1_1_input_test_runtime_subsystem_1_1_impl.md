@@ -2,7 +2,7 @@
 
 # Class `puc::app::InputTestRuntimeSubsystem::Impl`
 
-[Source](../../puc-cli/tui/input_test_runtime.cpp#L421)
+[Source](../../puc-cli/test_apps/input/input_test_runtime.cpp#L421)
 
 ## Public data members
 
@@ -14,4 +14,4 @@
 std::shared_ptr<InputTestApplication> puc::app::InputTestRuntimeSubsystem::Impl::application
 ```
 
-[Source](../../puc-cli/tui/input_test_runtime.cpp#L423)
+[Source](../../puc-cli/test_apps/input/input_test_runtime.cpp#L423)

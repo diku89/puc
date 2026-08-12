@@ -4,7 +4,7 @@
 
 Command-line validation for the terminal conformance executable.
 
-[Source](../../puc-cli/tui/terminal/terminal_test_options.cpp)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_options.cpp)
 
 ## Related symbols
 

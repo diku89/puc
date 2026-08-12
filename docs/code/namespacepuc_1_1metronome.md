@@ -2,7 +2,7 @@
 
 # Namespace `puc::metronome`
 
-[Source](../../state/metronome.hpp#L13)
+[Source](../../utils/metronome/metronome.cpp#L28)
 
 ## Related symbols
 
@@ -30,7 +30,7 @@ Result of starting a [Metronome](classpuc_1_1metronome_1_1_metronome.md) publish
 
 ## Variables
 
-<a id="symbol-utils_2metronome_2metronome_8hpp_1ad712d1722112c3e9598cb3e96ee87db6"></a>
+<a id="symbol-metronome_8hpp_1ad712d1722112c3e9598cb3e96ee87db6"></a>
 
 ### `kOneHertzChannel`
 

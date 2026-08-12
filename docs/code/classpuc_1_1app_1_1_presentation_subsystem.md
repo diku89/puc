@@ -6,7 +6,7 @@ Own a [ParallelRenderer](classpuc_1_1app_1_1_parallel_renderer.md) for each runn
 
 Layouts, themes, canvases, and Frames are durable presentation data owned by an application-specific runtime subsystem. This adapter owns the active scheduler that borrows [WorkerSubsystem](classpuc_1_1app_1_1_worker_subsystem.md) and guarantees that every render job is joined before the worker generation is stopped.
 
-[Source](../../state/presentation.hpp#L27)
+[Source](../../puc-cli/tui/rendering/presentation_subsystem.hpp#L27)
 
 ## Private data members
 
@@ -20,7 +20,7 @@ std::unique_ptr<tui::ParallelRenderer> puc::app::PresentationSubsystem::renderer
 
 Scheduler for the current running generation.
 
-[Source](../../state/presentation.hpp#L60)
+[Source](../../puc-cli/tui/rendering/presentation_subsystem.hpp#L60)
 
 <a id="symbol-classpuc_1_1app_1_1_presentation_subsystem_1a659d02fbaf0b7ea36a0db9b910ea60cc"></a>
 
@@ -32,7 +32,7 @@ tui::Status puc::app::PresentationSubsystem::renderer_status_
 
 Last detailed status.
 
-[Source](../../state/presentation.hpp#L61)
+[Source](../../puc-cli/tui/rendering/presentation_subsystem.hpp#L61)
 
 ## Public functions
 
@@ -46,7 +46,7 @@ puc::app::PresentationSubsystem::PresentationSubsystem()
 
 Declare the shared worker-pool dependency.
 
-[Source](../../state/presentation.hpp#L30)
+[Source](../../puc-cli/tui/rendering/presentation_subsystem.hpp#L30)
 
 <a id="symbol-classpuc_1_1app_1_1_presentation_subsystem_1a428b5209f7c5f5caff3ff3d0562ac7e7"></a>
 
@@ -58,7 +58,7 @@ puc::app::PresentationSubsystem::~PresentationSubsystem() override
 
 Destroy a quiescent renderer generation.
 
-[Source](../../state/presentation.hpp#L33)
+[Source](../../puc-cli/tui/rendering/presentation_subsystem.hpp#L33)
 
 <a id="symbol-classpuc_1_1app_1_1_presentation_subsystem_1aade460ac558b6902c02e5b1b28ff5c42"></a>
 
@@ -70,7 +70,7 @@ Status puc::app::PresentationSubsystem::initialize(AppState &app) override
 
 Validate the registered worker-pool owner.
 
-[Source](../../state/presentation.hpp#L36)
+[Source](../../puc-cli/tui/rendering/presentation_subsystem.hpp#L36)
 
 <a id="symbol-classpuc_1_1app_1_1_presentation_subsystem_1aafded244a41f8702ed3c5e12d7e62707"></a>
 
@@ -82,7 +82,7 @@ Status puc::app::PresentationSubsystem::start(AppState &app) override
 
 Construct a renderer borrowing the current worker generation.
 
-[Source](../../state/presentation.hpp#L39)
+[Source](../../puc-cli/tui/rendering/presentation_subsystem.hpp#L39)
 
 <a id="symbol-classpuc_1_1app_1_1_presentation_subsystem_1a13194cf0dd450931e462e5116f536a6e"></a>
 
@@ -94,7 +94,7 @@ Status puc::app::PresentationSubsystem::stop(AppState &app) noexcept override
 
 Join active render work and release the current renderer.
 
-[Source](../../state/presentation.hpp#L42)
+[Source](../../puc-cli/tui/rendering/presentation_subsystem.hpp#L42)
 
 <a id="symbol-classpuc_1_1app_1_1_presentation_subsystem_1a342a477e17ee66e03153da9406b498e4"></a>
 
@@ -106,7 +106,7 @@ Status puc::app::PresentationSubsystem::terminate(AppState &app) noexcept overri
 
 Release any renderer retained after partial lifecycle progress.
 
-[Source](../../state/presentation.hpp#L45)
+[Source](../../puc-cli/tui/rendering/presentation_subsystem.hpp#L45)
 
 <a id="symbol-classpuc_1_1app_1_1_presentation_subsystem_1a5a637ec3760383ee53c21e75cd423a4f"></a>
 
@@ -118,7 +118,7 @@ tui::ParallelRenderer * puc::app::PresentationSubsystem::renderer() noexcept
 
 Return the running renderer, or nullptr while stopped.
 
-[Source](../../state/presentation.hpp#L48)
+[Source](../../puc-cli/tui/rendering/presentation_subsystem.hpp#L48)
 
 <a id="symbol-classpuc_1_1app_1_1_presentation_subsystem_1a8532e0c84e8d6e3f1c2fcb2fc3625810"></a>
 
@@ -130,7 +130,7 @@ const tui::ParallelRenderer * puc::app::PresentationSubsystem::renderer() const 
 
 Return the running renderer, or nullptr while stopped.
 
-[Source](../../state/presentation.hpp#L51)
+[Source](../../puc-cli/tui/rendering/presentation_subsystem.hpp#L51)
 
 <a id="symbol-classpuc_1_1app_1_1_presentation_subsystem_1a85fabf25e75f8979babc45927ff95203"></a>
 
@@ -142,4 +142,4 @@ tui::Status puc::app::PresentationSubsystem::presentation_status() const noexcep
 
 Return the latest renderer status observed while quiescing.
 
-[Source](../../state/presentation.hpp#L56)
+[Source](../../puc-cli/tui/rendering/presentation_subsystem.hpp#L56)
