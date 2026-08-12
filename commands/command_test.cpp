@@ -16,8 +16,10 @@
 #include <utility>
 #include <vector>
 
+#include "commands/quit.hpp"
 #include "gtest/gtest.h"
 #include "msgs/cmdframe_msgs.hpp"
+#include "puc-cli/state/application_control.hpp"
 #include "utils/ipc/channel.hpp"
 #include "utils/ipc/directory.hpp"
 #include "utils/ipc/smem_channel.hpp"
@@ -110,6 +112,34 @@ TEST(CommandStatusTest, ReportsStableHumanReadableResults) {
     EXPECT_NE(status_message(status), "unknown command status");
   }
   EXPECT_EQ(status_message(static_cast<Status>(-1)), "unknown command status");
+}
+
+TEST(QuitCommandTest, RequestsDeferredExitWithoutChangingLifecycleInline) {
+  app::ApplicationControl control;
+  QuitCommand command;
+
+  EXPECT_FALSE(control.exit_requested());
+  EXPECT_EQ(command.run(CommonCommandArgs{.control = &control}, {}),
+            Status::OK);
+  EXPECT_TRUE(control.exit_requested());
+  EXPECT_EQ(command.run(CommonCommandArgs{.control = &control}, {}),
+            Status::OK);
+  EXPECT_TRUE(control.exit_requested());
+}
+
+TEST(QuitCommandTest, RejectsArgumentsAndMissingApplicationControl) {
+  app::ApplicationControl control;
+  QuitCommand command;
+  const std::vector<std::string> arguments{"now"};
+
+  EXPECT_EQ(command.run(CommonCommandArgs{.control = &control}, arguments),
+            Status::INVALID_ARGUMENT);
+  EXPECT_FALSE(control.exit_requested());
+  EXPECT_EQ(command.run(CommonCommandArgs{}, {}), Status::INVALID_ARGUMENT);
+  EXPECT_EQ(command.get_description(), "Quit puc.");
+  EXPECT_TRUE(command.get_usage().empty());
+  EXPECT_EQ(QuitCommand::get_aliases(),
+            (std::vector<std::string>{"q", "exit"}));
 }
 
 TEST(CommandDispatcherTest, RegistersCanonicalNamesAndAliases) {

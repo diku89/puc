@@ -16,7 +16,7 @@ cc_library(
         "//msgs",
         "//utils/ipc",
         "//utils/logger",
-        "//utils/multithreading",
+        "//utils/timer",
     ],
 )
 
@@ -31,6 +31,7 @@ cc_test(
         "//msgs",
         "//utils/ipc",
         "//utils/multithreading",
+        "//utils/timer",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
     ],

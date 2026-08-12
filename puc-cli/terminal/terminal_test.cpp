@@ -6,9 +6,9 @@
  * app validates presentation; this program reuses its Screen, Canvas, Layout,
  * ZBuffer, Theme, ParallelRenderer, four-worker ownership, resize handling,
  * and small-screen behavior as a trusted interface around the real terminal
- * input stack. Bytes are read through Screen's owned TerminalSession, decoded
- * by the runtime-configured terminfo/TOML Trie, and matched as normalized
- * terminal Events.
+ * input stack. TerminalSubsystem reads and decodes bytes with the
+ * runtime-configured terminfo/TOML Trie, then publishes normalized terminal
+ * Events for this application to match.
  *
  * Run `bazel run //puc-cli/terminal:terminal-test` in a real terminal for the
  * complete plan. Append `-- --list` to inspect stable test names without
@@ -41,26 +41,19 @@
 
 #include "puc-cli/state/terminal.hpp"
 
-#include <poll.h>
 #include <sys/utsname.h>
 #include <unistd.h>
 
 #include <algorithm>
 #include <atomic>
-#include <cerrno>
 #include <chrono>
-#include <csignal>
 #include <cstddef>
 #include <cstdint>
-#include <cstdlib>
-#include <filesystem>
 #include <format>
-#include <initializer_list>
 #include <iostream>
 #include <memory>
 #include <mutex>
 #include <optional>
-#include <span>
 #include <string>
 #include <string_view>
 #include <thread>
@@ -70,27 +63,26 @@
 #include "msgs/null_message.hpp"
 #include "msgs/screen_msgs.hpp"
 #include "puc-cli/state/bootstrap.hpp"
-#include "puc-cli/state/configuration.hpp"
+#include "puc-cli/state/control.hpp"
 #include "puc-cli/state/metronome.hpp"
 #include "puc-cli/state/presentation.hpp"
 #include "puc-cli/state/screen.hpp"
 #include "puc-cli/state/terminal.hpp"
-#include "puc-cli/terminal/decoder.hpp"
+#include "puc-cli/terminal/configuration_paths.hpp"
 #include "puc-cli/terminal/sequences.hpp"
 #include "puc-cli/terminal/terminal_test_options.hpp"
 #include "puc-cli/terminal/terminal_test_runner.hpp"
 #include "puc-cli/terminal/terminal_test_selection.hpp"
-#include "puc-cli/terminal/timeouts.hpp"
 #include "puc-cli/tui/canvas.hpp"
 #include "puc-cli/tui/frame.hpp"
 #include "puc-cli/tui/layout.hpp"
 #include "puc-cli/tui/renderer.hpp"
 #include "puc-cli/tui/screen.hpp"
 #include "puc-cli/tui/theme.hpp"
-#include "utils/config/config.hpp"
 #include "utils/ipc/channel.hpp"
 #include "utils/logger/logger.hpp"
 #include "utils/metronome/metronome.hpp"
+#include "utils/timer/deadline.hpp"
 
 /** @cond TERMINAL_TEST_LOGGER_MODULE */
 LOGGER_MODULE("Terminal Test App");
@@ -132,15 +124,6 @@ constexpr std::size_t kMinimumWidth = 44U;
 constexpr std::size_t kMinimumHeight =
     kPromptHeight + (2U * (kInfoHeight + 2U));
 
-/** Async-signal-safe shutdown request set by SIGINT or SIGTERM. */
-volatile std::sig_atomic_t stop_requested = 0;
-
-/** Request orderly terminal restoration without doing work in a signal. */
-void request_stop(int signal_number) noexcept {
-  static_cast<void>(signal_number);
-  stop_requested = 1;
-}
-
 /** Terminal and host labels displayed and retained in the final report. */
 struct EnvironmentInfo {
   std::string term;
@@ -148,12 +131,6 @@ struct EnvironmentInfo {
   std::string color_term;
   std::string operating_system;
 };
-
-/** Return one environment value without retaining a raw environment pointer. */
-std::string environment_value(const char* name) {
-  const char* value = std::getenv(name);
-  return value == nullptr ? std::string{} : std::string{value};
-}
 
 /** Render an absent environment value without changing its semantic value. */
 std::string_view environment_label(std::string_view value) noexcept {
@@ -196,9 +173,11 @@ std::string printable_ascii(std::string value) {
 /** Collect terminal variables and the POSIX uname identity once. */
 EnvironmentInfo collect_environment() {
   EnvironmentInfo info{
-      .term             = printable_ascii(environment_value("TERM")),
-      .term_program     = printable_ascii(environment_value("TERM_PROGRAM")),
-      .color_term       = printable_ascii(environment_value("COLORTERM")),
+      .term = printable_ascii(puc::terminal::environment_value("TERM")),
+      .term_program =
+          printable_ascii(puc::terminal::environment_value("TERM_PROGRAM")),
+      .color_term =
+          printable_ascii(puc::terminal::environment_value("COLORTERM")),
       .operating_system = "<unknown>",
   };
   struct utsname identity {};
@@ -209,73 +188,6 @@ EnvironmentInfo collect_environment() {
   return info;
 }
 
-/** Return whether a directory contains every packaged terminal configuration.
- */
-bool contains_terminal_configuration(const std::filesystem::path& root) {
-  std::error_code error;
-  if (!std::filesystem::is_regular_file(root / "input_keys.toml", error) ||
-      error) {
-    return false;
-  }
-  error.clear();
-  const std::string_view operating_system_defaults =
-      puc::terminal::operating_system_defaults_path(
-          puc::terminal::current_operating_system());
-  if (operating_system_defaults.empty() ||
-      !std::filesystem::is_regular_file(root / operating_system_defaults,
-                                        error) ||
-      error) {
-    return false;
-  }
-  error.clear();
-  return std::filesystem::is_regular_file(
-             root / puc::terminal::kTimeoutConfigurationPath, error) &&
-         !error;
-}
-
-/**
- * Locate an installed or Bazel-runfiles primary configuration root.
- *
- * The returned path may be invalid when no candidate exists; Decoder::setup()
- * then reports the authoritative configuration failure.
- */
-std::filesystem::path primary_config_root(std::string_view executable) {
-  const std::string configured = environment_value("PUC_CONFIG_ROOT");
-  if (!configured.empty()) {
-    return configured;
-  }
-
-  std::vector<std::filesystem::path> candidates;
-  std::error_code error;
-  candidates.push_back(std::filesystem::current_path(error));
-  const std::string runfiles = environment_value("RUNFILES_DIR");
-  if (!runfiles.empty()) {
-    candidates.emplace_back(runfiles);
-    candidates.emplace_back(std::filesystem::path{runfiles} / "_main");
-    candidates.emplace_back(std::filesystem::path{runfiles} / "puc");
-  }
-  if (!executable.empty()) {
-    const std::filesystem::path executable_path{executable};
-    candidates.emplace_back(executable_path.string() + ".runfiles/_main");
-    candidates.emplace_back(executable_path.string() + ".runfiles/puc");
-  }
-
-  for (const std::filesystem::path& candidate : candidates) {
-    if (contains_terminal_configuration(candidate)) {
-      return candidate;
-    }
-  }
-  return candidates.empty() ? std::filesystem::path{} : candidates.front();
-}
-
-/** Return the optional user overlay root chosen for this manual run. */
-std::filesystem::path user_config_root(
-    const std::filesystem::path& primary_root) {
-  const std::string configured = environment_value("PUC_USER_CONFIG_ROOT");
-  return configured.empty() ? primary_root / ".puc-no-user-overrides"
-                            : std::filesystem::path{configured};
-}
-
 /** Construct one complete Canvas cell. */
 Canvas::Cell cell(char32_t character, std::uint32_t foreground,
                   std::uint32_t background) {
@@ -284,17 +196,6 @@ Canvas::Cell cell(char32_t character, std::uint32_t foreground,
       .foreground_color = foreground,
       .background_color = background,
   };
-}
-
-/** Write a rectangular vector grid through Canvas's row-span interface. */
-puc::tui::Status write_grid(Canvas& canvas, const Canvas::Rect& rect,
-                            std::vector<std::vector<Canvas::Cell>>& cells) {
-  std::vector<std::span<Canvas::Cell>> rows;
-  rows.reserve(cells.size());
-  for (auto& row : cells) {
-    rows.emplace_back(row);
-  }
-  return canvas.write_cells(rect, std::span<std::span<Canvas::Cell>>{rows});
 }
 
 /** Write clipped ASCII bytes at one grid position. */
@@ -425,7 +326,7 @@ class ConformanceFrame final : public Frame {
       runner_.set_interaction_region({});
       write_centered(cells, rect.height / 2U, "Screen too small",
                      colors.text_warning, colors.background);
-      return write_grid(canvas, rect, cells);
+      return canvas.write_cells(rect, cells);
     }
 
     const InputConformanceView view = runner_.view();
@@ -499,7 +400,7 @@ class ConformanceFrame final : public Frame {
                    std::format("{} second{} remaining", view.seconds_remaining,
                                view.seconds_remaining == 1U ? "" : "s"),
                    colors.text_info, colors.background);
-    return write_grid(canvas, rect, cells);
+    return canvas.write_cells(rect, cells);
   }
 
  private:
@@ -533,42 +434,23 @@ class EnvironmentFrame final : public Frame {
     write_text(cells, 3U, 1U,
                "color: " + std::string{environment_label(info_.color_term)},
                colors.text_secondary, colors.background);
-    return write_grid(canvas, rect, cells);
+    return canvas.write_cells(rect, cells);
   }
 
  private:
   EnvironmentInfo info_; /**< Sanitized immutable environment values. */
 };
 
-/** Add a frame and each supplied constraint to a layout description. */
-puc::tui::Status add_frame(
-    Layout& layout,
-    const std::shared_ptr<Layout::LayoutDescription>& description,
-    std::string id, std::shared_ptr<Frame> frame,
-    std::initializer_list<Layout::Constraint> constraints) {
-  puc::tui::Status status =
-      layout.add_frame_to_layout_description(description, id, std::move(frame));
-  if (!puc::tui::is_ok(status)) {
-    return status;
-  }
-  for (const Layout::Constraint& constraint : constraints) {
-    status = layout.add_constraint_to_frame(description, id, constraint);
-    if (!puc::tui::is_ok(status)) {
-      return status;
-    }
-  }
-  return puc::tui::Status::OK;
-}
-
 /** Own one durable conformance plan over restartable shared services. */
-class TerminalTestApplication {
+class TerminalTestApplication final {
  public:
-  /** Capture environment and retain durable decoder/configuration services. */
+  /** Capture environment and retain durable terminal and exit control. */
   TerminalTestApplication(
-      puc::terminal::Decoder& decoder, const puc::config::Config& configuration,
+      puc::app::TerminalSubsystem& terminal,
+      puc::app::ApplicationControl& control,
       std::optional<puc::terminal::InputConformanceTest> selected_test)
-      : decoder_(decoder),
-        configuration_(configuration),
+      : terminal_(&terminal),
+        control_(&control),
         environment_(collect_environment()),
         runner_(InputConformanceRunner::kDefaultFeedbackDuration,
                 selected_test) {}
@@ -586,27 +468,19 @@ class TerminalTestApplication {
    * @param[in,out] active_renderer Renderer for the current worker generation.
    */
   bool setup(Screen& active_screen, ParallelRenderer& active_renderer) {
-    const puc::terminal::Status timeout_status =
-        puc::terminal::load_timeout_settings(configuration_, timeout_settings_);
-    if (!puc::terminal::is_ok(timeout_status)) {
-      Logger<ERROR> << "Terminal timeout setup failed: "
-                    << puc::terminal::status_message(timeout_status);
-      return false;
-    }
-
     screen_                 = &active_screen;
     renderer_               = &active_renderer;
     puc::tui::Status status = puc::tui::Status::OK;
 
-    const auto geometry_deadline =
-        std::chrono::steady_clock::now() + std::chrono::seconds{2};
+    puc::timer::Deadline<> geometry_timeout;
+    geometry_timeout.arm(std::chrono::seconds{2});
     while (true) {
       status = screen_->get_dimensions(width_, height_, cell_dimensions_);
       if (puc::tui::is_ok(status)) {
         break;
       }
       if (status != puc::tui::Status::TERMINAL_QUERY_FAILED ||
-          std::chrono::steady_clock::now() >= geometry_deadline) {
+          geometry_timeout.due()) {
         Logger<ERROR> << "Could not observe terminal geometry: "
                       << puc::tui::status_message(status);
         return false;
@@ -722,8 +596,7 @@ class TerminalTestApplication {
     small_layout_description_.reset();
     absolute_layout_       = {};
     small_absolute_layout_ = {};
-    pending_decoder_timeout_.reset();
-    pending_selection_timeout_.reset();
+    selection_timeout_.cancel();
     screen_too_small_.store(false, std::memory_order_release);
     screen_   = nullptr;
     renderer_ = nullptr;
@@ -808,28 +681,29 @@ class TerminalTestApplication {
     const std::shared_ptr<Frame> prompt =
         std::make_shared<ConformanceFrame>(runner_, selection_state_);
     puc::tui::Status status =
-        add_frame(layout_, layout_description_, "prompt", prompt, {});
+        layout_.add_frame(layout_description_, "prompt", prompt, {});
     if (!puc::tui::is_ok(status)) {
       Logger<ERROR> << "Could not add conformance frame: "
                     << puc::tui::status_message(status);
       return false;
     }
-    status = add_frame(layout_, layout_description_, "terminal-info",
-                       std::make_shared<EnvironmentFrame>(environment_),
-                       {
-                           Layout::make_character_constraint(
-                               Layout::ConstraintType::MIN_WIDTH, kInfoWidth),
-                           Layout::make_character_constraint(
-                               Layout::ConstraintType::MAX_WIDTH, kInfoWidth),
-                           Layout::make_character_constraint(
-                               Layout::ConstraintType::MIN_HEIGHT, kInfoHeight),
-                           Layout::make_character_constraint(
-                               Layout::ConstraintType::MAX_HEIGHT, kInfoHeight),
-                           Layout::make_character_constraint(
-                               Layout::ConstraintType::RIGHT_ANCHOR, 0U),
-                           Layout::make_character_constraint(
-                               Layout::ConstraintType::TOP_ANCHOR, 0U),
-                       });
+    status = layout_.add_frame(
+        layout_description_, "terminal-info",
+        std::make_shared<EnvironmentFrame>(environment_),
+        {
+            Layout::make_character_constraint(Layout::ConstraintType::MIN_WIDTH,
+                                              kInfoWidth),
+            Layout::make_character_constraint(Layout::ConstraintType::MAX_WIDTH,
+                                              kInfoWidth),
+            Layout::make_character_constraint(
+                Layout::ConstraintType::MIN_HEIGHT, kInfoHeight),
+            Layout::make_character_constraint(
+                Layout::ConstraintType::MAX_HEIGHT, kInfoHeight),
+            Layout::make_character_constraint(
+                Layout::ConstraintType::RIGHT_ANCHOR, 0U),
+            Layout::make_character_constraint(
+                Layout::ConstraintType::TOP_ANCHOR, 0U),
+        });
     if (!puc::tui::is_ok(status)) {
       Logger<ERROR> << "Could not add environment frame: "
                     << puc::tui::status_message(status);
@@ -837,8 +711,7 @@ class TerminalTestApplication {
     }
     small_layout_description_ =
         layout_.make_layout_description("terminal-input-too-small");
-    status =
-        add_frame(layout_, small_layout_description_, "prompt", prompt, {});
+    status = layout_.add_frame(small_layout_description_, "prompt", prompt, {});
     if (!puc::tui::is_ok(status)) {
       Logger<ERROR> << "Could not add small-screen frame: "
                     << puc::tui::status_message(status);
@@ -868,59 +741,39 @@ class TerminalTestApplication {
     return true;
   }
 
-  /** Read only after poll(2) reports bytes, then feed every event to runner. */
+  /** Ask TerminalSubsystem to poll, decode, and publish available input. */
   bool poll_input() {
-    pollfd descriptor{
-        .fd      = STDIN_FILENO,
-        .events  = POLLIN,
-        .revents = 0,
-    };
-    int readiness = 0;
-    do {
-      readiness = ::poll(&descriptor, 1U, 0);
-    } while (readiness < 0 && errno == EINTR);
-    if (readiness < 0) {
-      Logger<ERROR> << "Could not poll terminal input";
+    bool end_of_input = false;
+    if (terminal_ == nullptr ||
+        !puc::app::is_ok(terminal_->poll_input(std::chrono::milliseconds{0},
+                                               end_of_input))) {
+      Logger<ERROR> << "Could not poll normalized terminal input";
       return false;
     }
-    if (readiness == 0) {
-      return resolve_pending_timeouts();
-    }
-    if ((descriptor.revents & (POLLERR | POLLNVAL)) != 0) {
-      Logger<ERROR> << "Terminal input descriptor reported a poll error";
-      return false;
-    }
-    if ((descriptor.revents & POLLIN) == 0) {
-      if ((descriptor.revents & POLLHUP) != 0) {
-        stop_requested = 1;
-      }
-      return resolve_pending_timeouts();
+    if (end_of_input) {
+      control_->request_exit();
     }
 
     std::vector<puc::terminal::Event> events;
-    std::size_t bytes_read = 0U;
-    bool end_of_input      = false;
-    const puc::terminal::Status status =
-        screen_->read_input(decoder_, events, bytes_read, end_of_input);
-    if (!puc::terminal::is_ok(status)) {
-      Logger<ERROR> << "Could not decode terminal input: "
-                    << puc::terminal::status_message(status);
+    const puc::tui::Status input_status = screen_->drain_input_events(events);
+    if (!puc::tui::is_ok(input_status)) {
+      Logger<ERROR> << "Could not consume normalized terminal input: "
+                    << puc::tui::status_message(input_status);
       return false;
     }
-    if (!screen_too_small_.load(std::memory_order_acquire)) {
+    try {
       for (const puc::terminal::Event& event : events) {
-        if (!observe_terminal_event(event)) {
+        if (!screen_too_small_.load(std::memory_order_acquire) &&
+            !observe_terminal_event(event)) {
           return false;
         }
+        refresh_selection_timeout();
       }
+    } catch (...) {
+      Logger<ERROR> << "Could not apply normalized terminal input";
+      return false;
     }
-    const auto now = std::chrono::steady_clock::now();
-    refresh_decoder_timeout(now);
-    refresh_selection_timeout(now);
-    if (end_of_input) {
-      stop_requested = 1;
-    }
-    return true;
+    return resolve_selection_timeout();
   }
 
   /** Route one decoded event through Screen selection and the test matcher. */
@@ -955,95 +808,34 @@ class TerminalTestApplication {
     return true;
   }
 
-  /** Synchronize the app-owned deadline with Decoder's current token. */
-  void refresh_decoder_timeout(std::chrono::steady_clock::time_point now) {
-    const std::optional<puc::terminal::TimeoutInput> requested =
-        decoder_.pending_timeout();
-    if (!requested.has_value()) {
-      pending_decoder_timeout_.reset();
-      return;
-    }
-    if (!pending_decoder_timeout_.has_value() ||
-        pending_decoder_timeout_->input != *requested) {
-      pending_decoder_timeout_ = PendingTimeout{
-          .input    = *requested,
-          .deadline = now + timeout_settings_.input_sequence,
-      };
-    }
+  /** Synchronize the click recognizer with its shared timeout primitive. */
+  void refresh_selection_timeout() {
+    selection_timeout_.synchronize(
+        screen_->pending_selection_timeout(),
+        terminal_->timeout_settings().multiple_click);
   }
 
-  /** Synchronize the app-owned deadline with Screen's click-chain token. */
-  void refresh_selection_timeout(std::chrono::steady_clock::time_point now) {
-    const std::optional<puc::terminal::TimeoutInput> requested =
-        screen_->pending_selection_timeout();
-    if (!requested.has_value()) {
-      pending_selection_timeout_.reset();
-      return;
+  /** Deliver a due click-recognizer generation. */
+  bool resolve_selection_timeout() {
+    refresh_selection_timeout();
+    const std::optional<puc::terminal::TimeoutInput> due =
+        selection_timeout_.take_if_due();
+    if (!due.has_value()) {
+      return true;
     }
-    if (!pending_selection_timeout_.has_value() ||
-        pending_selection_timeout_->input != *requested) {
-      pending_selection_timeout_ = PendingTimeout{
-          .input    = *requested,
-          .deadline = now + timeout_settings_.multiple_click,
-      };
-    }
+    const puc::tui::Status status = screen_->handle_selection_timeout(*due);
+    refresh_selection_timeout();
+    return puc::tui::is_ok(status);
   }
 
-  /** Deliver every due explicit decoder or click-recognizer timeout. */
-  bool resolve_pending_timeouts() {
-    const auto now = std::chrono::steady_clock::now();
-    refresh_decoder_timeout(now);
-    refresh_selection_timeout(now);
-    if (pending_decoder_timeout_.has_value() &&
-        now >= pending_decoder_timeout_->deadline) {
-      std::vector<puc::terminal::Event> events;
-      const puc::terminal::Status status =
-          decoder_.handle_timeout(pending_decoder_timeout_->input, events);
-      if (!puc::terminal::is_ok(status)) {
-        Logger<ERROR> << "Could not resolve ambiguous terminal input: "
-                      << puc::terminal::status_message(status);
-        return false;
-      }
-      if (!screen_too_small_.load(std::memory_order_acquire)) {
-        for (const puc::terminal::Event& event : events) {
-          if (!observe_terminal_event(event)) {
-            return false;
-          }
-        }
-      }
-      pending_decoder_timeout_.reset();
-      refresh_decoder_timeout(now);
-    }
-    if (pending_selection_timeout_.has_value() &&
-        now >= pending_selection_timeout_->deadline) {
-      const puc::tui::Status status =
-          screen_->handle_selection_timeout(pending_selection_timeout_->input);
-      if (!puc::tui::is_ok(status)) {
-        Logger<ERROR> << "Could not resolve multi-click timeout: "
-                      << puc::tui::status_message(status);
-        return false;
-      }
-      pending_selection_timeout_.reset();
-      refresh_selection_timeout(now);
-    }
-    return true;
-  }
-
-  /** App-owned scheduling data for one target-issued timeout generation. */
-  struct PendingTimeout {
-    puc::terminal::TimeoutInput input; /**< Generation to deliver. */
-    std::chrono::steady_clock::time_point deadline; /**< Delivery time. */
-  };
-
-  puc::terminal::Decoder&
-      decoder_; /**< Lifecycle-owned configured input Trie. */
-  const puc::config::Config&
-      configuration_;             /**< Durable configuration roots. */
+  puc::app::TerminalSubsystem* terminal_ =
+      nullptr; /**< Lifecycle-owned decoder and publisher. */
+  puc::app::ApplicationControl* control_ =
+      nullptr;                    /**< Durable application-exit request sink. */
   EnvironmentInfo environment_;   /**< Stable terminal/host identity. */
   InputConformanceRunner runner_; /**< Timed event matcher. */
   std::shared_ptr<TerminalTestSelection> selection_state_ =
-      std::make_shared<TerminalTestSelection>();    /**< Typed prompt state. */
-  puc::terminal::TimeoutSettings timeout_settings_; /**< Layered durations. */
+      std::make_shared<TerminalTestSelection>(); /**< Typed prompt state. */
   Screen* screen_ = nullptr; /**< Lifecycle-owned presentation/session. */
   ParallelRenderer* renderer_ =
       nullptr; /**< Lifecycle-owned frame scheduler. */
@@ -1066,10 +858,8 @@ class TerminalTestApplication {
   std::size_t height_ = 0U;             /**< Latest terminal rows. */
   std::atomic<bool> screen_too_small_ =
       false; /**< Pauses tests while hidden. */
-  std::optional<PendingTimeout>
-      pending_decoder_timeout_; /**< Current explicit decoder timeout. */
-  std::optional<PendingTimeout>
-      pending_selection_timeout_; /**< Current explicit click timeout. */
+  puc::timer::TokenDeadline<puc::terminal::TimeoutInput>
+      selection_timeout_; /**< Current explicit click timeout. */
 };
 
 /** Preserve the conformance plan while rebinding restartable shared services.
@@ -1079,24 +869,24 @@ class TerminalTestRuntimeSubsystem final : public puc::app::AppSubsystem {
   /** Retain the selected plan until the one final terminate transition. */
   explicit TerminalTestRuntimeSubsystem(
       std::optional<puc::terminal::InputConformanceTest> selected_test)
-      : AppSubsystem(
-            "terminal-test-runtime",
-            puc::app::subsystem_dependencies<
-                puc::app::ConfigurationSubsystem, puc::app::TerminalSubsystem,
-                puc::app::ScreenSubsystem, puc::app::PresentationSubsystem,
-                puc::app::MetronomeSubsystem>()),
+      : AppSubsystem("terminal-test-runtime",
+                     puc::app::subsystem_dependencies<
+                         puc::app::ApplicationControlSubsystem,
+                         puc::app::TerminalSubsystem, puc::app::ScreenSubsystem,
+                         puc::app::PresentationSubsystem,
+                         puc::app::MetronomeSubsystem>()),
         selected_test_(selected_test) {}
 
-  /** Construct the durable runner over durable configuration and Decoder. */
+  /** Construct the durable runner over the terminal input subsystem. */
   puc::app::Status initialize(puc::app::AppState& app) override {
-    auto* configuration = app.get_subsystem<puc::app::ConfigurationSubsystem>();
-    auto* terminal      = app.get_subsystem<puc::app::TerminalSubsystem>();
-    if (configuration == nullptr || configuration->configuration() == nullptr ||
-        terminal == nullptr || terminal->decoder() == nullptr) {
+    auto* terminal = app.get_subsystem<puc::app::TerminalSubsystem>();
+    auto* control  = app.get_subsystem<puc::app::ApplicationControlSubsystem>();
+    if (terminal == nullptr || terminal->decoder() == nullptr ||
+        control == nullptr || control->control() == nullptr) {
       return puc::app::Status::SUBSYSTEM_FAILURE;
     }
-    application_ = std::make_unique<TerminalTestApplication>(
-        *terminal->decoder(), *configuration->configuration(), selected_test_);
+    application_ = std::make_shared<TerminalTestApplication>(
+        *terminal, *control->control(), selected_test_);
     return puc::app::Status::OK;
   }
 
@@ -1151,7 +941,7 @@ class TerminalTestRuntimeSubsystem final : public puc::app::AppSubsystem {
  private:
   std::optional<puc::terminal::InputConformanceTest>
       selected_test_; /**< Durable command-line plan selection. */
-  std::unique_ptr<TerminalTestApplication>
+  std::shared_ptr<TerminalTestApplication>
       application_; /**< Durable runner and restartable presentation bindings.
                      */
 };
@@ -1205,21 +995,15 @@ int main(int argc, char** argv) {
     return 0;
   }
 
-  if (std::signal(SIGINT, request_stop) == SIG_ERR ||
-      std::signal(SIGTERM, request_stop) == SIG_ERR) {
-    std::cerr << "Could not install termination signal handlers\n";
-    return 1;
-  }
-
-  const std::filesystem::path primary = primary_config_root(executable);
-  const std::filesystem::path user    = user_config_root(primary);
+  const puc::terminal::ConfigurationRoots roots =
+      puc::terminal::discover_configuration_roots(executable);
   puc::app::ApplicationSubsystemOptions subsystem_options{
       .logger       = logger_config,
       .worker_count = kWorkerCount,
-      .configuration =
-          puc::app::ConfigurationSubsystemOptions{
-              .primary_root        = primary,
-              .user_overrides_root = user,
+      .properties =
+          puc::app::PropertiesSubsystemOptions{
+              .primary_root        = roots.primary,
+              .user_overrides_root = roots.user_overrides,
           },
       .terminal =
           puc::app::TerminalSubsystemOptions{
@@ -1227,24 +1011,7 @@ int main(int argc, char** argv) {
               .output_fd         = STDOUT_FILENO,
               .decoder_limits    = {},
               .configure_decoder = true,
-              .terminal_name     = environment_value("TERM"),
-          },
-      .screen =
-          puc::app::ScreenSubsystemOptions{
-              .take_terminal = true,
-              .session_options =
-                  msg::ScreenSessionOptions{
-                      .preserve_signals     = true,
-                      .alternate_screen     = true,
-                      .hide_cursor          = true,
-                      .disable_auto_wrap    = true,
-                      .bracketed_paste      = true,
-                      .focus_reporting      = true,
-                      .mouse                = msg::ScreenMouseTracking::DRAG,
-                      .kitty_keyboard_flags = static_cast<std::uint32_t>(
-                          puc::terminal::KeyboardEnhancement::
-                              DISAMBIGUATE_ESCAPE_CODES),
-                  },
+              .terminal_name     = puc::terminal::environment_value("TERM"),
           },
       .selection =
           puc::app::ApplicationSubsystemSelection{
@@ -1281,8 +1048,17 @@ int main(int argc, char** argv) {
     return 1;
   }
 
+  const auto* control =
+      app.get_subsystem<puc::app::ApplicationControlSubsystem>();
+  if (control == nullptr || control->control() == nullptr) {
+    std::cerr << "Application control was not initialized\n";
+    static_cast<void>(app.stop());
+    static_cast<void>(app.terminate());
+    return 1;
+  }
+
   bool healthy = true;
-  while (healthy && stop_requested == 0 && !runtime_view->finished()) {
+  while (healthy && !control->exit_requested() && !runtime_view->finished()) {
     healthy = runtime_view->draw();
   }
 

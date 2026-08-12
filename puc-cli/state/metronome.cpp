@@ -8,23 +8,23 @@
 #include <memory>
 
 #include "puc-cli/state/directory.hpp"
-#include "puc-cli/state/workers.hpp"
+#include "puc-cli/state/timer.hpp"
 #include "utils/ipc/directory.hpp"
 #include "utils/metronome/metronome.hpp"
-#include "utils/multithreading/job_queue.hpp"
+#include "utils/timer/scheduler.hpp"
 
 namespace puc::app {
 
 MetronomeSubsystem::MetronomeSubsystem()
     : AppSubsystem(
           "metronome",
-          subsystem_dependencies<DirectorySubsystem, WorkerSubsystem>()) {}
+          subsystem_dependencies<DirectorySubsystem, TimerSubsystem>()) {}
 
 MetronomeSubsystem::~MetronomeSubsystem() = default;
 
 Status MetronomeSubsystem::initialize(AppState& app) {
   return app.get_subsystem<DirectorySubsystem>() == nullptr ||
-                 app.get_subsystem<WorkerSubsystem>() == nullptr
+                 app.get_subsystem<TimerSubsystem>() == nullptr
              ? Status::SUBSYSTEM_NOT_FOUND
              : Status::OK;
 }
@@ -34,14 +34,14 @@ Status MetronomeSubsystem::start(AppState& app) {
     return Status::OK;
   }
   DirectorySubsystem* directory = app.get_subsystem<DirectorySubsystem>();
-  WorkerSubsystem* workers      = app.get_subsystem<WorkerSubsystem>();
+  TimerSubsystem* timer         = app.get_subsystem<TimerSubsystem>();
   if (directory == nullptr || directory->directory() == nullptr ||
-      workers == nullptr || workers->workers() == nullptr) {
+      timer == nullptr || timer->scheduler() == nullptr) {
     return Status::SUBSYSTEM_FAILURE;
   }
 
   auto publisher = std::make_unique<metronome::Metronome>(
-      *directory->directory(), *workers->workers());
+      *directory->directory(), *timer->scheduler());
   status_ = publisher->start();
   if (!metronome::is_ok(status_)) {
     return Status::SUBSYSTEM_FAILURE;

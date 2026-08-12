@@ -34,7 +34,7 @@ Result of command registration, lookup, or execution.
 - <a id="symbol-command_8hpp_1a6fef870a7bf5516b662333b401f3fda7a4596302bc1e8ce6e62188e769aac94cf"></a>`NOT_ALLOWED` — Current application policy forbids execution.
 - <a id="symbol-command_8hpp_1a6fef870a7bf5516b662333b401f3fda7ae8c0c70879b5895c615677261d64a1ee"></a>`INTERNAL_ERROR` — Command execution failed internally.
 
-[Source](../../commands/command.hpp#L45)
+[Source](../../commands/command.hpp#L54)
 
 ## Functions
 
@@ -64,7 +64,7 @@ bool puc::command::is_ok(Status status) noexcept
 
 Return whether a command operation succeeded.
 
-[Source](../../commands/command.hpp#L57)
+[Source](../../commands/command.hpp#L66)
 
 <a id="symbol-command_8hpp_1a3cd776a4c939d894cf736835d274b232"></a>
 
@@ -76,4 +76,4 @@ std::string_view puc::command::status_message(Status status) noexcept
 
 Return stable human-readable text for a command result.
 
-[Source](../../commands/command.hpp#L60)
+[Source](../../commands/command.hpp#L69)

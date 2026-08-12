@@ -16,6 +16,7 @@
 #include <vector>
 
 #include "msgs/screen_msgs.hpp"
+#include "msgs/terminal_msgs.hpp"
 #include "puc-cli/terminal/session.hpp"
 #include "puc-cli/terminal/timeouts.hpp"
 #include "puc-cli/tui/canvas.hpp"
@@ -50,8 +51,10 @@ inline constexpr CellDimensions kDefaultCellDimensions{};
  * Screen renders Canvas images and sends one-way commands through
  * `//screen/commands`. TerminalSession consumes those commands on the
  * caller-owned worker pool borrowed by the IPC Directory and publishes
- * observed geometry through
- * `//screen/resize_events`. There are deliberately no completion or error
+ * observed geometry through `//screen/resize_events`. TerminalSubsystem
+ * publishes normalized input through `//terminal/input_events`; Screen is that
+ * route's transport consumer and retains decoded events in order until the
+ * application drains them. There are deliberately no completion or error
  * replies. Recoverable size observations converge on a later presentation;
  * unrecoverable terminal failures terminate at the worker boundary.
  *
@@ -71,9 +74,10 @@ class Screen {
    * Construct over lifecycle-owned protocol and terminal mechanisms.
    *
    * Both borrowed objects must outlive this Screen. The Directory must already
-   * contain the canonical Screen channels and the session must already own its
-   * command subscription. This Screen owns only its resize subscription and
-   * never closes or unbinds those shared mechanisms.
+   * contain the canonical Screen and terminal-input channels, and the session
+   * must already own its command subscription. This Screen owns its resize and
+   * terminal-input subscriptions but never closes or unbinds those shared
+   * mechanisms.
    */
   Screen(ipc::Directory& directory, terminal::TerminalSession& session);
 
@@ -86,21 +90,14 @@ class Screen {
   ~Screen();
 
   /**
-   * Request terminal ownership asynchronously.
+   * Request terminal ownership with Screen's interactive input contract.
    *
-   * Success means the command channel accepted the request, not that terminal
-   * setup has completed. The initial resize event marks usable geometry.
+   * The standard contract enables alternate-screen presentation, bracketed
+   * paste, focus changes, drag tracking, and enhanced keyboard reporting.
+   * Success means the command channel accepted the request, not that setup has
+   * completed. The initial resize event marks usable geometry.
    */
   Status take() noexcept;
-
-  /**
-   * Request ownership with caller-selected input protocol modes.
-   *
-   * Presentation still uses Screen's alternate-buffer clearing and final style
-   * reset. This overload exists for applications that consume mouse, focus,
-   * bracketed-paste, or enhanced-keyboard input while Screen owns the terminal.
-   */
-  Status take(const msg::ScreenSessionOptions& options) noexcept;
 
   /**
    * Request style reset and terminal restoration asynchronously.
@@ -122,6 +119,17 @@ class Screen {
 
   /** Render and enqueue the newest complete Canvas image for presentation. */
   Status draw() noexcept;
+
+  /**
+   * Drain normalized terminal events already consumed from the input channel.
+   *
+   * Events retain terminal publication order. The output is cleared first and
+   * receives every event currently available as one batch. An empty successful
+   * batch means no input has arrived since the preceding drain. Application
+   * code owns only mode- and focus-specific policy; it never subscribes to or
+   * decodes the terminal-input transport directly.
+   */
+  Status drain_input_events(std::vector<terminal::Event>& output) noexcept;
 
   /**
    * Read one available terminal block through the owned TerminalSession.
@@ -255,6 +263,9 @@ class Screen {
   /** Decode one asynchronously delivered geometry observation. */
   void receive_resize_event(ipc::Channel::Bytes payload) noexcept;
 
+  /** Decode and retain one normalized terminal-input publication. */
+  void receive_input_event(ipc::Channel::Bytes payload) noexcept;
+
   /** Current published Canvas, owned on the caller's presentation thread. */
   std::shared_ptr<Canvas> canvas_;
   /** TerminalSession owned only by standalone Screen constructors. */
@@ -265,8 +276,12 @@ class Screen {
   std::shared_ptr<ipc::Channel> command_channel_;
   /** Shared-memory channel carrying latest-only geometry observations. */
   std::shared_ptr<ipc::Channel> resize_channel_;
+  /** Ordered channel carrying normalized terminal input. */
+  std::shared_ptr<ipc::Channel> input_channel_;
   /** Keeps Screen's resize callback active for the Screen lifetime. */
   ipc::Subscription resize_subscription_;
+  /** Keeps Screen's terminal-input callback active for the Screen lifetime. */
+  ipc::Subscription input_subscription_;
   /** Protects desired ownership and asynchronously observed geometry. */
   mutable std::mutex state_mutex_;
   /** Latest successfully decoded terminal geometry. */
@@ -279,6 +294,14 @@ class Screen {
   msg::ScreenCommandCodec command_codec_;
   /** Typed resize-event decoder. */
   msg::ScreenResizeEventCodec resize_codec_;
+  /** Typed normalized terminal-event decoder. */
+  msg::TerminalInputEventCodec input_codec_;
+  /** Serializes event ingestion and application drains. */
+  mutable std::mutex input_mutex_;
+  /** Decoded terminal events awaiting application-specific handling. */
+  std::vector<terminal::Event> input_events_;
+  /** Persistent decoding failure for the current Screen generation. */
+  Status input_status_ = Status::OK;
   /** Serializes pointer recognition, Frame dispatch, and selection queries. */
   mutable std::mutex selection_mutex_;
   /** Applies semantic operations and retains the active selected Frame. */

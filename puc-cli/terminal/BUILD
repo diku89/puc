@@ -57,7 +57,9 @@ cc_library(
     name = "terminal",
     srcs = [
         "clipboard.cpp",
+        "configuration_paths.cpp",
         "decoder.cpp",
+        "event_messages.cpp",
         "input.cpp",
         "sequences.cpp",
         "session.cpp",
@@ -65,8 +67,10 @@ cc_library(
     ],
     hdrs = [
         "clipboard.hpp",
+        "configuration_paths.hpp",
         "decoder.hpp",
         "event.hpp",
+        "event_messages.hpp",
         "input.hpp",
         "sequences.hpp",
         "session.hpp",
@@ -77,7 +81,7 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         "//msgs",
-        "//utils/config",
+        "//properties",
         "//utils/containers:trie",
         "//utils/ipc",
         "//utils/logger",
@@ -102,16 +106,18 @@ cc_binary(
         ":linux_defaults_config",
         ":timeout_config",
         ":xterm_ghostty_defaults_config",
+        "//themes:default_dark_config",
     ],
     deps = [
         ":terminal",
         "//msgs",
+        "//properties",
         "//puc-cli/state:adapters",
         "//puc-cli/tui",
-        "//utils/config",
         "//utils/ipc",
         "//utils/logger",
         "//utils/metronome",
+        "//utils/timer",
     ],
 )
 
@@ -121,6 +127,7 @@ cc_test(
     srcs = [
         "clipboard_test.cpp",
         "decoder_test.cpp",
+        "event_messages_test.cpp",
         "event_test.cpp",
         "input_test.cpp",
         "sequences_test.cpp",
@@ -151,6 +158,7 @@ cc_test(
     }),
     deps = [
         ":terminal",
+        "//properties",
         "//puc-cli/tui",
         "@googletest//:gtest",
         "@googletest//:gtest_main",

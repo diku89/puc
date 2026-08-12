@@ -459,11 +459,11 @@ Decoder::Decoder(InputMap input_map, DecoderLimits limits) : Decoder(limits) {
   input_trie_ = input_map.take_trie();
 }
 
-Status Decoder::setup(const config::Config& configurations,
+Status Decoder::setup(properties::Properties& properties,
                       std::string_view terminal_name, int output_fd) {
   InputMap input_map;
   const Status status =
-      InputMap::setup(configurations, input_map, terminal_name, output_fd);
+      InputMap::setup(properties, input_map, terminal_name, output_fd);
   if (!is_ok(status)) {
     Logger<ERROR> << "Could not set up terminal input decoder: "
                   << status_message(status);

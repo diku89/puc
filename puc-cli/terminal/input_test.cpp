@@ -88,12 +88,31 @@ bool write_profile(const std::filesystem::path& path,
   return std::fclose(file) == 0 && written;
 }
 
-/** Return the configuration roots populated by puc_config runfiles. */
-config::Config runfiles_config() {
+/** Return application properties over the puc_config runfiles root. */
+properties::Properties runfiles_properties() {
   std::error_code error;
   const std::filesystem::path root = std::filesystem::current_path(error);
   EXPECT_FALSE(error);
-  return config::Config{root, root / "missing_user_overrides"};
+  return properties::Properties{root, root / "missing_user_overrides"};
+}
+
+/** Load one packaged immutable source through the Properties boundary. */
+properties::LoadResult load_runfile(std::string_view path) {
+  properties::Properties properties = runfiles_properties();
+  return properties.load_immutable("test.source", path);
+}
+
+/** Configure a decoder from packaged properties whose lifetime ends here. */
+Status setup_runfiles(Decoder& decoder, std::string_view terminal_name) {
+  properties::Properties properties = runfiles_properties();
+  return decoder.setup(properties, terminal_name);
+}
+
+/** Configure a decoder from one test's primary and user roots. */
+Status setup_from_roots(Decoder& decoder, const ProfileRoots& roots,
+                        std::string_view terminal_name) {
+  properties::Properties properties{roots.primary, roots.user};
+  return decoder.setup(properties, terminal_name);
 }
 
 /** Feed bytes and return all immediately emitted events. */
@@ -129,18 +148,18 @@ TEST(TerminalInputActionTest, StoresEventsAndProtocolsWithValueSemantics) {
 }
 
 TEST(TerminalInputSetupTest, PucConfigAppearsAtItsDeclaredRunfilesPath) {
-  const config::LoadResult loaded = runfiles_config().load("input_keys.toml");
-  ASSERT_EQ(loaded.status, config::Status::OK);
+  const properties::LoadResult loaded = load_runfile("input_keys.toml");
+  ASSERT_EQ(loaded.status, properties::Status::OK);
   EXPECT_EQ(loaded.find("version").as_integer(), 1);
-  EXPECT_EQ(loaded.find("mapping").type(), config::ValueType::ARRAY);
-  EXPECT_EQ(loaded.find("terminfo").type(), config::ValueType::ARRAY);
+  EXPECT_EQ(loaded.find("mapping").type(), properties::ValueType::ARRAY);
+  EXPECT_EQ(loaded.find("terminfo").type(), properties::ValueType::ARRAY);
 
   for (const std::string_view path :
        {"darwin-defaults.toml", "linux-defaults.toml", "bsd-defaults.toml"}) {
-    const config::LoadResult defaults = runfiles_config().load(path);
-    ASSERT_EQ(defaults.status, config::Status::OK) << path;
+    const properties::LoadResult defaults = load_runfile(path);
+    ASSERT_EQ(defaults.status, properties::Status::OK) << path;
     EXPECT_EQ(defaults.find("version").as_integer(), 1) << path;
-    ASSERT_EQ(defaults.find("mapping").type(), config::ValueType::ARRAY)
+    ASSERT_EQ(defaults.find("mapping").type(), properties::ValueType::ARRAY)
         << path;
     const std::size_t expected_mappings =
         path == "darwin-defaults.toml" ? 20U : 1U;
@@ -153,11 +172,11 @@ TEST(TerminalInputSetupTest, PucConfigAppearsAtItsDeclaredRunfilesPath) {
         << path;
   }
 
-  const config::LoadResult ghostty =
-      runfiles_config().load("terminals/xterm-ghostty.toml");
-  ASSERT_EQ(ghostty.status, config::Status::OK);
+  const properties::LoadResult ghostty =
+      load_runfile("terminals/xterm-ghostty.toml");
+  ASSERT_EQ(ghostty.status, properties::Status::OK);
   EXPECT_EQ(ghostty.find("version").as_integer(), 1);
-  ASSERT_EQ(ghostty.find("mapping").type(), config::ValueType::ARRAY);
+  ASSERT_EQ(ghostty.find("mapping").type(), properties::ValueType::ARRAY);
   EXPECT_EQ(ghostty.find("mapping").size(), 4U);
 }
 
@@ -175,7 +194,7 @@ TEST(TerminalInputSetupTest, SelectsAStableDefaultsPathForEverySupportedOs) {
 
 TEST(TerminalInputSetupTest, PackagedOsDefaultsEmitCopyDirectlyFromTheTrie) {
   Decoder decoder;
-  ASSERT_EQ(decoder.setup(runfiles_config(), "xterm-256color"), Status::OK);
+  ASSERT_EQ(setup_runfiles(decoder, "xterm-256color"), Status::OK);
 
   std::string_view copy_sequence;
   switch (current_operating_system()) {
@@ -198,7 +217,7 @@ TEST(TerminalInputSetupTest, PackagedOsDefaultsEmitCopyDirectlyFromTheTrie) {
 
 TEST(TerminalInputSetupTest, EscapeColonEmitsCommandModeIntentFromTheTrie) {
   Decoder decoder;
-  ASSERT_EQ(decoder.setup(runfiles_config(), "xterm-256color"), Status::OK);
+  ASSERT_EQ(setup_runfiles(decoder, "xterm-256color"), Status::OK);
 
   const std::vector<Event> events = decode(decoder, "\x1b:");
   ASSERT_EQ(events.size(), 1U);
@@ -209,7 +228,7 @@ TEST(TerminalInputSetupTest, EscapeColonEmitsCommandModeIntentFromTheTrie) {
 TEST(TerminalInputSetupTest,
      EscapeGreaterThanEmitsTerminalModeIntentFromTheTrie) {
   Decoder decoder;
-  ASSERT_EQ(decoder.setup(runfiles_config(), "xterm-256color"), Status::OK);
+  ASSERT_EQ(setup_runfiles(decoder, "xterm-256color"), Status::OK);
 
   const std::vector<Event> events = decode(decoder, "\x1b>");
   ASSERT_EQ(events.size(), 1U);
@@ -221,7 +240,7 @@ TEST(TerminalInputIntegrationTest,
      LegacyAndEnhancedEscapeColonReachTheSameFrameTransition) {
   const auto exercise = [](std::string_view bytes) {
     Decoder decoder;
-    ASSERT_EQ(decoder.setup(runfiles_config(), "xterm-256color"), Status::OK);
+    ASSERT_EQ(setup_runfiles(decoder, "xterm-256color"), Status::OK);
     std::vector<Event> events = decode(decoder, bytes);
     ASSERT_FALSE(events.empty());
 
@@ -247,7 +266,7 @@ TEST(TerminalInputIntegrationTest,
      LegacyAndEnhancedEscapeGreaterThanReachTheSameFrameTransition) {
   const auto exercise = [](std::string_view bytes) {
     Decoder decoder;
-    ASSERT_EQ(decoder.setup(runfiles_config(), "xterm-256color"), Status::OK);
+    ASSERT_EQ(setup_runfiles(decoder, "xterm-256color"), Status::OK);
     std::vector<Event> events = decode(decoder, bytes);
     ASSERT_FALSE(events.empty());
 
@@ -272,7 +291,7 @@ TEST(TerminalInputIntegrationTest,
 TEST(TerminalInputIntegrationTest,
      DecoderNormalizedDoubleEscapeClearsTheFrame) {
   Decoder decoder;
-  ASSERT_EQ(decoder.setup(runfiles_config(), "xterm-256color"), Status::OK);
+  ASSERT_EQ(setup_runfiles(decoder, "xterm-256color"), Status::OK);
   const std::vector<Event> events = decode(decoder, "\x1b\x1b");
   ASSERT_EQ(events.size(), 1U);
 
@@ -287,7 +306,7 @@ TEST(TerminalInputIntegrationTest,
 TEST(TerminalInputIntegrationTest,
      DecoderTimeoutArmsThenFrameTimeoutDismissesEscapePrompt) {
   Decoder decoder;
-  ASSERT_EQ(decoder.setup(runfiles_config(), "xterm-256color"), Status::OK);
+  ASSERT_EQ(setup_runfiles(decoder, "xterm-256color"), Status::OK);
   std::vector<Event> events;
   ASSERT_EQ(decoder.feed("\x1b", events), Status::OK);
   ASSERT_TRUE(events.empty());
@@ -308,10 +327,9 @@ TEST(TerminalInputIntegrationTest,
 }
 
 TEST(TerminalInputSetupTest, DarwinDefaultsDeclareMacNavigationCommands) {
-  const config::LoadResult defaults =
-      runfiles_config().load("darwin-defaults.toml");
-  ASSERT_EQ(defaults.status, config::Status::OK);
-  const config::Value mappings = defaults.find("mapping");
+  const properties::LoadResult defaults = load_runfile("darwin-defaults.toml");
+  ASSERT_EQ(defaults.status, properties::Status::OK);
+  const properties::Value mappings = defaults.find("mapping");
   ASSERT_EQ(mappings.size(), 20U);
   EXPECT_EQ(mappings.at(1U).find("command").as_string(), "MOVE_WORD_LEFT");
   EXPECT_EQ(mappings.at(2U).find("command").as_string(), "MOVE_WORD_RIGHT");
@@ -326,10 +344,10 @@ TEST(TerminalInputSetupTest, DarwinDefaultsDeclareMacNavigationCommands) {
 }
 
 TEST(TerminalInputSetupTest, GhosttyProfileDeclaresReachableMacFallbacks) {
-  const config::LoadResult profile =
-      runfiles_config().load("terminals/xterm-ghostty.toml");
-  ASSERT_EQ(profile.status, config::Status::OK);
-  const config::Value mappings = profile.find("mapping");
+  const properties::LoadResult profile =
+      load_runfile("terminals/xterm-ghostty.toml");
+  ASSERT_EQ(profile.status, properties::Status::OK);
+  const properties::Value mappings = profile.find("mapping");
   ASSERT_EQ(mappings.size(), 4U);
   EXPECT_EQ(mappings.at(0U).find("sequence").as_string(), "^A");
   EXPECT_EQ(mappings.at(0U).find("command").as_string(), "MOVE_ROW_START");
@@ -342,7 +360,7 @@ TEST(TerminalInputSetupTest, GhosttyProfileDeclaresReachableMacFallbacks) {
 
 TEST(TerminalInputSetupTest, PackagedGhosttyMacFallbacksDecodeFromTrie) {
   Decoder decoder;
-  const Status setup = decoder.setup(runfiles_config(), "xterm-ghostty");
+  const Status setup = setup_runfiles(decoder, "xterm-ghostty");
   if (setup == Status::TERMINFO_LOAD_FAILED) {
     GTEST_SKIP() << "xterm-ghostty terminfo is not installed on this host";
   }
@@ -371,7 +389,7 @@ TEST(TerminalInputSetupTest, DarwinDefaultsDecodeCommonMacNavigationForms) {
   }
 
   Decoder decoder;
-  ASSERT_EQ(decoder.setup(runfiles_config(), "xterm-256color"), Status::OK);
+  ASSERT_EQ(setup_runfiles(decoder, "xterm-256color"), Status::OK);
   const struct {
     std::string_view sequence;
     Command command;
@@ -402,7 +420,7 @@ TEST(TerminalInputSetupTest, DarwinDefaultsDecodeCommonMacNavigationForms) {
 
 TEST(TerminalInputSetupTest, PlainControlCRemainsAKeyAndNotACopyCommand) {
   Decoder decoder;
-  ASSERT_EQ(decoder.setup(runfiles_config(), "xterm-256color"), Status::OK);
+  ASSERT_EQ(setup_runfiles(decoder, "xterm-256color"), Status::OK);
 
   const std::vector<Event> events = decode(decoder, "\x03");
   ASSERT_EQ(events.size(), 1U);
@@ -414,7 +432,7 @@ TEST(TerminalInputSetupTest, PlainControlCRemainsAKeyAndNotACopyCommand) {
 
 TEST(TerminalInputSetupTest, LoadsThePackagedProfileAtRuntime) {
   Decoder decoder;
-  ASSERT_EQ(decoder.setup(runfiles_config(), "xterm-256color"), Status::OK);
+  ASSERT_EQ(setup_runfiles(decoder, "xterm-256color"), Status::OK);
 
   const std::vector<Event> focus = decode(decoder, "\x1b[I");
   ASSERT_EQ(focus.size(), 1U);
@@ -469,7 +487,7 @@ key = "END"
 )toml"));
 
   Decoder decoder;
-  const config::Config configurations{roots.primary, roots.user};
+  properties::Properties configurations{roots.primary, roots.user};
   ASSERT_EQ(decoder.setup(configurations, "xterm-256color"), Status::OK);
 
   const std::vector<Event> events = decode(decoder, "\x1b[Ay");
@@ -520,7 +538,7 @@ protocol = "OSC52"
 )toml"));
 
   Decoder decoder;
-  const config::Config configurations{roots.primary, roots.user};
+  properties::Properties configurations{roots.primary, roots.user};
   ASSERT_EQ(decoder.setup(configurations, "xterm-256color"), Status::OK);
 
   const std::vector<Event> events =
@@ -558,7 +576,7 @@ protocol = "CSI"
 )toml"));
 
   Decoder decoder;
-  const config::Config configurations{roots.primary, roots.user};
+  properties::Properties configurations{roots.primary, roots.user};
   ASSERT_EQ(decoder.setup(configurations, "xterm-256color"), Status::OK);
 
   const std::vector<Event> events = decode(decoder, "\x1b[1;2P");
@@ -568,7 +586,7 @@ protocol = "CSI"
 
 TEST(TerminalInputSetupTest, MissingRuntimeConfigurationIsAnError) {
   const ProfileRoots roots = profile_roots("missing_profile");
-  const config::Config configurations{roots.primary, roots.user};
+  properties::Properties configurations{roots.primary, roots.user};
   Decoder decoder;
 
   EXPECT_EQ(decoder.setup(configurations, "xterm-256color"),
@@ -595,8 +613,7 @@ protocol = "TEXT"
   ASSERT_FALSE(error);
 
   Decoder decoder;
-  EXPECT_EQ(decoder.setup(config::Config{roots.primary, roots.user},
-                          "xterm-256color"),
+  EXPECT_EQ(setup_from_roots(decoder, roots, "xterm-256color"),
             Status::CONFIGURATION_LOAD_FAILED);
 }
 
@@ -626,9 +643,7 @@ key = "END"
 )toml"));
 
   Decoder decoder;
-  ASSERT_EQ(decoder.setup(config::Config{roots.primary, roots.user},
-                          "xterm-256color"),
-            Status::OK);
+  ASSERT_EQ(setup_from_roots(decoder, roots, "xterm-256color"), Status::OK);
   EXPECT_EQ(decode(decoder, "z"),
             (std::vector<Event>{Event{KeyEvent{.key = NamedKey::END}}}));
 }
@@ -663,8 +678,7 @@ command = "COPY"
 )toml"));
 
   Decoder decoder;
-  EXPECT_EQ(decoder.setup(config::Config{roots.primary, roots.user},
-                          "xterm-256color"),
+  EXPECT_EQ(setup_from_roots(decoder, roots, "xterm-256color"),
             Status::CONFIGURATION_PARSE_FAILED);
 }
 
@@ -693,8 +707,7 @@ command = "COPY"
 )toml"));
 
   Decoder decoder;
-  EXPECT_EQ(decoder.setup(config::Config{roots.primary, roots.user},
-                          "xterm-256color"),
+  EXPECT_EQ(setup_from_roots(decoder, roots, "xterm-256color"),
             Status::CONFIGURATION_PARSE_FAILED);
 }
 
@@ -718,14 +731,13 @@ command = "NOT_A_COMMAND"
 )toml"));
 
   Decoder decoder;
-  EXPECT_EQ(decoder.setup(config::Config{roots.primary, roots.user},
-                          "xterm-256color"),
+  EXPECT_EQ(setup_from_roots(decoder, roots, "xterm-256color"),
             Status::CONFIGURATION_PARSE_FAILED);
 }
 
 TEST(TerminalInputSetupTest, FailedSetupPreservesThePreviousDecoder) {
   Decoder decoder;
-  ASSERT_EQ(decoder.setup(runfiles_config(), "xterm-256color"), Status::OK);
+  ASSERT_EQ(setup_runfiles(decoder, "xterm-256color"), Status::OK);
 
   const ProfileRoots roots = profile_roots("transactional_setup");
   ASSERT_TRUE(write_profile(roots.primary / "input_keys.toml", R"toml(
@@ -735,7 +747,7 @@ sequence = "broken"
 kind = "key"
 key = "NOT_A_KEY"
 )toml"));
-  const config::Config invalid{roots.primary, roots.user};
+  properties::Properties invalid{roots.primary, roots.user};
   EXPECT_EQ(decoder.setup(invalid, "xterm-256color"),
             Status::CONFIGURATION_PARSE_FAILED);
 
@@ -746,8 +758,7 @@ key = "NOT_A_KEY"
 
 TEST(TerminalInputSetupTest, RejectsUnsafeTerminalProfileNames) {
   Decoder decoder;
-  EXPECT_EQ(decoder.setup(runfiles_config(), "../xterm"),
-            Status::INVALID_ARGUMENT);
+  EXPECT_EQ(setup_runfiles(decoder, "../xterm"), Status::INVALID_ARGUMENT);
 }
 
 TEST(TerminalInputSetupTest,
@@ -764,7 +775,7 @@ key = "UP"
 )toml"));
 
   Decoder decoder;
-  const config::Config configurations{roots.primary, roots.user};
+  properties::Properties configurations{roots.primary, roots.user};
   EXPECT_EQ(decoder.setup(configurations, "xterm-256color"),
             Status::CONFIGURATION_PARSE_FAILED);
 }
@@ -787,7 +798,7 @@ key = "UP"
 )toml"));
 
   Decoder decoder;
-  const config::Config configurations{roots.primary, roots.user};
+  properties::Properties configurations{roots.primary, roots.user};
   ASSERT_EQ(decoder.setup(configurations, "xterm-256color"), Status::OK);
   const std::vector<Event> events = decode(decoder, "ax");
 
@@ -887,7 +898,7 @@ disabled = true
 )toml"));
 
   Decoder decoder;
-  const config::Config configurations{roots.primary, roots.user};
+  properties::Properties configurations{roots.primary, roots.user};
   ASSERT_EQ(decoder.setup(configurations, "xterm-256color"), Status::OK);
 
   const std::vector<Event> focus = decode(decoder, "\x1b[I");
@@ -938,7 +949,7 @@ protocol = "CSI"
 )toml"));
 
   Decoder decoder;
-  const config::Config configurations{roots.primary, roots.user};
+  properties::Properties configurations{roots.primary, roots.user};
   ASSERT_EQ(decoder.setup(configurations, "xterm-256color"), Status::OK);
 
   const std::vector<Event> events = decode(decoder, "\x01\x1b[A");
@@ -965,7 +976,7 @@ key = "UP"
 )toml"));
 
   Decoder decoder;
-  const config::Config invalid_root_action{roots.primary, roots.user};
+  properties::Properties invalid_root_action{roots.primary, roots.user};
   EXPECT_EQ(decoder.setup(invalid_root_action, "xterm-256color"),
             Status::CONFIGURATION_PARSE_FAILED);
 

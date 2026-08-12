@@ -4,7 +4,7 @@
 
 Own the PTY master and exactly one child process while the app is running.
 
-InputFrame retains durable virtual-terminal state. This adapter observes its requested session generation, starts/resizes the shell lazily, translates normalized input back to PTY bytes, pumps child output into libtmt, and reaps the child synchronously on stop before [InputSubsystem](classpuc_1_1app_1_1_input_subsystem.md) can be stopped.
+[InputFrame](classpuc_1_1app_1_1_input_frame.md) retains durable virtual-terminal state. This adapter observes its requested session generation, starts/resizes the shell lazily, translates normalized input back to PTY bytes, pumps child output into libtmt, and reaps the child synchronously on stop before [InputSubsystem](classpuc_1_1app_1_1_input_subsystem.md) can be stopped.
 
 [Source](../../puc-cli/state/embedded_terminal.hpp#L35)
 
@@ -84,7 +84,7 @@ Whether PTY work is accepted in this generation.
 puc::app::EmbeddedTerminalSubsystem::EmbeddedTerminalSubsystem(EmbeddedTerminalSubsystemOptions options={})
 ```
 
-Retain the shell launch policy and declare the InputFrame dependency.
+Retain the shell launch policy and declare the [InputFrame](classpuc_1_1app_1_1_input_frame.md) dependency.
 
 [Source](../../puc-cli/state/embedded_terminal.hpp#L38)
 
@@ -108,7 +108,7 @@ Destroy already-reaped process state.
 Status puc::app::EmbeddedTerminalSubsystem::initialize(AppState &app) override
 ```
 
-Bind the durable InputFrame and allocate inactive PTY state.
+Bind the durable [InputFrame](classpuc_1_1app_1_1_input_frame.md) and allocate inactive PTY state.
 
 [Source](../../puc-cli/state/embedded_terminal.hpp#L45)
 
@@ -144,7 +144,7 @@ Close the PTY and synchronously terminate/reap its owned child.
 Status puc::app::EmbeddedTerminalSubsystem::terminate(AppState &app) noexcept override
 ```
 
-Release durable PTY state and the InputFrame binding.
+Release durable PTY state and the [InputFrame](classpuc_1_1app_1_1_input_frame.md) binding.
 
 [Source](../../puc-cli/state/embedded_terminal.hpp#L54)
 
@@ -168,7 +168,7 @@ Translate and queue one normalized event for the active child.
 Status puc::app::EmbeddedTerminalSubsystem::synchronize(std::size_t screen_width, std::size_t screen_height)
 ```
 
-Start, resize, pump, or reap the session requested by InputFrame.
+Start, resize, pump, or reap the session requested by [InputFrame](classpuc_1_1app_1_1_input_frame.md).
 
 [Source](../../puc-cli/state/embedded_terminal.hpp#L60)
 
@@ -192,6 +192,6 @@ Return whether this running generation currently owns a live child.
 std::size_t puc::app::EmbeddedTerminalSubsystem::child_generation() const noexcept
 ```
 
-Return the InputFrame terminal-session generation served by the child.
+Return the [InputFrame](classpuc_1_1app_1_1_input_frame.md) terminal-session generation served by the child.
 
 [Source](../../puc-cli/state/embedded_terminal.hpp#L66)

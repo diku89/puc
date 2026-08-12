@@ -11,5 +11,5 @@ Process-local one-hertz heartbeat publication.
 - [puc::metronome::Metronome](classpuc_1_1metronome_1_1_metronome.md)
 - [puc](namespacepuc.md)
 - [puc::ipc](namespacepuc_1_1ipc.md)
-- [puc::multithreading](namespacepuc_1_1multithreading.md)
+- [puc::timer](namespacepuc_1_1timer.md)
 - [puc::metronome](namespacepuc_1_1metronome.md)

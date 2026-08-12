@@ -6,7 +6,7 @@ Setup-time registry of typed payload codecs.
 
 The default collection contains [NullMessageCodec](classpuc_1_1msg_1_1_null_message_codec.md). Additional codecs may be registered by message id before the collection is shared with consumers. Registration and const lookup are synchronized; registered codecs are never removed, so concurrent readers retain stable codec addresses.
 
-[Source](../../msgs/codec.hpp#L212)
+[Source](../../msgs/codec.hpp#L222)
 
 ## Private data members
 
@@ -20,7 +20,7 @@ std::shared_mutex puc::msg::MessageCodecCollection::mutex_
 
 Synchronizes registry access.
 
-[Source](../../msgs/codec.hpp#L307)
+[Source](../../msgs/codec.hpp#L317)
 
 <a id="symbol-classpuc_1_1msg_1_1_message_codec_collection_1a1ecc3decd7afa671d97398e10919c8b6"></a>
 
@@ -32,7 +32,7 @@ std::unordered_map<MessageId, std::unique_ptr<CodecBase> > puc::msg::MessageCode
 
 Message-id index and codec ownership.
 
-[Source](../../msgs/codec.hpp#L309)
+[Source](../../msgs/codec.hpp#L319)
 
 ## Public functions
 
@@ -46,7 +46,7 @@ puc::msg::MessageCodecCollection::MessageCodecCollection()
 
 Construct a collection containing the built-in null-message codec.
 
-[Source](../../msgs/codec.hpp#L215)
+[Source](../../msgs/codec.hpp#L225)
 
 <a id="symbol-classpuc_1_1msg_1_1_message_codec_collection_1aa4ffa0d491dfd310a404f6623153f614"></a>
 
@@ -58,7 +58,7 @@ puc::msg::MessageCodecCollection::~MessageCodecCollection()=default
 
 Destroy every registered codec.
 
-[Source](../../msgs/codec.hpp#L218)
+[Source](../../msgs/codec.hpp#L228)
 
 <a id="symbol-classpuc_1_1msg_1_1_message_codec_collection_1abf3a234ec245bd780a7e32c7abb110e1"></a>
 
@@ -70,7 +70,7 @@ puc::msg::MessageCodecCollection::MessageCodecCollection(const MessageCodecColle
 
 Collections have unique codec ownership and cannot be copied.
 
-[Source](../../msgs/codec.hpp#L221)
+[Source](../../msgs/codec.hpp#L231)
 
 <a id="symbol-classpuc_1_1msg_1_1_message_codec_collection_1a659c2c3ed81f97d2e4602ee4d1c5fc22"></a>
 
@@ -82,7 +82,7 @@ MessageCodecCollection & puc::msg::MessageCodecCollection::operator=(const Messa
 
 Collections have unique codec ownership and cannot be copy-assigned.
 
-[Source](../../msgs/codec.hpp#L224)
+[Source](../../msgs/codec.hpp#L234)
 
 <a id="symbol-classpuc_1_1msg_1_1_message_codec_collection_1a682373f2126783e524af7f91877480c3"></a>
 
@@ -94,7 +94,7 @@ puc::msg::MessageCodecCollection::MessageCodecCollection(MessageCodecCollection 
 
 A collection contains a mutex and cannot be moved.
 
-[Source](../../msgs/codec.hpp#L227)
+[Source](../../msgs/codec.hpp#L237)
 
 <a id="symbol-classpuc_1_1msg_1_1_message_codec_collection_1a3e016c7f64d0d7f5d0c9977b5c103d36"></a>
 
@@ -106,7 +106,7 @@ MessageCodecCollection & puc::msg::MessageCodecCollection::operator=(MessageCode
 
 A collection contains a mutex and cannot be move-assigned.
 
-[Source](../../msgs/codec.hpp#L230)
+[Source](../../msgs/codec.hpp#L240)
 
 <a id="symbol-classpuc_1_1msg_1_1_message_codec_collection_1aea7e9464a8e5e46c20fb05f0187fcb06"></a>
 
@@ -120,7 +120,7 @@ Add an owning codec without replacing an existing message id.
 
 **Returns:** [Status::OK](namespacepuc_1_1msg.md#symbol-namespacepuc_1_1msg_1a907eec61a676749c81ee4d71de76953fae0aa021e21dddbd6d8cecec71e9cf564), [Status::INVALID\_ARGUMENT](namespacepuc_1_1msg.md#symbol-namespacepuc_1_1msg_1a907eec61a676749c81ee4d71de76953faf295a0c3e37c94f078e1c5476479132d) for a null codec, or [Status::DUPLICATE\_MESSAGE\_ID](namespacepuc_1_1msg.md#symbol-namespacepuc_1_1msg_1a907eec61a676749c81ee4d71de76953fa50eba419914f74022f3e7b092cbfa1d9) when the id is already registered.
 
-[Source](../../msgs/codec.hpp#L238)
+[Source](../../msgs/codec.hpp#L248)
 
 <a id="symbol-classpuc_1_1msg_1_1_message_codec_collection_1a79849ebc939a386b1879c45201440be8"></a>
 
@@ -132,7 +132,7 @@ std::size_t puc::msg::MessageCodecCollection::size() const
 
 Return the number of registered payload schema identifiers.
 
-[Source](../../msgs/codec.hpp#L241)
+[Source](../../msgs/codec.hpp#L251)
 
 <a id="symbol-classpuc_1_1msg_1_1_message_codec_collection_1ac8efa776c50a1061a90b191f362fbdbc"></a>
 
@@ -146,7 +146,7 @@ Serialize a typed payload with its registered codec.
 
 Output is empty on every failure, including a missing id or type mismatch.
 
-[Source](../../msgs/codec.hpp#L249)
+[Source](../../msgs/codec.hpp#L259)
 
 <a id="symbol-classpuc_1_1msg_1_1_message_codec_collection_1a690aca5674b41825353534cdb2b7fdd0"></a>
 
@@ -160,7 +160,7 @@ Deserialize a typed payload with its registered codec.
 
 Output is default-initialized on every failure.
 
-[Source](../../msgs/codec.hpp#L263)
+[Source](../../msgs/codec.hpp#L273)
 
 <a id="symbol-classpuc_1_1msg_1_1_message_codec_collection_1ad98ea82f3b681575877d846638dd076a"></a>
 
@@ -174,7 +174,7 @@ Decode payload bytes by id and format the resulting struct as JSON.
 
 Output is cleared before lookup and remains empty on failure.
 
-[Source](../../msgs/codec.hpp#L276)
+[Source](../../msgs/codec.hpp#L286)
 
 <a id="symbol-classpuc_1_1msg_1_1_message_codec_collection_1aac2d3bc5f21f51df4a17738d60e4e2a6"></a>
 
@@ -188,7 +188,7 @@ Decode the first complete IPC message and format its payload as JSON.
 
 The IPC header's message id selects the payload codec. On success, `data` advances by exactly one complete IPC message, permitting repeated decoding of a concatenated stream. On failure, `data` is unchanged and output is empty.
 
-[Source](../../msgs/codec.hpp#L288)
+[Source](../../msgs/codec.hpp#L298)
 
 ## Private functions
 
@@ -202,7 +202,7 @@ const CodecBase * puc::msg::MessageCodecCollection::find_codec(MessageId message
 
 Find a type-erased codec while protecting the registry index.
 
-[Source](../../msgs/codec.hpp#L293)
+[Source](../../msgs/codec.hpp#L303)
 
 <a id="symbol-classpuc_1_1msg_1_1_message_codec_collection_1af0f007a31d1fa26398819c4ef3e774b6"></a>
 
@@ -214,4 +214,4 @@ Status puc::msg::MessageCodecCollection::get_codec(MessageId message_id, const C
 
 Resolve an id and verify that its codec owns exactly T.
 
-[Source](../../msgs/codec.hpp#L297)
+[Source](../../msgs/codec.hpp#L307)

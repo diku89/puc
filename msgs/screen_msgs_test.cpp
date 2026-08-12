@@ -28,21 +28,10 @@ TEST(ScreenMessagesTest, MessageValuesMeetTheGenericCodecContract) {
   static_assert(MessageValue<ScreenResizeEvent>);
 }
 
-TEST(ScreenCommandCodecTest, TakeCommandRoundTripsEveryOption) {
+TEST(ScreenCommandCodecTest, TakeCommandRoundTripsScreenOwnedBytes) {
   const ScreenCommand original{
       .data =
           ScreenTakeCommand{
-              .options =
-                  ScreenSessionOptions{
-                      .preserve_signals     = false,
-                      .alternate_screen     = true,
-                      .hide_cursor          = true,
-                      .disable_auto_wrap    = true,
-                      .bracketed_paste      = true,
-                      .focus_reporting      = true,
-                      .mouse                = ScreenMouseTracking::DRAG,
-                      .kitty_keyboard_flags = 0x12345678U,
-                  },
               .initial_bytes = "clear",
               .final_bytes   = "reset",
           },
@@ -50,14 +39,14 @@ TEST(ScreenCommandCodecTest, TakeCommandRoundTripsEveryOption) {
   ScreenCommandCodec codec;
   std::vector<std::uint8_t> payload;
   ASSERT_EQ(codec.serialize(original, payload), Status::OK);
-  EXPECT_EQ(payload.size(), 25U);
+  EXPECT_EQ(payload.size(), 19U);
 
   ScreenCommand decoded;
   EXPECT_EQ(codec.deserialize(payload, decoded), Status::OK);
   EXPECT_EQ(decoded, original);
   EXPECT_EQ(
       std::format("{}", decoded),
-      R"({"type":"take","preserve_signals":false,"alternate_screen":true,"hide_cursor":true,"disable_auto_wrap":true,"bracketed_paste":true,"focus_reporting":true,"mouse":"drag","kitty_keyboard_flags":305419896,"initial_bytes_hex":"636c656172","final_bytes_hex":"7265736574"})");
+      R"({"type":"take","initial_bytes_hex":"636c656172","final_bytes_hex":"7265736574"})");
 }
 
 TEST(ScreenCommandCodecTest, EmptyReleaseCommandUsesOneByte) {
@@ -110,15 +99,13 @@ TEST(ScreenCommandCodecTest, ClipboardCommandOwnsAndRoundTripsUtf8Bytes) {
       R"({"type":"set_clipboard","selection":"primary","text_hex":"e0b2a8e0b2aee0b2b8e0b38de0b295e0b2bee0b2b0"})");
 }
 
-TEST(ScreenCommandCodecTest, RejectsUnknownTypesFlagsAndTrailingBytes) {
+TEST(ScreenCommandCodecTest, RejectsUnknownTypesTruncationAndTrailingBytes) {
   ScreenCommandCodec codec;
   ScreenCommand decoded;
-  constexpr std::array unknown   = {std::uint8_t{99U}};
-  constexpr std::array bad_flags = {
-      std::uint8_t{1U}, std::uint8_t{0x80U}, std::uint8_t{0U}, std::uint8_t{0U},
-      std::uint8_t{0U}, std::uint8_t{0U},    std::uint8_t{0U}, std::uint8_t{0U},
-      std::uint8_t{0U}, std::uint8_t{0U},    std::uint8_t{0U}, std::uint8_t{0U},
-      std::uint8_t{0U}, std::uint8_t{0U},    std::uint8_t{0U},
+  constexpr std::array unknown        = {std::uint8_t{99U}};
+  constexpr std::array truncated_take = {
+      std::uint8_t{1U}, std::uint8_t{0U}, std::uint8_t{0U},
+      std::uint8_t{0U}, std::uint8_t{1U}, std::uint8_t{'A'},
   };
   constexpr std::array release_with_trailer = {std::uint8_t{2U},
                                                std::uint8_t{0U}};
@@ -132,38 +119,14 @@ TEST(ScreenCommandCodecTest, RejectsUnknownTypesFlagsAndTrailingBytes) {
   };
   EXPECT_EQ(codec.deserialize({}, decoded), Status::MALFORMED_PAYLOAD);
   EXPECT_EQ(codec.deserialize(unknown, decoded), Status::MALFORMED_PAYLOAD);
-  EXPECT_EQ(codec.deserialize(bad_flags, decoded), Status::MALFORMED_PAYLOAD);
+  EXPECT_EQ(codec.deserialize(truncated_take, decoded),
+            Status::MALFORMED_PAYLOAD);
   EXPECT_EQ(codec.deserialize(release_with_trailer, decoded),
             Status::MALFORMED_PAYLOAD);
   EXPECT_EQ(codec.deserialize(truncated_present, decoded),
             Status::MALFORMED_PAYLOAD);
   EXPECT_EQ(codec.deserialize(bad_clipboard, decoded),
             Status::MALFORMED_PAYLOAD);
-}
-
-TEST(ScreenCommandCodecTest, RejectsInvalidMouseEnumOnEncodeAndDecode) {
-  ScreenCommand invalid{
-      .data =
-          ScreenTakeCommand{
-              .options =
-                  ScreenSessionOptions{
-                      .mouse = static_cast<ScreenMouseTracking>(99U),
-                  },
-          },
-  };
-  ScreenCommandCodec codec;
-  std::vector<std::uint8_t> payload;
-  EXPECT_EQ(codec.serialize(invalid, payload), Status::PAYLOAD_ENCODING_FAILED);
-  EXPECT_TRUE(payload.empty());
-
-  constexpr std::array bad_mouse = {
-      std::uint8_t{1U}, std::uint8_t{0U}, std::uint8_t{99U}, std::uint8_t{0U},
-      std::uint8_t{0U}, std::uint8_t{0U}, std::uint8_t{0U},  std::uint8_t{0U},
-      std::uint8_t{0U}, std::uint8_t{0U}, std::uint8_t{0U},  std::uint8_t{0U},
-      std::uint8_t{0U}, std::uint8_t{0U}, std::uint8_t{0U},
-  };
-  ScreenCommand decoded;
-  EXPECT_EQ(codec.deserialize(bad_mouse, decoded), Status::MALFORMED_PAYLOAD);
 }
 
 TEST(ScreenResizeEventCodecTest, UsesFixedWidthPortablePayloadAndJson) {

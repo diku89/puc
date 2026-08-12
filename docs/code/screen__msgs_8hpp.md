@@ -8,7 +8,6 @@ One-way commands and observed state shared by Screen and the terminal.
 
 ## Related symbols
 
-- [puc::msg::ScreenSessionOptions](structpuc_1_1msg_1_1_screen_session_options.md)
 - [puc::msg::ScreenTakeCommand](structpuc_1_1msg_1_1_screen_take_command.md)
 - [puc::msg::ScreenReleaseCommand](structpuc_1_1msg_1_1_screen_release_command.md)
 - [puc::msg::ScreenPresentCommand](structpuc_1_1msg_1_1_screen_present_command.md)

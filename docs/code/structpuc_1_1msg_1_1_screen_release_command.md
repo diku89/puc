@@ -4,7 +4,7 @@
 
 Request restoration of every mode owned by the terminal session.
 
-[Source](../../msgs/screen_msgs.hpp#L78)
+[Source](../../msgs/screen_msgs.hpp#L53)
 
 ## Public functions
 
@@ -18,4 +18,4 @@ bool puc::msg::ScreenReleaseCommand::operator==(const ScreenReleaseCommand &) co
 
 Compare empty release requests.
 
-[Source](../../msgs/screen_msgs.hpp#L80)
+[Source](../../msgs/screen_msgs.hpp#L55)

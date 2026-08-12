@@ -37,34 +37,14 @@ struct TerminalSize {
   constexpr bool operator==(const TerminalSize&) const noexcept = default;
 };
 
-/** Mouse reporting level requested while a terminal session is active. */
-enum class MouseTracking {
-  NONE,
-  BUTTONS,
-  DRAG,
-  MOTION,
-};
-
-/** Terminal operations requested by the PUC layer that owns this session. */
-struct SessionOptions {
-  bool preserve_signals  = true;  /**< Leave `ISIG` enabled in raw mode. */
-  bool alternate_screen  = false; /**< Enter the alternate screen. */
-  bool hide_cursor       = false; /**< Hide the terminal cursor. */
-  bool disable_auto_wrap = false; /**< Disable automatic margin wrapping. */
-  bool bracketed_paste   = false; /**< Request bracketed-paste boundaries. */
-  bool focus_reporting   = false; /**< Request focus transition reports. */
-  MouseTracking mouse    = MouseTracking::NONE; /**< Requested mouse detail. */
-  std::uint32_t kitty_keyboard_flags = 0; /**< Kitty flags to push, or zero. */
-};
-
 /**
  * Own the reversible operating-system and protocol state of one terminal.
  *
  * File descriptors are borrowed and must outlive the session. This class is a
- * mechanism-only adapter: its owner decides which modes PUC wants, while the
- * session performs the uncontrollable operating-system and terminal I/O needed
- * to request them. `release()` reverses every successfully requested mode and
- * then restores the original termios state.
+ * PUC has one interactive terminal contract: signal-generating input remains
+ * enabled; alternate-screen presentation, bracketed paste, focus events, drag
+ * tracking, and enhanced keyboard reporting are active for the session.
+ * `release()` reverses that contract and restores the original termios state.
  */
 class TerminalSession {
  public:
@@ -80,8 +60,8 @@ class TerminalSession {
   /** Release an active session without propagating teardown failures. */
   ~TerminalSession();
 
-  /** Enter raw mode and request exactly the terminal modes in `options`. */
-  Status take(const SessionOptions& options = {}) noexcept;
+  /** Enter raw mode and activate PUC's fixed interactive terminal contract. */
+  Status take() noexcept;
 
   /** Restore every mode changed by take(). Safe to call repeatedly. */
   Status release() noexcept;
@@ -134,15 +114,13 @@ class TerminalSession {
     ACTIVE_DISABLED_WRAP    = 1U << 2U,
     ACTIVE_BRACKETED_PASTE  = 1U << 3U,
     ACTIVE_FOCUS            = 1U << 4U,
-    ACTIVE_MOUSE_BUTTONS    = 1U << 5U,
-    ACTIVE_MOUSE_DRAG       = 1U << 6U,
-    ACTIVE_MOUSE_MOTION     = 1U << 7U,
-    ACTIVE_SGR_MOUSE        = 1U << 8U,
-    ACTIVE_KITTY_KEYBOARD   = 1U << 9U,
+    ACTIVE_MOUSE_DRAG       = 1U << 5U,
+    ACTIVE_SGR_MOUSE        = 1U << 6U,
+    ACTIVE_KITTY_KEYBOARD   = 1U << 7U,
   };
 
   Status write_all(std::string_view bytes) noexcept;
-  void build_enter_sequence(const SessionOptions& options, std::string& output);
+  void build_enter_sequence(std::string& output);
   void build_leave_sequence(std::string& output) const;
   void receive_screen_command(ipc::Channel::Bytes payload) noexcept;
   void execute_screen_command(const msg::ScreenCommand& command) noexcept;

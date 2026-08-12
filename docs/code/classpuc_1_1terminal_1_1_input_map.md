@@ -4,7 +4,7 @@
 
 Mutable builder for the immutable trie consumed by [Decoder](classpuc_1_1terminal_1_1_decoder.md).
 
-[Decoder::setup()](classpuc_1_1terminal_1_1_decoder.md#symbol-classpuc_1_1terminal_1_1_decoder_1a6a0aa9f8b3e7c5ffeee0ba1998dd22d7) is the canonical construction path. It builds a temporary map in one explicit source-of-truth hierarchy and moves the finished trie into the decoder. In increasing authority, that hierarchy is:
+[Decoder::setup()](classpuc_1_1terminal_1_1_decoder.md#symbol-classpuc_1_1terminal_1_1_decoder_1aadb32b3dc0eeddd9745da0abef4605f0) is the canonical construction path. It builds a temporary map in one explicit source-of-truth hierarchy and moves the finished trie into the decoder. In increasing authority, that hierarchy is:
 
 1. key sequences materialized from terminfo;
 2. `input_keys.toml`, merged by Config from system defaults followed by user overrides;
@@ -195,34 +195,34 @@ Materialize declared key capabilities from one terminfo entry.
 
 [Source](../../puc-cli/terminal/input.hpp#L233)
 
-<a id="symbol-classpuc_1_1terminal_1_1_input_map_1a3f04794ed793059d424667f945d88b2c"></a>
+<a id="symbol-classpuc_1_1terminal_1_1_input_map_1a7f22e9e23126558b5f900f13fa52a82e"></a>
 
 ### `validate_config`
 
 ```cpp
-Status puc::terminal::InputMap::validate_config(const config::Value &root) const
+Status puc::terminal::InputMap::validate_config(const properties::Value &root) const
 ```
 
 [Source](../../puc-cli/terminal/input.hpp#L235)
 
-<a id="symbol-classpuc_1_1terminal_1_1_input_map_1a20fa1536e991fcd9edc8669ee73ecb29"></a>
+<a id="symbol-classpuc_1_1terminal_1_1_input_map_1abd97253fd19a27e144618f8cb033a511"></a>
 
 ### `apply_mappings`
 
 ```cpp
-Status puc::terminal::InputMap::apply_mappings(const config::Value &root)
+Status puc::terminal::InputMap::apply_mappings(const properties::Value &root)
 ```
 
 Apply one source's mappings in declaration order.
 
 [Source](../../puc-cli/terminal/input.hpp#L237)
 
-<a id="symbol-classpuc_1_1terminal_1_1_input_map_1afdc4f729c8c5ffad6e506c3646f019c8"></a>
+<a id="symbol-classpuc_1_1terminal_1_1_input_map_1abaea950bae1ac377311c68b8ec0a4947"></a>
 
 ### `apply_terminfo_bindings`
 
 ```cpp
-Status puc::terminal::InputMap::apply_terminfo_bindings(const config::Value &root)
+Status puc::terminal::InputMap::apply_terminfo_bindings(const properties::Value &root)
 ```
 
 [Source](../../puc-cli/terminal/input.hpp#L238)
@@ -239,12 +239,12 @@ Reject ambiguous prefix relationships between semantic commands.
 
 [Source](../../puc-cli/terminal/input.hpp#L241)
 
-<a id="symbol-classpuc_1_1terminal_1_1_input_map_1a7b8d844e050a6429cf1939d5f6d78029"></a>
+<a id="symbol-classpuc_1_1terminal_1_1_input_map_1a5c34a49100d2fc3b04603c632885adca"></a>
 
 ### `track_command_sequence`
 
 ```cpp
-void puc::terminal::InputMap::track_command_sequence(std::string_view sequence, const InputAction *action, config::SourceLocation location)
+void puc::terminal::InputMap::track_command_sequence(std::string_view sequence, const InputAction *action, properties::SourceLocation location)
 ```
 
 Update effective command provenance after one mapping declaration.
@@ -253,15 +253,15 @@ Update effective command provenance after one mapping declaration.
 
 ## Private static functions
 
-<a id="symbol-classpuc_1_1terminal_1_1_input_map_1ad91923b5189857b79f5a5d13c9c0c646"></a>
+<a id="symbol-classpuc_1_1terminal_1_1_input_map_1ac1ad73f3eef75b7c21edef03a24e8683"></a>
 
 ### `setup`
 
 ```cpp
-Status puc::terminal::InputMap::setup(const config::Config &configurations, InputMap &output, std::string_view terminal_name, int output_fd)
+Status puc::terminal::InputMap::setup(properties::Properties &properties, InputMap &output, std::string_view terminal_name, int output_fd)
 ```
 
-Build the sole configured map used by [Decoder::setup()](classpuc_1_1terminal_1_1_decoder.md#symbol-classpuc_1_1terminal_1_1_decoder_1a6a0aa9f8b3e7c5ffeee0ba1998dd22d7).
+Build the sole configured map used by [Decoder::setup()](classpuc_1_1terminal_1_1_decoder.md#symbol-classpuc_1_1terminal_1_1_decoder_1aadb32b3dc0eeddd9745da0abef4605f0).
 
 Sources are applied in the class-level hierarchy above. Mappings within each TOML document are applied in declaration order. The required files are read at runtime; no TOML document is compiled into the application.
 

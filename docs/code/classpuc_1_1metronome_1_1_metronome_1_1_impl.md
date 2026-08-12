@@ -4,7 +4,7 @@
 
 Synchronized channel, job, and cancellation ownership.
 
-[Source](../../utils/metronome/metronome.cpp#L81)
+[Source](../../utils/metronome/metronome.cpp#L68)
 
 ## Public data members
 
@@ -18,19 +18,19 @@ ipc::Directory& puc::metronome::Metronome::Impl::directory
 
 Borrowed named-channel registry.
 
-[Source](../../utils/metronome/metronome.cpp#L171)
+[Source](../../utils/metronome/metronome.cpp#L158)
 
-<a id="symbol-classpuc_1_1metronome_1_1_metronome_1_1_impl_1aa4a36156005edc9241bf86dd41dc72d3"></a>
+<a id="symbol-classpuc_1_1metronome_1_1_metronome_1_1_impl_1a6fb9c3a36ccbd0b6ceef5582b4218e9e"></a>
 
-### `workers`
+### `scheduler`
 
 ```cpp
-multithreading::JobQueue& puc::metronome::Metronome::Impl::workers
+timer::Scheduler& puc::metronome::Metronome::Impl::scheduler
 ```
 
 Borrowed periodic scheduler.
 
-[Source](../../utils/metronome/metronome.cpp#L172)
+[Source](../../utils/metronome/metronome.cpp#L159)
 
 <a id="symbol-classpuc_1_1metronome_1_1_metronome_1_1_impl_1aba00a96daa877fb0c7f7bfbf901fcbf4"></a>
 
@@ -42,7 +42,7 @@ std::mutex puc::metronome::Metronome::Impl::mutex
 
 Serializes start, stop, and inspection.
 
-[Source](../../utils/metronome/metronome.cpp#L173)
+[Source](../../utils/metronome/metronome.cpp#L160)
 
 <a id="symbol-classpuc_1_1metronome_1_1_metronome_1_1_impl_1a399d2b45b77bb6899ccb719bfeb3db0d"></a>
 
@@ -54,7 +54,7 @@ std::shared_ptr<TickState> puc::metronome::Metronome::Impl::state
 
 Current in-flight-safe tick state.
 
-[Source](../../utils/metronome/metronome.cpp#L174)
+[Source](../../utils/metronome/metronome.cpp#L161)
 
 <a id="symbol-classpuc_1_1metronome_1_1_metronome_1_1_impl_1abe1e912068de50c83e875e00ca0fb048"></a>
 
@@ -66,33 +66,33 @@ std::shared_ptr<ipc::Channel> puc::metronome::Metronome::Impl::channel
 
 Owned registered endpoint.
 
-[Source](../../utils/metronome/metronome.cpp#L175)
+[Source](../../utils/metronome/metronome.cpp#L162)
 
-<a id="symbol-classpuc_1_1metronome_1_1_metronome_1_1_impl_1a6a0eb3a08cfd95d70ea3c4304cf4339a"></a>
+<a id="symbol-classpuc_1_1metronome_1_1_metronome_1_1_impl_1a9c4b490024dc454b4930a340f758e772"></a>
 
 ### `schedule`
 
 ```cpp
-multithreading::PeriodicJobHandle puc::metronome::Metronome::Impl::schedule
+timer::PeriodicHandle puc::metronome::Metronome::Impl::schedule
 ```
 
 Periodic cancellation.
 
-[Source](../../utils/metronome/metronome.cpp#L176)
+[Source](../../utils/metronome/metronome.cpp#L163)
 
 ## Public functions
 
-<a id="symbol-classpuc_1_1metronome_1_1_metronome_1_1_impl_1abd40bef0448a9fea73ae3c57586626f5"></a>
+<a id="symbol-classpuc_1_1metronome_1_1_metronome_1_1_impl_1ae719e56052799c6715b1d0fb7c2cac0a"></a>
 
 ### `Impl`
 
 ```cpp
-puc::metronome::Metronome::Impl::Impl(ipc::Directory &configured_directory, multithreading::JobQueue &configured_workers) noexcept
+puc::metronome::Metronome::Impl::Impl(ipc::Directory &configured_directory, timer::Scheduler &configured_scheduler) noexcept
 ```
 
 Borrow dependencies that outlive this implementation.
 
-[Source](../../utils/metronome/metronome.cpp#L84)
+[Source](../../utils/metronome/metronome.cpp#L71)
 
 <a id="symbol-classpuc_1_1metronome_1_1_metronome_1_1_impl_1adbc4940e0b8a8294bff1ca5b0b5fc877"></a>
 
@@ -104,7 +104,7 @@ puc::metronome::Metronome::Impl::~Impl()
 
 Stop any active publication before borrowed dependencies disappear.
 
-[Source](../../utils/metronome/metronome.cpp#L89)
+[Source](../../utils/metronome/metronome.cpp#L76)
 
 <a id="symbol-classpuc_1_1metronome_1_1_metronome_1_1_impl_1a73cc2c28047e1d04f960ba71bd2fc26a"></a>
 
@@ -116,7 +116,7 @@ Status puc::metronome::Metronome::Impl::start()
 
 Register the channel and schedule the first tick transactionally.
 
-[Source](../../utils/metronome/metronome.cpp#L92)
+[Source](../../utils/metronome/metronome.cpp#L79)
 
 <a id="symbol-classpuc_1_1metronome_1_1_metronome_1_1_impl_1a780e24f16969b7f72f327bc06a8f3461"></a>
 
@@ -128,7 +128,7 @@ void puc::metronome::Metronome::Impl::stop() noexcept
 
 Cancel periodic work before detaching its asynchronous channel.
 
-[Source](../../utils/metronome/metronome.cpp#L148)
+[Source](../../utils/metronome/metronome.cpp#L135)
 
 <a id="symbol-classpuc_1_1metronome_1_1_metronome_1_1_impl_1a7f6df84322c7c54e1c56b8dda28b33b8"></a>
 
@@ -140,4 +140,4 @@ bool puc::metronome::Metronome::Impl::running() const noexcept
 
 Inspect periodic ownership under the lifecycle lock.
 
-[Source](../../utils/metronome/metronome.cpp#L166)
+[Source](../../utils/metronome/metronome.cpp#L153)

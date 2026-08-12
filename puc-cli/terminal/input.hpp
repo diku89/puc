@@ -13,9 +13,9 @@
 #include <variant>
 #include <vector>
 
+#include "properties/properties.hpp"
 #include "puc-cli/terminal/event.hpp"
 #include "puc-cli/terminal/status.hpp"
-#include "utils/config/config.hpp"
 #include "utils/containers/trie.hpp"
 
 namespace puc {
@@ -226,16 +226,16 @@ class InputMap {
    * each TOML document are applied in declaration order. The required files
    * are read at runtime; no TOML document is compiled into the application.
    */
-  static Status setup(const config::Config& configurations, InputMap& output,
+  static Status setup(properties::Properties& properties, InputMap& output,
                       std::string_view terminal_name, int output_fd);
 
   /** Materialize declared key capabilities from one terminfo entry. */
   Status load_terminfo(std::string_view terminal_name, int output_fd);
 
-  Status validate_config(const config::Value& root) const;
+  Status validate_config(const properties::Value& root) const;
   /** Apply one source's mappings in declaration order. */
-  Status apply_mappings(const config::Value& root);
-  Status apply_terminfo_bindings(const config::Value& root);
+  Status apply_mappings(const properties::Value& root);
+  Status apply_terminfo_bindings(const properties::Value& root);
 
   /** Reject ambiguous prefix relationships between semantic commands. */
   Status validate_command_sequences() const;
@@ -243,7 +243,7 @@ class InputMap {
   /** Update effective command provenance after one mapping declaration. */
   void track_command_sequence(std::string_view sequence,
                               const InputAction* action,
-                              config::SourceLocation location);
+                              properties::SourceLocation location);
 
   Trie trie_; /**< Byte-sequence paths and accepting actions. */
   std::vector<TerminfoKeyBinding>

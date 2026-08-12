@@ -12,4 +12,5 @@ Lifecycle adapter for terminal transport and input decoding.
 - [puc::app::TerminalSubsystem](classpuc_1_1app_1_1_terminal_subsystem.md)
 - [puc](namespacepuc.md)
 - [puc::terminal](namespacepuc_1_1terminal.md)
+- [puc::ipc](namespacepuc_1_1ipc.md)
 - [puc::app](namespacepuc_1_1app.md)

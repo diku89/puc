@@ -4,6 +4,7 @@
  */
 
 #include <chrono>
+#include <csignal>
 #include <cstddef>
 #include <cstdint>
 #include <memory>
@@ -12,17 +13,21 @@
 #include <string>
 #include <thread>
 #include <utility>
+#include <variant>
 #include <vector>
 
 #include "commands/command.hpp"
 #include "gtest/gtest.h"
 #include "msgs/cmdframe_msgs.hpp"
 #include "msgs/screen_msgs.hpp"
+#include "msgs/terminal_msgs.hpp"
+#include "properties/properties.hpp"
 #include "puc-cli/state/bootstrap.hpp"
+#include "puc-cli/state/builtin_commands.hpp"
 #include "puc-cli/state/channels.hpp"
 #include "puc-cli/state/command_mode.hpp"
 #include "puc-cli/state/commands.hpp"
-#include "puc-cli/state/configuration.hpp"
+#include "puc-cli/state/control.hpp"
 #include "puc-cli/state/directory.hpp"
 #include "puc-cli/state/embedded_terminal.hpp"
 #include "puc-cli/state/input.hpp"
@@ -30,14 +35,18 @@
 #include "puc-cli/state/logger.hpp"
 #include "puc-cli/state/metronome.hpp"
 #include "puc-cli/state/presentation.hpp"
+#include "puc-cli/state/properties.hpp"
 #include "puc-cli/state/screen.hpp"
 #include "puc-cli/state/state.hpp"
 #include "puc-cli/state/terminal.hpp"
+#include "puc-cli/state/theme.hpp"
+#include "puc-cli/state/timer.hpp"
 #include "puc-cli/state/workers.hpp"
+#include "puc-cli/terminal/event.hpp"
 #include "puc-cli/terminal/session.hpp"
 #include "puc-cli/tui/input_frame.hpp"
 #include "puc-cli/tui/screen.hpp"
-#include "utils/config/config.hpp"
+#include "puc-cli/tui/theme.hpp"
 #include "utils/ipc/channel.hpp"
 #include "utils/ipc/directory.hpp"
 #include "utils/ipc/smem_channel.hpp"
@@ -62,6 +71,27 @@ class AdapterCommand final : public command::CommandApp {
 
   std::string get_usage() const override { return "--verbose"; }
 };
+
+TEST(CoreAdaptersTest, ControlOwnsTerminationSignalsAcrossRunCycles) {
+  AppState app;
+  auto control = std::make_unique<ApplicationControlSubsystem>();
+  ApplicationControlSubsystem* control_view = control.get();
+  ASSERT_EQ(app.register_subsystem(std::move(control)), Status::OK);
+
+  ASSERT_EQ(app.initialize(OperatingMode::TUI), Status::OK);
+  ASSERT_NE(control_view->control(), nullptr);
+  EXPECT_FALSE(control_view->exit_requested());
+  ASSERT_EQ(std::raise(SIGTERM), 0);
+  EXPECT_TRUE(control_view->exit_requested());
+
+  ASSERT_EQ(app.start(), Status::OK);
+  ASSERT_EQ(app.stop(), Status::OK);
+  EXPECT_TRUE(control_view->exit_requested());
+  ASSERT_EQ(app.start(), Status::OK);
+  EXPECT_TRUE(control_view->exit_requested());
+  EXPECT_EQ(app.terminate(), Status::OK);
+  EXPECT_EQ(control_view->control(), nullptr);
+}
 
 TEST(CoreAdaptersTest, CreatesStopsAndRestartsDirectoryAboveWorkers) {
   AppState app;
@@ -165,6 +195,8 @@ TEST(ChannelAdaptersTest, OwnCanonicalRoutesForEachRunningGeneration) {
   AppState app;
   auto screen_channels = std::make_unique<ScreenChannelSubsystem>();
   ScreenChannelSubsystem* screen_adapter = screen_channels.get();
+  auto terminal_input = std::make_unique<TerminalInputChannelSubsystem>();
+  TerminalInputChannelSubsystem* terminal_input_adapter = terminal_input.get();
   auto command_notifications =
       std::make_unique<CommandNotificationChannelSubsystem>();
   CommandNotificationChannelSubsystem* command_adapter =
@@ -173,6 +205,7 @@ TEST(ChannelAdaptersTest, OwnCanonicalRoutesForEachRunningGeneration) {
   DirectorySubsystem* directory_adapter = directory.get();
 
   ASSERT_EQ(app.register_subsystem(std::move(screen_channels)), Status::OK);
+  ASSERT_EQ(app.register_subsystem(std::move(terminal_input)), Status::OK);
   ASSERT_EQ(app.register_subsystem(std::move(command_notifications)),
             Status::OK);
   ASSERT_EQ(app.register_subsystem(std::move(directory)), Status::OK);
@@ -184,13 +217,15 @@ TEST(ChannelAdaptersTest, OwnCanonicalRoutesForEachRunningGeneration) {
   ASSERT_EQ(app.start(), Status::OK);
 
   ASSERT_NE(directory_adapter->directory(), nullptr);
-  EXPECT_EQ(directory_adapter->directory()->size(), 3U);
+  EXPECT_EQ(directory_adapter->directory()->size(), 4U);
   EXPECT_NE(screen_adapter->command_channel_id(), 0U);
   EXPECT_NE(screen_adapter->resize_channel_id(), 0U);
   EXPECT_NE(command_adapter->channel_id(), 0U);
+  EXPECT_NE(terminal_input_adapter->channel_id(), 0U);
   ASSERT_NE(screen_adapter->command_channel(), nullptr);
   ASSERT_NE(screen_adapter->resize_channel(), nullptr);
   ASSERT_NE(command_adapter->channel(), nullptr);
+  ASSERT_NE(terminal_input_adapter->channel(), nullptr);
   EXPECT_EQ(screen_adapter->command_channel()->channel_max_depth(),
             std::optional<std::size_t>{3U});
   EXPECT_EQ(screen_adapter->resize_channel()->channel_max_depth(),
@@ -209,16 +244,21 @@ TEST(ChannelAdaptersTest, OwnCanonicalRoutesForEachRunningGeneration) {
                 ->get_channel(msg::kCmdFrameNotifyChannel)
                 .get(),
             command_adapter->channel());
+  EXPECT_EQ(directory_adapter->directory()
+                ->get_channel(msg::kTerminalInputEventChannel)
+                .get(),
+            terminal_input_adapter->channel());
 
   ASSERT_EQ(app.stop(), Status::OK);
   EXPECT_EQ(screen_adapter->command_channel(), nullptr);
   EXPECT_EQ(screen_adapter->resize_channel(), nullptr);
   EXPECT_EQ(command_adapter->channel(), nullptr);
+  EXPECT_EQ(terminal_input_adapter->channel(), nullptr);
   EXPECT_EQ(directory_adapter->directory(), nullptr);
 
   ASSERT_EQ(app.start(), Status::OK);
   ASSERT_NE(directory_adapter->directory(), nullptr);
-  EXPECT_EQ(directory_adapter->directory()->size(), 3U);
+  EXPECT_EQ(directory_adapter->directory()->size(), 4U);
   EXPECT_EQ(app.terminate(), Status::OK);
 }
 
@@ -230,11 +270,14 @@ TEST(TerminalAdapterTest, RetainsMechanismsAndRebindsAcrossRestarts) {
   ASSERT_EQ(app.register_subsystem(std::move(terminal)), Status::OK);
   ASSERT_EQ(app.register_subsystem(std::make_unique<ScreenChannelSubsystem>()),
             Status::OK);
+  ASSERT_EQ(
+      app.register_subsystem(std::make_unique<TerminalInputChannelSubsystem>()),
+      Status::OK);
   ASSERT_EQ(app.register_subsystem(std::make_unique<DirectorySubsystem>()),
             Status::OK);
   ASSERT_EQ(app.register_subsystem(std::make_unique<WorkerSubsystem>(2U)),
             Status::OK);
-  ASSERT_EQ(app.register_subsystem(std::make_unique<ConfigurationSubsystem>()),
+  ASSERT_EQ(app.register_subsystem(std::make_unique<PropertiesSubsystem>()),
             Status::OK);
   ASSERT_EQ(app.register_subsystem(std::make_unique<LoggerSubsystem>()),
             Status::OK);
@@ -272,10 +315,13 @@ TEST(ScreenAdapterTest, BorrowsLifecycleOwnedTerminalAndDirectory) {
   ASSERT_EQ(app.register_subsystem(std::move(terminal)), Status::OK);
   ASSERT_EQ(app.register_subsystem(std::make_unique<ScreenChannelSubsystem>()),
             Status::OK);
+  ASSERT_EQ(
+      app.register_subsystem(std::make_unique<TerminalInputChannelSubsystem>()),
+      Status::OK);
   ASSERT_EQ(app.register_subsystem(std::move(directory)), Status::OK);
   ASSERT_EQ(app.register_subsystem(std::make_unique<WorkerSubsystem>(2U)),
             Status::OK);
-  ASSERT_EQ(app.register_subsystem(std::make_unique<ConfigurationSubsystem>()),
+  ASSERT_EQ(app.register_subsystem(std::make_unique<PropertiesSubsystem>()),
             Status::OK);
   ASSERT_EQ(app.register_subsystem(std::make_unique<LoggerSubsystem>()),
             Status::OK);
@@ -289,10 +335,33 @@ TEST(ScreenAdapterTest, BorrowsLifecycleOwnedTerminalAndDirectory) {
             directory_adapter->directory());
   ASSERT_NE(terminal_adapter->session(), nullptr);
   EXPECT_TRUE(terminal_adapter->session()->screen_channels_bound());
+  const std::shared_ptr<ipc::Channel> input_channel =
+      directory_adapter->directory()->get_channel(
+          msg::kTerminalInputEventChannel);
+  ASSERT_NE(input_channel, nullptr);
+  EXPECT_EQ(input_channel->subscriber_count(), 1U);
+
+  const msg::TerminalInputEvent message{
+      .data = msg::TerminalTextEvent{.utf8 = "lifecycle input"}};
+  std::vector<std::uint8_t> payload;
+  ASSERT_EQ(msg::TerminalInputEventCodec{}.serialize(message, payload),
+            msg::Status::OK);
+  const ipc::TransferResult transfer = directory_adapter->directory()->transmit(
+      msg::kTerminalInputEventChannel, payload);
+  ASSERT_EQ(transfer.status, ipc::Status::OK);
+  ASSERT_EQ(transfer.bytes, payload.size());
+  std::vector<terminal::Event> events;
+  ASSERT_EQ(screen_adapter->screen()->drain_input_events(events),
+            tui::Status::OK);
+  ASSERT_EQ(events.size(), 1U);
+  ASSERT_TRUE(std::holds_alternative<terminal::TextEvent>(events.front()));
+  EXPECT_EQ(std::get<terminal::TextEvent>(events.front()).utf8,
+            "lifecycle input");
 
   ASSERT_EQ(app.stop(), Status::OK);
   EXPECT_EQ(screen_adapter->screen(), nullptr);
   EXPECT_FALSE(terminal_adapter->session()->screen_channels_bound());
+  EXPECT_EQ(input_channel->subscriber_count(), 0U);
   ASSERT_EQ(app.start(), Status::OK);
   EXPECT_NE(screen_adapter->screen(), nullptr);
   EXPECT_EQ(app.terminate(), Status::OK);
@@ -303,7 +372,9 @@ TEST(CommandAdapterTest, RetainsRegistryAndResolvesCurrentBorrowedServices) {
   AppState app;
   auto commands                     = std::make_unique<CommandSubsystem>();
   CommandSubsystem* command_adapter = commands.get();
-  auto directory                    = std::make_unique<DirectorySubsystem>();
+  auto control = std::make_unique<ApplicationControlSubsystem>();
+  ApplicationControlSubsystem* control_adapter = control.get();
+  auto directory = std::make_unique<DirectorySubsystem>();
   DirectorySubsystem* directory_adapter = directory.get();
   auto workers                          = std::make_unique<WorkerSubsystem>(2U);
   WorkerSubsystem* worker_adapter       = workers.get();
@@ -311,6 +382,7 @@ TEST(CommandAdapterTest, RetainsRegistryAndResolvesCurrentBorrowedServices) {
   ScreenSubsystem* screen_adapter       = screen.get();
 
   ASSERT_EQ(app.register_subsystem(std::move(commands)), Status::OK);
+  ASSERT_EQ(app.register_subsystem(std::move(control)), Status::OK);
   ASSERT_EQ(app.register_subsystem(
                 std::make_unique<CommandNotificationChannelSubsystem>()),
             Status::OK);
@@ -319,9 +391,12 @@ TEST(CommandAdapterTest, RetainsRegistryAndResolvesCurrentBorrowedServices) {
             Status::OK);
   ASSERT_EQ(app.register_subsystem(std::make_unique<ScreenChannelSubsystem>()),
             Status::OK);
+  ASSERT_EQ(
+      app.register_subsystem(std::make_unique<TerminalInputChannelSubsystem>()),
+      Status::OK);
   ASSERT_EQ(app.register_subsystem(std::move(directory)), Status::OK);
   ASSERT_EQ(app.register_subsystem(std::move(workers)), Status::OK);
-  ASSERT_EQ(app.register_subsystem(std::make_unique<ConfigurationSubsystem>()),
+  ASSERT_EQ(app.register_subsystem(std::make_unique<PropertiesSubsystem>()),
             Status::OK);
   ASSERT_EQ(app.register_subsystem(std::make_unique<LoggerSubsystem>()),
             Status::OK);
@@ -337,6 +412,8 @@ TEST(CommandAdapterTest, RetainsRegistryAndResolvesCurrentBorrowedServices) {
   EXPECT_EQ(args.workers, worker_adapter->workers());
   EXPECT_EQ(args.directory, directory_adapter->directory());
   EXPECT_EQ(args.screen, screen_adapter->screen());
+  EXPECT_EQ(args.control, control_adapter->control());
+  EXPECT_NE(args.properties, nullptr);
   EXPECT_EQ(args.state, &app);
 
   ASSERT_EQ(app.stop(), Status::OK);
@@ -354,11 +431,13 @@ TEST(InputAdapterTest, ConsumesTypedNotificationsAcrossRestarts) {
   InputSubsystem* input_adapter     = input.get();
   auto commands                     = std::make_unique<CommandSubsystem>();
   CommandSubsystem* command_adapter = commands.get();
-  auto screen                       = std::make_unique<ScreenSubsystem>();
-  ScreenSubsystem* screen_adapter   = screen.get();
+  auto control = std::make_unique<ApplicationControlSubsystem>();
+  auto screen  = std::make_unique<ScreenSubsystem>();
+  ScreenSubsystem* screen_adapter = screen.get();
 
   ASSERT_EQ(app.register_subsystem(std::move(input)), Status::OK);
   ASSERT_EQ(app.register_subsystem(std::move(commands)), Status::OK);
+  ASSERT_EQ(app.register_subsystem(std::move(control)), Status::OK);
   ASSERT_EQ(app.register_subsystem(
                 std::make_unique<CommandNotificationChannelSubsystem>()),
             Status::OK);
@@ -367,11 +446,14 @@ TEST(InputAdapterTest, ConsumesTypedNotificationsAcrossRestarts) {
             Status::OK);
   ASSERT_EQ(app.register_subsystem(std::make_unique<ScreenChannelSubsystem>()),
             Status::OK);
+  ASSERT_EQ(
+      app.register_subsystem(std::make_unique<TerminalInputChannelSubsystem>()),
+      Status::OK);
   ASSERT_EQ(app.register_subsystem(std::make_unique<DirectorySubsystem>()),
             Status::OK);
   ASSERT_EQ(app.register_subsystem(std::make_unique<WorkerSubsystem>(2U)),
             Status::OK);
-  ASSERT_EQ(app.register_subsystem(std::make_unique<ConfigurationSubsystem>()),
+  ASSERT_EQ(app.register_subsystem(std::make_unique<PropertiesSubsystem>()),
             Status::OK);
   ASSERT_EQ(app.register_subsystem(std::make_unique<LoggerSubsystem>()),
             Status::OK);
@@ -542,14 +624,19 @@ TEST(AdapterBootstrapTest, RegistersAndRunsTheCompleteCanonicalGraph) {
   EXPECT_EQ(register_application_subsystems(app), Status::INVALID_ARGUMENT);
 
   EXPECT_NE(app.get_subsystem<LoggerSubsystem>(), nullptr);
-  EXPECT_NE(app.get_subsystem<ConfigurationSubsystem>(), nullptr);
+  EXPECT_NE(app.get_subsystem<ApplicationControlSubsystem>(), nullptr);
+  EXPECT_NE(app.get_subsystem<PropertiesSubsystem>(), nullptr);
   EXPECT_NE(app.get_subsystem<WorkerSubsystem>(), nullptr);
+  EXPECT_NE(app.get_subsystem<TimerSubsystem>(), nullptr);
+  EXPECT_NE(app.get_subsystem<ThemeSubsystem>(), nullptr);
   EXPECT_NE(app.get_subsystem<DirectorySubsystem>(), nullptr);
   EXPECT_NE(app.get_subsystem<ScreenChannelSubsystem>(), nullptr);
+  EXPECT_NE(app.get_subsystem<TerminalInputChannelSubsystem>(), nullptr);
   EXPECT_NE(app.get_subsystem<CommandNotificationChannelSubsystem>(), nullptr);
   EXPECT_NE(app.get_subsystem<TerminalSubsystem>(), nullptr);
   EXPECT_NE(app.get_subsystem<ScreenSubsystem>(), nullptr);
   EXPECT_NE(app.get_subsystem<CommandSubsystem>(), nullptr);
+  EXPECT_NE(app.get_subsystem<BuiltinCommandSubsystem>(), nullptr);
   EXPECT_NE(app.get_subsystem<InputSubsystem>(), nullptr);
   EXPECT_NE(app.get_subsystem<MetronomeSubsystem>(), nullptr);
   EXPECT_NE(app.get_subsystem<PresentationSubsystem>(), nullptr);
@@ -557,33 +644,64 @@ TEST(AdapterBootstrapTest, RegistersAndRunsTheCompleteCanonicalGraph) {
   EXPECT_NE(app.get_subsystem<EmbeddedTerminalSubsystem>(), nullptr);
 
   ASSERT_EQ(app.initialize(OperatingMode::TEST), Status::OK);
-  ConfigurationSubsystem* configuration =
-      app.get_subsystem<ConfigurationSubsystem>();
-  ASSERT_NE(configuration->configuration(), nullptr);
-  config::Config* configuration_generation = configuration->configuration();
+  ApplicationControlSubsystem* control =
+      app.get_subsystem<ApplicationControlSubsystem>();
+  CommandSubsystem* commands = app.get_subsystem<CommandSubsystem>();
+  PropertiesSubsystem* properties_adapter =
+      app.get_subsystem<PropertiesSubsystem>();
+  ASSERT_NE(control, nullptr);
+  ASSERT_NE(commands, nullptr);
+  ASSERT_NE(properties_adapter, nullptr);
+  ASSERT_NE(control->control(), nullptr);
+  ASSERT_NE(commands->dispatcher(), nullptr);
+  EXPECT_TRUE(commands->dispatcher()->contains("quit"));
+  EXPECT_TRUE(commands->dispatcher()->contains("q"));
+  EXPECT_TRUE(commands->dispatcher()->contains("exit"));
+  EXPECT_TRUE(commands->dispatcher()->contains("config"));
+  ASSERT_NE(properties_adapter->properties(), nullptr);
+  ASSERT_NE(app.get_subsystem<ThemeSubsystem>()->theme(), nullptr);
+  EXPECT_EQ(app.get_subsystem<TimerSubsystem>()->scheduler(), nullptr);
+  properties::Properties* properties_generation =
+      properties_adapter->properties();
   ASSERT_EQ(app.start(), Status::OK);
   const DirectorySubsystem* directory = app.get_subsystem<DirectorySubsystem>();
   ASSERT_NE(directory, nullptr);
   ASSERT_NE(directory->directory(), nullptr);
-  EXPECT_EQ(directory->directory()->size(), 4U);
+  EXPECT_EQ(directory->directory()->size(), 5U);
   EXPECT_TRUE(
       app.get_subsystem<InputSubsystem>()->notification_consumer_active());
+  EXPECT_NE(app.get_subsystem<TimerSubsystem>()->scheduler(), nullptr);
   EXPECT_NE(app.get_subsystem<PresentationSubsystem>()->renderer(), nullptr);
   EXPECT_NE(app.get_subsystem<MetronomeSubsystem>()->metronome(), nullptr);
   EXPECT_TRUE(app.get_subsystem<CommandModeSubsystem>()->snapshot().active);
   EXPECT_FALSE(app.get_subsystem<EmbeddedTerminalSubsystem>()->child_running());
+  ASSERT_EQ(
+      properties_adapter->properties()->set("theme.colors.primary", "0x123456"),
+      properties::Status::OK);
+
+  EXPECT_EQ(
+      commands->dispatcher()->dispatch("q", commands->common_args(app), {}),
+      command::Status::OK);
+  EXPECT_TRUE(control->exit_requested());
 
   ASSERT_EQ(app.stop(), Status::OK);
-  EXPECT_EQ(configuration->configuration(), configuration_generation);
+  EXPECT_TRUE(control->exit_requested());
+  EXPECT_EQ(properties_adapter->properties(), properties_generation);
   EXPECT_EQ(app.get_subsystem<PresentationSubsystem>()->renderer(), nullptr);
+  EXPECT_EQ(app.get_subsystem<TimerSubsystem>()->scheduler(), nullptr);
   EXPECT_EQ(app.get_subsystem<MetronomeSubsystem>()->metronome(), nullptr);
   EXPECT_FALSE(app.get_subsystem<CommandModeSubsystem>()->snapshot().active);
   ASSERT_EQ(app.start(), Status::OK);
-  EXPECT_EQ(configuration->configuration(), configuration_generation);
+  EXPECT_TRUE(control->exit_requested());
+  EXPECT_EQ(properties_adapter->properties(), properties_generation);
   EXPECT_NE(app.get_subsystem<PresentationSubsystem>()->renderer(), nullptr);
+  EXPECT_NE(app.get_subsystem<TimerSubsystem>()->scheduler(), nullptr);
   EXPECT_NE(app.get_subsystem<MetronomeSubsystem>()->metronome(), nullptr);
+  EXPECT_EQ(app.get_subsystem<ThemeSubsystem>()->theme()->get_colors().primary,
+            0x123456U);
   EXPECT_EQ(app.terminate(), Status::OK);
-  EXPECT_EQ(configuration->configuration(), nullptr);
+  EXPECT_EQ(control->control(), nullptr);
+  EXPECT_EQ(properties_adapter->properties(), nullptr);
   EXPECT_EQ(app.lifecycle_state(), LifecycleState::TERMINATED);
 }
 
@@ -604,8 +722,10 @@ TEST(AdapterBootstrapTest, RegistersExecutableSpecificLeafProfiles) {
             Status::OK);
   EXPECT_EQ(app.size(), expected);
   EXPECT_NE(app.get_subsystem<PresentationSubsystem>(), nullptr);
+  EXPECT_NE(app.get_subsystem<ApplicationControlSubsystem>(), nullptr);
   EXPECT_EQ(app.get_subsystem<MetronomeSubsystem>(), nullptr);
   EXPECT_EQ(app.get_subsystem<CommandSubsystem>(), nullptr);
+  EXPECT_EQ(app.get_subsystem<BuiltinCommandSubsystem>(), nullptr);
   EXPECT_EQ(app.get_subsystem<InputSubsystem>(), nullptr);
   EXPECT_EQ(app.get_subsystem<CommandModeSubsystem>(), nullptr);
   EXPECT_EQ(app.get_subsystem<EmbeddedTerminalSubsystem>(), nullptr);

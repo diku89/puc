@@ -2,33 +2,46 @@
 
 # Namespace `puc::app`
 
-[Source](../../commands/command.hpp#L26)
+[Source](../../commands/command.hpp#L30)
 
 ## Related symbols
 
+- [puc::app::ApplicationControl](classpuc_1_1app_1_1_application_control.md)
+- [puc::app::ApplicationControlSubsystem](classpuc_1_1app_1_1_application_control_subsystem.md)
 - [puc::app::ApplicationSubsystemOptions](structpuc_1_1app_1_1_application_subsystem_options.md)
 - [puc::app::ApplicationSubsystemSelection](structpuc_1_1app_1_1_application_subsystem_selection.md)
 - [puc::app::AppState](classpuc_1_1app_1_1_app_state.md)
 - [puc::app::AppSubsystem](classpuc_1_1app_1_1_app_subsystem.md)
+- [puc::app::BuiltinCommandSubsystem](classpuc_1_1app_1_1_builtin_command_subsystem.md)
+- [puc::app::Canvas](classpuc_1_1app_1_1_canvas.md)
+- [puc::app::CellDimensions](structpuc_1_1app_1_1_cell_dimensions.md)
 - [puc::app::CommandCompletion](structpuc_1_1app_1_1_command_completion.md)
 - [puc::app::CommandModeSnapshot](structpuc_1_1app_1_1_command_mode_snapshot.md)
 - [puc::app::CommandModeSubsystem](classpuc_1_1app_1_1_command_mode_subsystem.md)
 - [puc::app::CommandNotificationChannelSubsystem](classpuc_1_1app_1_1_command_notification_channel_subsystem.md)
 - [puc::app::CommandSubsystem](classpuc_1_1app_1_1_command_subsystem.md)
-- [puc::app::ConfigurationSubsystem](classpuc_1_1app_1_1_configuration_subsystem.md)
-- [puc::app::ConfigurationSubsystemOptions](structpuc_1_1app_1_1_configuration_subsystem_options.md)
 - [puc::app::DirectorySubsystem](classpuc_1_1app_1_1_directory_subsystem.md)
 - [puc::app::EmbeddedTerminalSubsystem](classpuc_1_1app_1_1_embedded_terminal_subsystem.md)
 - [puc::app::EmbeddedTerminalSubsystemOptions](structpuc_1_1app_1_1_embedded_terminal_subsystem_options.md)
+- [puc::app::InputFrame](classpuc_1_1app_1_1_input_frame.md)
 - [puc::app::InputSubsystem](classpuc_1_1app_1_1_input_subsystem.md)
+- [puc::app::InputTestRuntimeSubsystem](classpuc_1_1app_1_1_input_test_runtime_subsystem.md)
+- [puc::app::Layout](classpuc_1_1app_1_1_layout.md)
 - [puc::app::LoggerSubsystem](classpuc_1_1app_1_1_logger_subsystem.md)
 - [puc::app::MetronomeSubsystem](classpuc_1_1app_1_1_metronome_subsystem.md)
+- [puc::app::ParallelRenderer](classpuc_1_1app_1_1_parallel_renderer.md)
 - [puc::app::PresentationSubsystem](classpuc_1_1app_1_1_presentation_subsystem.md)
+- [puc::app::PropertiesSubsystem](classpuc_1_1app_1_1_properties_subsystem.md)
+- [puc::app::PropertiesSubsystemOptions](structpuc_1_1app_1_1_properties_subsystem_options.md)
+- [puc::app::Screen](classpuc_1_1app_1_1_screen.md)
 - [puc::app::ScreenChannelSubsystem](classpuc_1_1app_1_1_screen_channel_subsystem.md)
 - [puc::app::ScreenSubsystem](classpuc_1_1app_1_1_screen_subsystem.md)
-- [puc::app::ScreenSubsystemOptions](structpuc_1_1app_1_1_screen_subsystem_options.md)
+- [puc::app::TerminalInputChannelSubsystem](classpuc_1_1app_1_1_terminal_input_channel_subsystem.md)
 - [puc::app::TerminalSubsystem](classpuc_1_1app_1_1_terminal_subsystem.md)
 - [puc::app::TerminalSubsystemOptions](structpuc_1_1app_1_1_terminal_subsystem_options.md)
+- [puc::app::Theme](classpuc_1_1app_1_1_theme.md)
+- [puc::app::ThemeSubsystem](classpuc_1_1app_1_1_theme_subsystem.md)
+- [puc::app::TimerSubsystem](classpuc_1_1app_1_1_timer_subsystem.md)
 - [puc::app::WorkerSubsystem](classpuc_1_1app_1_1_worker_subsystem.md)
 
 ## Enumerations
@@ -125,7 +138,7 @@ std::size_t puc::app::kApplicationSubsystemCount
 
 Number of concrete adapters in the complete default production graph.
 
-[Source](../../puc-cli/state/bootstrap.hpp#L32)
+[Source](../../puc-cli/state/bootstrap.hpp#L31)
 
 ## Functions
 
@@ -143,7 +156,7 @@ Registration is root-to-leaf for readability, although [AppState](classpuc_1_1ap
 
 **Returns:** [Status::OK](#symbol-lifecycle_8hpp_1a01c86981579ba6b89336774973c68d60ae0aa021e21dddbd6d8cecec71e9cf564), [Status::INVALID\_ARGUMENT](#symbol-lifecycle_8hpp_1a01c86981579ba6b89336774973c68d60af295a0c3e37c94f078e1c5476479132d) for a nonempty [AppState](classpuc_1_1app_1_1_app_state.md), or an unexpected registration failure.
 
-[Source](../../puc-cli/state/bootstrap.cpp#L27)
+[Source](../../puc-cli/state/bootstrap.cpp#L31)
 
 <a id="symbol-bootstrap_8hpp_1a77eff784c7ddbc35f6e049ec742ed604"></a>
 
@@ -155,7 +168,7 @@ std::size_t puc::app::application_subsystem_count(const ApplicationSubsystemSele
 
 Return the number of adapters selected by one executable profile.
 
-[Source](../../puc-cli/state/bootstrap.hpp#L35)
+[Source](../../puc-cli/state/bootstrap.hpp#L34)
 
 <a id="symbol-lifecycle_8hpp_1a4b70db1608e49fb1b3c00c6b9f30ecbe"></a>
 

@@ -4,7 +4,7 @@
 
 Terminal geometry observed independently of any individual command.
 
-**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000011):**
+**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000012):**
 
 **Kind:** Message  
 **Type:** [puc::msg::ScreenResizeEvent](#)  
@@ -12,7 +12,7 @@ Terminal geometry observed independently of any individual command.
 **Producers:** [TerminalSession](classpuc_1_1terminal_1_1_terminal_session.md).  
 **Consumers:** [Screen](classpuc_1_1tui_1_1_screen.md) and subscribed geometry observers.
 
-[Source](../../msgs/screen_msgs.hpp#L140)
+[Source](../../msgs/screen_msgs.hpp#L115)
 
 ## Public data members
 
@@ -26,7 +26,7 @@ std::uint32_t puc::msg::ScreenResizeEvent::width
 
 Character-cell columns.
 
-[Source](../../msgs/screen_msgs.hpp#L141)
+[Source](../../msgs/screen_msgs.hpp#L116)
 
 <a id="symbol-structpuc_1_1msg_1_1_screen_resize_event_1a50d5fcfc865897837a563b85708c34b4"></a>
 
@@ -38,7 +38,7 @@ std::uint32_t puc::msg::ScreenResizeEvent::height
 
 Character-cell rows.
 
-[Source](../../msgs/screen_msgs.hpp#L142)
+[Source](../../msgs/screen_msgs.hpp#L117)
 
 <a id="symbol-structpuc_1_1msg_1_1_screen_resize_event_1aff4f646a3eeb1234d6ba61dfa5c40304"></a>
 
@@ -50,7 +50,7 @@ std::uint32_t puc::msg::ScreenResizeEvent::pixel_width
 
 Total pixel width, or zero.
 
-[Source](../../msgs/screen_msgs.hpp#L143)
+[Source](../../msgs/screen_msgs.hpp#L118)
 
 <a id="symbol-structpuc_1_1msg_1_1_screen_resize_event_1abe168d209524035cb2c726189ae4f45e"></a>
 
@@ -62,7 +62,7 @@ std::uint32_t puc::msg::ScreenResizeEvent::pixel_height
 
 Total pixel height, or zero.
 
-[Source](../../msgs/screen_msgs.hpp#L144)
+[Source](../../msgs/screen_msgs.hpp#L119)
 
 ## Public functions
 
@@ -76,4 +76,4 @@ bool puc::msg::ScreenResizeEvent::operator==(const ScreenResizeEvent &) const no
 
 Compare cell and optional pixel dimensions.
 
-[Source](../../msgs/screen_msgs.hpp#L147)
+[Source](../../msgs/screen_msgs.hpp#L122)

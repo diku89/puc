@@ -64,6 +64,16 @@ enum class MessageId : std::uint32_t {
    * "CmdFrame".}
    */
   CMD_FRAME_NOTIFICATION = 3U,
+
+  /**
+   * Normalized terminal input event.
+   *
+   * \msg_id{4||puc::msg::TerminalInputEvent||Selects the portable tagged
+   * terminal-event schema published on //terminal/input_events.||The
+   * lifecycle-owned terminal input producer.||The TUI Screen transport
+   * consumer.}
+   */
+  TERMINAL_INPUT_EVENT = 4U,
 };
 
 /** Convert a payload schema identifier to its IPC wire representation. */

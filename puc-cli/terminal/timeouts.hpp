@@ -11,8 +11,8 @@
 
 #include "puc-cli/terminal/status.hpp"
 
-namespace puc::config {
-class Config;
+namespace puc::properties {
+class Properties;
 }
 
 namespace puc::terminal {
@@ -45,12 +45,12 @@ inline constexpr const char* kTimeoutConfigurationPath =
     "terminal_timeouts.toml";
 
 /**
- * Load terminal timing policy through Config's primary/override hierarchy.
+ * Load mutable terminal timing defaults through the Properties service.
  *
  * Both integer millisecond values are required and must be positive. Loading
  * is transactional: `output` changes only after the entire file validates.
  */
-Status load_timeout_settings(const config::Config& configurations,
+Status load_timeout_settings(properties::Properties& properties,
                              TimeoutSettings& output);
 
 }  // namespace puc::terminal

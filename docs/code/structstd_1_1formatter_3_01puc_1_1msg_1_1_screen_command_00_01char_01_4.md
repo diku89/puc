@@ -4,7 +4,7 @@
 
 Format one ScreenCommand as complete, lossless JSON.
 
-[Source](../../msgs/screen_msgs.hpp#L172)
+[Source](../../msgs/screen_msgs.hpp#L131)
 
 ## Public functions
 
@@ -18,7 +18,7 @@ auto std::formatter< puc::msg::ScreenCommand, char >::parse(format_parse_context
 
 Accept only the formatter's empty format specification.
 
-[Source](../../msgs/screen_msgs.hpp#L174)
+[Source](../../msgs/screen_msgs.hpp#L133)
 
 <a id="symbol-structstd_1_1formatter_3_01puc_1_1msg_1_1_screen_command_00_01char_01_4_1ade12c29c4c8c5b3800a51f4a973eec51"></a>
 
@@ -30,4 +30,4 @@ auto std::formatter< puc::msg::ScreenCommand, char >::format(const puc::msg::Scr
 
 Write the concrete command and every field as lossless JSON.
 
-[Source](../../msgs/screen_msgs.hpp#L180)
+[Source](../../msgs/screen_msgs.hpp#L139)

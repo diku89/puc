@@ -8,7 +8,6 @@ Lifecycle adapter for terminal presentation policy.
 
 ## Related symbols
 
-- [puc::app::ScreenSubsystemOptions](structpuc_1_1app_1_1_screen_subsystem_options.md)
 - [puc::app::ScreenSubsystem](classpuc_1_1app_1_1_screen_subsystem.md)
 - [puc](namespacepuc.md)
 - [puc::tui](namespacepuc_1_1tui.md)

@@ -4,7 +4,7 @@
 
 Own the one-hertz heartbeat route and periodic job while the app is running.
 
-Every start binds to the current Directory and Worker generations, registers `//metronome/1hz`, and schedules publication. Stop cancels the periodic job and removes the route before either borrowed subsystem can stop.
+Every start binds to the current Directory and Timer generations, registers `//metronome/1hz`, and schedules publication. Stop cancels the periodic job and removes the route before either borrowed subsystem can stop.
 
 [Source](../../puc-cli/state/metronome.hpp#L26)
 
@@ -44,7 +44,7 @@ Last start status.
 puc::app::MetronomeSubsystem::MetronomeSubsystem()
 ```
 
-Declare the channel-directory and worker-pool dependencies.
+Declare the channel-directory and timer-scheduler dependencies.
 
 [Source](../../puc-cli/state/metronome.hpp#L29)
 

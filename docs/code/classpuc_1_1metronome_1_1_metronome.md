@@ -2,9 +2,9 @@
 
 # Class `puc::metronome::Metronome`
 
-Publish NullMessage heartbeats using a caller-owned Directory and JobQueue.
+Publish NullMessage heartbeats using a caller-owned Directory and Scheduler.
 
-`start()` registers `kOneHertzChannel` and schedules its first tick one second later. `stop()` cancels only this periodic job and removes its channel; it never shuts down the shared workers. The Directory and JobQueue must outlive this object and remain active until it is stopped or destroyed.
+`start()` registers `kOneHertzChannel` and schedules its first tick one second later. `stop()` cancels only this periodic job and removes its channel; it never shuts down the shared timer. The Directory and Scheduler must outlive this object and remain active until it is stopped or destroyed.
 
 [Source](../../utils/metronome/metronome.hpp#L41)
 
@@ -24,21 +24,21 @@ std::unique_ptr<Impl> puc::metronome::Metronome::impl_
 
 Synchronized publisher implementation.
 
-[Source](../../utils/metronome/metronome.hpp#L65)
+[Source](../../utils/metronome/metronome.hpp#L66)
 
 ## Public functions
 
-<a id="symbol-classpuc_1_1metronome_1_1_metronome_1afb424840d65f08b401539aaa924d06e3"></a>
+<a id="symbol-classpuc_1_1metronome_1_1_metronome_1a18f3682721e447e08a723dde84aa18b1"></a>
 
 ### `Metronome`
 
 ```cpp
-puc::metronome::Metronome::Metronome(ipc::Directory &directory, multithreading::JobQueue &workers)
+puc::metronome::Metronome::Metronome(ipc::Directory &directory, timer::Scheduler &scheduler)
 ```
 
-Borrow the routing directory and worker pool used by this publisher.
+Borrow the routing directory and timer scheduler used by this publisher.
 
-[Source](../../utils/metronome/metronome.hpp#L44)
+[Source](../../utils/metronome/metronome.hpp#L45)
 
 <a id="symbol-classpuc_1_1metronome_1_1_metronome_1a369bb018c89b2baf56f9c5741b3c8354"></a>
 
@@ -48,7 +48,7 @@ Borrow the routing directory and worker pool used by this publisher.
 puc::metronome::Metronome::Metronome(const Metronome &)=delete
 ```
 
-[Source](../../utils/metronome/metronome.hpp#L46)
+[Source](../../utils/metronome/metronome.hpp#L47)
 
 <a id="symbol-classpuc_1_1metronome_1_1_metronome_1ac58d2ed09d789f624e3db91f0343e439"></a>
 
@@ -58,7 +58,7 @@ puc::metronome::Metronome::Metronome(const Metronome &)=delete
 Metronome & puc::metronome::Metronome::operator=(const Metronome &)=delete
 ```
 
-[Source](../../utils/metronome/metronome.hpp#L47)
+[Source](../../utils/metronome/metronome.hpp#L48)
 
 <a id="symbol-classpuc_1_1metronome_1_1_metronome_1ae25dc1ed68cabaa779c17bafa4e2419e"></a>
 
@@ -68,7 +68,7 @@ Metronome & puc::metronome::Metronome::operator=(const Metronome &)=delete
 puc::metronome::Metronome::Metronome(Metronome &&)=delete
 ```
 
-[Source](../../utils/metronome/metronome.hpp#L48)
+[Source](../../utils/metronome/metronome.hpp#L49)
 
 <a id="symbol-classpuc_1_1metronome_1_1_metronome_1a545232fe19fa231f8bb75d22c8eaf592"></a>
 
@@ -78,7 +78,7 @@ puc::metronome::Metronome::Metronome(Metronome &&)=delete
 Metronome & puc::metronome::Metronome::operator=(Metronome &&)=delete
 ```
 
-[Source](../../utils/metronome/metronome.hpp#L49)
+[Source](../../utils/metronome/metronome.hpp#L50)
 
 <a id="symbol-classpuc_1_1metronome_1_1_metronome_1a2c3555a866b6ac77e7c53f8c88792075"></a>
 
@@ -90,7 +90,7 @@ puc::metronome::Metronome::~Metronome()
 
 Cancel publication and remove the channel before releasing state.
 
-[Source](../../utils/metronome/metronome.hpp#L52)
+[Source](../../utils/metronome/metronome.hpp#L53)
 
 <a id="symbol-classpuc_1_1metronome_1_1_metronome_1aeffc155ac712fc0dc31d8eca8e23bf25"></a>
 
@@ -102,7 +102,7 @@ Status puc::metronome::Metronome::start()
 
 Register the heartbeat channel and begin periodic publication.
 
-[Source](../../utils/metronome/metronome.hpp#L55)
+[Source](../../utils/metronome/metronome.hpp#L56)
 
 <a id="symbol-classpuc_1_1metronome_1_1_metronome_1ac6e00de0027c14ec93fa33e22df543c2"></a>
 
@@ -114,7 +114,7 @@ void puc::metronome::Metronome::stop() noexcept
 
 Stop publication and remove the channel; safe to call repeatedly.
 
-[Source](../../utils/metronome/metronome.hpp#L58)
+[Source](../../utils/metronome/metronome.hpp#L59)
 
 <a id="symbol-classpuc_1_1metronome_1_1_metronome_1ad7a151017da4bc6b205c7d4acfe66fb7"></a>
 
@@ -126,4 +126,4 @@ bool puc::metronome::Metronome::running() const noexcept
 
 Return whether this object currently owns an active periodic job.
 
-[Source](../../utils/metronome/metronome.hpp#L61)
+[Source](../../utils/metronome/metronome.hpp#L62)

@@ -2,6 +2,10 @@
 
 # File `quit.hpp`
 
+Deferred application-exit command.
+
+\\command quit || Quit the application. \\alias q \\alias exit
+
 [Source](../../commands/quit.hpp)
 
 ## Related symbols

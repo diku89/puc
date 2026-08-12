@@ -32,7 +32,7 @@ Registry retained until application termination.
 puc::app::CommandSubsystem::CommandSubsystem()
 ```
 
-Declare notification and Screen service dependencies.
+Declare invocation-service and notification-route dependencies.
 
 [Source](../../puc-cli/state/commands.hpp#L26)
 

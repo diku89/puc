@@ -1276,6 +1276,44 @@ Status Layout::add_frame_to_layout_description(
   return Status::OK;
 }
 
+Status Layout::add_frame(
+    const std::shared_ptr<LayoutDescription>& layout_description,
+    std::string frame_id, std::shared_ptr<Frame> frame,
+    std::initializer_list<Constraint> constraints) {
+  if (layout_description == nullptr || frame_id.empty() || frame == nullptr) {
+    return Status::INVALID_ARGUMENT;
+  }
+  for (auto current = constraints.begin(); current != constraints.end();
+       ++current) {
+    const Status validation = validate_constraint(*current);
+    if (!is_ok(validation)) {
+      return validation;
+    }
+    for (auto previous = constraints.begin(); previous != current; ++previous) {
+      if (previous->type == current->type ||
+          (is_horizontal_placement(previous->type) &&
+           is_horizontal_placement(current->type)) ||
+          (is_vertical_placement(previous->type) &&
+           is_vertical_placement(current->type))) {
+        return Status::INVALID_CONSTRAINT;
+      }
+    }
+  }
+
+  Status status = add_frame_to_layout_description(layout_description, frame_id,
+                                                  std::move(frame));
+  if (!is_ok(status)) {
+    return status;
+  }
+  for (const Constraint& constraint : constraints) {
+    status = add_constraint_to_frame(layout_description, frame_id, constraint);
+    if (!is_ok(status)) {
+      return status;
+    }
+  }
+  return Status::OK;
+}
+
 Status Layout::add_constraint_to_frame(
     const std::shared_ptr<LayoutDescription>& layout_description,
     const std::string& frame_id, const Constraint& constraint) {

@@ -8,10 +8,9 @@
 #include <cstddef>
 #include <cstdint>
 
-#include "puc-cli/state/configuration.hpp"
 #include "puc-cli/state/embedded_terminal.hpp"
 #include "puc-cli/state/logger.hpp"
-#include "puc-cli/state/screen.hpp"
+#include "puc-cli/state/properties.hpp"
 #include "puc-cli/state/state.hpp"
 #include "puc-cli/state/terminal.hpp"
 
@@ -29,17 +28,17 @@ struct ApplicationSubsystemSelection {
 };
 
 /** Number of concrete adapters in the complete default production graph. */
-inline constexpr std::size_t kApplicationSubsystemCount = 14U;
+inline constexpr std::size_t kApplicationSubsystemCount = 19U;
 
 /** Return the number of adapters selected by one executable profile. */
 constexpr std::size_t application_subsystem_count(
     const ApplicationSubsystemSelection& selection) noexcept {
-  constexpr std::size_t base_subsystems = 7U;
+  constexpr std::size_t base_subsystems = 11U;
   const bool command_notification       = selection.commands || selection.input;
+  const std::size_t command_subsystems  = selection.commands ? 2U : 0U;
   return base_subsystems + static_cast<std::size_t>(command_notification) +
          static_cast<std::size_t>(selection.metronome) +
-         static_cast<std::size_t>(selection.presentation) +
-         static_cast<std::size_t>(selection.commands) +
+         static_cast<std::size_t>(selection.presentation) + command_subsystems +
          static_cast<std::size_t>(selection.input) +
          static_cast<std::size_t>(selection.command_mode) +
          static_cast<std::size_t>(selection.embedded_terminal);
@@ -50,10 +49,9 @@ constexpr std::size_t application_subsystem_count(
 struct ApplicationSubsystemOptions {
   logger::LoggerConf logger;      /**< Process-wide logging policy. */
   std::uint8_t worker_count = 4U; /**< Shared worker-pool width. */
-  ConfigurationSubsystemOptions
-      configuration; /**< Application-wide configuration roots. */
+  PropertiesSubsystemOptions
+      properties;                    /**< Application-wide properties roots. */
   TerminalSubsystemOptions terminal; /**< Terminal descriptors and decoding. */
-  ScreenSubsystemOptions screen;     /**< Terminal presentation policy. */
   EmbeddedTerminalSubsystemOptions
       embedded_terminal; /**< Integrated-terminal child launch policy. */
   ApplicationSubsystemSelection

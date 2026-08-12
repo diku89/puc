@@ -34,7 +34,7 @@ Decoder configured_decoder(DecoderLimits limits = {}) {
     ADD_FAILURE() << "Could not resolve the test runfiles directory";
     return decoder;
   }
-  const config::Config configurations{root, root / "missing_user_overrides"};
+  properties::Properties configurations{root, root / "missing_user_overrides"};
   EXPECT_EQ(decoder.setup(configurations, "xterm-256color"), Status::OK);
   return decoder;
 }
@@ -82,7 +82,7 @@ Decoder configured_decoder_with_override(std::string_view test_name,
     return decoder;
   }
 
-  const config::Config configurations{primary_root, override_root};
+  properties::Properties configurations{primary_root, override_root};
   EXPECT_EQ(decoder.setup(configurations, "xterm-256color"), Status::OK);
   return decoder;
 }

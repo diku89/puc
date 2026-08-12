@@ -12,10 +12,6 @@ Mutable editor state is synchronized because rendering may run on a worker while
 
 [Source](../../puc-cli/tui/input_frame.hpp#L74)
 
-## Related symbols
-
-- [puc::tui::InputFrame::Impl](classpuc_1_1tui_1_1_input_frame_1_1_impl.md)
-
 ## Public types
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1ab4ca57f78610042d4b1c5502462f7944"></a>

@@ -35,34 +35,12 @@ namespace terminal {
 
 namespace {
 
-/** Translate the shared message contract to terminal mechanism options. */
-SessionOptions session_options(const msg::ScreenSessionOptions& options) {
-  MouseTracking mouse = MouseTracking::NONE;
-  switch (options.mouse) {
-    case msg::ScreenMouseTracking::NONE:
-      mouse = MouseTracking::NONE;
-      break;
-    case msg::ScreenMouseTracking::BUTTONS:
-      mouse = MouseTracking::BUTTONS;
-      break;
-    case msg::ScreenMouseTracking::DRAG:
-      mouse = MouseTracking::DRAG;
-      break;
-    case msg::ScreenMouseTracking::MOTION:
-      mouse = MouseTracking::MOTION;
-      break;
-  }
-  return SessionOptions{
-      .preserve_signals     = options.preserve_signals,
-      .alternate_screen     = options.alternate_screen,
-      .hide_cursor          = options.hide_cursor,
-      .disable_auto_wrap    = options.disable_auto_wrap,
-      .bracketed_paste      = options.bracketed_paste,
-      .focus_reporting      = options.focus_reporting,
-      .mouse                = mouse,
-      .kitty_keyboard_flags = options.kitty_keyboard_flags,
-  };
-}
+/** Kitty keyboard features required by PUC's normalized input contract. */
+constexpr std::uint32_t kKeyboardEnhancements =
+    static_cast<std::uint32_t>(KeyboardEnhancement::DISAMBIGUATE_ESCAPE_CODES) |
+    static_cast<std::uint32_t>(KeyboardEnhancement::REPORT_ALTERNATE_KEYS) |
+    static_cast<std::uint32_t>(KeyboardEnhancement::REPORT_ALL_KEYS) |
+    static_cast<std::uint32_t>(KeyboardEnhancement::REPORT_ASSOCIATED_TEXT);
 
 /** Terminate after logging an unrecoverable asynchronous terminal failure. */
 [[noreturn]] void fatal_async_failure(std::string_view operation,
@@ -89,15 +67,10 @@ TerminalSession::~TerminalSession() {
   }
 }
 
-Status TerminalSession::take(const SessionOptions& options) noexcept {
+Status TerminalSession::take() noexcept {
   if (active_) {
     Logger<WARN> << status_message(Status::ALREADY_ACTIVE);
     return Status::ALREADY_ACTIVE;
-  }
-  constexpr std::uint32_t kKnownKeyboardFlags = 0x1fU;
-  if ((options.kitty_keyboard_flags & ~kKnownKeyboardFlags) != 0U) {
-    Logger<ERROR> << "Cannot take terminal with invalid Kitty keyboard flags";
-    return Status::INVALID_ARGUMENT;
   }
   if (::isatty(input_fd_) == 0 || ::isatty(output_fd_) == 0) {
     Logger<ERROR> << status_message(Status::TERMINAL_NOT_AVAILABLE);
@@ -112,9 +85,7 @@ Status TerminalSession::take(const SessionOptions& options) noexcept {
 
   termios raw_terminal_state = original_terminal_state_;
   ::cfmakeraw(&raw_terminal_state);
-  if (options.preserve_signals) {
-    raw_terminal_state.c_lflag |= original_terminal_state_.c_lflag & ISIG;
-  }
+  raw_terminal_state.c_lflag |= original_terminal_state_.c_lflag & ISIG;
   if (::tcsetattr(input_fd_, TCSANOW, &raw_terminal_state) != 0) {
     Logger<ERROR> << "Could not enable raw terminal mode: "
                   << std::strerror(errno);
@@ -124,7 +95,7 @@ Status TerminalSession::take(const SessionOptions& options) noexcept {
 
   active_modes_ = 0;
   std::string enter_sequence;
-  build_enter_sequence(options, enter_sequence);
+  build_enter_sequence(enter_sequence);
   const Status write_status = write_all(enter_sequence);
   if (!is_ok(write_status)) {
     std::string leave_sequence;
@@ -141,7 +112,7 @@ Status TerminalSession::take(const SessionOptions& options) noexcept {
   }
 
   active_ = true;
-  Logger<INFO> << "Took terminal session with caller-selected modes";
+  Logger<INFO> << "Took terminal session in PUC interactive mode";
   return Status::OK;
 }
 
@@ -315,7 +286,7 @@ void TerminalSession::receive_screen_command(
 void TerminalSession::execute_screen_command(
     const msg::ScreenCommand& command) noexcept {
   if (const auto* take = std::get_if<msg::ScreenTakeCommand>(&command.data)) {
-    const Status status = this->take(session_options(take->options));
+    const Status status = this->take();
     if (!is_ok(status) && status != Status::ALREADY_ACTIVE) {
       fatal_async_failure("take", status);
     }
@@ -434,54 +405,27 @@ Status TerminalSession::write_all(std::string_view bytes) noexcept {
   return Status::OK;
 }
 
-void TerminalSession::build_enter_sequence(const SessionOptions& options,
-                                           std::string& output) {
-  const auto enable = [&output, this](Mode mode, ActiveMode active_mode,
-                                      bool requested) {
-    if (requested) {
-      output.append(mode_sequence(mode, true));
-      active_modes_ |= active_mode;
-    }
+void TerminalSession::build_enter_sequence(std::string& output) {
+  const auto enable = [&output, this](Mode mode, ActiveMode active_mode) {
+    output.append(mode_sequence(mode, true));
+    active_modes_ |= active_mode;
   };
 
-  enable(Mode::ALTERNATE_SCREEN, ACTIVE_ALTERNATE_SCREEN,
-         options.alternate_screen);
-  if (options.hide_cursor) {
-    output.append(mode_sequence(Mode::CURSOR_VISIBLE, false));
-    active_modes_ |= ACTIVE_HIDDEN_CURSOR;
-  }
-  if (options.disable_auto_wrap) {
-    output.append(mode_sequence(Mode::AUTO_WRAP, false));
-    active_modes_ |= ACTIVE_DISABLED_WRAP;
-  }
-  enable(Mode::BRACKETED_PASTE, ACTIVE_BRACKETED_PASTE,
-         options.bracketed_paste);
-  enable(Mode::FOCUS_REPORTING, ACTIVE_FOCUS, options.focus_reporting);
+  enable(Mode::ALTERNATE_SCREEN, ACTIVE_ALTERNATE_SCREEN);
+  output.append(mode_sequence(Mode::CURSOR_VISIBLE, false));
+  active_modes_ |= ACTIVE_HIDDEN_CURSOR;
+  output.append(mode_sequence(Mode::AUTO_WRAP, false));
+  active_modes_ |= ACTIVE_DISABLED_WRAP;
+  enable(Mode::BRACKETED_PASTE, ACTIVE_BRACKETED_PASTE);
+  enable(Mode::FOCUS_REPORTING, ACTIVE_FOCUS);
+  enable(Mode::MOUSE_DRAG_TRACKING, ACTIVE_MOUSE_DRAG);
+  enable(Mode::SGR_MOUSE, ACTIVE_SGR_MOUSE);
 
-  if (options.mouse != MouseTracking::NONE) {
-    switch (options.mouse) {
-      case MouseTracking::NONE:
-        break;
-      case MouseTracking::BUTTONS:
-        enable(Mode::MOUSE_BUTTON_TRACKING, ACTIVE_MOUSE_BUTTONS, true);
-        break;
-      case MouseTracking::DRAG:
-        enable(Mode::MOUSE_DRAG_TRACKING, ACTIVE_MOUSE_DRAG, true);
-        break;
-      case MouseTracking::MOTION:
-        enable(Mode::MOUSE_MOTION_TRACKING, ACTIVE_MOUSE_MOTION, true);
-        break;
-    }
-    enable(Mode::SGR_MOUSE, ACTIVE_SGR_MOUSE, true);
-  }
-
-  if (options.kitty_keyboard_flags != 0U) {
-    std::string keyboard_sequence;
-    if (is_ok(build_kitty_keyboard_push(options.kitty_keyboard_flags,
-                                        keyboard_sequence))) {
-      output.append(keyboard_sequence);
-      active_modes_ |= ACTIVE_KITTY_KEYBOARD;
-    }
+  std::string keyboard_sequence;
+  if (is_ok(build_kitty_keyboard_push(kKeyboardEnhancements,
+                                      keyboard_sequence))) {
+    output.append(keyboard_sequence);
+    active_modes_ |= ACTIVE_KITTY_KEYBOARD;
   }
 }
 
@@ -492,14 +436,8 @@ void TerminalSession::build_leave_sequence(std::string& output) const {
   if ((active_modes_ & ACTIVE_SGR_MOUSE) != 0U) {
     output.append(mode_sequence(Mode::SGR_MOUSE, false));
   }
-  if ((active_modes_ & ACTIVE_MOUSE_MOTION) != 0U) {
-    output.append(mode_sequence(Mode::MOUSE_MOTION_TRACKING, false));
-  }
   if ((active_modes_ & ACTIVE_MOUSE_DRAG) != 0U) {
     output.append(mode_sequence(Mode::MOUSE_DRAG_TRACKING, false));
-  }
-  if ((active_modes_ & ACTIVE_MOUSE_BUTTONS) != 0U) {
-    output.append(mode_sequence(Mode::MOUSE_BUTTON_TRACKING, false));
   }
   if ((active_modes_ & ACTIVE_FOCUS) != 0U) {
     output.append(mode_sequence(Mode::FOCUS_REPORTING, false));

@@ -23,9 +23,14 @@ namespace puc::multithreading {
 class JobQueue;
 }
 
-namespace puc::app {
-class AppState;
+namespace puc::properties {
+class Properties;
 }
+
+namespace puc::app {
+class ApplicationControl;
+class AppState;
+}  // namespace puc::app
 
 namespace puc::tui {
 class Screen;
@@ -38,7 +43,11 @@ struct CommonCommandArgs {
   multithreading::JobQueue* workers = nullptr; /**< Borrowed worker pool. */
   tui::Screen* screen = nullptr; /**< Borrowed active terminal presentation. */
   ipc::Directory* directory = nullptr; /**< Borrowed channel directory. */
-  app::AppState* state      = nullptr; /**< Borrowed application lifecycle. */
+  properties::Properties* properties =
+      nullptr; /**< Application-owned configuration and runtime settings. */
+  app::ApplicationControl* control =
+      nullptr;                    /**< Deferred application-exit control. */
+  app::AppState* state = nullptr; /**< Borrowed application lifecycle. */
 };
 
 /** Result of command registration, lookup, or execution. */

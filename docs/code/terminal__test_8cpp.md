@@ -4,7 +4,7 @@
 
 Interactive end-to-end conformance test for terminal input decoding.
 
-This manual executable complements `puc-cli/tui/test-app.cpp`. The TUI test app validates presentation; this program reuses its Screen, Canvas, Layout, ZBuffer, Theme, ParallelRenderer, four-worker ownership, resize handling, and small-screen behavior as a trusted interface around the real terminal input stack. Bytes are read through Screen's owned TerminalSession, decoded by the runtime-configured terminfo/TOML Trie, and matched as normalized terminal Events.
+This manual executable complements `puc-cli/tui/test-app.cpp`. The TUI test app validates presentation; this program reuses its Screen, Canvas, Layout, ZBuffer, Theme, ParallelRenderer, four-worker ownership, resize handling, and small-screen behavior as a trusted interface around the real terminal input stack. TerminalSubsystem reads and decodes bytes with the runtime-configured terminfo/TOML Trie, then publishes normalized terminal Events for this application to match.
 
 Run `bazel run //puc-cli/terminal:terminal-test` in a real terminal for the complete plan. Append `-- --list` to inspect stable test names without entering terminal mode, or `-- --test clipboard-paste` to execute only the named check.
 
@@ -37,4 +37,4 @@ Run the interactive terminal input conformance plan and print its report.
 
 **Returns:** Zero for successful listing/help, or when every selected check, setup operation, and terminal restoration succeeds; otherwise nonzero.
 
-[Source](../../puc-cli/terminal/terminal_test.cpp#L1171)
+[Source](../../puc-cli/terminal/terminal_test.cpp#L961)

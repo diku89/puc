@@ -4,7 +4,7 @@
 
 Portable fixed-width payload codec for [ScreenResizeEvent](structpuc_1_1msg_1_1_screen_resize_event.md).
 
-[Source](../../msgs/screen_msgs.hpp#L280)
+[Source](../../msgs/screen_msgs.hpp#L228)
 
 ## Public functions
 
@@ -18,7 +18,7 @@ puc::msg::ScreenResizeEventCodec::ScreenResizeEventCodec() noexcept
 
 Construct the codec under [MessageId::SCREEN\_RESIZE\_EVENT](namespacepuc_1_1msg.md#symbol-namespacepuc_1_1msg_1a24b154890bf81939005e112918c3813fac6358684a996df7bd22732e2db736db5).
 
-[Source](../../msgs/screen_msgs.hpp#L283)
+[Source](../../msgs/screen_msgs.hpp#L231)
 
 ## Private functions
 
@@ -30,7 +30,7 @@ Construct the codec under [MessageId::SCREEN\_RESIZE\_EVENT](namespacepuc_1_1msg
 Status puc::msg::ScreenResizeEventCodec::encode_payload(const ScreenResizeEvent &event, std::vector< std::uint8_t > &output) const override
 ```
 
-[Source](../../msgs/screen_msgs.hpp#L287)
+[Source](../../msgs/screen_msgs.hpp#L235)
 
 <a id="symbol-classpuc_1_1msg_1_1_screen_resize_event_codec_1aa630bc8f71d55301359edc51f0313fe2"></a>
 
@@ -40,4 +40,4 @@ Status puc::msg::ScreenResizeEventCodec::encode_payload(const ScreenResizeEvent 
 Status puc::msg::ScreenResizeEventCodec::decode_payload(std::span< const std::uint8_t > payload, ScreenResizeEvent &output) const override
 ```
 
-[Source](../../msgs/screen_msgs.hpp#L289)
+[Source](../../msgs/screen_msgs.hpp#L237)

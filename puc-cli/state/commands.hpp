@@ -22,7 +22,7 @@ namespace puc::app {
  */
 class CommandSubsystem final : public AppSubsystem {
  public:
-  /** Declare notification and Screen service dependencies. */
+  /** Declare invocation-service and notification-route dependencies. */
   CommandSubsystem();
 
   /** Construct the persistent command registry. */

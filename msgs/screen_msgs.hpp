@@ -38,33 +38,8 @@ inline constexpr std::string_view kScreenCommandChannel = "//screen/commands";
 inline constexpr std::string_view kScreenResizeEventChannel =
     "//screen/resize_events";
 
-/** Mouse reporting detail requested for an active screen session. */
-enum class ScreenMouseTracking : std::uint8_t {
-  NONE,
-  BUTTONS,
-  DRAG,
-  MOTION,
-};
-
-/** Terminal modes selected by Screen and applied by TerminalSession. */
-struct ScreenSessionOptions {
-  bool preserve_signals  = true;  /**< Keep signal-generating input enabled. */
-  bool alternate_screen  = false; /**< Request the alternate screen buffer. */
-  bool hide_cursor       = false; /**< Hide the terminal cursor. */
-  bool disable_auto_wrap = false; /**< Disable automatic margin wrapping. */
-  bool bracketed_paste   = false; /**< Request bracketed-paste boundaries. */
-  bool focus_reporting   = false; /**< Request terminal focus reports. */
-  ScreenMouseTracking mouse = ScreenMouseTracking::NONE; /**< Mouse detail. */
-  std::uint32_t kitty_keyboard_flags = 0U; /**< Kitty keyboard flag mask. */
-
-  /** Compare every requested terminal mode. */
-  constexpr bool operator==(const ScreenSessionOptions&) const noexcept =
-      default;
-};
-
-/** Request terminal ownership with caller-selected presentation modes. */
+/** Request terminal ownership under PUC's fixed interactive mode contract. */
 struct ScreenTakeCommand {
-  ScreenSessionOptions options; /**< Complete desired terminal mode state. */
   std::string
       initial_bytes; /**< Screen-owned bytes written after mode setup. */
   std::string
@@ -147,22 +122,6 @@ struct ScreenResizeEvent {
   constexpr bool operator==(const ScreenResizeEvent&) const noexcept = default;
 };
 
-/** Return stable text for a configured mouse tracking level. */
-constexpr std::string_view screen_mouse_tracking_name(
-    ScreenMouseTracking tracking) noexcept {
-  switch (tracking) {
-    case ScreenMouseTracking::NONE:
-      return "none";
-    case ScreenMouseTracking::BUTTONS:
-      return "buttons";
-    case ScreenMouseTracking::DRAG:
-      return "drag";
-    case ScreenMouseTracking::MOTION:
-      return "motion";
-  }
-  return "unknown";
-}
-
 }  // namespace puc::msg
 
 namespace std {
@@ -181,19 +140,8 @@ struct formatter<puc::msg::ScreenCommand, char> {
               FormatContext& context) const {
     using namespace puc::msg;
     if (const auto* take = std::get_if<ScreenTakeCommand>(&command.data)) {
-      const ScreenSessionOptions& options = take->options;
-      auto output =
-          std::format_to(context.out(),
-                         "{{\"type\":\"take\",\"preserve_signals\":{},"
-                         "\"alternate_screen\":{},\"hide_cursor\":{},"
-                         "\"disable_auto_wrap\":{},\"bracketed_paste\":{},"
-                         "\"focus_reporting\":{},\"mouse\":\"{}\","
-                         "\"kitty_keyboard_flags\":{},\"initial_bytes_hex\":\"",
-                         options.preserve_signals, options.alternate_screen,
-                         options.hide_cursor, options.disable_auto_wrap,
-                         options.bracketed_paste, options.focus_reporting,
-                         screen_mouse_tracking_name(options.mouse),
-                         options.kitty_keyboard_flags);
+      auto output = std::format_to(
+          context.out(), "{{\"type\":\"take\",\"initial_bytes_hex\":\"");
       constexpr char kHex[] = "0123456789abcdef";
       for (const unsigned char byte : take->initial_bytes) {
         *output++ = kHex[byte >> 4U];

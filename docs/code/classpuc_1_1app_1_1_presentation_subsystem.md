@@ -2,7 +2,7 @@
 
 # Class `puc::app::PresentationSubsystem`
 
-Own a ParallelRenderer for each running worker-pool generation.
+Own a [ParallelRenderer](classpuc_1_1app_1_1_parallel_renderer.md) for each running worker-pool generation.
 
 Layouts, themes, canvases, and Frames are durable presentation data owned by an application-specific runtime subsystem. This adapter owns the active scheduler that borrows [WorkerSubsystem](classpuc_1_1app_1_1_worker_subsystem.md) and guarantees that every render job is joined before the worker generation is stopped.
 

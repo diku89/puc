@@ -59,7 +59,7 @@ Shell process awaiting waitpid.
 std::size_t puc::app::EmbeddedTerminalSubsystem::Impl::generation_
 ```
 
-InputFrame session being served.
+[InputFrame](classpuc_1_1app_1_1_input_frame.md) session being served.
 
 [Source](../../puc-cli/state/embedded_terminal.cpp#L424)
 

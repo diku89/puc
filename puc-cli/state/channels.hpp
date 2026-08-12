@@ -66,6 +66,45 @@ class ScreenChannelSubsystem final : public AppSubsystem {
 };
 
 /**
+ * Register the ordered `//terminal/input_events` producer channel.
+ *
+ * TerminalSubsystem publishes decoded events through this route. Screen owns
+ * the transport subscription and retains normalized events until an application
+ * drains them to apply only its mode-specific policy. No additional
+ * input-router mechanism is interposed.
+ */
+class TerminalInputChannelSubsystem final : public AppSubsystem {
+ public:
+  /** Declare the channel-directory dependency. */
+  TerminalInputChannelSubsystem();
+
+  /** Validate access to the registered DirectorySubsystem. */
+  Status initialize(AppState& app) override;
+
+  /** Create and register the canonical terminal-input channel. */
+  Status start(AppState& app) override;
+
+  /** Close the route and release its endpoint. */
+  Status stop(AppState& app) noexcept override;
+
+  /** Release any endpoint retained after partial lifecycle progress. */
+  Status terminate(AppState& app) noexcept override;
+
+  /** Return the terminal-input endpoint, or nullptr while stopped. */
+  ipc::Channel* channel() noexcept { return channel_.get(); }
+
+  /** Return the assigned terminal-input identifier, or zero while stopped. */
+  ipc::ChannelId channel_id() const noexcept { return channel_id_; }
+
+ private:
+  Status close_channel() noexcept;
+
+  ipc::Directory* directory_ = nullptr;   /**< Borrowed while started. */
+  std::shared_ptr<ipc::Channel> channel_; /**< Ordered event endpoint. */
+  ipc::ChannelId channel_id_ = 0U; /**< Directory-assigned endpoint id. */
+};
+
+/**
  * Register the latest-only `//cmdframe/notify` producer channel.
  *
  * Command implementations publish through Directory; command-frame consumers

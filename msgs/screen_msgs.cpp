@@ -32,16 +32,6 @@ enum class WireCommand : std::uint8_t {
   SET_CLIPBOARD = 4U,
 };
 
-constexpr std::uint8_t kPreserveSignals = 1U << 0U;
-constexpr std::uint8_t kAlternateScreen = 1U << 1U;
-constexpr std::uint8_t kHideCursor      = 1U << 2U;
-constexpr std::uint8_t kDisableAutoWrap = 1U << 3U;
-constexpr std::uint8_t kBracketedPaste  = 1U << 4U;
-constexpr std::uint8_t kFocusReporting  = 1U << 5U;
-constexpr std::uint8_t kKnownOptionBits = kPreserveSignals | kAlternateScreen |
-                                          kHideCursor | kDisableAutoWrap |
-                                          kBracketedPaste | kFocusReporting;
-
 void append_u32(std::vector<std::uint8_t>& output, std::uint32_t value) {
   output.push_back(static_cast<std::uint8_t>(value >> 24U));
   output.push_back(static_cast<std::uint8_t>(value >> 16U));
@@ -56,17 +46,6 @@ std::uint32_t read_u32(std::span<const std::uint8_t> input) noexcept {
          static_cast<std::uint32_t>(input[3]);
 }
 
-bool valid_mouse_tracking(ScreenMouseTracking tracking) noexcept {
-  switch (tracking) {
-    case ScreenMouseTracking::NONE:
-    case ScreenMouseTracking::BUTTONS:
-    case ScreenMouseTracking::DRAG:
-    case ScreenMouseTracking::MOTION:
-      return true;
-  }
-  return false;
-}
-
 bool valid_clipboard_selection(ScreenClipboardSelection selection) noexcept {
   return selection == ScreenClipboardSelection::PRIMARY ||
          selection == ScreenClipboardSelection::CLIPBOARD;
@@ -77,26 +56,13 @@ bool valid_clipboard_selection(ScreenClipboardSelection selection) noexcept {
 Status ScreenCommandCodec::encode_payload(
     const ScreenCommand& command, std::vector<std::uint8_t>& output) const {
   if (const auto* take = std::get_if<ScreenTakeCommand>(&command.data)) {
-    if (!valid_mouse_tracking(take->options.mouse)) {
-      return Status::PAYLOAD_ENCODING_FAILED;
-    }
-    std::uint8_t flags = 0U;
-    flags |= take->options.preserve_signals ? kPreserveSignals : 0U;
-    flags |= take->options.alternate_screen ? kAlternateScreen : 0U;
-    flags |= take->options.hide_cursor ? kHideCursor : 0U;
-    flags |= take->options.disable_auto_wrap ? kDisableAutoWrap : 0U;
-    flags |= take->options.bracketed_paste ? kBracketedPaste : 0U;
-    flags |= take->options.focus_reporting ? kFocusReporting : 0U;
     if (take->initial_bytes.size() >
             std::numeric_limits<std::uint32_t>::max() ||
         take->final_bytes.size() > std::numeric_limits<std::uint32_t>::max()) {
       return Status::PAYLOAD_ENCODING_FAILED;
     }
-    output.reserve(15U + take->initial_bytes.size() + take->final_bytes.size());
+    output.reserve(9U + take->initial_bytes.size() + take->final_bytes.size());
     output.push_back(static_cast<std::uint8_t>(WireCommand::TAKE));
-    output.push_back(flags);
-    output.push_back(static_cast<std::uint8_t>(take->options.mouse));
-    append_u32(output, take->options.kitty_keyboard_flags);
     append_u32(output, static_cast<std::uint32_t>(take->initial_bytes.size()));
     output.insert(output.end(), take->initial_bytes.begin(),
                   take->initial_bytes.end());
@@ -142,39 +108,22 @@ Status ScreenCommandCodec::decode_payload(std::span<const std::uint8_t> payload,
   }
   switch (static_cast<WireCommand>(payload.front())) {
     case WireCommand::TAKE: {
-      if (payload.size() < 15U || (payload[1] & ~kKnownOptionBits) != 0U) {
+      if (payload.size() < 9U) {
         return Status::MALFORMED_PAYLOAD;
       }
-      const auto mouse = static_cast<ScreenMouseTracking>(payload[2]);
-      if (!valid_mouse_tracking(mouse)) {
+      const std::uint32_t size = read_u32(payload.subspan(1U, 4U));
+      if (static_cast<std::size_t>(size) > payload.size() - 9U) {
         return Status::MALFORMED_PAYLOAD;
       }
-      const std::uint32_t size = read_u32(payload.subspan(7U, 4U));
-      if (payload.size() < 15U ||
-          static_cast<std::size_t>(size) > payload.size() - 15U) {
-        return Status::MALFORMED_PAYLOAD;
-      }
-      const std::size_t final_size_offset =
-          11U + static_cast<std::size_t>(size);
+      const std::size_t final_size_offset = 5U + static_cast<std::size_t>(size);
       const std::uint32_t final_size =
           read_u32(payload.subspan(final_size_offset, 4U));
       if (payload.size() - final_size_offset - 4U != final_size) {
         return Status::MALFORMED_PAYLOAD;
       }
       output.data = ScreenTakeCommand{
-          .options =
-              ScreenSessionOptions{
-                  .preserve_signals     = (payload[1] & kPreserveSignals) != 0U,
-                  .alternate_screen     = (payload[1] & kAlternateScreen) != 0U,
-                  .hide_cursor          = (payload[1] & kHideCursor) != 0U,
-                  .disable_auto_wrap    = (payload[1] & kDisableAutoWrap) != 0U,
-                  .bracketed_paste      = (payload[1] & kBracketedPaste) != 0U,
-                  .focus_reporting      = (payload[1] & kFocusReporting) != 0U,
-                  .mouse                = mouse,
-                  .kitty_keyboard_flags = read_u32(payload.subspan(3U, 4U)),
-              },
           .initial_bytes =
-              std::string{reinterpret_cast<const char*>(payload.data() + 11U),
+              std::string{reinterpret_cast<const char*>(payload.data() + 5U),
                           size},
           .final_bytes =
               std::string{reinterpret_cast<const char*>(payload.data() +

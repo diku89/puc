@@ -38,7 +38,7 @@ Status puc::ipc::detail::configure_stream_descriptor(int descriptor) noexcept
 
 Set nonblocking and close-on-exec descriptor flags.
 
-[Source](../../utils/ipc/framed_io.cpp#L149)
+[Source](../../utils/ipc/framed_io.cpp#L139)
 
 <a id="symbol-framed__io_8cpp_1a4a89846513542a890adf0422a3b316fa"></a>
 
@@ -50,7 +50,7 @@ Status puc::ipc::detail::configure_socket_descriptor(int descriptor) noexcept
 
 Apply platform-specific protection against socket SIGPIPE.
 
-[Source](../../utils/ipc/framed_io.cpp#L167)
+[Source](../../utils/ipc/framed_io.cpp#L157)
 
 <a id="symbol-framed__io_8cpp_1a6474276a1f33b95fa6032e774e93077f"></a>
 
@@ -64,7 +64,7 @@ Write one 32-bit network-order length prefix followed by one payload.
 
 The caller must serialize concurrent calls for the same descriptor.
 
-[Source](../../utils/ipc/framed_io.cpp#L184)
+[Source](../../utils/ipc/framed_io.cpp#L174)
 
 <a id="symbol-framed__io_8cpp_1ac972c747ec9e5f63ed027207d15c399e"></a>
 
@@ -78,4 +78,4 @@ Read one complete length-prefixed payload into reusable owned storage.
 
 Output is cleared first. Polling wakes periodically to observe `stopping`.
 
-[Source](../../utils/ipc/framed_io.cpp#L211)
+[Source](../../utils/ipc/framed_io.cpp#L201)

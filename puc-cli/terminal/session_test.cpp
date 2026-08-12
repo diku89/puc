@@ -10,10 +10,8 @@
 #include <termios.h>
 #include <unistd.h>
 
-#include <array>
 #include <cerrno>
 #include <cstddef>
-#include <cstdint>
 #include <filesystem>
 #include <limits>
 #include <string>
@@ -43,7 +41,7 @@ Decoder configured_decoder() {
     ADD_FAILURE() << "Could not resolve the test runfiles directory";
     return decoder;
   }
-  const config::Config configurations{root, root / "missing_user_overrides"};
+  properties::Properties configurations{root, root / "missing_user_overrides"};
   EXPECT_EQ(decoder.setup(configurations, "xterm-256color"), Status::OK);
   return decoder;
 }
@@ -142,21 +140,6 @@ class PseudoTerminal {
   int slave_fd_  = -1;
 };
 
-/** Return every reversible presentation/input mode used by integration tests.
- */
-SessionOptions full_session_options() {
-  return SessionOptions{
-      .preserve_signals     = true,
-      .alternate_screen     = true,
-      .hide_cursor          = true,
-      .disable_auto_wrap    = true,
-      .bracketed_paste      = true,
-      .focus_reporting      = true,
-      .mouse                = MouseTracking::DRAG,
-      .kitty_keyboard_flags = 0,
-  };
-}
-
 TEST(TerminalSessionTest, InactiveOperationsReturnNonThrowingStatuses) {
   TerminalSession session(-1, -1);
   Decoder decoder;
@@ -188,8 +171,7 @@ TEST(TerminalSessionTest, RejectsNonTerminalDescriptors) {
   ASSERT_EQ(::pipe(descriptors), 0);
   {
     TerminalSession session(descriptors[0], descriptors[1]);
-    EXPECT_EQ(session.take(full_session_options()),
-              Status::TERMINAL_NOT_AVAILABLE);
+    EXPECT_EQ(session.take(), Status::TERMINAL_NOT_AVAILABLE);
     TerminalSize size{.width = 1, .height = 1};
     EXPECT_EQ(session.get_size(size), Status::TERMINAL_QUERY_FAILED);
     EXPECT_EQ(size, TerminalSize{});
@@ -198,7 +180,7 @@ TEST(TerminalSessionTest, RejectsNonTerminalDescriptors) {
   EXPECT_EQ(::close(descriptors[1]), 0);
 }
 
-TEST(TerminalSessionTest, TakeEnablesRequestedModesAndReleaseReversesThem) {
+TEST(TerminalSessionTest, TakeActivatesAndReleaseReversesPucTerminalMode) {
   PseudoTerminal terminal;
   ASSERT_TRUE(terminal.valid());
   ASSERT_TRUE(terminal.set_size(80, 24));
@@ -206,7 +188,7 @@ TEST(TerminalSessionTest, TakeEnablesRequestedModesAndReleaseReversesThem) {
   ASSERT_EQ(::tcgetattr(terminal.slave_fd(), &before), 0);
 
   TerminalSession session(terminal.slave_fd(), terminal.slave_fd());
-  ASSERT_EQ(session.take(full_session_options()), Status::OK);
+  ASSERT_EQ(session.take(), Status::OK);
   EXPECT_TRUE(session.active());
 
   termios raw{};
@@ -222,12 +204,18 @@ TEST(TerminalSessionTest, TakeEnablesRequestedModesAndReleaseReversesThem) {
   EXPECT_NE(entered.find("\x1b[?1004h"), std::string::npos);
   EXPECT_NE(entered.find("\x1b[?1002h"), std::string::npos);
   EXPECT_NE(entered.find("\x1b[?1006h"), std::string::npos);
+  EXPECT_NE(entered.find("\x1b[>29u"), std::string::npos);
 
-  EXPECT_EQ(session.take(full_session_options()), Status::ALREADY_ACTIVE);
+  EXPECT_EQ(session.write("hello"), Status::OK);
+  EXPECT_EQ(session.write(""), Status::OK);
+  EXPECT_EQ(terminal.read_output(), "hello");
+
+  EXPECT_EQ(session.take(), Status::ALREADY_ACTIVE);
   ASSERT_EQ(session.release(), Status::OK);
   EXPECT_FALSE(session.active());
 
   const std::string released = terminal.read_output();
+  EXPECT_NE(released.find("\x1b[<u"), std::string::npos);
   EXPECT_NE(released.find("\x1b[?1006l"), std::string::npos);
   EXPECT_NE(released.find("\x1b[?1002l"), std::string::npos);
   EXPECT_NE(released.find("\x1b[?1004l"), std::string::npos);
@@ -248,117 +236,6 @@ TEST(TerminalSessionTest, TakeEnablesRequestedModesAndReleaseReversesThem) {
   EXPECT_EQ(after.c_lflag & ~ignored_local_flags,
             before.c_lflag & ~ignored_local_flags);
   EXPECT_EQ(session.release(), Status::OK);
-}
-
-TEST(TerminalSessionTest, DefaultOptionsEmitNoPresentationModes) {
-  PseudoTerminal terminal;
-  ASSERT_TRUE(terminal.valid());
-  ASSERT_TRUE(terminal.set_size(80, 24));
-
-  TerminalSession session(terminal.slave_fd(), terminal.slave_fd());
-  ASSERT_EQ(session.take(), Status::OK);
-  EXPECT_TRUE(terminal.read_output().empty());
-  ASSERT_EQ(session.release(), Status::OK);
-  EXPECT_TRUE(terminal.read_output().empty());
-}
-
-TEST(TerminalSessionTest, OptionsCanDisableModesSignalsAndKittyNegotiation) {
-  PseudoTerminal terminal;
-  ASSERT_TRUE(terminal.valid());
-  ASSERT_TRUE(terminal.set_size(80, 24));
-
-  SessionOptions options;
-  options.preserve_signals     = false;
-  options.alternate_screen     = false;
-  options.hide_cursor          = false;
-  options.disable_auto_wrap    = false;
-  options.bracketed_paste      = false;
-  options.focus_reporting      = false;
-  options.mouse                = MouseTracking::NONE;
-  options.kitty_keyboard_flags = 0U;
-  TerminalSession session(terminal.slave_fd(), terminal.slave_fd());
-  ASSERT_EQ(session.take(options), Status::OK);
-  EXPECT_TRUE(terminal.read_output().empty());
-
-  termios raw{};
-  ASSERT_EQ(::tcgetattr(terminal.slave_fd(), &raw), 0);
-  EXPECT_EQ(raw.c_lflag & (ECHO | ICANON | ISIG), 0U);
-  EXPECT_EQ(session.write("hello"), Status::OK);
-  EXPECT_EQ(session.write(""), Status::OK);
-  EXPECT_EQ(terminal.read_output(), "hello");
-  ASSERT_EQ(session.release(), Status::OK);
-  EXPECT_TRUE(terminal.read_output().empty());
-}
-
-TEST(TerminalSessionTest, SelectsButtonAndAllMotionMouseTracking) {
-  struct TrackingCase {
-    MouseTracking tracking;
-    std::string_view enable;
-    std::string_view disable;
-  };
-  constexpr std::array cases{
-      TrackingCase{MouseTracking::BUTTONS, "\x1b[?1000h", "\x1b[?1000l"},
-      TrackingCase{MouseTracking::MOTION, "\x1b[?1003h", "\x1b[?1003l"},
-  };
-
-  for (const TrackingCase& test_case : cases) {
-    PseudoTerminal terminal;
-    ASSERT_TRUE(terminal.valid());
-    SessionOptions options;
-    options.alternate_screen  = false;
-    options.hide_cursor       = false;
-    options.disable_auto_wrap = false;
-    options.bracketed_paste   = false;
-    options.focus_reporting   = false;
-    options.mouse             = test_case.tracking;
-
-    TerminalSession session(terminal.slave_fd(), terminal.slave_fd());
-    ASSERT_EQ(session.take(options), Status::OK);
-    EXPECT_EQ(terminal.read_output(),
-              std::string{test_case.enable} + "\x1b[?1006h");
-    ASSERT_EQ(session.release(), Status::OK);
-    EXPECT_EQ(terminal.read_output(),
-              "\x1b[?1006l" + std::string{test_case.disable});
-  }
-}
-
-TEST(TerminalSessionTest, KittyKeyboardModeUsesAReversibleStackEntry) {
-  PseudoTerminal terminal;
-  ASSERT_TRUE(terminal.valid());
-  ASSERT_TRUE(terminal.set_size(80, 24));
-  SessionOptions options;
-  options.alternate_screen  = false;
-  options.hide_cursor       = false;
-  options.disable_auto_wrap = false;
-  options.bracketed_paste   = false;
-  options.focus_reporting   = false;
-  options.mouse             = MouseTracking::NONE;
-  options.kitty_keyboard_flags =
-      (KeyboardEnhancement::DISAMBIGUATE_ESCAPE_CODES |
-       KeyboardEnhancement::REPORT_EVENT_TYPES) |
-      static_cast<std::uint32_t>(KeyboardEnhancement::REPORT_ASSOCIATED_TEXT);
-
-  TerminalSession session(terminal.slave_fd(), terminal.slave_fd());
-  ASSERT_EQ(session.take(options), Status::OK);
-  EXPECT_EQ(terminal.read_output(), "\x1b[>19u");
-  ASSERT_EQ(session.release(), Status::OK);
-  EXPECT_EQ(terminal.read_output(), "\x1b[<u");
-}
-
-TEST(TerminalSessionTest, InvalidKittyFlagsDoNotChangeTerminalState) {
-  PseudoTerminal terminal;
-  ASSERT_TRUE(terminal.valid());
-  termios before{};
-  ASSERT_EQ(::tcgetattr(terminal.slave_fd(), &before), 0);
-  SessionOptions options;
-  options.kitty_keyboard_flags = 32;
-
-  TerminalSession session(terminal.slave_fd(), terminal.slave_fd());
-  EXPECT_EQ(session.take(options), Status::INVALID_ARGUMENT);
-  termios after{};
-  ASSERT_EQ(::tcgetattr(terminal.slave_fd(), &after), 0);
-  EXPECT_EQ(after.c_lflag, before.c_lflag);
-  EXPECT_TRUE(terminal.read_output().empty());
 }
 
 TEST(TerminalSessionTest, QueriesCharacterCellDimensions) {
@@ -455,6 +332,7 @@ TEST(TerminalSessionTest, WritesAndQueriesClipboardWithoutLoggingPayload) {
   ASSERT_TRUE(terminal.set_size(80, 24));
   TerminalSession session(terminal.slave_fd(), terminal.slave_fd());
   ASSERT_EQ(session.take(), Status::OK);
+  static_cast<void>(terminal.read_output());
   ASSERT_EQ(session.set_clipboard(ClipboardSelection::CLIPBOARD, "secret"),
             Status::OK);
   ASSERT_EQ(session.query_clipboard(ClipboardSelection::PRIMARY), Status::OK);
@@ -470,6 +348,7 @@ TEST(TerminalSessionTest, ClipboardOutputLimitIsPropagated) {
   ASSERT_TRUE(terminal.valid());
   TerminalSession session(terminal.slave_fd(), terminal.slave_fd());
   ASSERT_EQ(session.take(), Status::OK);
+  static_cast<void>(terminal.read_output());
 
   const std::string too_large(kDefaultMaximumClipboardBytes + 1U, 'x');
   EXPECT_EQ(session.set_clipboard(ClipboardSelection::CLIPBOARD, too_large),
@@ -487,8 +366,7 @@ TEST(TerminalSessionTest, FailedSetupRollsBackRawTerminalState) {
   ASSERT_EQ(::tcgetattr(terminal.slave_fd(), &before), 0);
 
   TerminalSession session(terminal.slave_fd(), read_only_output);
-  EXPECT_EQ(session.take(full_session_options()),
-            Status::TERMINAL_WRITE_FAILED);
+  EXPECT_EQ(session.take(), Status::TERMINAL_WRITE_FAILED);
   EXPECT_FALSE(session.active());
   termios after{};
   ASSERT_EQ(::tcgetattr(terminal.slave_fd(), &after), 0);
@@ -510,7 +388,7 @@ TEST(TerminalSessionTest, ReleaseRestoresTermiosEvenWhenOutputFails) {
   ASSERT_EQ(::tcgetattr(terminal.slave_fd(), &before), 0);
 
   TerminalSession session(terminal.slave_fd(), output);
-  ASSERT_EQ(session.take(full_session_options()), Status::OK);
+  ASSERT_EQ(session.take(), Status::OK);
   EXPECT_EQ(::close(output), 0);
   EXPECT_EQ(session.release(), Status::TERMINAL_WRITE_FAILED);
 
@@ -533,7 +411,7 @@ TEST(TerminalSessionTest, DestructorRestoresRawModeAndPresentationModes) {
 
   {
     TerminalSession session(terminal.slave_fd(), terminal.slave_fd());
-    ASSERT_EQ(session.take(full_session_options()), Status::OK);
+    ASSERT_EQ(session.take(), Status::OK);
     static_cast<void>(terminal.read_output());
   }
 

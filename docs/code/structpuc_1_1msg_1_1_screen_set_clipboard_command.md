@@ -4,7 +4,7 @@
 
 Request that TerminalSession publish UTF-8 bytes through OSC 52.
 
-[Source](../../msgs/screen_msgs.hpp#L99)
+[Source](../../msgs/screen_msgs.hpp#L74)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ ScreenClipboardSelection puc::msg::ScreenSetClipboardCommand::selection
 
 Destination clipboard.
 
-[Source](../../msgs/screen_msgs.hpp#L100)
+[Source](../../msgs/screen_msgs.hpp#L75)
 
 <a id="symbol-structpuc_1_1msg_1_1_screen_set_clipboard_command_1ab6a2da895141bc31777da407f3cf5d12"></a>
 
@@ -30,7 +30,7 @@ std::string puc::msg::ScreenSetClipboardCommand::text
 
 Selected logical UTF-8, excluding visual padding.
 
-[Source](../../msgs/screen_msgs.hpp#L102)
+[Source](../../msgs/screen_msgs.hpp#L77)
 
 ## Public functions
 
@@ -44,4 +44,4 @@ bool puc::msg::ScreenSetClipboardCommand::operator==(const ScreenSetClipboardCom
 
 Compare destination and complete clipboard bytes.
 
-[Source](../../msgs/screen_msgs.hpp#L105)
+[Source](../../msgs/screen_msgs.hpp#L80)

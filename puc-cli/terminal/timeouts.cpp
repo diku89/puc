@@ -10,7 +10,7 @@
 #include <optional>
 #include <string_view>
 
-#include "utils/config/config.hpp"
+#include "properties/properties.hpp"
 #include "utils/logger/logger.hpp"
 
 /** @cond TERMINAL_TIMEOUTS_LOGGER_MODULE */
@@ -20,18 +20,21 @@ LOGGER_MODULE("Terminal Timeouts");
 namespace puc::terminal {
 namespace {
 
-Status configuration_status(config::Status status) noexcept {
-  return status == config::Status::PARSE_ERROR
+Status configuration_status(properties::Status status) noexcept {
+  return status == properties::Status::PARSE_ERROR
              ? Status::CONFIGURATION_PARSE_FAILED
              : Status::CONFIGURATION_LOAD_FAILED;
 }
 
-bool read_positive_duration(const config::LoadResult& loaded,
-                            std::string_view path,
+bool read_positive_duration(const properties::Properties& properties,
+                            std::string_view name,
                             std::chrono::milliseconds& output) {
-  const std::optional<std::int64_t> value = loaded.find(path).as_integer();
-  if (!value.has_value() || *value <= 0) {
-    Logger<ERROR> << "Terminal timeout '" << path
+  properties::Property property;
+  const properties::Status status = properties.get(name, property);
+  const auto* value               = std::get_if<std::int64_t>(
+      properties::is_ok(status) ? &property.value : nullptr);
+  if (value == nullptr || *value <= 0) {
+    Logger<ERROR> << "Terminal timeout '" << name
                   << "' must be a positive integer number of milliseconds";
     return false;
   }
@@ -41,20 +44,21 @@ bool read_positive_duration(const config::LoadResult& loaded,
 
 }  // namespace
 
-Status load_timeout_settings(const config::Config& configurations,
+Status load_timeout_settings(properties::Properties& properties,
                              TimeoutSettings& output) {
-  const config::LoadResult loaded =
-      configurations.load(kTimeoutConfigurationPath);
-  if (loaded.status != config::Status::OK) {
+  const properties::Status loaded =
+      properties.load_mutable_defaults("terminal", kTimeoutConfigurationPath);
+  if (loaded != properties::Status::OK &&
+      loaded != properties::Status::DUPLICATE_SOURCE) {
     Logger<ERROR> << "Could not load terminal timeout configuration: "
-                  << config::status_message(loaded.status);
-    return configuration_status(loaded.status);
+                  << properties::status_message(loaded);
+    return configuration_status(loaded);
   }
 
   TimeoutSettings candidate;
-  if (!read_positive_duration(loaded, "timeouts.input_sequence_ms",
+  if (!read_positive_duration(properties, "terminal.timeouts.input_sequence_ms",
                               candidate.input_sequence) ||
-      !read_positive_duration(loaded, "timeouts.multiple_click_ms",
+      !read_positive_duration(properties, "terminal.timeouts.multiple_click_ms",
                               candidate.multiple_click)) {
     return Status::CONFIGURATION_PARSE_FAILED;
   }

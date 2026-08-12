@@ -12,6 +12,7 @@
 
 #include "msgs/cmdframe_msgs.hpp"
 #include "msgs/screen_msgs.hpp"
+#include "msgs/terminal_msgs.hpp"
 #include "puc-cli/state/directory.hpp"
 #include "utils/ipc/directory.hpp"
 #include "utils/ipc/smem_channel.hpp"
@@ -116,6 +117,59 @@ Status ScreenChannelSubsystem::close_channels() noexcept {
   resize_channel_.reset();
   command_id_ = 0U;
   resize_id_  = 0U;
+  directory_  = nullptr;
+  return result;
+}
+
+TerminalInputChannelSubsystem::TerminalInputChannelSubsystem()
+    : AppSubsystem("terminal-input-channel",
+                   subsystem_dependencies<DirectorySubsystem>()) {}
+
+Status TerminalInputChannelSubsystem::initialize(AppState& app) {
+  return app.get_subsystem<DirectorySubsystem>() == nullptr
+             ? Status::SUBSYSTEM_NOT_FOUND
+             : Status::OK;
+}
+
+Status TerminalInputChannelSubsystem::start(AppState& app) {
+  if (channel_ != nullptr) {
+    return Status::OK;
+  }
+  DirectorySubsystem* directory_subsystem =
+      app.get_subsystem<DirectorySubsystem>();
+  if (directory_subsystem == nullptr ||
+      directory_subsystem->directory() == nullptr) {
+    return Status::SUBSYSTEM_FAILURE;
+  }
+  directory_   = directory_subsystem->directory();
+  auto channel = std::make_shared<ipc::SmemChannel>(
+      std::string{msg::kTerminalInputEventChannel},
+      ipc::kDefaultMaximumMessageBytes);
+  const ipc::Status status = directory_->open_channel(channel, channel_id_);
+  if (!ipc::is_ok(status)) {
+    directory_  = nullptr;
+    channel_id_ = 0U;
+    return Status::SUBSYSTEM_FAILURE;
+  }
+  channel_ = std::move(channel);
+  return Status::OK;
+}
+
+Status TerminalInputChannelSubsystem::stop(AppState& app) noexcept {
+  static_cast<void>(app);
+  return close_channel();
+}
+
+Status TerminalInputChannelSubsystem::terminate(AppState& app) noexcept {
+  static_cast<void>(app);
+  return close_channel();
+}
+
+Status TerminalInputChannelSubsystem::close_channel() noexcept {
+  const Status result =
+      close_route(directory_, msg::kTerminalInputEventChannel);
+  channel_.reset();
+  channel_id_ = 0U;
   directory_  = nullptr;
   return result;
 }

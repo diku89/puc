@@ -22,7 +22,9 @@
 #include <vector>
 
 #include "msgs/screen_msgs.hpp"
+#include "msgs/terminal_msgs.hpp"
 #include "puc-cli/terminal/event.hpp"
+#include "puc-cli/terminal/event_messages.hpp"
 #include "puc-cli/tui/frame.hpp"
 #include "puc-cli/tui/selection.hpp"
 #include "puc-cli/tui/zbuf.hpp"
@@ -89,20 +91,6 @@ Status local_position(const terminal::CellPosition& position,
     return status;
   }
   return relative_coordinate(position.y, rect.y, output.y);
-}
-
-/** Return the terminal modes selected and owned by Screen. */
-msg::ScreenSessionOptions screen_session_options() noexcept {
-  return msg::ScreenSessionOptions{
-      .preserve_signals     = true,
-      .alternate_screen     = true,
-      .hide_cursor          = true,
-      .disable_auto_wrap    = true,
-      .bracketed_paste      = false,
-      .focus_reporting      = false,
-      .mouse                = msg::ScreenMouseTracking::NONE,
-      .kitty_keyboard_flags = 0U,
-  };
 }
 
 /** Append an unsigned decimal integer without locale-sensitive formatting. */
@@ -271,13 +259,22 @@ Screen::~Screen() {
       Logger<ERROR> << "Could not quiesce Screen resize events: "
                     << ipc::status_message(resize_close_status);
     }
+    const ipc::Status input_close_status =
+        directory_->close_channel(msg::kTerminalInputEventChannel);
+    if (!ipc::is_ok(input_close_status) &&
+        input_close_status != ipc::Status::CHANNEL_NOT_FOUND) {
+      Logger<ERROR> << "Could not quiesce Screen input events: "
+                    << ipc::status_message(input_close_status);
+    }
   }
   if (owns_channels_ && terminal_session_ != nullptr) {
     terminal_session_->unbind_screen_channels();
   }
   resize_subscription_.reset();
+  input_subscription_.reset();
   command_channel_.reset();
   resize_channel_.reset();
+  input_channel_.reset();
   directory_ = nullptr;
   owned_directory_.reset();
 }
@@ -289,6 +286,7 @@ Status Screen::setup_channels(bool create_channels) {
 
   ipc::ChannelId command_id = 0U;
   ipc::ChannelId resize_id  = 0U;
+  ipc::ChannelId input_id   = 0U;
   ipc::Status ipc_status    = ipc::Status::OK;
   if (create_channels) {
     command_channel_ = std::make_shared<ipc::SmemChannel>(
@@ -311,16 +309,31 @@ Status Screen::setup_channels(bool create_channels) {
                     << ipc::status_message(ipc_status);
       return Status::CHANNEL_SETUP_FAILED;
     }
+
+    input_channel_ = std::make_shared<ipc::SmemChannel>(
+        std::string{msg::kTerminalInputEventChannel},
+        ipc::kDefaultMaximumMessageBytes);
+    ipc_status = directory_->open_channel(input_channel_, input_id);
+    if (!ipc::is_ok(ipc_status)) {
+      Logger<ERROR> << "Could not open Screen input channel: "
+                    << ipc::status_message(ipc_status);
+      return Status::CHANNEL_SETUP_FAILED;
+    }
   } else {
     command_channel_ = directory_->get_channel(msg::kScreenCommandChannel);
     resize_channel_  = directory_->get_channel(msg::kScreenResizeEventChannel);
+    input_channel_   = directory_->get_channel(msg::kTerminalInputEventChannel);
     if (command_channel_ == nullptr || resize_channel_ == nullptr ||
+        input_channel_ == nullptr ||
         !ipc::is_ok(directory_->get_channel_id(msg::kScreenCommandChannel,
                                                command_id)) ||
         !ipc::is_ok(directory_->get_channel_id(msg::kScreenResizeEventChannel,
-                                               resize_id))) {
+                                               resize_id)) ||
+        !ipc::is_ok(directory_->get_channel_id(msg::kTerminalInputEventChannel,
+                                               input_id))) {
       command_channel_.reset();
       resize_channel_.reset();
+      input_channel_.reset();
       Logger<ERROR> << "Lifecycle-owned Screen channels are not registered";
       return Status::CHANNEL_SETUP_FAILED;
     }
@@ -338,6 +351,18 @@ Status Screen::setup_channels(bool create_channels) {
     return Status::CHANNEL_SETUP_FAILED;
   }
 
+  ipc_status = directory_->subscribe(
+      input_id,
+      [this](ipc::Channel::Bytes payload) noexcept {
+        receive_input_event(payload);
+      },
+      input_subscription_);
+  if (!ipc::is_ok(ipc_status)) {
+    Logger<ERROR> << "Could not subscribe Screen to terminal input: "
+                  << ipc::status_message(ipc_status);
+    return Status::CHANNEL_SETUP_FAILED;
+  }
+
   const terminal::Status terminal_status =
       terminal_session_->bind_screen_channels(*directory_);
   if (!terminal::is_ok(terminal_status)) {
@@ -346,7 +371,7 @@ Status Screen::setup_channels(bool create_channels) {
     return Status::CHANNEL_SETUP_FAILED;
   }
   Logger<INFO> << "Configured asynchronous Screen channels " << command_id
-               << " and " << resize_id;
+               << ", " << resize_id << " and " << input_id;
   return Status::OK;
 }
 
@@ -371,9 +396,7 @@ Status Screen::send_command(const msg::ScreenCommand& command) noexcept {
   return Status::OK;
 }
 
-Status Screen::take() noexcept { return take(screen_session_options()); }
-
-Status Screen::take(const msg::ScreenSessionOptions& options) noexcept {
+Status Screen::take() noexcept {
   if (!is_ok(setup_status_)) {
     return setup_status_;
   }
@@ -385,11 +408,15 @@ Status Screen::take(const msg::ScreenSessionOptions& options) noexcept {
     terminal_requested_ = true;
     latest_size_.reset();
   }
+  {
+    const std::lock_guard lock(input_mutex_);
+    input_events_.clear();
+    input_status_ = Status::OK;
+  }
 
   const msg::ScreenCommand command{
       .data =
           msg::ScreenTakeCommand{
-              .options       = options,
               .initial_bytes = std::string{kClearAndHome},
               .final_bytes   = std::string{kResetStyle},
           },
@@ -407,6 +434,20 @@ terminal::Status Screen::read_input(terminal::Decoder& decoder,
                                     std::size_t& bytes_read,
                                     bool& end_of_input) {
   return terminal_session_->read(decoder, events, bytes_read, end_of_input);
+}
+
+Status Screen::drain_input_events(
+    std::vector<terminal::Event>& output) noexcept {
+  output.clear();
+  if (!is_ok(setup_status_)) {
+    return setup_status_;
+  }
+  const std::lock_guard lock(input_mutex_);
+  if (!is_ok(input_status_)) {
+    return input_status_;
+  }
+  output.swap(input_events_);
+  return Status::OK;
 }
 
 Status Screen::handle_mouse_event(
@@ -804,6 +845,36 @@ void Screen::receive_resize_event(ipc::Channel::Bytes payload) noexcept {
     latest_size_ = event;
     Logger<INFO> << "Observed terminal geometry " << event.width << 'x'
                  << event.height;
+  }
+}
+
+void Screen::receive_input_event(ipc::Channel::Bytes payload) noexcept {
+  try {
+    msg::TerminalInputEvent message;
+    terminal::Event event;
+    const msg::Status decode_status =
+        input_codec_.deserialize(payload, message);
+    const msg::Status conversion_status =
+        msg::is_ok(decode_status) ? terminal::from_message(message, event)
+                                  : decode_status;
+    if (!msg::is_ok(conversion_status)) {
+      const std::lock_guard lock(input_mutex_);
+      input_events_.clear();
+      input_status_ = Status::MESSAGE_DECODING_FAILED;
+      Logger<ERROR> << "Discarded malformed terminal input event: "
+                    << msg::status_message(conversion_status);
+      return;
+    }
+
+    const std::lock_guard lock(input_mutex_);
+    if (is_ok(input_status_)) {
+      input_events_.push_back(std::move(event));
+    }
+  } catch (...) {
+    const std::lock_guard lock(input_mutex_);
+    input_events_.clear();
+    input_status_ = Status::MESSAGE_DECODING_FAILED;
+    Logger<ERROR> << "Could not retain decoded terminal input event";
   }
 }
 

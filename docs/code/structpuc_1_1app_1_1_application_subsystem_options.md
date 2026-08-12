@@ -4,7 +4,7 @@
 
 Configuration retained by the adapters in the canonical application graph.
 
-[Source](../../puc-cli/state/bootstrap.hpp#L50)
+[Source](../../puc-cli/state/bootstrap.hpp#L49)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ logger::LoggerConf puc::app::ApplicationSubsystemOptions::logger
 
 Process-wide logging policy.
 
-[Source](../../puc-cli/state/bootstrap.hpp#L51)
+[Source](../../puc-cli/state/bootstrap.hpp#L50)
 
 <a id="symbol-structpuc_1_1app_1_1_application_subsystem_options_1ae3154129a00f3c71cf74b3daf541fd5f"></a>
 
@@ -30,19 +30,19 @@ std::uint8_t puc::app::ApplicationSubsystemOptions::worker_count
 
 Shared worker-pool width.
 
-[Source](../../puc-cli/state/bootstrap.hpp#L52)
+[Source](../../puc-cli/state/bootstrap.hpp#L51)
 
-<a id="symbol-structpuc_1_1app_1_1_application_subsystem_options_1a582b1c07a9685e39e5d3f6908404fbfd"></a>
+<a id="symbol-structpuc_1_1app_1_1_application_subsystem_options_1a02cc1abea6cc816cb4077996cefbd017"></a>
 
-### `configuration`
+### `properties`
 
 ```cpp
-ConfigurationSubsystemOptions puc::app::ApplicationSubsystemOptions::configuration
+PropertiesSubsystemOptions puc::app::ApplicationSubsystemOptions::properties
 ```
 
-Application-wide configuration roots.
+Application-wide properties roots.
 
-[Source](../../puc-cli/state/bootstrap.hpp#L54)
+[Source](../../puc-cli/state/bootstrap.hpp#L53)
 
 <a id="symbol-structpuc_1_1app_1_1_application_subsystem_options_1ac3c46616e47ef64dc23959bf199945e6"></a>
 
@@ -54,19 +54,7 @@ TerminalSubsystemOptions puc::app::ApplicationSubsystemOptions::terminal
 
 Terminal descriptors and decoding.
 
-[Source](../../puc-cli/state/bootstrap.hpp#L55)
-
-<a id="symbol-structpuc_1_1app_1_1_application_subsystem_options_1a8e296cf6b9f1c8f6d9c0545760b76817"></a>
-
-### `screen`
-
-```cpp
-ScreenSubsystemOptions puc::app::ApplicationSubsystemOptions::screen
-```
-
-Terminal presentation policy.
-
-[Source](../../puc-cli/state/bootstrap.hpp#L56)
+[Source](../../puc-cli/state/bootstrap.hpp#L54)
 
 <a id="symbol-structpuc_1_1app_1_1_application_subsystem_options_1a3a100aa41768d9fad0da5b1e66890d0d"></a>
 
@@ -78,7 +66,7 @@ EmbeddedTerminalSubsystemOptions puc::app::ApplicationSubsystemOptions::embedded
 
 Integrated-terminal child launch policy.
 
-[Source](../../puc-cli/state/bootstrap.hpp#L58)
+[Source](../../puc-cli/state/bootstrap.hpp#L56)
 
 <a id="symbol-structpuc_1_1app_1_1_application_subsystem_options_1a58152c5c7724193d5ff845f7df0a6f7f"></a>
 
@@ -90,4 +78,4 @@ ApplicationSubsystemSelection puc::app::ApplicationSubsystemOptions::selection
 
 Executable-specific optional subsystem profile.
 
-[Source](../../puc-cli/state/bootstrap.hpp#L60)
+[Source](../../puc-cli/state/bootstrap.hpp#L58)

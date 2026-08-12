@@ -42,24 +42,29 @@ namespace {
 constexpr std::size_t kMaximumConfiguredSequenceBytes = 4096U;
 constexpr std::string_view kInputConfigurationPath    = "input_keys.toml";
 constexpr std::string_view kTerminalProfileDirectory  = "terminals";
+constexpr std::string_view kInputConfigurationSource =
+    "terminal.input.universal";
+constexpr std::string_view kTerminalProfileSource = "terminal.input.profile";
+constexpr std::string_view kOperatingSystemSource =
+    "terminal.input.operating-system";
 using InputTrie = containers::Trie<char, InputAction>;
 
 /** Return a table field or a missing value when it is absent. */
-config::Value field(const config::Value& table,
-                    std::string_view name) noexcept {
+properties::Value field(const properties::Value& table,
+                        std::string_view name) noexcept {
   return table.find(name);
 }
 
 /** Return a non-owning configuration string value. */
 std::optional<std::string_view> string_value(
-    const config::Value& value) noexcept {
+    const properties::Value& value) noexcept {
   return value.as_string();
 }
 
 /** Log one configuration diagnostic with source coordinates when available. */
-void log_configuration_error(const config::Value& value,
+void log_configuration_error(const properties::Value& value,
                              std::string_view message) {
-  const config::SourceLocation location = value.location();
+  const properties::SourceLocation location = value.location();
   Logger<ERROR> << (location.source.empty() ? "<configuration>"
                                             : location.source)
                 << ':' << location.line << ':' << location.column << ": "
@@ -305,13 +310,13 @@ std::optional<Modifier> modifier(std::string_view name) noexcept {
 }
 
 /** Parse optional modifiers from a mapping table. */
-bool parse_modifiers(const config::Value& table, Modifiers& modifiers) {
-  modifiers                      = {};
-  const config::Value configured = field(table, "modifiers");
+bool parse_modifiers(const properties::Value& table, Modifiers& modifiers) {
+  modifiers                          = {};
+  const properties::Value configured = field(table, "modifiers");
   if (!configured) {
     return true;
   }
-  if (configured.type() != config::ValueType::ARRAY) {
+  if (configured.type() != properties::ValueType::ARRAY) {
     return false;
   }
   for (std::size_t index = 0; index < configured.size(); ++index) {
@@ -330,9 +335,9 @@ bool parse_modifiers(const config::Value& table, Modifiers& modifiers) {
 }
 
 /** Parse an optional key action from a mapping table. */
-bool parse_key_action(const config::Value& table, KeyAction& action) {
-  action                         = KeyAction::PRESS;
-  const config::Value configured = field(table, "key_action");
+bool parse_key_action(const properties::Value& table, KeyAction& action) {
+  action                             = KeyAction::PRESS;
+  const properties::Value configured = field(table, "key_action");
   if (!configured) {
     return true;
   }
@@ -353,9 +358,9 @@ bool parse_key_action(const config::Value& table, KeyAction& action) {
 }
 
 /** Parse a key event shared by direct and terminfo mappings. */
-bool parse_key_event(const config::Value& table, KeyEvent& event) {
-  event                   = {};
-  const config::Value key = field(table, "key");
+bool parse_key_event(const properties::Value& table, KeyEvent& event) {
+  event                       = {};
+  const properties::Value key = field(table, "key");
   if (const std::optional<std::string_view> name = string_value(key)) {
     if (const std::optional<NamedKey> parsed = named_key(*name)) {
       event.key = *parsed;
@@ -436,7 +441,7 @@ std::optional<Command> command(std::string_view name) noexcept {
 }
 
 /** Parse a mapping table's directly stored trie action. */
-bool parse_action(const config::Value& table, InputAction& action) {
+bool parse_action(const properties::Value& table, InputAction& action) {
   const std::optional<std::string_view> kind =
       string_value(field(table, "kind"));
   if (!kind) {
@@ -483,14 +488,14 @@ bool parse_action(const config::Value& table, InputAction& action) {
 }
 
 /** Validate the optional format version. */
-bool valid_version(const config::Value& root) noexcept {
-  const config::Value version = field(root, "version");
+bool valid_version(const properties::Value& root) noexcept {
+  const properties::Value version = field(root, "version");
   return !version || version.as_integer() == 1;
 }
 
 /** Return whether a table explicitly disables its sequence. */
-bool mapping_disabled(const config::Value& table, bool& disabled) noexcept {
-  const config::Value value = field(table, "disabled");
+bool mapping_disabled(const properties::Value& table, bool& disabled) noexcept {
+  const properties::Value value = field(table, "disabled");
   if (!value) {
     disabled = false;
     return true;
@@ -504,17 +509,17 @@ bool mapping_disabled(const config::Value& table, bool& disabled) noexcept {
 }
 
 /** Parse an array-of-tables field or accept its absence. */
-bool table_array(const config::Value& root, std::string_view name,
-                 config::Value& output) noexcept {
+bool table_array(const properties::Value& root, std::string_view name,
+                 properties::Value& output) noexcept {
   output = field(root, name);
   if (!output) {
     return true;
   }
-  if (output.type() != config::ValueType::ARRAY) {
+  if (output.type() != properties::ValueType::ARRAY) {
     return false;
   }
   for (std::size_t index = 0; index < output.size(); ++index) {
-    if (output.at(index).type() != config::ValueType::TABLE) {
+    if (output.at(index).type() != properties::ValueType::TABLE) {
       return false;
     }
   }
@@ -542,8 +547,8 @@ bool find_protocol_path(const InputTrie& trie, InputTrie::NodeIndex node,
 }
 
 /** Convert shared configuration failures into the terminal status domain. */
-Status configuration_status(config::Status status) noexcept {
-  return status == config::Status::PARSE_ERROR
+Status configuration_status(properties::Status status) noexcept {
+  return status == properties::Status::PARSE_ERROR
              ? Status::CONFIGURATION_PARSE_FAILED
              : Status::CONFIGURATION_LOAD_FAILED;
 }
@@ -589,7 +594,7 @@ bool InputAction::empty() const noexcept {
   return std::holds_alternative<std::monostate>(storage_);
 }
 
-Status InputMap::setup(const config::Config& configurations, InputMap& output,
+Status InputMap::setup(properties::Properties& properties, InputMap& output,
                        std::string_view configured_terminal_name,
                        int output_fd) {
   std::string selected_terminal;
@@ -597,11 +602,11 @@ Status InputMap::setup(const config::Config& configurations, InputMap& output,
   if (!is_ok(status)) {
     return status;
   }
-  const config::LoadResult configured =
-      configurations.load(kInputConfigurationPath);
-  if (configured.status != config::Status::OK) {
+  const properties::LoadResult configured = properties.load_immutable(
+      std::string{kInputConfigurationSource}, kInputConfigurationPath);
+  if (configured.status != properties::Status::OK) {
     Logger<ERROR> << "Could not load terminal input configuration: "
-                  << config::status_message(configured.status);
+                  << properties::status_message(configured.status);
     return configuration_status(configured.status);
   }
 
@@ -616,16 +621,16 @@ Status InputMap::setup(const config::Config& configurations, InputMap& output,
   const std::filesystem::path terminal_profile_path =
       std::filesystem::path{kTerminalProfileDirectory} /
       (selected_terminal + ".toml");
-  const config::LoadResult terminal_profile =
-      configurations.load(terminal_profile_path);
-  if (is_ok(status) && terminal_profile.status != config::Status::OK &&
-      terminal_profile.status != config::Status::NOT_FOUND) {
+  const properties::LoadResult terminal_profile = properties.load_immutable(
+      std::string{kTerminalProfileSource}, terminal_profile_path);
+  if (is_ok(status) && terminal_profile.status != properties::Status::OK &&
+      terminal_profile.status != properties::Status::NOT_FOUND) {
     Logger<ERROR> << "Could not load terminal-specific input profile '"
-                  << terminal_profile_path.string()
-                  << "': " << config::status_message(terminal_profile.status);
+                  << terminal_profile_path.string() << "': "
+                  << properties::status_message(terminal_profile.status);
     status = configuration_status(terminal_profile.status);
   }
-  if (is_ok(status) && terminal_profile.status == config::Status::OK) {
+  if (is_ok(status) && terminal_profile.status == properties::Status::OK) {
     status = candidate.validate_config(terminal_profile.document.root());
     if (is_ok(status) && field(terminal_profile.document.root(), "terminfo")) {
       log_configuration_error(
@@ -644,19 +649,22 @@ Status InputMap::setup(const config::Config& configurations, InputMap& output,
                      "system";
     status = Status::UNSUPPORTED;
   }
-  config::LoadResult operating_system_defaults;
+  properties::LoadResult operating_system_defaults;
   if (is_ok(status)) {
-    operating_system_defaults = configurations.load(operating_system_path);
-    if (operating_system_defaults.status != config::Status::OK) {
+    operating_system_defaults =
+        properties.load_immutable(std::string{kOperatingSystemSource},
+                                  std::filesystem::path{operating_system_path});
+    if (operating_system_defaults.status != properties::Status::OK) {
       Logger<ERROR> << "Could not load operating-system input defaults '"
                     << operating_system_path << "': "
-                    << config::status_message(operating_system_defaults.status);
+                    << properties::status_message(
+                           operating_system_defaults.status);
       status = configuration_status(operating_system_defaults.status);
     }
   }
   if (is_ok(status)) {
-    const config::Value root = operating_system_defaults.document.root();
-    status                   = candidate.validate_config(root);
+    const properties::Value root = operating_system_defaults.document.root();
+    status                       = candidate.validate_config(root);
     if (is_ok(status) && field(root, "terminfo")) {
       log_configuration_error(
           field(root, "terminfo"),
@@ -667,7 +675,7 @@ Status InputMap::setup(const config::Config& configurations, InputMap& output,
       status = candidate.apply_mappings(root);
     }
   }
-  if (is_ok(status) && terminal_profile.status == config::Status::OK) {
+  if (is_ok(status) && terminal_profile.status == properties::Status::OK) {
     status = candidate.apply_mappings(terminal_profile.document.root());
   }
   if (is_ok(status)) {
@@ -713,7 +721,7 @@ Status InputMap::validate_command_sequences() const {
 
 void InputMap::track_command_sequence(std::string_view sequence,
                                       const InputAction* action,
-                                      config::SourceLocation location) {
+                                      properties::SourceLocation location) {
   const auto existing = std::ranges::find(command_sequences_, sequence,
                                           &CommandSequence::sequence);
   const bool is_command =
@@ -745,14 +753,14 @@ void InputMap::track_command_sequence(std::string_view sequence,
   *existing = std::move(declaration);
 }
 
-Status InputMap::validate_config(const config::Value& root) const {
-  if (root.type() != config::ValueType::TABLE || !valid_version(root)) {
+Status InputMap::validate_config(const properties::Value& root) const {
+  if (root.type() != properties::ValueType::TABLE || !valid_version(root)) {
     log_configuration_error(root, "expected terminal input format version 1");
     return Status::CONFIGURATION_PARSE_FAILED;
   }
 
-  config::Value mappings;
-  config::Value terminfo;
+  properties::Value mappings;
+  properties::Value terminfo;
   if (!table_array(root, "mapping", mappings) ||
       !table_array(root, "terminfo", terminfo)) {
     log_configuration_error(
@@ -762,11 +770,11 @@ Status InputMap::validate_config(const config::Value& root) const {
   return Status::OK;
 }
 
-Status InputMap::apply_mappings(const config::Value& root) {
-  const config::Value mappings = field(root, "mapping");
+Status InputMap::apply_mappings(const properties::Value& root) {
+  const properties::Value mappings = field(root, "mapping");
   if (mappings) {
     for (std::size_t index = 0; index < mappings.size(); ++index) {
-      const config::Value mapping = mappings.at(index);
+      const properties::Value mapping = mappings.at(index);
       const std::optional<std::string_view> encoded =
           string_value(field(mapping, "sequence"));
       std::string sequence;
@@ -797,11 +805,11 @@ Status InputMap::apply_mappings(const config::Value& root) {
   return Status::OK;
 }
 
-Status InputMap::apply_terminfo_bindings(const config::Value& root) {
-  const config::Value terminfo = field(root, "terminfo");
+Status InputMap::apply_terminfo_bindings(const properties::Value& root) {
+  const properties::Value terminfo = field(root, "terminfo");
   if (terminfo) {
     for (std::size_t index = 0; index < terminfo.size(); ++index) {
-      const config::Value binding = terminfo.at(index);
+      const properties::Value binding = terminfo.at(index);
       const std::optional<std::string_view> capability =
           string_value(field(binding, "capability"));
       KeyEvent event;

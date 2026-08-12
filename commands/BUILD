@@ -6,11 +6,21 @@ code_docs_sources()
 
 cc_library(
     name = "commands",
-    srcs = ["command.cpp"],
-    hdrs = ["command.hpp"],
+    srcs = [
+        "command.cpp",
+        "config.cpp",
+        "quit.cpp",
+    ],
+    hdrs = [
+        "command.hpp",
+        "config.hpp",
+        "quit.hpp",
+    ],
     visibility = ["//visibility:public"],
     deps = [
         "//msgs",
+        "//properties",
+        "//puc-cli/state",
         "//utils/containers:trie",
         "//utils/ipc",
         "//utils/logger",
@@ -20,10 +30,15 @@ cc_library(
 cc_test(
     name = "command_test",
     size = "small",
-    srcs = ["command_test.cpp"],
+    srcs = [
+        "command_test.cpp",
+        "config_test.cpp",
+    ],
     deps = [
         ":commands",
         "//msgs",
+        "//properties",
+        "//puc-cli/state",
         "//utils/ipc",
         "//utils/multithreading",
         "@googletest//:gtest",

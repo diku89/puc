@@ -2,7 +2,7 @@
 
 # Class `puc::app::ScreenChannelSubsystem`
 
-Register the command and resize channels shared by Screen and the terminal.
+Register the command and resize channels shared by [Screen](classpuc_1_1app_1_1_screen.md) and the terminal.
 
 This adapter is the server/producer owner for both canonical channel names. Terminal and presentation consumers depend on it and own only their subscriptions. Stopping the adapter closes both routes before Directory is destroyed.
 
@@ -104,7 +104,7 @@ Validate access to the registered [DirectorySubsystem](classpuc_1_1app_1_1_direc
 Status puc::app::ScreenChannelSubsystem::start(AppState &app) override
 ```
 
-Create and register both canonical Screen channels.
+Create and register both canonical [Screen](classpuc_1_1app_1_1_screen.md) channels.
 
 [Source](../../puc-cli/state/channels.hpp#L37)
 
@@ -140,7 +140,7 @@ Release any endpoints retained after partial lifecycle progress.
 ipc::Channel * puc::app::ScreenChannelSubsystem::command_channel() noexcept
 ```
 
-Return the Screen command endpoint, or nullptr while stopped.
+Return the [Screen](classpuc_1_1app_1_1_screen.md) command endpoint, or nullptr while stopped.
 
 [Source](../../puc-cli/state/channels.hpp#L46)
 
@@ -164,7 +164,7 @@ Return the terminal resize endpoint, or nullptr while stopped.
 ipc::ChannelId puc::app::ScreenChannelSubsystem::command_channel_id() const noexcept
 ```
 
-Return the assigned Screen command identifier, or zero while stopped.
+Return the assigned [Screen](classpuc_1_1app_1_1_screen.md) command identifier, or zero while stopped.
 
 [Source](../../puc-cli/state/channels.hpp#L52)
 

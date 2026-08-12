@@ -8,18 +8,22 @@
 #include <memory>
 #include <utility>
 
+#include "puc-cli/state/builtin_commands.hpp"
 #include "puc-cli/state/channels.hpp"
 #include "puc-cli/state/command_mode.hpp"
 #include "puc-cli/state/commands.hpp"
-#include "puc-cli/state/configuration.hpp"
+#include "puc-cli/state/control.hpp"
 #include "puc-cli/state/directory.hpp"
 #include "puc-cli/state/embedded_terminal.hpp"
 #include "puc-cli/state/input.hpp"
 #include "puc-cli/state/logger.hpp"
 #include "puc-cli/state/metronome.hpp"
 #include "puc-cli/state/presentation.hpp"
+#include "puc-cli/state/properties.hpp"
 #include "puc-cli/state/screen.hpp"
 #include "puc-cli/state/terminal.hpp"
+#include "puc-cli/state/theme.hpp"
+#include "puc-cli/state/timer.hpp"
 #include "puc-cli/state/workers.hpp"
 
 namespace puc::app {
@@ -35,25 +39,42 @@ Status register_application_subsystems(AppState& app,
     return Status::INVALID_ARGUMENT;
   }
 
-  auto logger = std::make_unique<LoggerSubsystem>(std::move(options.logger));
-  auto configuration = std::make_unique<ConfigurationSubsystem>(
-      std::move(options.configuration));
+  auto logger  = std::make_unique<LoggerSubsystem>(std::move(options.logger));
+  auto control = std::make_unique<ApplicationControlSubsystem>();
+  auto properties =
+      std::make_unique<PropertiesSubsystem>(std::move(options.properties));
   auto workers   = std::make_unique<WorkerSubsystem>(options.worker_count);
+  auto timer     = std::make_unique<TimerSubsystem>();
+  auto theme     = std::make_unique<ThemeSubsystem>();
   auto directory = std::make_unique<DirectorySubsystem>();
   auto screen_channels = std::make_unique<ScreenChannelSubsystem>();
+  auto terminal_input_channel =
+      std::make_unique<TerminalInputChannelSubsystem>();
   auto terminal =
       std::make_unique<TerminalSubsystem>(std::move(options.terminal));
-  auto screen = std::make_unique<ScreenSubsystem>(std::move(options.screen));
+  auto screen = std::make_unique<ScreenSubsystem>();
 
   Status status = app.register_subsystem(std::move(logger));
   if (!is_ok(status)) {
     return status;
   }
-  status = app.register_subsystem(std::move(configuration));
+  status = app.register_subsystem(std::move(control));
+  if (!is_ok(status)) {
+    return status;
+  }
+  status = app.register_subsystem(std::move(properties));
   if (!is_ok(status)) {
     return status;
   }
   status = app.register_subsystem(std::move(workers));
+  if (!is_ok(status)) {
+    return status;
+  }
+  status = app.register_subsystem(std::move(timer));
+  if (!is_ok(status)) {
+    return status;
+  }
+  status = app.register_subsystem(std::move(theme));
   if (!is_ok(status)) {
     return status;
   }
@@ -62,6 +83,10 @@ Status register_application_subsystems(AppState& app,
     return status;
   }
   status = app.register_subsystem(std::move(screen_channels));
+  if (!is_ok(status)) {
+    return status;
+  }
+  status = app.register_subsystem(std::move(terminal_input_channel));
   if (!is_ok(status)) {
     return status;
   }
@@ -94,6 +119,11 @@ Status register_application_subsystems(AppState& app,
   }
   if (selection.commands) {
     status = app.register_subsystem(std::make_unique<CommandSubsystem>());
+    if (!is_ok(status)) {
+      return status;
+    }
+    status =
+        app.register_subsystem(std::make_unique<BuiltinCommandSubsystem>());
     if (!is_ok(status)) {
       return status;
     }

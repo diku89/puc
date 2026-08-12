@@ -2,13 +2,14 @@
 
 # Namespace `puc::terminal`
 
-[Source](../../puc-cli/state/terminal.hpp#L15)
+[Source](../../puc-cli/state/terminal.hpp#L19)
 
 ## Related symbols
 
 - [puc::terminal::CellPosition](structpuc_1_1terminal_1_1_cell_position.md)
 - [puc::terminal::ClipboardEvent](structpuc_1_1terminal_1_1_clipboard_event.md)
 - [puc::terminal::CommandEvent](structpuc_1_1terminal_1_1_command_event.md)
+- [puc::terminal::ConfigurationRoots](structpuc_1_1terminal_1_1_configuration_roots.md)
 - [puc::terminal::Decoder](classpuc_1_1terminal_1_1_decoder.md)
 - [puc::terminal::DecoderLimits](structpuc_1_1terminal_1_1_decoder_limits.md)
 - [puc::terminal::EmitInputEvent](structpuc_1_1terminal_1_1_emit_input_event.md)
@@ -29,7 +30,6 @@
 - [puc::terminal::PasteEvent](structpuc_1_1terminal_1_1_paste_event.md)
 - [puc::terminal::ScrollEvent](structpuc_1_1terminal_1_1_scroll_event.md)
 - [puc::terminal::SelectableLine](structpuc_1_1terminal_1_1_selectable_line.md)
-- [puc::terminal::SessionOptions](structpuc_1_1terminal_1_1_session_options.md)
 - [puc::terminal::TerminalResponseEvent](structpuc_1_1terminal_1_1_terminal_response_event.md)
 - [puc::terminal::TerminalSession](classpuc_1_1terminal_1_1_terminal_session.md)
 - [puc::terminal::TerminalSize](structpuc_1_1terminal_1_1_terminal_size.md)
@@ -434,24 +434,6 @@ Kitty progressive-keyboard enhancement flags.
 
 [Source](../../puc-cli/terminal/sequences.hpp#L34)
 
-<a id="symbol-session_8hpp_1aa1cb8c8b426fc74fb2e893154eaf2d15"></a>
-
-### `MouseTracking`
-
-```cpp
-MouseTracking
-```
-
-Mouse reporting level requested while a terminal session is active.
-
-#### Values
-- <a id="symbol-session_8hpp_1aa1cb8c8b426fc74fb2e893154eaf2d15ab50339a10e1de285ac99d4c3990b8693"></a>`NONE`
-- <a id="symbol-session_8hpp_1aa1cb8c8b426fc74fb2e893154eaf2d15a4422b785f04af470aecbfc9d871fdf54"></a>`BUTTONS`
-- <a id="symbol-session_8hpp_1aa1cb8c8b426fc74fb2e893154eaf2d15aff3480bb59f4249a9453a0caaa1b2236"></a>`DRAG`
-- <a id="symbol-session_8hpp_1aa1cb8c8b426fc74fb2e893154eaf2d15af96e6ea7a7375bd60bad3f3caae3cf27"></a>`MOTION`
-
-[Source](../../puc-cli/terminal/session.hpp#L41)
-
 <a id="symbol-puc-cli_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44"></a>
 
 ### `Status`
@@ -690,6 +672,32 @@ Return the OSC 52 selector character for a normalized selection.
 
 [Source](../../puc-cli/terminal/clipboard.hpp#L22)
 
+<a id="symbol-configuration__paths_8cpp_1ab688b9d7aa95d37c17282f9695bf18bd"></a>
+
+### `environment_value`
+
+```cpp
+std::string puc::terminal::environment_value(const char *name)
+```
+
+Copy one environment variable, or return an empty string when absent.
+
+[Source](../../puc-cli/terminal/configuration_paths.cpp#L38)
+
+<a id="symbol-configuration__paths_8cpp_1a0f924ba756808755ee1c08750835cf81"></a>
+
+### `discover_configuration_roots`
+
+```cpp
+ConfigurationRoots puc::terminal::discover_configuration_roots(std::string_view executable)
+```
+
+Locate packaged terminal/theme configuration and its user overlay.
+
+`PUC_CONFIG_ROOT` takes precedence. Otherwise the current directory and common Bazel runfiles roots derived from `RUNFILES_DIR` and the executable path are searched. `PUC_USER_CONFIG_ROOT` selects the overlay; without it a deliberately absent path below the primary root disables overrides.
+
+[Source](../../puc-cli/terminal/configuration_paths.cpp#L43)
+
 <a id="symbol-event_8hpp_1a81a3232deb4c1a6e197bfb61aaf78eac"></a>
 
 ### `operator|`
@@ -713,6 +721,30 @@ Modifiers puc::terminal::operator|(Modifiers left, Modifier right) noexcept
 Add an individual modifier to a modifier set.
 
 [Source](../../puc-cli/terminal/event.hpp#L211)
+
+<a id="symbol-event__messages_8cpp_1ae495480bd5464ad19d55acb992c41a6f"></a>
+
+### `to_message`
+
+```cpp
+msg::Status puc::terminal::to_message(const Event &event, msg::TerminalInputEvent &output)
+```
+
+Convert one normalized in-process event to its portable message form.
+
+[Source](../../puc-cli/terminal/event_messages.cpp#L39)
+
+<a id="symbol-event__messages_8cpp_1add0cffc1632a0281b8c187e466fe628f"></a>
+
+### `from_message`
+
+```cpp
+msg::Status puc::terminal::from_message(const msg::TerminalInputEvent &message, Event &output)
+```
+
+Convert one validated portable message back to a normalized event.
+
+[Source](../../puc-cli/terminal/event_messages.cpp#L127)
 
 <a id="symbol-terminal_2input_8hpp_1a813519af89de13cbd6690c833e27af3e"></a>
 
@@ -957,16 +989,16 @@ Return stable report text for one final outcome.
 
 [Source](../../puc-cli/terminal/terminal_test_runner.cpp#L179)
 
-<a id="symbol-timeouts_8cpp_1a6f55cc64f6d2640e145d07bf8b93a5dd"></a>
+<a id="symbol-timeouts_8cpp_1a968dedf40e2d051fb2b6a301df938ddd"></a>
 
 ### `load_timeout_settings`
 
 ```cpp
-Status puc::terminal::load_timeout_settings(const config::Config &configurations, TimeoutSettings &output)
+Status puc::terminal::load_timeout_settings(properties::Properties &properties, TimeoutSettings &output)
 ```
 
-Load terminal timing policy through Config's primary/override hierarchy.
+Load mutable terminal timing defaults through the Properties service.
 
 Both integer millisecond values are required and must be positive. Loading is transactional: `output` changes only after the entire file validates.
 
-[Source](../../puc-cli/terminal/timeouts.cpp#L44)
+[Source](../../puc-cli/terminal/timeouts.cpp#L47)

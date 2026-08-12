@@ -2,7 +2,7 @@
 
 # Class `puc::command::QuitCommand`
 
-[Source](../../commands/quit.hpp#L16)
+[Source](../../commands/quit.hpp#L17)
 
 ## Public functions
 
@@ -14,7 +14,7 @@
 puc::command::QuitCommand::QuitCommand()=default
 ```
 
-[Source](../../commands/quit.hpp#L18)
+[Source](../../commands/quit.hpp#L19)
 
 <a id="symbol-classpuc_1_1command_1_1_quit_command_1aadf5675ef52f8d1d0ceb9b4eb96eed60"></a>
 
@@ -24,7 +24,7 @@ puc::command::QuitCommand::QuitCommand()=default
 puc::command::QuitCommand::~QuitCommand() override=default
 ```
 
-[Source](../../commands/quit.hpp#L19)
+[Source](../../commands/quit.hpp#L20)
 
 <a id="symbol-classpuc_1_1command_1_1_quit_command_1acd57c3bd157f5ae01d0e38e80af6bfff"></a>
 
@@ -36,7 +36,7 @@ Status puc::command::QuitCommand::run(CommonCommandArgs common_args, std::span< 
 
 Execute with shared services and arguments excluding the command name.
 
-[Source](../../commands/quit.hpp#L21)
+[Source](../../commands/quit.hpp#L22)
 
 <a id="symbol-classpuc_1_1command_1_1_quit_command_1ab98d829ab71e23ce513bf0c77ef5c172"></a>
 
@@ -48,7 +48,7 @@ std::string puc::command::QuitCommand::get_description() const override
 
 Return the short text displayed beside a completion candidate.
 
-[Source](../../commands/quit.hpp#L24)
+[Source](../../commands/quit.hpp#L25)
 
 <a id="symbol-classpuc_1_1command_1_1_quit_command_1aae6b522c59f7ea02415ca1295129abb6"></a>
 
@@ -60,7 +60,7 @@ std::string puc::command::QuitCommand::get_usage() const override
 
 Return argument and subcommand help, or an empty string for none.
 
-[Source](../../commands/quit.hpp#L26)
+[Source](../../commands/quit.hpp#L27)
 
 ## Public static functions
 
@@ -72,4 +72,4 @@ Return argument and subcommand help, or an empty string for none.
 static std::vector< std::string > puc::command::QuitCommand::get_aliases()
 ```
 
-[Source](../../commands/quit.hpp#L28)
+[Source](../../commands/quit.hpp#L29)

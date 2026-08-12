@@ -7,6 +7,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <initializer_list>
 #include <map>
 #include <memory>
 #include <optional>
@@ -228,6 +229,17 @@ class Layout {
   Status add_frame_to_layout_description(
       const std::shared_ptr<LayoutDescription>& layout_description,
       const std::string& frame_id, std::shared_ptr<Frame> frame);
+
+  /**
+   * Add one frame together with its complete ordered constraint set.
+   *
+   * Constraints are validated for type and mutual conflicts before the frame
+   * is inserted, avoiding the repeated adapter helper previously needed by
+   * each application.
+   */
+  Status add_frame(const std::shared_ptr<LayoutDescription>& layout_description,
+                   std::string frame_id, std::shared_ptr<Frame> frame,
+                   std::initializer_list<Constraint> constraints);
 
   /**
    * Add a constraint to a frame in a layout description.

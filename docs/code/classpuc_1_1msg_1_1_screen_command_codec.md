@@ -4,7 +4,7 @@
 
 Portable payload codec for [ScreenCommand](structpuc_1_1msg_1_1_screen_command.md).
 
-[Source](../../msgs/screen_msgs.hpp#L267)
+[Source](../../msgs/screen_msgs.hpp#L215)
 
 ## Public functions
 
@@ -18,7 +18,7 @@ puc::msg::ScreenCommandCodec::ScreenCommandCodec() noexcept
 
 Construct the codec under [MessageId::SCREEN\_COMMAND](namespacepuc_1_1msg.md#symbol-namespacepuc_1_1msg_1a24b154890bf81939005e112918c3813fa2762e0ac6a7a8de6eb1160ffeaa14043).
 
-[Source](../../msgs/screen_msgs.hpp#L270)
+[Source](../../msgs/screen_msgs.hpp#L218)
 
 ## Private functions
 
@@ -30,7 +30,7 @@ Construct the codec under [MessageId::SCREEN\_COMMAND](namespacepuc_1_1msg.md#sy
 Status puc::msg::ScreenCommandCodec::encode_payload(const ScreenCommand &command, std::vector< std::uint8_t > &output) const override
 ```
 
-[Source](../../msgs/screen_msgs.hpp#L273)
+[Source](../../msgs/screen_msgs.hpp#L221)
 
 <a id="symbol-classpuc_1_1msg_1_1_screen_command_codec_1af468bfe1e9451ee5e7c66333dff01d12"></a>
 
@@ -40,4 +40,4 @@ Status puc::msg::ScreenCommandCodec::encode_payload(const ScreenCommand &command
 Status puc::msg::ScreenCommandCodec::decode_payload(std::span< const std::uint8_t > payload, ScreenCommand &output) const override
 ```
 
-[Source](../../msgs/screen_msgs.hpp#L275)
+[Source](../../msgs/screen_msgs.hpp#L223)

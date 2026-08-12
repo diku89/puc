@@ -9,6 +9,7 @@ Lifecycle-owned producers for application protocol channels.
 ## Related symbols
 
 - [puc::app::ScreenChannelSubsystem](classpuc_1_1app_1_1_screen_channel_subsystem.md)
+- [puc::app::TerminalInputChannelSubsystem](classpuc_1_1app_1_1_terminal_input_channel_subsystem.md)
 - [puc::app::CommandNotificationChannelSubsystem](classpuc_1_1app_1_1_command_notification_channel_subsystem.md)
 - [puc](namespacepuc.md)
 - [puc::ipc](namespacepuc_1_1ipc.md)

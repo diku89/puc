@@ -13,7 +13,7 @@
 #include <system_error>
 
 #include "gtest/gtest.h"
-#include "utils/config/config.hpp"
+#include "properties/properties.hpp"
 
 namespace puc::terminal {
 namespace {
@@ -55,10 +55,10 @@ std::filesystem::path make_override_root(std::string_view name) {
 
 TEST(TerminalTimeoutSettingsTest, LoadsRepositoryDefaults) {
   const std::filesystem::path primary = runfiles_root();
-  const config::Config configurations{primary, primary / "missing_overrides"};
+  properties::Properties properties{primary, primary / "missing_overrides"};
   TimeoutSettings settings{.input_sequence = 1ms, .multiple_click = 1ms};
 
-  ASSERT_EQ(load_timeout_settings(configurations, settings), Status::OK);
+  ASSERT_EQ(load_timeout_settings(properties, settings), Status::OK);
   EXPECT_EQ(settings.input_sequence, 50ms);
   EXPECT_EQ(settings.multiple_click, 500ms);
 }
@@ -72,10 +72,10 @@ TEST(TerminalTimeoutSettingsTest, UserFileOverridesIndividualDefaults) {
 [timeouts]
 multiple_click_ms = 750
 )toml"));
-  const config::Config configurations{primary, overrides};
+  properties::Properties properties{primary, overrides};
   TimeoutSettings settings;
 
-  ASSERT_EQ(load_timeout_settings(configurations, settings), Status::OK);
+  ASSERT_EQ(load_timeout_settings(properties, settings), Status::OK);
   EXPECT_EQ(settings.input_sequence, 50ms);
   EXPECT_EQ(settings.multiple_click, 750ms);
 }
@@ -90,12 +90,12 @@ TEST(TerminalTimeoutSettingsTest, InvalidOverrideDoesNotPartiallyMutateOutput) {
 input_sequence_ms = 75
 multiple_click_ms = 0
 )toml"));
-  const config::Config configurations{primary, overrides};
+  properties::Properties properties{primary, overrides};
   const TimeoutSettings original{.input_sequence = 12ms,
                                  .multiple_click = 34ms};
   TimeoutSettings settings = original;
 
-  EXPECT_EQ(load_timeout_settings(configurations, settings),
+  EXPECT_EQ(load_timeout_settings(properties, settings),
             Status::CONFIGURATION_PARSE_FAILED);
   EXPECT_EQ(settings, original);
 }

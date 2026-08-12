@@ -32,6 +32,7 @@ cc_library(
     deps = [
         "//utils/logger",
         "//utils/multithreading",
+        "//utils/timer",
     ],
 )
 

@@ -19,6 +19,7 @@
 #include <map>
 #include <memory>
 #include <mutex>
+#include <optional>
 #include <span>
 #include <string>
 #include <thread>
@@ -34,10 +35,11 @@
 
 #include "gtest/gtest.h"
 #include "msgs/screen_msgs.hpp"
+#include "msgs/terminal_msgs.hpp"
+#include "properties/properties.hpp"
 #include "puc-cli/terminal/event.hpp"
 #include "puc-cli/tui/frame.hpp"
 #include "puc-cli/tui/zbuf.hpp"
-#include "utils/config/config.hpp"
 #include "utils/ipc/channel.hpp"
 #include "utils/multithreading/job_queue.hpp"
 
@@ -218,12 +220,62 @@ TEST(ScreenTest, ConfiguresBoundedDirectionSpecificChannels) {
       screen.ipc_directory().get_channel(msg::kScreenCommandChannel);
   const std::shared_ptr<ipc::Channel> resize =
       screen.ipc_directory().get_channel(msg::kScreenResizeEventChannel);
+  const std::shared_ptr<ipc::Channel> input =
+      screen.ipc_directory().get_channel(msg::kTerminalInputEventChannel);
   ASSERT_NE(commands, nullptr);
   ASSERT_NE(resize, nullptr);
+  ASSERT_NE(input, nullptr);
   EXPECT_EQ(commands->channel_max_depth(), 3U);
   EXPECT_EQ(resize->channel_max_depth(), 1U);
+  EXPECT_EQ(input->channel_max_depth(), std::nullopt);
+  EXPECT_EQ(input->subscriber_count(), 1U);
   EXPECT_EQ(screen.pending_commands(), 0U);
   EXPECT_EQ(screen.dropped_commands(), 0U);
+}
+
+TEST(ScreenTest, ConsumesAndRetainsNormalizedTerminalEventsInOrder) {
+  multithreading::JobQueue workers;
+  Screen screen(-1, -1, workers);
+  msg::TerminalInputEventCodec codec;
+
+  const auto publish_text = [&](std::string text) {
+    const msg::TerminalInputEvent message{
+        .data = msg::TerminalTextEvent{.utf8 = std::move(text)}};
+    std::vector<std::uint8_t> payload;
+    if (!msg::is_ok(codec.serialize(message, payload))) {
+      return false;
+    }
+    const ipc::TransferResult result = screen.ipc_directory().transmit(
+        msg::kTerminalInputEventChannel, payload);
+    return ipc::is_ok(result.status) && result.bytes == payload.size();
+  };
+
+  ASSERT_TRUE(publish_text("first"));
+  ASSERT_TRUE(publish_text("second"));
+  std::vector<terminal::Event> events;
+  ASSERT_EQ(screen.drain_input_events(events), Status::OK);
+  ASSERT_EQ(events.size(), 2U);
+  ASSERT_TRUE(std::holds_alternative<terminal::TextEvent>(events[0]));
+  ASSERT_TRUE(std::holds_alternative<terminal::TextEvent>(events[1]));
+  EXPECT_EQ(std::get<terminal::TextEvent>(events[0]).utf8, "first");
+  EXPECT_EQ(std::get<terminal::TextEvent>(events[1]).utf8, "second");
+
+  ASSERT_EQ(screen.drain_input_events(events), Status::OK);
+  EXPECT_TRUE(events.empty());
+}
+
+TEST(ScreenTest, ReportsMalformedTerminalInputAtTheDrainBoundary) {
+  multithreading::JobQueue workers;
+  Screen screen(-1, -1, workers);
+  const std::vector<std::uint8_t> malformed{0xffU};
+  const ipc::TransferResult result = screen.ipc_directory().transmit(
+      msg::kTerminalInputEventChannel, malformed);
+  ASSERT_TRUE(ipc::is_ok(result.status));
+  ASSERT_EQ(result.bytes, malformed.size());
+
+  std::vector<terminal::Event> events;
+  EXPECT_EQ(screen.drain_input_events(events), Status::MESSAGE_DECODING_FAILED);
+  EXPECT_TRUE(events.empty());
 }
 
 TEST(ScreenTest, BorrowsOneSharedApplicationWorkerBudget) {
@@ -290,26 +342,14 @@ TEST(ScreenTest, TakeAndReleaseAreAsynchronousAndRestoreTerminalState) {
   EXPECT_NE(output.find("\x1b[?1049l"), std::string::npos);
 }
 
-TEST(ScreenTest, CustomTakeTransmitsEveryRequestedInputMode) {
+TEST(ScreenTest, DefaultTakeRequestsTheCompleteInteractiveContract) {
   multithreading::JobQueue workers;
   PseudoTerminal terminal;
   ASSERT_TRUE(terminal.valid());
   ASSERT_TRUE(terminal.set_dimensions(80U, 24U));
-  termios before{};
-  ASSERT_EQ(::tcgetattr(terminal.slave_fd(), &before), 0);
 
   Screen screen(terminal.slave_fd(), terminal.slave_fd(), workers);
-  const msg::ScreenSessionOptions options{
-      .preserve_signals     = true,
-      .alternate_screen     = true,
-      .hide_cursor          = true,
-      .disable_auto_wrap    = true,
-      .bracketed_paste      = true,
-      .focus_reporting      = true,
-      .mouse                = msg::ScreenMouseTracking::DRAG,
-      .kitty_keyboard_flags = 0U,
-  };
-  ASSERT_EQ(screen.take(options), Status::OK);
+  ASSERT_EQ(screen.take(), Status::OK);
 
   std::string entered;
   ASSERT_TRUE(wait_until([&] {
@@ -317,15 +357,14 @@ TEST(ScreenTest, CustomTakeTransmitsEveryRequestedInputMode) {
     return entered.contains("\x1b[?1049h") && entered.contains("\x1b[?25l") &&
            entered.contains("\x1b[?7l") && entered.contains("\x1b[?2004h") &&
            entered.contains("\x1b[?1004h") && entered.contains("\x1b[?1002h") &&
-           entered.contains("\x1b[?1006h");
+           entered.contains("\x1b[?1006h") && entered.contains("\x1b[>29u");
   }));
 
   ASSERT_EQ(screen.release(), Status::OK);
   std::string released;
   ASSERT_TRUE(wait_until([&] {
     released.append(terminal.read_available());
-    return terminal_state_restored(terminal.slave_fd(), before) &&
-           released.contains("\x1b[?1006l") &&
+    return released.contains("\x1b[<u") && released.contains("\x1b[?1006l") &&
            released.contains("\x1b[?1002l") &&
            released.contains("\x1b[?1004l") &&
            released.contains("\x1b[?2004l") && released.contains("\x1b[?7h") &&
@@ -342,10 +381,9 @@ TEST(ScreenTest, ReadInputUsesTheOwnedTerminalSessionAndCallerDecoder) {
   std::error_code error;
   const std::filesystem::path root = std::filesystem::current_path(error);
   ASSERT_FALSE(error);
-  const puc::config::Config configurations{root,
-                                           root / "missing_user_overrides"};
+  puc::properties::Properties properties{root, root / "missing_user_overrides"};
   puc::terminal::Decoder decoder;
-  ASSERT_EQ(decoder.setup(configurations, "xterm-256color"),
+  ASSERT_EQ(decoder.setup(properties, "xterm-256color"),
             puc::terminal::Status::OK);
 
   Screen screen(terminal.slave_fd(), terminal.slave_fd(), workers);

@@ -58,12 +58,12 @@ class Decoder {
    * transactional: failure preserves the decoder's previous mappings and
    * pending state. No mappings are compiled into the application.
    *
-   * @param[in] configurations Primary and user configuration roots.
+   * @param[in] properties Application-owned immutable properties gateway.
    * @param[in] terminal_name terminfo/profile name, or empty to use `TERM`.
    * @param[in] output_fd Descriptor supplied to terminfo initialization.
    * @return Status::OK or a configuration/terminfo error.
    */
-  Status setup(const config::Config& configurations,
+  Status setup(properties::Properties& properties,
                std::string_view terminal_name = {}, int output_fd = 1);
 
   /**

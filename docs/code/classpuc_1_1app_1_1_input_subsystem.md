@@ -2,7 +2,7 @@
 
 # Class `puc::app::InputSubsystem`
 
-Own InputFrame and its command-notification consumer subscription.
+Own [InputFrame](classpuc_1_1app_1_1_input_frame.md) and its command-notification consumer subscription.
 
 The frame is retained across stop/start so draft input survives a temporary application pause. Each running generation receives a fresh subscription to [CommandNotificationChannelSubsystem](classpuc_1_1app_1_1_command_notification_channel_subsystem.md). Presentation code may retain shared frame ownership for render jobs, but must quiesce those jobs before this subsystem terminates.
 
@@ -68,7 +68,7 @@ Destroy the released frame and inactive subscription.
 Status puc::app::InputSubsystem::initialize(AppState &app) override
 ```
 
-Construct the composite InputFrame.
+Construct the composite [InputFrame](classpuc_1_1app_1_1_input_frame.md).
 
 [Source](../../puc-cli/state/input.hpp#L37)
 

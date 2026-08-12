@@ -55,7 +55,7 @@ struct CommandModeSnapshot {
  */
 class CommandModeSubsystem final : public AppSubsystem {
  public:
-  /** Declare input-frame and command-dispatcher dependencies. */
+  /** Declare input-frame, dispatcher, and built-in catalog dependencies. */
   CommandModeSubsystem();
 
   /** Destroy released controller state. */

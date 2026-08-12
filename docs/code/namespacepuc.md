@@ -2,16 +2,6 @@
 
 # Namespace `puc`
 
-Implement the config comand.
-
-\\command config || View, edit, or reload the configuration. \\subcommand get <full.key.path> || Get the value of a configuration key. \\subcommand set <full.key.path>
-
-|| Set the value of a configuration key. \\subcommand list \[partial.prefix\] || List all configuration keys, optionally filtered by a prefix. \\subcommand reload || Reload all configurations from config files.
-
-Implement the quit command.
-
-\\command quit || Quit the application. \\alias q \\alias exit
-
 [Source](../../commands/command.cpp#L29)
 
 ## Related symbols
@@ -26,6 +16,9 @@ Implement the quit command.
 - [puc::metronome](namespacepuc_1_1metronome.md)
 - [puc::msg](namespacepuc_1_1msg.md)
 - [puc::multithreading](namespacepuc_1_1multithreading.md)
+- [puc::properties](namespacepuc_1_1properties.md)
 - [puc::terminal](namespacepuc_1_1terminal.md)
+- [puc::themes](namespacepuc_1_1themes.md)
+- [puc::timer](namespacepuc_1_1timer.md)
 - [puc::tui](namespacepuc_1_1tui.md)
 - [puc::utf8](namespacepuc_1_1utf8.md)

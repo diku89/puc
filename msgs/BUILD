@@ -10,6 +10,7 @@ cc_library(
         "cmdframe_msgs.cpp",
         "codec.cpp",
         "screen_msgs.cpp",
+        "terminal_msgs.cpp",
     ],
     hdrs = [
         "cmdframe_msgs.hpp",
@@ -18,6 +19,7 @@ cc_library(
         "null_message.hpp",
         "screen_msgs.hpp",
         "status.hpp",
+        "terminal_msgs.hpp",
     ],
     visibility = ["//visibility:public"],
     deps = [
@@ -36,6 +38,7 @@ cc_test(
         "cmdframe_msgs_test.cpp",
         "codec_test.cpp",
         "screen_msgs_test.cpp",
+        "terminal_msgs_test.cpp",
     ],
     deps = [
         ":msgs",

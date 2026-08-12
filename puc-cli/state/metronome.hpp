@@ -19,13 +19,13 @@ namespace puc::app {
 /**
  * Own the one-hertz heartbeat route and periodic job while the app is running.
  *
- * Every start binds to the current Directory and Worker generations, registers
+ * Every start binds to the current Directory and Timer generations, registers
  * `//metronome/1hz`, and schedules publication. Stop cancels the periodic job
  * and removes the route before either borrowed subsystem can stop.
  */
 class MetronomeSubsystem final : public AppSubsystem {
  public:
-  /** Declare the channel-directory and worker-pool dependencies. */
+  /** Declare the channel-directory and timer-scheduler dependencies. */
   MetronomeSubsystem();
 
   /** Destroy a stopped heartbeat publisher. */

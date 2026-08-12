@@ -4,7 +4,7 @@
 
 Present one complete, already-rendered terminal frame.
 
-[Source](../../msgs/screen_msgs.hpp#L85)
+[Source](../../msgs/screen_msgs.hpp#L60)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::string puc::msg::ScreenPresentCommand::bytes
 
 Owned terminal output bytes for one frame.
 
-[Source](../../msgs/screen_msgs.hpp#L86)
+[Source](../../msgs/screen_msgs.hpp#L61)
 
 ## Public functions
 
@@ -32,4 +32,4 @@ bool puc::msg::ScreenPresentCommand::operator==(const ScreenPresentCommand &) co
 
 Compare complete frame byte streams.
 
-[Source](../../msgs/screen_msgs.hpp#L89)
+[Source](../../msgs/screen_msgs.hpp#L64)

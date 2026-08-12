@@ -8,17 +8,21 @@
 #include <memory>
 
 #include "puc-cli/state/channels.hpp"
+#include "puc-cli/state/control.hpp"
 #include "puc-cli/state/directory.hpp"
+#include "puc-cli/state/properties.hpp"
 #include "puc-cli/state/screen.hpp"
 #include "puc-cli/state/workers.hpp"
 
 namespace puc::app {
 
 CommandSubsystem::CommandSubsystem()
-    : AppSubsystem("commands",
-                   subsystem_dependencies<CommandNotificationChannelSubsystem,
-                                          ScreenSubsystem, WorkerSubsystem,
-                                          DirectorySubsystem>()) {}
+    : AppSubsystem(
+          "commands",
+          subsystem_dependencies<CommandNotificationChannelSubsystem,
+                                 ApplicationControlSubsystem, ScreenSubsystem,
+                                 WorkerSubsystem, DirectorySubsystem,
+                                 PropertiesSubsystem>()) {}
 
 Status CommandSubsystem::initialize(AppState& app) {
   static_cast<void>(app);
@@ -32,7 +36,8 @@ Status CommandSubsystem::start(AppState& app) {
   }
   const command::CommonCommandArgs args = common_args(app);
   return args.workers == nullptr || args.screen == nullptr ||
-                 args.directory == nullptr
+                 args.directory == nullptr || args.properties == nullptr ||
+                 args.control == nullptr
              ? Status::SUBSYSTEM_FAILURE
              : Status::OK;
 }
@@ -54,15 +59,24 @@ command::CommonCommandArgs CommandSubsystem::common_args(
   DirectorySubsystem* directory_subsystem =
       app.get_subsystem<DirectorySubsystem>();
   ScreenSubsystem* screen_subsystem = app.get_subsystem<ScreenSubsystem>();
+  ApplicationControlSubsystem* control_subsystem =
+      app.get_subsystem<ApplicationControlSubsystem>();
+  PropertiesSubsystem* properties_subsystem =
+      app.get_subsystem<PropertiesSubsystem>();
   return command::CommonCommandArgs{
       .workers =
           worker_subsystem == nullptr ? nullptr : worker_subsystem->workers(),
       .screen =
           screen_subsystem == nullptr ? nullptr : screen_subsystem->screen(),
-      .directory = directory_subsystem == nullptr
-                       ? nullptr
-                       : directory_subsystem->directory(),
-      .state     = &app,
+      .directory  = directory_subsystem == nullptr
+                        ? nullptr
+                        : directory_subsystem->directory(),
+      .properties = properties_subsystem == nullptr
+                        ? nullptr
+                        : properties_subsystem->properties(),
+      .control =
+          control_subsystem == nullptr ? nullptr : control_subsystem->control(),
+      .state = &app,
   };
 }
 

@@ -17,6 +17,7 @@
 #include <vector>
 
 #include "commands/command.hpp"
+#include "puc-cli/state/builtin_commands.hpp"
 #include "puc-cli/state/commands.hpp"
 #include "puc-cli/state/input.hpp"
 #include "puc-cli/tui/input_frame.hpp"
@@ -75,8 +76,8 @@ std::vector<std::string> usage_rows(std::string_view usage) {
 
 CommandModeSubsystem::CommandModeSubsystem()
     : AppSubsystem("command-mode",
-                   subsystem_dependencies<InputSubsystem, CommandSubsystem>()) {
-}
+                   subsystem_dependencies<InputSubsystem, CommandSubsystem,
+                                          BuiltinCommandSubsystem>()) {}
 
 CommandModeSubsystem::~CommandModeSubsystem() = default;
 

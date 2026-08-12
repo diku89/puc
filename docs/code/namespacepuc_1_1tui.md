@@ -4,7 +4,7 @@
 
 Terminal user-interface primitives, layout, rendering, and terminal control.
 
-[Source](../../commands/command.hpp#L30)
+[Source](../../commands/command.hpp#L35)
 
 ## Related symbols
 
@@ -27,6 +27,7 @@ Terminal user-interface primitives, layout, rendering, and terminal control.
 - [puc::tui::IntegratedTermFrameSnapshot](structpuc_1_1tui_1_1_integrated_term_frame_snapshot.md)
 - [puc::tui::IntegratedTermFrameStyle](structpuc_1_1tui_1_1_integrated_term_frame_style.md)
 - [puc::tui::Layout](classpuc_1_1tui_1_1_layout.md)
+- [puc::tui::MessageFrame](classpuc_1_1tui_1_1_message_frame.md)
 - [puc::tui::ParallelRenderer](classpuc_1_1tui_1_1_parallel_renderer.md)
 - [puc::tui::Screen](classpuc_1_1tui_1_1_screen.md)
 - [puc::tui::SelectionEvent](structpuc_1_1tui_1_1_selection_event.md)
@@ -139,6 +140,7 @@ Result codes returned by expected TUI operations.
 - <a id="symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ac96841a758410c9a6e5897eee3da9d99"></a>`TERMINAL_WRITE_FAILED` — The complete terminal output could not be written.
 - <a id="symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270a767a0073624a94f0852e62c3567a1242"></a>`CHANNEL_SETUP_FAILED` — Asynchronous [Screen](classpuc_1_1tui_1_1_screen.md) channels could not be built.
 - <a id="symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270a14e610ffbb18babdaab9b4b060bfc6ed"></a>`MESSAGE_ENCODING_FAILED` — A typed [Screen](classpuc_1_1tui_1_1_screen.md) command could not be encoded.
+- <a id="symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270a211ae15df57c9387ca6d65013d7af580"></a>`MESSAGE_DECODING_FAILED` — A typed [Screen](classpuc_1_1tui_1_1_screen.md) event could not be decoded.
 - <a id="symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270a48bfc59ef14509cf5160e41dede02da9"></a>`ASYNC_DISPATCH_FAILED` — Asynchronous work could not be completed.
 
 [Source](../../puc-cli/tui/status.hpp#L23)
@@ -169,7 +171,7 @@ CellDimensions puc::tui::kDefaultCellDimensions
 
 Conventional cell proportions used when a terminal omits pixel metrics.
 
-[Source](../../puc-cli/tui/screen.hpp#L45)
+[Source](../../puc-cli/tui/screen.hpp#L46)
 
 ## Functions
 
@@ -189,7 +191,7 @@ Test whether a status represents success.
 
 **Returns:** `true` only for [Status::OK](#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ae0aa021e21dddbd6d8cecec71e9cf564).
 
-[Source](../../puc-cli/tui/status.hpp#L62)
+[Source](../../puc-cli/tui/status.hpp#L63)
 
 <a id="symbol-namespacepuc_1_1tui_1aa6eafcdd424900009e70a0e945d425b8"></a>
 
@@ -209,4 +211,4 @@ Unknown enum values map to `"unknown terminal UI status"` so diagnostic paths ne
 
 **Returns:** A static string suitable for logs and diagnostics.
 
-[Source](../../puc-cli/tui/status.hpp#L73)
+[Source](../../puc-cli/tui/status.hpp#L74)

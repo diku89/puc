@@ -125,6 +125,16 @@ Status Canvas::write_cells(const Rect& rect,
   return Status::OK;
 }
 
+Status Canvas::write_cells(const Rect& rect,
+                           std::vector<std::vector<Cell>>& cells) {
+  std::vector<std::span<Cell>> rows;
+  rows.reserve(cells.size());
+  for (std::vector<Cell>& row : cells) {
+    rows.emplace_back(row);
+  }
+  return write_cells(rect, std::span<std::span<Cell>>{rows});
+}
+
 Status Canvas::end_frame() noexcept {
   if (!frame_in_progress_) {
     Logger<ERROR> << status_message(Status::NO_FRAME_IN_PROGRESS);

@@ -206,12 +206,12 @@ Construct an unconfigured decoder with explicit resource limits.
 
 [Source](../../puc-cli/terminal/decoder.hpp#L50)
 
-<a id="symbol-classpuc_1_1terminal_1_1_decoder_1a6a0aa9f8b3e7c5ffeee0ba1998dd22d7"></a>
+<a id="symbol-classpuc_1_1terminal_1_1_decoder_1aadb32b3dc0eeddd9745da0abef4605f0"></a>
 
 ### `setup`
 
 ```cpp
-Status puc::terminal::Decoder::setup(const config::Config &configurations, std::string_view terminal_name={}, int output_fd=1)
+Status puc::terminal::Decoder::setup(properties::Properties &properties, std::string_view terminal_name={}, int output_fd=1)
 ```
 
 Load the complete input source hierarchy into this decoder.
@@ -220,7 +220,7 @@ Setup applies terminfo first, then an optional terminal-specific profile, the me
 
 **Parameters**
 
-- `configurations` (in) — Primary and user configuration roots.
+- `properties` (in) — Application-owned immutable properties gateway.
 - `terminal_name` (in) — terminfo/profile name, or empty to use `TERM`.
 - `output_fd` (in) — Descriptor supplied to terminfo initialization.
 
@@ -330,7 +330,7 @@ Return whether input is currently inside a bracketed paste.
 puc::terminal::Decoder::Decoder(InputMap input_map, DecoderLimits limits)
 ```
 
-Take ownership of one fully merged map built by [setup()](#symbol-classpuc_1_1terminal_1_1_decoder_1a6a0aa9f8b3e7c5ffeee0ba1998dd22d7).
+Take ownership of one fully merged map built by [setup()](#symbol-classpuc_1_1terminal_1_1_decoder_1aadb32b3dc0eeddd9745da0abef4605f0).
 
 [Source](../../puc-cli/terminal/decoder.hpp#L114)
 

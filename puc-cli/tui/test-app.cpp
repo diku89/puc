@@ -70,16 +70,13 @@
 
 #include <algorithm>
 #include <chrono>
-#include <csignal>
 #include <cstddef>
 #include <cstdint>
 #include <cstdio>
-#include <initializer_list>
 #include <iomanip>
 #include <memory>
 #include <mutex>
 #include <shared_mutex>
-#include <span>
 #include <sstream>
 #include <string>
 #include <string_view>
@@ -88,16 +85,19 @@
 #include <vector>
 
 #include "puc-cli/state/bootstrap.hpp"
+#include "puc-cli/state/control.hpp"
 #include "puc-cli/state/presentation.hpp"
 #include "puc-cli/state/screen.hpp"
 #include "puc-cli/tui/canvas.hpp"
 #include "puc-cli/tui/frame.hpp"
 #include "puc-cli/tui/layout.hpp"
+#include "puc-cli/tui/message_frame.hpp"
 #include "puc-cli/tui/renderer.hpp"
 #include "puc-cli/tui/screen.hpp"
 #include "puc-cli/tui/status.hpp"
 #include "puc-cli/tui/theme.hpp"
 #include "utils/logger/logger.hpp"
+#include "utils/timer/deadline.hpp"
 
 /** @cond TUI_LOGGER_MODULE */
 LOGGER_MODULE("TUI Test App");
@@ -164,8 +164,6 @@ size_t frames_since_sample = 0;
 size_t minimum_screen_width = 0;
 /** Smallest terminal height that can display the normal layout. */
 size_t minimum_screen_height = 0;
-/** Async-signal-safe flag set by the termination handler. */
-volatile std::sig_atomic_t stop_requested = 0;
 /** Tracks small-screen mode so transitions can be logged once. */
 bool showing_screen_too_small = false;
 
@@ -186,27 +184,6 @@ Canvas::Cell make_cell(char32_t character, uint32_t foreground,
   };
 }
 
-/**
- * Adapt a vector-of-vectors grid to Canvas's row-span write interface.
- *
- * @param[in,out] canvas Active Canvas transaction receiving the cells.
- * @param[in] rect Destination rectangle.
- * @param[in,out] cells Row-major cell grid matching `rect`.
- * @return The result of Canvas::write_cells().
- */
-Status write_grid(Canvas& canvas, const Canvas::Rect& rect,
-                  std::vector<std::vector<Canvas::Cell>>& cells) {
-  std::vector<std::span<Canvas::Cell>> rows;
-  rows.reserve(cells.size());
-
-  for (auto& row : cells) {
-    rows.emplace_back(row);
-  }
-
-  const std::span<std::span<Canvas::Cell>> cell_span{rows};
-  return canvas.write_cells(rect, cell_span);
-}
-
 /** Frame that fills its assigned rectangle with one background color. */
 class SolidFrame final : public Frame {
  public:
@@ -223,7 +200,7 @@ class SolidFrame final : public Frame {
     std::vector<std::vector<Canvas::Cell>> cells(
         rect.height,
         std::vector<Canvas::Cell>(rect.width, make_cell(U' ', color_, color_)));
-    return write_grid(canvas, rect, cells);
+    return canvas.write_cells(rect, cells);
   }
 
  private:
@@ -260,7 +237,7 @@ class GlyphFrame final : public Frame {
                                   make_cell(U' ', foreground_, background_)));
     cells[rect.height / 2][rect.width / 2] =
         make_cell(glyph_, foreground_, background_);
-    return write_grid(canvas, rect, cells);
+    return canvas.write_cells(rect, cells);
   }
 
  private:
@@ -308,7 +285,7 @@ class MetricsFrame final : public Frame {
                colors.text, colors.background);
     write_line(cells, 3, format_frame_rate(frames_per_second), colors.text,
                colors.background);
-    return write_grid(canvas, rect, cells);
+    return canvas.write_cells(rect, cells);
   }
 
  private:
@@ -373,75 +350,6 @@ class MetricsFrame final : public Frame {
   }
 };
 
-/** Frame that centers a clipped warning inside its assigned rectangle. */
-class MessageFrame final : public Frame {
- public:
-  /** Construct a named frame containing one immutable ASCII message. */
-  MessageFrame(std::string name, std::string message)
-      : Frame(std::move(name)), message_(std::move(message)) {}
-
-  Status draw(const Theme& current_theme, Canvas& canvas,
-              const Canvas::Rect& rect) override {
-    if (rect.width == 0U || rect.height == 0U) {
-      return Status::OK;
-    }
-
-    const Theme::Colors colors   = current_theme.get_colors();
-    const size_t character_count = std::min(rect.width, message_.size());
-    std::vector<std::vector<Canvas::Cell>> cells(
-        1U, std::vector<Canvas::Cell>(
-                character_count,
-                make_cell(U' ', colors.text_warning, colors.background)));
-    for (size_t index = 0U; index < character_count; ++index) {
-      cells.front()[index] =
-          make_cell(static_cast<unsigned char>(message_[index]),
-                    colors.text_warning, colors.background);
-    }
-
-    return write_grid(canvas,
-                      Canvas::Rect{
-                          .x     = rect.x + (rect.width - character_count) / 2U,
-                          .y     = rect.y + rect.height / 2U,
-                          .width = character_count,
-                          .height = 1U,
-                      },
-                      cells);
-  }
-
- private:
-  std::string message_; /**< Text centered and clipped by draw(). */
-};
-
-/**
- * Add a frame and all of its constraints to one test layout.
- *
- * The frame is retained if a later constraint fails, which is acceptable
- * during one-shot setup because the error aborts application initialization.
- *
- * @param[in] description Layout description receiving the frame.
- * @param[in] frame_id Unique layout id.
- * @param[in] frame Frame implementation for which ownership is shared.
- * @param[in] constraints Constraints applied in the supplied order.
- * @return Status::OK or the first frame/constraint insertion error.
- */
-Status add_frame(const std::shared_ptr<Layout::LayoutDescription>& description,
-                 std::string frame_id, std::shared_ptr<Frame> frame,
-                 std::initializer_list<Layout::Constraint> constraints) {
-  Status status = layout.add_frame_to_layout_description(description, frame_id,
-                                                         std::move(frame));
-  if (!puc::tui::is_ok(status)) {
-    return status;
-  }
-
-  for (const Layout::Constraint& constraint : constraints) {
-    status = layout.add_constraint_to_frame(description, frame_id, constraint);
-    if (!puc::tui::is_ok(status)) {
-      return status;
-    }
-  }
-  return Status::OK;
-}
-
 /**
  * Add one fixed `2 x 1` red marker anchored to a screen corner.
  *
@@ -453,20 +361,20 @@ Status add_frame(const std::shared_ptr<Layout::LayoutDescription>& description,
 Status add_corner(const std::string& frame_id,
                   Layout::ConstraintType horizontal,
                   Layout::ConstraintType vertical) {
-  return add_frame(layout_description, frame_id,
-                   std::make_shared<SolidFrame>(frame_id, kRed),
-                   {
-                       Layout::make_character_constraint(
-                           Layout::ConstraintType::MIN_WIDTH, 2),
-                       Layout::make_character_constraint(
-                           Layout::ConstraintType::MAX_WIDTH, 2),
-                       Layout::make_character_constraint(
-                           Layout::ConstraintType::MIN_HEIGHT, 1),
-                       Layout::make_character_constraint(
-                           Layout::ConstraintType::MAX_HEIGHT, 1),
-                       Layout::make_character_constraint(horizontal, 0),
-                       Layout::make_character_constraint(vertical, 0),
-                   });
+  return layout.add_frame(layout_description, frame_id,
+                          std::make_shared<SolidFrame>(frame_id, kRed),
+                          {
+                              Layout::make_character_constraint(
+                                  Layout::ConstraintType::MIN_WIDTH, 2),
+                              Layout::make_character_constraint(
+                                  Layout::ConstraintType::MAX_WIDTH, 2),
+                              Layout::make_character_constraint(
+                                  Layout::ConstraintType::MIN_HEIGHT, 1),
+                              Layout::make_character_constraint(
+                                  Layout::ConstraintType::MAX_HEIGHT, 1),
+                              Layout::make_character_constraint(horizontal, 0),
+                              Layout::make_character_constraint(vertical, 0),
+                          });
 }
 
 /**
@@ -481,7 +389,7 @@ Status setup_layout() {
   layout_description = layout.make_layout_description("canvas-test");
 
   constexpr std::string_view kMetricsFrameId = "metrics";
-  Status status                              = add_frame(
+  Status status                              = layout.add_frame(
       layout_description, std::string{kMetricsFrameId},
       std::make_shared<MetricsFrame>(std::string{kMetricsFrameId}, state),
       {
@@ -501,23 +409,24 @@ Status setup_layout() {
   }
 
   constexpr std::string_view kCenterFrameId = "center";
-  status = add_frame(layout_description, std::string{kCenterFrameId},
-                     std::make_shared<GlyphFrame>(std::string{kCenterFrameId},
-                                                  U'+', kWhite, kBlack),
-                     {
-                         Layout::make_character_constraint(
-                             Layout::ConstraintType::MIN_WIDTH, 1),
-                         Layout::make_character_constraint(
-                             Layout::ConstraintType::MAX_WIDTH, 1),
-                         Layout::make_character_constraint(
-                             Layout::ConstraintType::MIN_HEIGHT, 1),
-                         Layout::make_character_constraint(
-                             Layout::ConstraintType::MAX_HEIGHT, 1),
-                         Layout::make_character_constraint(
-                             Layout::ConstraintType::HORIZONTAL_CENTER, 0),
-                         Layout::make_character_constraint(
-                             Layout::ConstraintType::VERTICAL_CENTER, 0),
-                     });
+  status =
+      layout.add_frame(layout_description, std::string{kCenterFrameId},
+                       std::make_shared<GlyphFrame>(std::string{kCenterFrameId},
+                                                    U'+', kWhite, kBlack),
+                       {
+                           Layout::make_character_constraint(
+                               Layout::ConstraintType::MIN_WIDTH, 1),
+                           Layout::make_character_constraint(
+                               Layout::ConstraintType::MAX_WIDTH, 1),
+                           Layout::make_character_constraint(
+                               Layout::ConstraintType::MIN_HEIGHT, 1),
+                           Layout::make_character_constraint(
+                               Layout::ConstraintType::MAX_HEIGHT, 1),
+                           Layout::make_character_constraint(
+                               Layout::ConstraintType::HORIZONTAL_CENTER, 0),
+                           Layout::make_character_constraint(
+                               Layout::ConstraintType::VERTICAL_CENTER, 0),
+                       });
   if (!puc::tui::is_ok(status)) {
     return status;
   }
@@ -546,10 +455,10 @@ Status setup_layout() {
   }
 
   small_layout_description = layout.make_layout_description("screen-too-small");
-  return add_frame(
-      small_layout_description, "message",
-      std::make_shared<MessageFrame>("message", std::string{kScreenTooSmall}),
-      {});
+  return layout.add_frame(small_layout_description, "message",
+                          std::make_shared<puc::tui::MessageFrame>(
+                              "message", std::string{kScreenTooSmall}),
+                          {});
 }
 
 /**
@@ -593,16 +502,6 @@ void update_frame_rate() {
     frames_since_sample = 0;
     frame_rate_sample   = now;
   }
-}
-
-/**
- * Request shutdown from a process signal without performing unsafe work.
- *
- * @param[in] signal_number Ignored signal number supplied by `std::signal`.
- */
-void request_stop(int signal_number) {
-  static_cast<void>(signal_number);
-  stop_requested = 1;
 }
 
 /**
@@ -674,15 +573,14 @@ Status setup(Screen& active_screen, ParallelRenderer& active_renderer) {
 
   size_t width  = 0;
   size_t height = 0;
-  const auto geometry_deadline =
-      std::chrono::steady_clock::now() + std::chrono::seconds{2};
+  puc::timer::Deadline<> geometry_timeout;
+  geometry_timeout.arm(std::chrono::seconds{2});
   while (true) {
     status = screen->get_dimensions(width, height, cell_dimensions);
     if (puc::tui::is_ok(status)) {
       break;
     }
-    if (status != Status::TERMINAL_QUERY_FAILED ||
-        std::chrono::steady_clock::now() >= geometry_deadline) {
+    if (status != Status::TERMINAL_QUERY_FAILED || geometry_timeout.due()) {
       return status;
     }
     std::this_thread::sleep_for(std::chrono::milliseconds{1});
@@ -876,19 +774,9 @@ int main() {
       .global_level = puc::logger::LogLevel::WARN,
   };
 
-  if (std::signal(SIGINT, request_stop) == SIG_ERR ||
-      std::signal(SIGTERM, request_stop) == SIG_ERR) {
-    std::fprintf(stderr, "Could not install termination signal handlers\n");
-    return 1;
-  }
-
   puc::app::ApplicationSubsystemOptions options{
       .logger       = logger_config,
       .worker_count = kWorkerCount,
-      .screen =
-          puc::app::ScreenSubsystemOptions{
-              .take_terminal = true,
-          },
       .selection =
           puc::app::ApplicationSubsystemSelection{
               .metronome         = false,
@@ -925,9 +813,18 @@ int main() {
     return 1;
   }
 
+  const auto* control =
+      app.get_subsystem<puc::app::ApplicationControlSubsystem>();
+  if (control == nullptr || control->control() == nullptr) {
+    std::fprintf(stderr, "Application control was not initialized\n");
+    static_cast<void>(app.stop());
+    static_cast<void>(app.terminate());
+    return 1;
+  }
+
   Status status = Status::OK;
   while (true) {
-    if (stop_requested != 0) {
+    if (control->exit_requested()) {
       break;
     }
     status = runtime_view->draw_frame();

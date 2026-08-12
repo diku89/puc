@@ -4,7 +4,7 @@
 
 Unix socket descriptors, connection worker, and endpoint configuration.
 
-[Source](../../utils/ipc/socket_channel.cpp#L51)
+[Source](../../utils/ipc/socket_channel.cpp#L52)
 
 ## Private data members
 
@@ -18,7 +18,7 @@ SocketChannel& puc::ipc::SocketChannel::Impl::owner_
 
 [Channel](classpuc_1_1ipc_1_1_channel.md) receiving decoded frames.
 
-[Source](../../utils/ipc/socket_channel.cpp#L322)
+[Source](../../utils/ipc/socket_channel.cpp#L314)
 
 <a id="symbol-classpuc_1_1ipc_1_1_socket_channel_1_1_impl_1a16f1a17303ac7e8df98afee7411a3c8a"></a>
 
@@ -30,7 +30,7 @@ std::filesystem::path puc::ipc::SocketChannel::Impl::path_
 
 Configured socket filesystem path.
 
-[Source](../../utils/ipc/socket_channel.cpp#L323)
+[Source](../../utils/ipc/socket_channel.cpp#L315)
 
 <a id="symbol-classpuc_1_1ipc_1_1_socket_channel_1_1_impl_1a1a0e121d63647ba129bdca5560971c97"></a>
 
@@ -42,7 +42,7 @@ SocketRole puc::ipc::SocketChannel::Impl::role_
 
 Connect or listen behavior.
 
-[Source](../../utils/ipc/socket_channel.cpp#L324)
+[Source](../../utils/ipc/socket_channel.cpp#L316)
 
 <a id="symbol-classpuc_1_1ipc_1_1_socket_channel_1_1_impl_1ab7b2f82ef3494ac4d713d385107ec692"></a>
 
@@ -54,7 +54,7 @@ std::size_t puc::ipc::SocketChannel::Impl::maximum_message_bytes_
 
 Per-frame payload limit.
 
-[Source](../../utils/ipc/socket_channel.cpp#L325)
+[Source](../../utils/ipc/socket_channel.cpp#L317)
 
 <a id="symbol-classpuc_1_1ipc_1_1_socket_channel_1_1_impl_1ae11dcb09bccc4933a2b57a53352e99e8"></a>
 
@@ -66,7 +66,7 @@ std::string puc::ipc::SocketChannel::Impl::path_text_
 
 Native path passed to POSIX calls.
 
-[Source](../../utils/ipc/socket_channel.cpp#L326)
+[Source](../../utils/ipc/socket_channel.cpp#L318)
 
 <a id="symbol-classpuc_1_1ipc_1_1_socket_channel_1_1_impl_1a055f79ac7291c038d759957af75a5a95"></a>
 
@@ -78,7 +78,7 @@ std::atomic<bool> puc::ipc::SocketChannel::Impl::stopping_
 
 Reader shutdown request.
 
-[Source](../../utils/ipc/socket_channel.cpp#L327)
+[Source](../../utils/ipc/socket_channel.cpp#L319)
 
 <a id="symbol-classpuc_1_1ipc_1_1_socket_channel_1_1_impl_1a9aa60bb50444477d010202e1b8b41ca4"></a>
 
@@ -90,7 +90,7 @@ std::mutex puc::ipc::SocketChannel::Impl::peer_mutex_
 
 Serializes peer changes and writes.
 
-[Source](../../utils/ipc/socket_channel.cpp#L328)
+[Source](../../utils/ipc/socket_channel.cpp#L320)
 
 <a id="symbol-classpuc_1_1ipc_1_1_socket_channel_1_1_impl_1ae3842529e05b8ceb46c7479f2feb82c7"></a>
 
@@ -102,7 +102,7 @@ int puc::ipc::SocketChannel::Impl::listener_descriptor_
 
 Server listener, otherwise invalid.
 
-[Source](../../utils/ipc/socket_channel.cpp#L329)
+[Source](../../utils/ipc/socket_channel.cpp#L321)
 
 <a id="symbol-classpuc_1_1ipc_1_1_socket_channel_1_1_impl_1a923ca533d895aa4b43bf6a654cefbd87"></a>
 
@@ -114,7 +114,7 @@ int puc::ipc::SocketChannel::Impl::peer_descriptor_
 
 Current bidirectional connection.
 
-[Source](../../utils/ipc/socket_channel.cpp#L330)
+[Source](../../utils/ipc/socket_channel.cpp#L322)
 
 <a id="symbol-classpuc_1_1ipc_1_1_socket_channel_1_1_impl_1adb9cae5c709b0a7ceb4cd57f39ba54cd"></a>
 
@@ -126,7 +126,7 @@ bool puc::ipc::SocketChannel::Impl::owns_path_
 
 Whether destruction should unlink path\_.
 
-[Source](../../utils/ipc/socket_channel.cpp#L331)
+[Source](../../utils/ipc/socket_channel.cpp#L323)
 
 <a id="symbol-classpuc_1_1ipc_1_1_socket_channel_1_1_impl_1afc847108a816c0fe57319c027f301b42"></a>
 
@@ -138,7 +138,7 @@ std::thread puc::ipc::SocketChannel::Impl::reader_
 
 Accept/read worker.
 
-[Source](../../utils/ipc/socket_channel.cpp#L332)
+[Source](../../utils/ipc/socket_channel.cpp#L324)
 
 ## Public functions
 
@@ -152,7 +152,7 @@ puc::ipc::SocketChannel::Impl::Impl(SocketChannel &owner, std::filesystem::path 
 
 Retain immutable endpoint configuration.
 
-[Source](../../utils/ipc/socket_channel.cpp#L54)
+[Source](../../utils/ipc/socket_channel.cpp#L55)
 
 <a id="symbol-classpuc_1_1ipc_1_1_socket_channel_1_1_impl_1a38890af553d515dbb124ecfa716f41e4"></a>
 
@@ -162,7 +162,7 @@ Retain immutable endpoint configuration.
 puc::ipc::SocketChannel::Impl::Impl(const Impl &)=delete
 ```
 
-[Source](../../utils/ipc/socket_channel.cpp#L61)
+[Source](../../utils/ipc/socket_channel.cpp#L62)
 
 <a id="symbol-classpuc_1_1ipc_1_1_socket_channel_1_1_impl_1afa2df8b6362d88c28c5960482f8beb81"></a>
 
@@ -172,7 +172,7 @@ puc::ipc::SocketChannel::Impl::Impl(const Impl &)=delete
 Impl & puc::ipc::SocketChannel::Impl::operator=(const Impl &)=delete
 ```
 
-[Source](../../utils/ipc/socket_channel.cpp#L62)
+[Source](../../utils/ipc/socket_channel.cpp#L63)
 
 <a id="symbol-classpuc_1_1ipc_1_1_socket_channel_1_1_impl_1adee73e08b059edcd0e86b37d70068f2b"></a>
 
@@ -184,7 +184,7 @@ puc::ipc::SocketChannel::Impl::~Impl()
 
 Ensure all resources are stopped if outer construction later fails.
 
-[Source](../../utils/ipc/socket_channel.cpp#L65)
+[Source](../../utils/ipc/socket_channel.cpp#L66)
 
 <a id="symbol-classpuc_1_1ipc_1_1_socket_channel_1_1_impl_1a78994479cf37ed6070b76aaa35d1566e"></a>
 
@@ -196,7 +196,7 @@ Status puc::ipc::SocketChannel::Impl::start()
 
 Validate, open, and start the endpoint.
 
-[Source](../../utils/ipc/socket_channel.cpp#L68)
+[Source](../../utils/ipc/socket_channel.cpp#L69)
 
 <a id="symbol-classpuc_1_1ipc_1_1_socket_channel_1_1_impl_1a34a66fde91b2b2cec1a2fc0561e35343"></a>
 
@@ -208,7 +208,7 @@ void puc::ipc::SocketChannel::Impl::stop() noexcept
 
 Stop the worker, then close and unlink owned resources.
 
-[Source](../../utils/ipc/socket_channel.cpp#L109)
+[Source](../../utils/ipc/socket_channel.cpp#L110)
 
 <a id="symbol-classpuc_1_1ipc_1_1_socket_channel_1_1_impl_1a1a4ea282e71bfb0d8b322c5402d13ce5"></a>
 
@@ -220,7 +220,7 @@ TransferResult puc::ipc::SocketChannel::Impl::transmit(Bytes data) noexcept
 
 Serialize writes and send one complete frame.
 
-[Source](../../utils/ipc/socket_channel.cpp#L129)
+[Source](../../utils/ipc/socket_channel.cpp#L130)
 
 <a id="symbol-classpuc_1_1ipc_1_1_socket_channel_1_1_impl_1a48d106d7ae92f8152d606e27bf51c4ef"></a>
 
@@ -232,7 +232,7 @@ bool puc::ipc::SocketChannel::Impl::connected() const noexcept
 
 Return whether a peer descriptor is currently installed.
 
-[Source](../../utils/ipc/socket_channel.cpp#L145)
+[Source](../../utils/ipc/socket_channel.cpp#L146)
 
 <a id="symbol-classpuc_1_1ipc_1_1_socket_channel_1_1_impl_1a3c9e3c5c33f07996e7cb6066cb5e983c"></a>
 
@@ -244,7 +244,7 @@ const std::filesystem::path & puc::ipc::SocketChannel::Impl::path() const noexce
 
 Return the configured Unix socket path.
 
-[Source](../../utils/ipc/socket_channel.cpp#L151)
+[Source](../../utils/ipc/socket_channel.cpp#L152)
 
 <a id="symbol-classpuc_1_1ipc_1_1_socket_channel_1_1_impl_1a711ff20c5b53310cf4f054fa1310f3cd"></a>
 
@@ -256,7 +256,7 @@ SocketRole puc::ipc::SocketChannel::Impl::role() const noexcept
 
 Return whether this endpoint connects or listens.
 
-[Source](../../utils/ipc/socket_channel.cpp#L154)
+[Source](../../utils/ipc/socket_channel.cpp#L155)
 
 <a id="symbol-classpuc_1_1ipc_1_1_socket_channel_1_1_impl_1aa6678c8c4d1ec28d1bf9f3bc4392050b"></a>
 
@@ -268,7 +268,7 @@ std::size_t puc::ipc::SocketChannel::Impl::maximum_message_bytes() const noexcep
 
 Return the per-frame payload limit.
 
-[Source](../../utils/ipc/socket_channel.cpp#L157)
+[Source](../../utils/ipc/socket_channel.cpp#L158)
 
 ## Private functions
 
@@ -282,7 +282,7 @@ sockaddr_un puc::ipc::SocketChannel::Impl::address() const noexcept
 
 Populate a portable sockaddr\_un for path\_text\_.
 
-[Source](../../utils/ipc/socket_channel.cpp#L163)
+[Source](../../utils/ipc/socket_channel.cpp#L164)
 
 <a id="symbol-classpuc_1_1ipc_1_1_socket_channel_1_1_impl_1aefd8ca097050b9fa470e5f29bd219468"></a>
 
@@ -294,7 +294,7 @@ Status puc::ipc::SocketChannel::Impl::open_server() noexcept
 
 Bind an unused filesystem path and begin listening.
 
-[Source](../../utils/ipc/socket_channel.cpp#L171)
+[Source](../../utils/ipc/socket_channel.cpp#L172)
 
 <a id="symbol-classpuc_1_1ipc_1_1_socket_channel_1_1_impl_1afcba55788688836994ba46453c3a6a0e"></a>
 
@@ -306,7 +306,7 @@ Status puc::ipc::SocketChannel::Impl::open_client() noexcept
 
 Connect synchronously to an existing listener, then switch nonblocking.
 
-[Source](../../utils/ipc/socket_channel.cpp#L213)
+[Source](../../utils/ipc/socket_channel.cpp#L214)
 
 <a id="symbol-classpuc_1_1ipc_1_1_socket_channel_1_1_impl_1a8c52bb18be3c7abeabaa706b05a7ee5f"></a>
 
@@ -318,7 +318,7 @@ void puc::ipc::SocketChannel::Impl::run_server() noexcept
 
 Accept and serve one connection at a time until stopping.
 
-[Source](../../utils/ipc/socket_channel.cpp#L241)
+[Source](../../utils/ipc/socket_channel.cpp#L242)
 
 <a id="symbol-classpuc_1_1ipc_1_1_socket_channel_1_1_impl_1a98565b4cb560deafd9bdcfdb1e134833"></a>
 
@@ -330,4 +330,4 @@ void puc::ipc::SocketChannel::Impl::run_peer() noexcept
 
 Receive frames from the installed peer until it closes or fails.
 
-[Source](../../utils/ipc/socket_channel.cpp#L289)
+[Source](../../utils/ipc/socket_channel.cpp#L281)

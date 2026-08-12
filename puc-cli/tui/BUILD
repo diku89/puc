@@ -21,6 +21,7 @@ cc_library(
         "input_frame.cpp",
         "integrated_term_frame.cpp",
         "layout.cpp",
+        "message_frame.cpp",
         "renderer.cpp",
         "screen.cpp",
         "selection.cpp",
@@ -38,6 +39,7 @@ cc_library(
         "input_frame.hpp",
         "integrated_term_frame.hpp",
         "layout.hpp",
+        "message_frame.hpp",
         "renderer.hpp",
         "screen.hpp",
         "selection.hpp",
@@ -62,16 +64,22 @@ cc_library(
 cc_binary(
     name = "test-app",
     srcs = ["test-app.cpp"],
+    data = ["//themes:default_dark_config"],
     deps = [
         ":tui",
         "//puc-cli/state:adapters",
         "//utils/logger",
+        "//utils/timer",
     ],
 )
 
 cc_binary(
     name = "input-test-app",
-    srcs = ["input-test-app.cpp"],
+    srcs = [
+        "input-test-app.cpp",
+        "input_test_runtime.cpp",
+        "input_test_runtime.hpp",
+    ],
     data = [
         "//puc-cli/terminal:bsd_defaults_config",
         "//puc-cli/terminal:darwin_defaults_config",
@@ -79,6 +87,7 @@ cc_binary(
         "//puc-cli/terminal:linux_defaults_config",
         "//puc-cli/terminal:timeout_config",
         "//puc-cli/terminal:xterm_ghostty_defaults_config",
+        "//themes:default_dark_config",
     ],
     linkopts = select({
         ":linux": ["-lutil"],
@@ -89,8 +98,9 @@ cc_binary(
         "//msgs",
         "//puc-cli/state:adapters",
         "//puc-cli/terminal",
-        "//utils/config",
+        "//utils/ipc",
         "//utils/logger",
+        "//utils/timer",
     ],
 )
 
@@ -120,6 +130,7 @@ cc_test(
     }),
     deps = [
         ":tui",
+        "//properties",
         "//utils/multithreading",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
@@ -170,6 +181,17 @@ cc_test(
     deps = [
         ":tui",
         "//utils/multithreading",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "message_frame_test",
+    size = "small",
+    srcs = ["message_frame_test.cpp"],
+    deps = [
+        ":tui",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
     ],

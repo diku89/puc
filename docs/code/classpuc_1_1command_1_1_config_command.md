@@ -2,7 +2,7 @@
 
 # Class `puc::command::ConfigCommand`
 
-[Source](../../commands/config.hpp#L19)
+[Source](../../commands/config.hpp#L20)
 
 ## Public functions
 
@@ -14,7 +14,7 @@
 puc::command::ConfigCommand::ConfigCommand()=default
 ```
 
-[Source](../../commands/config.hpp#L21)
+[Source](../../commands/config.hpp#L22)
 
 <a id="symbol-classpuc_1_1command_1_1_config_command_1aba8c97998cccfdb2419e07e9443b1ab2"></a>
 
@@ -24,7 +24,7 @@ puc::command::ConfigCommand::ConfigCommand()=default
 puc::command::ConfigCommand::~ConfigCommand() override=default
 ```
 
-[Source](../../commands/config.hpp#L22)
+[Source](../../commands/config.hpp#L23)
 
 <a id="symbol-classpuc_1_1command_1_1_config_command_1aef17628af714da123697f85a4bf3c5ab"></a>
 
@@ -36,7 +36,7 @@ Status puc::command::ConfigCommand::run(CommonCommandArgs common_args, std::span
 
 Execute with shared services and arguments excluding the command name.
 
-[Source](../../commands/config.hpp#L24)
+[Source](../../commands/config.hpp#L25)
 
 <a id="symbol-classpuc_1_1command_1_1_config_command_1a7e054f9f0d95f3325a3e80d9c54a7228"></a>
 
@@ -48,7 +48,7 @@ std::string puc::command::ConfigCommand::get_description() const override
 
 Return the short text displayed beside a completion candidate.
 
-[Source](../../commands/config.hpp#L27)
+[Source](../../commands/config.hpp#L28)
 
 <a id="symbol-classpuc_1_1command_1_1_config_command_1a1e29edae9f176b25183ff5dbc6a2030e"></a>
 
@@ -60,7 +60,7 @@ std::string puc::command::ConfigCommand::get_usage() const override
 
 Return argument and subcommand help, or an empty string for none.
 
-[Source](../../commands/config.hpp#L31)
+[Source](../../commands/config.hpp#L32)
 
 ## Public static functions
 
@@ -72,4 +72,4 @@ Return argument and subcommand help, or an empty string for none.
 static std::vector< std::string > puc::command::ConfigCommand::get_aliases()
 ```
 
-[Source](../../commands/config.hpp#L38)
+[Source](../../commands/config.hpp#L39)

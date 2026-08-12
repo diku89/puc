@@ -50,6 +50,7 @@ enum class Status {
                           */
   CHANNEL_SETUP_FAILED, /**< Asynchronous Screen channels could not be built. */
   MESSAGE_ENCODING_FAILED, /**< A typed Screen command could not be encoded. */
+  MESSAGE_DECODING_FAILED, /**< A typed Screen event could not be decoded. */
   ASYNC_DISPATCH_FAILED,   /**< Asynchronous work could not be completed. */
 };
 
@@ -120,6 +121,8 @@ constexpr std::string_view status_message(Status status) noexcept {
       return "asynchronous screen channels could not be configured";
     case Status::MESSAGE_ENCODING_FAILED:
       return "screen command could not be encoded";
+    case Status::MESSAGE_DECODING_FAILED:
+      return "screen event could not be decoded";
     case Status::ASYNC_DISPATCH_FAILED:
       return "asynchronous work could not be completed";
   }

@@ -21,9 +21,20 @@ Typed payload serialization and JSON formatting above PUC IPC.
 - [puc::msg::ScreenReleaseCommand](structpuc_1_1msg_1_1_screen_release_command.md)
 - [puc::msg::ScreenResizeEvent](structpuc_1_1msg_1_1_screen_resize_event.md)
 - [puc::msg::ScreenResizeEventCodec](classpuc_1_1msg_1_1_screen_resize_event_codec.md)
-- [puc::msg::ScreenSessionOptions](structpuc_1_1msg_1_1_screen_session_options.md)
 - [puc::msg::ScreenSetClipboardCommand](structpuc_1_1msg_1_1_screen_set_clipboard_command.md)
 - [puc::msg::ScreenTakeCommand](structpuc_1_1msg_1_1_screen_take_command.md)
+- [puc::msg::TerminalClipboardEvent](structpuc_1_1msg_1_1_terminal_clipboard_event.md)
+- [puc::msg::TerminalCommandEvent](structpuc_1_1msg_1_1_terminal_command_event.md)
+- [puc::msg::TerminalFocusEvent](structpuc_1_1msg_1_1_terminal_focus_event.md)
+- [puc::msg::TerminalInputEvent](structpuc_1_1msg_1_1_terminal_input_event.md)
+- [puc::msg::TerminalInputEventCodec](classpuc_1_1msg_1_1_terminal_input_event_codec.md)
+- [puc::msg::TerminalKeyEvent](structpuc_1_1msg_1_1_terminal_key_event.md)
+- [puc::msg::TerminalMouseEvent](structpuc_1_1msg_1_1_terminal_mouse_event.md)
+- [puc::msg::TerminalPasteEvent](structpuc_1_1msg_1_1_terminal_paste_event.md)
+- [puc::msg::TerminalResponseEvent](structpuc_1_1msg_1_1_terminal_response_event.md)
+- [puc::msg::TerminalScrollEvent](structpuc_1_1msg_1_1_terminal_scroll_event.md)
+- [puc::msg::TerminalTextEvent](structpuc_1_1msg_1_1_terminal_text_event.md)
+- [puc::msg::TerminalUnknownEvent](structpuc_1_1msg_1_1_terminal_unknown_event.md)
 
 ## Enumerations
 
@@ -78,26 +89,18 @@ Globally registered payload schema identifiers.
 **Purpose:** Selects the UTF-8 command notification schema published on //cmdframe/notify.  
 **Producers:** [Command notification producers](namespacepuc_1_1command.md#symbol-command_8cpp_1aae6bb7ab5476027600e831b5731b57ea).  
 **Consumers:** The command-mode controller presenting [CmdFrame](classpuc_1_1tui_1_1_cmd_frame.md).
+- <a id="symbol-namespacepuc_1_1msg_1a24b154890bf81939005e112918c3813fa0dc388ed7715695dc47c7fd9a7e0cef2"></a>`TERMINAL_INPUT_EVENT` — Normalized terminal input event.
+
+**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000007):**
+
+**Kind:** Message ID  
+**ID:** `4`  
+**Message:** [puc::msg::TerminalInputEvent](structpuc_1_1msg_1_1_terminal_input_event.md)  
+**Purpose:** Selects the portable tagged terminal-event schema published on //terminal/input\_events.  
+**Producers:** The lifecycle-owned terminal input producer.  
+**Consumers:** The TUI Screen transport consumer.
 
 [Source](../../msgs/codec.hpp#L26)
-
-<a id="symbol-namespacepuc_1_1msg_1a00aa3f6c1c72cac540289f83c7aa644e"></a>
-
-### `ScreenMouseTracking`
-
-```cpp
-ScreenMouseTracking
-```
-
-Mouse reporting detail requested for an active screen session.
-
-#### Values
-- <a id="symbol-namespacepuc_1_1msg_1a00aa3f6c1c72cac540289f83c7aa644eab50339a10e1de285ac99d4c3990b8693"></a>`NONE`
-- <a id="symbol-namespacepuc_1_1msg_1a00aa3f6c1c72cac540289f83c7aa644ea4422b785f04af470aecbfc9d871fdf54"></a>`BUTTONS`
-- <a id="symbol-namespacepuc_1_1msg_1a00aa3f6c1c72cac540289f83c7aa644eaff3480bb59f4249a9453a0caaa1b2236"></a>`DRAG`
-- <a id="symbol-namespacepuc_1_1msg_1a00aa3f6c1c72cac540289f83c7aa644eaf96e6ea7a7375bd60bad3f3caae3cf27"></a>`MOTION`
-
-[Source](../../msgs/screen_msgs.hpp#L42)
 
 <a id="symbol-namespacepuc_1_1msg_1a95fce2ec526a4d2b450a8bb20c8b3304"></a>
 
@@ -113,7 +116,7 @@ Host-terminal clipboard selected by one asynchronous Screen command.
 - <a id="symbol-namespacepuc_1_1msg_1a95fce2ec526a4d2b450a8bb20c8b3304a428429ba9ea83e4841036fb0508fd6dc"></a>`PRIMARY` — Selection clipboard where the terminal supports one.
 - <a id="symbol-namespacepuc_1_1msg_1a95fce2ec526a4d2b450a8bb20c8b3304aec10a7ad0896c0e5562fbba6a1c1808f"></a>`CLIPBOARD` — Conventional explicit copy/paste clipboard.
 
-[Source](../../msgs/screen_msgs.hpp#L93)
+[Source](../../msgs/screen_msgs.hpp#L68)
 
 <a id="symbol-namespacepuc_1_1msg_1a907eec61a676749c81ee4d71de76953f"></a>
 
@@ -170,7 +173,7 @@ std::string_view puc::msg::kScreenCommandChannel
 
 Channel carrying commands from TUI presentation to terminal mechanism.
 
-**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000008):**
+**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000009):**
 
 **Kind:** Channel  
 **Name:** `//screen/commands`  
@@ -190,7 +193,7 @@ std::string_view puc::msg::kScreenResizeEventChannel
 
 Channel publishing terminal geometry whenever the observation changes.
 
-**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000009):**
+**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000010):**
 
 **Kind:** Channel  
 **Name:** `//screen/resize_events`  
@@ -199,6 +202,26 @@ Channel publishing terminal geometry whenever the observation changes.
 **Consumers:** [Screen](classpuc_1_1tui_1_1_screen.md) and subscribed geometry observers.
 
 [Source](../../msgs/screen_msgs.hpp#L38)
+
+<a id="symbol-namespacepuc_1_1msg_1a03288ead64679521f461fcc1f83b2262"></a>
+
+### `kTerminalInputEventChannel`
+
+```cpp
+std::string_view puc::msg::kTerminalInputEventChannel
+```
+
+Channel publishing normalized terminal input and protocol responses.
+
+**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000013):**
+
+**Kind:** Channel  
+**Name:** `//terminal/input_events`  
+**Purpose:** Publishes ordered, terminal-independent keyboard, text, pointer, paste, focus, clipboard, command, protocol-response, and diagnostic events after the terminal Decoder has applied its input Trie.  
+**Producers:** The lifecycle-owned terminal input producer.  
+**Consumers:** The TUI Screen, which retains decoded events for application-specific handling.
+
+[Source](../../msgs/terminal_msgs.hpp#L29)
 
 ## Functions
 
@@ -224,7 +247,7 @@ std::uint32_t puc::msg::to_wire_id(MessageId message_id) noexcept
 
 Convert a payload schema identifier to its IPC wire representation.
 
-[Source](../../msgs/codec.hpp#L70)
+[Source](../../msgs/codec.hpp#L80)
 
 <a id="symbol-namespacepuc_1_1msg_1aacd082ba1fecf7c69c4c4ef12388c1bb"></a>
 
@@ -236,7 +259,7 @@ MessageId puc::msg::from_wire_id(std::uint32_t message_id) noexcept
 
 Convert an IPC wire identifier to a payload schema identifier.
 
-[Source](../../msgs/codec.hpp#L75)
+[Source](../../msgs/codec.hpp#L85)
 
 <a id="symbol-namespacepuc_1_1msg_1a781f11eb19137fb1f890dfd2e7386979"></a>
 
@@ -248,19 +271,7 @@ Status puc::msg::register_screen_codecs(MessageCodecCollection &codecs)
 
 Register every Screen/TerminalSession payload schema in a collection.
 
-[Source](../../msgs/screen_msgs.cpp#L257)
-
-<a id="symbol-namespacepuc_1_1msg_1aceb1792eb4798b590dbeea4e0f4dc75e"></a>
-
-### `screen_mouse_tracking_name`
-
-```cpp
-std::string_view puc::msg::screen_mouse_tracking_name(ScreenMouseTracking tracking) noexcept
-```
-
-Return stable text for a configured mouse tracking level.
-
-[Source](../../msgs/screen_msgs.hpp#L151)
+[Source](../../msgs/screen_msgs.cpp#L206)
 
 <a id="symbol-namespacepuc_1_1msg_1af74ba2d2ee0e6375dd3891052f007669"></a>
 
@@ -285,3 +296,27 @@ std::string_view puc::msg::status_message(Status status) noexcept
 Return stable, human-readable text for a payload codec status.
 
 [Source](../../msgs/status.hpp#L29)
+
+<a id="symbol-namespacepuc_1_1msg_1a199cc351adfa3430e9682468b818c9b2"></a>
+
+### `register_terminal_codecs`
+
+```cpp
+Status puc::msg::register_terminal_codecs(MessageCodecCollection &codecs)
+```
+
+Register the normalized terminal-input codec in a collection.
+
+[Source](../../msgs/terminal_msgs.cpp#L375)
+
+<a id="symbol-namespacepuc_1_1msg_1a47180dbdfb1e280449f25b5d317e5e59"></a>
+
+### `terminal_input_event_name`
+
+```cpp
+std::string_view puc::msg::terminal_input_event_name(const TerminalInputEvent &event) noexcept
+```
+
+Return a stable name for the concrete terminal input alternative.
+
+[Source](../../msgs/terminal_msgs.cpp#L379)

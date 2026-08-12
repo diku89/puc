@@ -140,7 +140,7 @@ Whether events are accepted.
 puc::app::CommandModeSubsystem::CommandModeSubsystem()
 ```
 
-Declare input-frame and command-dispatcher dependencies.
+Declare input-frame, dispatcher, and built-in catalog dependencies.
 
 [Source](../../puc-cli/state/command_mode.hpp#L59)
 
@@ -164,7 +164,7 @@ Destroy released controller state.
 Status puc::app::CommandModeSubsystem::initialize(AppState &app) override
 ```
 
-Bind the durable command dispatcher and InputFrame.
+Bind the durable command dispatcher and [InputFrame](classpuc_1_1app_1_1_input_frame.md).
 
 [Source](../../puc-cli/state/command_mode.hpp#L65)
 
@@ -212,7 +212,7 @@ Release durable bindings to the dispatcher and frame.
 tui::Status puc::app::CommandModeSubsystem::handle_event(const terminal::Event &event, std::chrono::steady_clock::time_point now=std::chrono::steady_clock::now())
 ```
 
-Route one event through command-mode behavior or ordinary InputFrame.
+Route one event through command-mode behavior or ordinary [InputFrame](classpuc_1_1app_1_1_input_frame.md).
 
 [Source](../../puc-cli/state/command_mode.hpp#L77)
 

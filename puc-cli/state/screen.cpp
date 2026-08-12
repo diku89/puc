@@ -6,8 +6,8 @@
 #include "puc-cli/state/screen.hpp"
 
 #include <memory>
-#include <utility>
 
+#include "puc-cli/state/channels.hpp"
 #include "puc-cli/state/directory.hpp"
 #include "puc-cli/state/terminal.hpp"
 #include "puc-cli/terminal/session.hpp"
@@ -16,17 +16,17 @@
 
 namespace puc::app {
 
-ScreenSubsystem::ScreenSubsystem(ScreenSubsystemOptions options)
-    : AppSubsystem(
-          "screen",
-          subsystem_dependencies<TerminalSubsystem, DirectorySubsystem>()),
-      options_(std::move(options)) {}
+ScreenSubsystem::ScreenSubsystem()
+    : AppSubsystem("screen",
+                   subsystem_dependencies<TerminalSubsystem, DirectorySubsystem,
+                                          TerminalInputChannelSubsystem>()) {}
 
 ScreenSubsystem::~ScreenSubsystem() = default;
 
 Status ScreenSubsystem::initialize(AppState& app) {
   return app.get_subsystem<TerminalSubsystem>() == nullptr ||
-                 app.get_subsystem<DirectorySubsystem>() == nullptr
+                 app.get_subsystem<DirectorySubsystem>() == nullptr ||
+                 app.get_subsystem<TerminalInputChannelSubsystem>() == nullptr
              ? Status::SUBSYSTEM_NOT_FOUND
              : Status::OK;
 }
@@ -53,13 +53,11 @@ Status ScreenSubsystem::start(AppState& app) {
     screen_.reset();
     return Status::SUBSYSTEM_FAILURE;
   }
-  if (app.operating_mode() != OperatingMode::TUI || !options_.take_terminal) {
+  if (app.operating_mode() != OperatingMode::TUI) {
     return Status::OK;
   }
 
-  screen_status_ = options_.session_options.has_value()
-                       ? screen_->take(*options_.session_options)
-                       : screen_->take();
+  screen_status_ = screen_->take();
   if (!tui::is_ok(screen_status_)) {
     screen_.reset();
     return Status::SUBSYSTEM_FAILURE;

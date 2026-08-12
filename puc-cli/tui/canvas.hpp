@@ -132,6 +132,14 @@ class Canvas {
                      const std::span<std::span<Cell>>& cells) noexcept;
 
   /**
+   * Write an owned rectangular row grid without hand-building row spans.
+   *
+   * This convenience overload delegates all shape, bounds, and transaction
+   * validation to the span-based API.
+   */
+  Status write_cells(const Rect& rect, std::vector<std::vector<Cell>>& cells);
+
+  /**
    * Publish the completed writable buffer.
    *
    * @return Status::OK on success, or Status::NO_FRAME_IN_PROGRESS when no

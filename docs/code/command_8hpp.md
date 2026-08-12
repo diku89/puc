@@ -14,6 +14,7 @@ Command registration, completion, metadata, and dispatch.
 - [puc](namespacepuc.md)
 - [puc::ipc](namespacepuc_1_1ipc.md)
 - [puc::multithreading](namespacepuc_1_1multithreading.md)
+- [puc::properties](namespacepuc_1_1properties.md)
 - [puc::app](namespacepuc_1_1app.md)
 - [puc::tui](namespacepuc_1_1tui.md)
 - [puc::command](namespacepuc_1_1command.md)

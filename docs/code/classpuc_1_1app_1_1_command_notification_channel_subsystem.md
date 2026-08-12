@@ -6,7 +6,7 @@ Register the latest-only `//cmdframe/notify` producer channel.
 
 Command implementations publish through Directory; command-frame consumers depend on this adapter and retain only a subscription. Keeping route ownership separate from CommandDispatcher permits either side to restart without making the registry responsible for transport lifetime.
 
-[Source](../../puc-cli/state/channels.hpp#L76)
+[Source](../../puc-cli/state/channels.hpp#L115)
 
 ## Private data members
 
@@ -20,7 +20,7 @@ ipc::Directory* puc::app::CommandNotificationChannelSubsystem::directory_
 
 Borrowed while this is started.
 
-[Source](../../puc-cli/state/channels.hpp#L103)
+[Source](../../puc-cli/state/channels.hpp#L142)
 
 <a id="symbol-classpuc_1_1app_1_1_command_notification_channel_subsystem_1a71db90159dc659a296be64d5a365a7e0"></a>
 
@@ -32,7 +32,7 @@ std::shared_ptr<ipc::Channel> puc::app::CommandNotificationChannelSubsystem::cha
 
 Latest-only producer endpoint.
 
-[Source](../../puc-cli/state/channels.hpp#L104)
+[Source](../../puc-cli/state/channels.hpp#L143)
 
 <a id="symbol-classpuc_1_1app_1_1_command_notification_channel_subsystem_1a857110905225ccf2fe6aae718eb621bd"></a>
 
@@ -44,7 +44,7 @@ ipc::ChannelId puc::app::CommandNotificationChannelSubsystem::channel_id_
 
 Directory-assigned endpoint id.
 
-[Source](../../puc-cli/state/channels.hpp#L105)
+[Source](../../puc-cli/state/channels.hpp#L144)
 
 ## Public functions
 
@@ -58,7 +58,7 @@ puc::app::CommandNotificationChannelSubsystem::CommandNotificationChannelSubsyst
 
 Declare the channel-directory dependency.
 
-[Source](../../puc-cli/state/channels.hpp#L79)
+[Source](../../puc-cli/state/channels.hpp#L118)
 
 <a id="symbol-classpuc_1_1app_1_1_command_notification_channel_subsystem_1a823ca4e0433b65a72e9856f74fc3ff34"></a>
 
@@ -70,7 +70,7 @@ Status puc::app::CommandNotificationChannelSubsystem::initialize(AppState &app) 
 
 Validate access to the registered [DirectorySubsystem](classpuc_1_1app_1_1_directory_subsystem.md).
 
-[Source](../../puc-cli/state/channels.hpp#L82)
+[Source](../../puc-cli/state/channels.hpp#L121)
 
 <a id="symbol-classpuc_1_1app_1_1_command_notification_channel_subsystem_1a4111307941f52e45b6ec9ca9a50d2c38"></a>
 
@@ -82,7 +82,7 @@ Status puc::app::CommandNotificationChannelSubsystem::start(AppState &app) overr
 
 Create and register the canonical notification channel.
 
-[Source](../../puc-cli/state/channels.hpp#L85)
+[Source](../../puc-cli/state/channels.hpp#L124)
 
 <a id="symbol-classpuc_1_1app_1_1_command_notification_channel_subsystem_1a80246ad04abcaed0e408bfa15c9fdde4"></a>
 
@@ -94,7 +94,7 @@ Status puc::app::CommandNotificationChannelSubsystem::stop(AppState &app) noexce
 
 Close the canonical route and release its endpoint.
 
-[Source](../../puc-cli/state/channels.hpp#L88)
+[Source](../../puc-cli/state/channels.hpp#L127)
 
 <a id="symbol-classpuc_1_1app_1_1_command_notification_channel_subsystem_1a2bbcd7c0901a97006ae60fcdbcf5b448"></a>
 
@@ -106,7 +106,7 @@ Status puc::app::CommandNotificationChannelSubsystem::terminate(AppState &app) n
 
 Release any endpoint retained after partial lifecycle progress.
 
-[Source](../../puc-cli/state/channels.hpp#L91)
+[Source](../../puc-cli/state/channels.hpp#L130)
 
 <a id="symbol-classpuc_1_1app_1_1_command_notification_channel_subsystem_1ab973d996f7c055db564ddd8325045123"></a>
 
@@ -118,7 +118,7 @@ ipc::Channel * puc::app::CommandNotificationChannelSubsystem::channel() noexcept
 
 Return the notification endpoint, or nullptr while stopped.
 
-[Source](../../puc-cli/state/channels.hpp#L94)
+[Source](../../puc-cli/state/channels.hpp#L133)
 
 <a id="symbol-classpuc_1_1app_1_1_command_notification_channel_subsystem_1a3c0167a8593c4e027ed78dce558e48e6"></a>
 
@@ -130,7 +130,7 @@ ipc::ChannelId puc::app::CommandNotificationChannelSubsystem::channel_id() const
 
 Return the assigned notification identifier, or zero while stopped.
 
-[Source](../../puc-cli/state/channels.hpp#L97)
+[Source](../../puc-cli/state/channels.hpp#L136)
 
 ## Private functions
 
@@ -144,4 +144,4 @@ Status puc::app::CommandNotificationChannelSubsystem::close_channel() noexcept
 
 Close the registered route and clear retained state.
 
-[Source](../../puc-cli/state/channels.hpp#L101)
+[Source](../../puc-cli/state/channels.hpp#L140)
