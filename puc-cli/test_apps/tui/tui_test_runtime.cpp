@@ -328,25 +328,26 @@ class TuiTestApplication final {
     }
 
     constexpr std::string_view kCenterFrameId = "center";
-    status                                    = layout.add_frame(
-        layout_description, std::string{kCenterFrameId},
-        std::make_shared<puc::tui::MessageFrame>(std::string{kCenterFrameId},
-                                                 "+", Theme::ColorTypes::TEXT,
-                                                 Theme::ColorTypes::BACKGROUND),
-        {
-            Layout::make_character_constraint(Layout::ConstraintType::MIN_WIDTH,
-                                                                                 1),
-            Layout::make_character_constraint(Layout::ConstraintType::MAX_WIDTH,
-                                                                                 1),
-            Layout::make_character_constraint(
-                Layout::ConstraintType::MIN_HEIGHT, 1),
-            Layout::make_character_constraint(
-                Layout::ConstraintType::MAX_HEIGHT, 1),
-            Layout::make_character_constraint(
-                Layout::ConstraintType::HORIZONTAL_CENTER, 0),
-            Layout::make_character_constraint(
-                Layout::ConstraintType::VERTICAL_CENTER, 0),
-        });
+    auto center_frame = std::make_shared<puc::tui::MessageFrame>(
+        std::string{kCenterFrameId}, "+", Theme::ColorTypes::TEXT,
+        Theme::ColorTypes::BACKGROUND);
+    status =
+        layout.add_frame(layout_description, std::string{kCenterFrameId},
+                         std::move(center_frame),
+                         {
+                             Layout::make_character_constraint(
+                                 Layout::ConstraintType::MIN_WIDTH, 1),
+                             Layout::make_character_constraint(
+                                 Layout::ConstraintType::MAX_WIDTH, 1),
+                             Layout::make_character_constraint(
+                                 Layout::ConstraintType::MIN_HEIGHT, 1),
+                             Layout::make_character_constraint(
+                                 Layout::ConstraintType::MAX_HEIGHT, 1),
+                             Layout::make_character_constraint(
+                                 Layout::ConstraintType::HORIZONTAL_CENTER, 0),
+                             Layout::make_character_constraint(
+                                 Layout::ConstraintType::VERTICAL_CENTER, 0),
+                         });
     if (!puc::tui::is_ok(status)) {
       return status;
     }
