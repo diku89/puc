@@ -6,7 +6,7 @@ Coordinate CmdFrame editing, completion metadata, and command execution.
 
 The durable controller binds [InputSubsystem](classpuc_1_1app_1_1_input_subsystem.md) and [CommandSubsystem](classpuc_1_1app_1_1_command_subsystem.md) during the one initialized lifetime. Start enables event handling for the current app generation; stop disables entry while preserving completion, result, and editor state so a later start resumes the same interaction. Terminate alone releases that durable state and its registry/frame bindings.
 
-[Source](../../puc-cli/state/command_mode.hpp#L56)
+[Source](../../state/command_mode.hpp#L56)
 
 ## Private data members
 
@@ -20,7 +20,7 @@ std::shared_mutex puc::app::CommandModeSubsystem::mutex_
 
 Synchronizes controller state.
 
-[Source](../../puc-cli/state/command_mode.hpp#L94)
+[Source](../../state/command_mode.hpp#L94)
 
 <a id="symbol-classpuc_1_1app_1_1_command_mode_subsystem_1ad3ec146ebdbc18635e5095b040d09c57"></a>
 
@@ -32,7 +32,7 @@ std::shared_ptr<tui::InputFrame> puc::app::CommandModeSubsystem::input_frame_
 
 Durable frame owned by [InputSubsystem](classpuc_1_1app_1_1_input_subsystem.md).
 
-[Source](../../puc-cli/state/command_mode.hpp#L96)
+[Source](../../state/command_mode.hpp#L96)
 
 <a id="symbol-classpuc_1_1app_1_1_command_mode_subsystem_1ac62bd06f52aa39b538a666496d991725"></a>
 
@@ -44,7 +44,7 @@ command::CommandDispatcher* puc::app::CommandModeSubsystem::dispatcher_
 
 Durable registry owned by [CommandSubsystem](classpuc_1_1app_1_1_command_subsystem.md).
 
-[Source](../../puc-cli/state/command_mode.hpp#L97)
+[Source](../../state/command_mode.hpp#L97)
 
 <a id="symbol-classpuc_1_1app_1_1_command_mode_subsystem_1af1bf8a555abe5ea1ad1be44a70da978a"></a>
 
@@ -56,7 +56,7 @@ AppState* puc::app::CommandModeSubsystem::app_
 
 Current running generation for command args.
 
-[Source](../../puc-cli/state/command_mode.hpp#L99)
+[Source](../../state/command_mode.hpp#L99)
 
 <a id="symbol-classpuc_1_1app_1_1_command_mode_subsystem_1a650cc5db807f9a5309f253800fe95bfb"></a>
 
@@ -68,7 +68,7 @@ std::vector<CommandCompletion> puc::app::CommandModeSubsystem::completions_
 
 Current prefix candidates.
 
-[Source](../../puc-cli/state/command_mode.hpp#L101)
+[Source](../../state/command_mode.hpp#L101)
 
 <a id="symbol-classpuc_1_1app_1_1_command_mode_subsystem_1aa28b67118e9718d0116e820ad78935c5"></a>
 
@@ -80,7 +80,7 @@ std::string puc::app::CommandModeSubsystem::usage_
 
 Exact-command usage text.
 
-[Source](../../puc-cli/state/command_mode.hpp#L102)
+[Source](../../state/command_mode.hpp#L102)
 
 <a id="symbol-classpuc_1_1app_1_1_command_mode_subsystem_1ab3a53b18d3b2eeb006a02f102c3355f0"></a>
 
@@ -92,7 +92,7 @@ std::string puc::app::CommandModeSubsystem::prefix_
 
 Prefix behind candidates.
 
-[Source](../../puc-cli/state/command_mode.hpp#L103)
+[Source](../../state/command_mode.hpp#L103)
 
 <a id="symbol-classpuc_1_1app_1_1_command_mode_subsystem_1a07a28f2a00d181375a100875e6006f94"></a>
 
@@ -104,7 +104,7 @@ std::size_t puc::app::CommandModeSubsystem::selected_completion_
 
 Arrow-selected candidate.
 
-[Source](../../puc-cli/state/command_mode.hpp#L104)
+[Source](../../state/command_mode.hpp#L104)
 
 <a id="symbol-classpuc_1_1app_1_1_command_mode_subsystem_1aecce20087e89c91cc865435f655a17ba"></a>
 
@@ -116,7 +116,7 @@ bool puc::app::CommandModeSubsystem::waiting_for_acknowledgement_
 
 Whether any key should exit.
 
-[Source](../../puc-cli/state/command_mode.hpp#L105)
+[Source](../../state/command_mode.hpp#L105)
 
 <a id="symbol-classpuc_1_1app_1_1_command_mode_subsystem_1ae92a16c6c70502b32f2c38b0c5d09feb"></a>
 
@@ -128,7 +128,7 @@ bool puc::app::CommandModeSubsystem::active_
 
 Whether events are accepted.
 
-[Source](../../puc-cli/state/command_mode.hpp#L107)
+[Source](../../state/command_mode.hpp#L107)
 
 ## Public functions
 
@@ -142,7 +142,7 @@ puc::app::CommandModeSubsystem::CommandModeSubsystem()
 
 Declare input-frame, dispatcher, and built-in catalog dependencies.
 
-[Source](../../puc-cli/state/command_mode.hpp#L59)
+[Source](../../state/command_mode.hpp#L59)
 
 <a id="symbol-classpuc_1_1app_1_1_command_mode_subsystem_1a5bd963916367f6fb73141be5949b072b"></a>
 
@@ -154,7 +154,7 @@ puc::app::CommandModeSubsystem::~CommandModeSubsystem() override
 
 Destroy released controller state.
 
-[Source](../../puc-cli/state/command_mode.hpp#L62)
+[Source](../../state/command_mode.hpp#L62)
 
 <a id="symbol-classpuc_1_1app_1_1_command_mode_subsystem_1a1eddab499ac6b746c982d90199b7a7e7"></a>
 
@@ -166,7 +166,7 @@ Status puc::app::CommandModeSubsystem::initialize(AppState &app) override
 
 Bind the durable command dispatcher and [InputFrame](classpuc_1_1app_1_1_input_frame.md).
 
-[Source](../../puc-cli/state/command_mode.hpp#L65)
+[Source](../../state/command_mode.hpp#L65)
 
 <a id="symbol-classpuc_1_1app_1_1_command_mode_subsystem_1a70ed0be10cf4d581107fa61d1d6d0e83"></a>
 
@@ -178,7 +178,7 @@ Status puc::app::CommandModeSubsystem::start(AppState &app) override
 
 Enable command interaction for one running generation.
 
-[Source](../../puc-cli/state/command_mode.hpp#L68)
+[Source](../../state/command_mode.hpp#L68)
 
 <a id="symbol-classpuc_1_1app_1_1_command_mode_subsystem_1a9cdc552c1b73434271948321f142971a"></a>
 
@@ -190,7 +190,7 @@ Status puc::app::CommandModeSubsystem::stop(AppState &app) noexcept override
 
 Pause command interaction while preserving its durable UI state.
 
-[Source](../../puc-cli/state/command_mode.hpp#L71)
+[Source](../../state/command_mode.hpp#L71)
 
 <a id="symbol-classpuc_1_1app_1_1_command_mode_subsystem_1ad295d60bbbef84b5f737024431ae879f"></a>
 
@@ -202,7 +202,7 @@ Status puc::app::CommandModeSubsystem::terminate(AppState &app) noexcept overrid
 
 Release durable bindings to the dispatcher and frame.
 
-[Source](../../puc-cli/state/command_mode.hpp#L74)
+[Source](../../state/command_mode.hpp#L74)
 
 <a id="symbol-classpuc_1_1app_1_1_command_mode_subsystem_1a098ee5374e31ba0dfe3a7dfbfcd496f5"></a>
 
@@ -214,7 +214,7 @@ tui::Status puc::app::CommandModeSubsystem::handle_event(const terminal::Event &
 
 Route one event through command-mode behavior or ordinary [InputFrame](classpuc_1_1app_1_1_input_frame.md).
 
-[Source](../../puc-cli/state/command_mode.hpp#L77)
+[Source](../../state/command_mode.hpp#L77)
 
 <a id="symbol-classpuc_1_1app_1_1_command_mode_subsystem_1abcf42aa6a330593e4aa9c96924e8f54f"></a>
 
@@ -226,7 +226,7 @@ CommandModeSnapshot puc::app::CommandModeSubsystem::snapshot() const
 
 Return a consistent copy of completion and execution state.
 
-[Source](../../puc-cli/state/command_mode.hpp#L82)
+[Source](../../state/command_mode.hpp#L82)
 
 ## Private functions
 
@@ -240,7 +240,7 @@ void puc::app::CommandModeSubsystem::refresh_help()
 
 Recompute prefix candidates, usage, and visible help rows.
 
-[Source](../../puc-cli/state/command_mode.hpp#L86)
+[Source](../../state/command_mode.hpp#L86)
 
 <a id="symbol-classpuc_1_1app_1_1_command_mode_subsystem_1aadc0c735674fc70f81eeb05086f66a16"></a>
 
@@ -252,7 +252,7 @@ tui::Status puc::app::CommandModeSubsystem::autocomplete()
 
 Complete the currently selected or sole command spelling.
 
-[Source](../../puc-cli/state/command_mode.hpp#L89)
+[Source](../../state/command_mode.hpp#L89)
 
 <a id="symbol-classpuc_1_1app_1_1_command_mode_subsystem_1ae75453ab8f07acc4dda2998d1fa05553"></a>
 
@@ -264,4 +264,4 @@ tui::Status puc::app::CommandModeSubsystem::dispatch()
 
 Dispatch the current command buffer and enter acknowledgement state.
 
-[Source](../../puc-cli/state/command_mode.hpp#L92)
+[Source](../../state/command_mode.hpp#L92)

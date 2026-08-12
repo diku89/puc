@@ -6,7 +6,7 @@ Lifecycle-owned terminal input conformance runtime.
 
 This runtime complements `puc-cli/tui/test-app.cpp`. The TUI test app validates presentation; this code reuses its Screen, Canvas, Layout, ZBuffer, Theme, ParallelRenderer, four-worker ownership, resize handling, and small-screen behavior as a trusted interface around the real terminal input stack. TerminalSubsystem reads and decodes bytes with the runtime-configured terminfo/TOML Trie, then publishes normalized terminal Events for this application to match.
 
-Run `bazel run //puc-cli/terminal:terminal-test` in a real terminal for the complete plan. Append `-- --list` to inspect stable test names without entering terminal mode, or `-- --test clipboard-paste` to execute only the named check.
+Run `bazel run //puc-cli/tui/terminal:terminal-test` in a real terminal for the complete plan. Append `-- --list` to inspect stable test names without entering terminal mode, or `-- --test clipboard-paste` to execute only the named check.
 
 The central box shows one of fourteen actions and a fifteen-heartbeat countdown. A correct event turns the border green briefly; a timeout turns it red and advances. The top-right panel identifies the selected terminal environment. Mouse tracking, focus reporting, and bracketed paste are enabled only for this reversible alternate-screen session. After the final check, the terminal is restored before a durable pass/timeout report is printed.
 
@@ -16,7 +16,7 @@ The file-drop check records the portable fallback exposed by most terminal emula
 
 `PUC_CONFIG_ROOT` may select the primary configuration directory and `PUC_USER_CONFIG_ROOT` its user-overlay directory. Without them, the program locates Bazel's `input_keys.toml` runfile and uses no user overlay.
 
-[Source](../../puc-cli/terminal/terminal_test_runtime.cpp)
+[Source](../../puc-cli/tui/terminal/terminal_test_runtime.cpp)
 
 ## Related symbols
 

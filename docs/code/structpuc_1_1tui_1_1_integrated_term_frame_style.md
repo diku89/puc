@@ -4,7 +4,7 @@
 
 Semantic colors for default terminal cells and the terminal caret.
 
-[Source](../../puc-cli/tui/integrated_term_frame.hpp#L28)
+[Source](../../puc-cli/tui/frames/integrated_term_frame.hpp#L28)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ Theme::ColorTypes puc::tui::IntegratedTermFrameStyle::text_color
 
 Default terminal foreground.
 
-[Source](../../puc-cli/tui/integrated_term_frame.hpp#L29)
+[Source](../../puc-cli/tui/frames/integrated_term_frame.hpp#L29)
 
 <a id="symbol-structpuc_1_1tui_1_1_integrated_term_frame_style_1a454f39862a3b6bd491d9159b386fa62c"></a>
 
@@ -30,7 +30,7 @@ Theme::ColorTypes puc::tui::IntegratedTermFrameStyle::background_color
 
 Default terminal background.
 
-[Source](../../puc-cli/tui/integrated_term_frame.hpp#L31)
+[Source](../../puc-cli/tui/frames/integrated_term_frame.hpp#L31)
 
 <a id="symbol-structpuc_1_1tui_1_1_integrated_term_frame_style_1a00b35a43d67fae97a3309eb6b1c76b1b"></a>
 
@@ -42,4 +42,4 @@ Theme::ColorTypes puc::tui::IntegratedTermFrameStyle::cursor_color
 
 Terminal caret background.
 
-[Source](../../puc-cli/tui/integrated_term_frame.hpp#L33)
+[Source](../../puc-cli/tui/frames/integrated_term_frame.hpp#L33)

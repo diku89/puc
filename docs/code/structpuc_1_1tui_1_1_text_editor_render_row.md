@@ -4,7 +4,7 @@
 
 One visible row created by wrapping a logical source line.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L63)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L63)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::size_t puc::tui::TextEditorRenderRow::logical_line
 
 Zero-based source line.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L64)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L64)
 
 <a id="symbol-structpuc_1_1tui_1_1_text_editor_render_row_1a73581c518844698283d2bd745711d8d2"></a>
 
@@ -30,7 +30,7 @@ std::size_t puc::tui::TextEditorRenderRow::first_character
 
 Source offset of the first cell.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L65)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L65)
 
 <a id="symbol-structpuc_1_1tui_1_1_text_editor_render_row_1acf9fc4150a135327fed28d7746cb8ea8"></a>
 
@@ -42,7 +42,7 @@ bool puc::tui::TextEditorRenderRow::first_visual_row
 
 Whether annotations belong here.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L66)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L66)
 
 <a id="symbol-structpuc_1_1tui_1_1_text_editor_render_row_1ab2b27dea972138f7c7de113fd36c0ae7"></a>
 
@@ -54,4 +54,4 @@ std::vector<TextEditorRenderCell> puc::tui::TextEditorRenderRow::cells
 
 Visible source characters.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L67)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L67)

@@ -4,7 +4,7 @@
 
 Property-backed application theme lifecycle implementation.
 
-[Source](../../puc-cli/state/theme.cpp)
+[Source](../../state/theme.cpp)
 
 ## Related symbols
 

@@ -4,7 +4,7 @@
 
 [Frame](classpuc_1_1tui_1_1_frame.md) contract required by the annotation decorator.
 
-[Source](../../puc-cli/tui/annotated_text_frame.hpp#L25)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.hpp#L25)
 
 ## Public functions
 
@@ -18,7 +18,7 @@ puc::tui::AnnotatedTextSource::~AnnotatedTextSource() override=default
 
 Destroy a source through the annotation interface.
 
-[Source](../../puc-cli/tui/annotated_text_frame.hpp#L30)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.hpp#L30)
 
 <a id="symbol-classpuc_1_1tui_1_1_annotated_text_source_1a5bb87ebcfd29a6e71520b6dffca89b3e"></a>
 
@@ -30,7 +30,7 @@ virtual std::size_t puc::tui::AnnotatedTextSource::logical_line_count() const no
 
 Return zero for pristine input, otherwise the logical line count.
 
-[Source](../../puc-cli/tui/annotated_text_frame.hpp#L33)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.hpp#L33)
 
 <a id="symbol-classpuc_1_1tui_1_1_annotated_text_source_1aa0df66b3b7cac048b37354600e8d3011"></a>
 
@@ -42,7 +42,7 @@ virtual std::vector< AnnotatedTextRow > puc::tui::AnnotatedTextSource::visible_t
 
 Return rows visible during the most recent successful draw.
 
-[Source](../../puc-cli/tui/annotated_text_frame.hpp#L36)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.hpp#L36)
 
 <a id="symbol-classpuc_1_1tui_1_1_annotated_text_source_1ac8f4ebdbee8a81bd61ebd334fe93ff23"></a>
 
@@ -58,4 +58,4 @@ Construct a named frame.
 
 - `name` (in) — Human-readable frame name available to derived classes.
 
-[Source](../../puc-cli/tui/annotated_text_frame.hpp#L27)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.hpp#L27)

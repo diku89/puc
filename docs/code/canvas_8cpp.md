@@ -4,7 +4,7 @@
 
 Canvas transaction, bounds-validation, and buffer-swap implementation.
 
-[Source](../../puc-cli/tui/canvas.cpp)
+[Source](../../puc-cli/tui/rendering/canvas.cpp)
 
 ## Related symbols
 

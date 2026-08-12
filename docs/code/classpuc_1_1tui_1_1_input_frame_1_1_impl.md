@@ -4,7 +4,7 @@
 
 Synchronized mode coordinator and its independently reusable child frames.
 
-[Source](../../puc-cli/tui/input_frame.cpp#L117)
+[Source](../../puc-cli/tui/frames/input_frame.cpp#L117)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::shared_mutex tui::InputFrame::Impl::mutex
 
 Synchronizes mode and Escape state.
 
-[Source](../../puc-cli/tui/input_frame.cpp#L299)
+[Source](../../puc-cli/tui/frames/input_frame.cpp#L299)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1_1_impl_1ac007f4b6ac54e351b8be1191eb63dc6a"></a>
 
@@ -30,7 +30,7 @@ std::shared_ptr<TextInputFrame> tui::InputFrame::Impl::normal_input
 
 Preserved normal editor.
 
-[Source](../../puc-cli/tui/input_frame.cpp#L300)
+[Source](../../puc-cli/tui/frames/input_frame.cpp#L300)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1_1_impl_1abbc2e14fd87f2643690214073fc62e86"></a>
 
@@ -42,7 +42,7 @@ std::shared_ptr<AnnotatedTextFrame> tui::InputFrame::Impl::normal_annotated
 
 Numbered normal editor.
 
-[Source](../../puc-cli/tui/input_frame.cpp#L302)
+[Source](../../puc-cli/tui/frames/input_frame.cpp#L302)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1_1_impl_1a447d2ae8d110c39985369805a388edd9"></a>
 
@@ -54,7 +54,7 @@ std::shared_ptr<CmdFrame> tui::InputFrame::Impl::command
 
 Disposable green command view.
 
-[Source](../../puc-cli/tui/input_frame.cpp#L303)
+[Source](../../puc-cli/tui/frames/input_frame.cpp#L303)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1_1_impl_1ad5f4783db8495cf8c422c917b5b6167a"></a>
 
@@ -66,7 +66,7 @@ std::shared_ptr<IntegratedTermFrame> tui::InputFrame::Impl::terminal
 
 Persistent libtmt view.
 
-[Source](../../puc-cli/tui/input_frame.cpp#L304)
+[Source](../../puc-cli/tui/frames/input_frame.cpp#L304)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1_1_impl_1a015c70a70e3f3509a4d7033fe1068ef6"></a>
 
@@ -78,7 +78,7 @@ std::shared_ptr<BoundingFrame> tui::InputFrame::Impl::normal_bounding
 
 White normal box.
 
-[Source](../../puc-cli/tui/input_frame.cpp#L305)
+[Source](../../puc-cli/tui/frames/input_frame.cpp#L305)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1_1_impl_1a686489fb442ec090ed5b7283f1856989"></a>
 
@@ -90,7 +90,7 @@ std::shared_ptr<BoundingFrame> tui::InputFrame::Impl::command_bounding
 
 Green command box.
 
-[Source](../../puc-cli/tui/input_frame.cpp#L306)
+[Source](../../puc-cli/tui/frames/input_frame.cpp#L306)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1_1_impl_1af10b3acc5229a522cb05a64207e0fd26"></a>
 
@@ -102,7 +102,7 @@ std::shared_ptr<BoundingFrame> tui::InputFrame::Impl::terminal_bounding
 
 Purple terminal box.
 
-[Source](../../puc-cli/tui/input_frame.cpp#L307)
+[Source](../../puc-cli/tui/frames/input_frame.cpp#L307)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1_1_impl_1a9e90085af74cf6e39d67b1c754a6d160"></a>
 
@@ -114,7 +114,7 @@ InputMode tui::InputFrame::Impl::mode
 
 Active composed view.
 
-[Source](../../puc-cli/tui/input_frame.cpp#L308)
+[Source](../../puc-cli/tui/frames/input_frame.cpp#L308)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1_1_impl_1ad81c43f43eacde6cbb55bbae05ec6854"></a>
 
@@ -126,7 +126,7 @@ std::atomic_bool tui::InputFrame::Impl::terminal_visible
 
 Lock-free capability state.
 
-[Source](../../puc-cli/tui/input_frame.cpp#L309)
+[Source](../../puc-cli/tui/frames/input_frame.cpp#L309)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1_1_impl_1a5e7089e58169e05fb3eaaa9e21784d81"></a>
 
@@ -138,7 +138,7 @@ std::optional<Clock::time_point> tui::InputFrame::Impl::escape_started
 
 Time at which the first Escape arrived.
 
-[Source](../../puc-cli/tui/input_frame.cpp#L311)
+[Source](../../puc-cli/tui/frames/input_frame.cpp#L311)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1_1_impl_1a11aef60c3f97cf012b7c484937c4ba10"></a>
 
@@ -150,7 +150,7 @@ std::string tui::InputFrame::Impl::notification
 
 UTF-8 notification-margin contents.
 
-[Source](../../puc-cli/tui/input_frame.cpp#L312)
+[Source](../../puc-cli/tui/frames/input_frame.cpp#L312)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1_1_impl_1a3fd8f2018900f253d6109cecd7afb294"></a>
 
@@ -162,7 +162,7 @@ std::vector<std::string> tui::InputFrame::Impl::command_help
 
 Completion/usage rows above command input.
 
-[Source](../../puc-cli/tui/input_frame.cpp#L314)
+[Source](../../puc-cli/tui/frames/input_frame.cpp#L314)
 
 ## Public functions
 
@@ -174,7 +174,7 @@ Completion/usage rows above command input.
 tui::InputFrame::Impl::Impl()
 ```
 
-[Source](../../puc-cli/tui/input_frame.cpp#L119)
+[Source](../../puc-cli/tui/frames/input_frame.cpp#L119)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1_1_impl_1a557f566aee8c2dfc0cfccf8aaaa3c3f6"></a>
 
@@ -186,7 +186,7 @@ bool tui::InputFrame::Impl::paste_in_progress() const
 
 Return whether the active editor has a paste transaction.
 
-[Source](../../puc-cli/tui/input_frame.cpp#L144)
+[Source](../../puc-cli/tui/frames/input_frame.cpp#L144)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1_1_impl_1a0c3db8a11e2f5e2208c6bb17ed921911"></a>
 
@@ -198,7 +198,7 @@ Status tui::InputFrame::Impl::route_editor_event(const terminal::Event &event)
 
 Route one event to the active editable child.
 
-[Source](../../puc-cli/tui/input_frame.cpp#L153)
+[Source](../../puc-cli/tui/frames/input_frame.cpp#L153)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1_1_impl_1ab7ef5528cdc471401083ee8c460d1551"></a>
 
@@ -210,7 +210,7 @@ TextEditorSnapshot tui::InputFrame::Impl::active_editor_snapshot() const
 
 Return the state of the active or preserved normal editor.
 
-[Source](../../puc-cli/tui/input_frame.cpp#L159)
+[Source](../../puc-cli/tui/frames/input_frame.cpp#L159)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1_1_impl_1a5ee4e858f090464e9b90884ad2c50b03"></a>
 
@@ -222,7 +222,7 @@ std::shared_ptr< BoundingFrame > tui::InputFrame::Impl::active_bounding() const 
 
 Return the active complete decorated view.
 
-[Source](../../puc-cli/tui/input_frame.cpp#L165)
+[Source](../../puc-cli/tui/frames/input_frame.cpp#L165)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1_1_impl_1afb563964d47bf20f83e98bec78f822b9"></a>
 
@@ -234,7 +234,7 @@ void tui::InputFrame::Impl::enter_command_mode()
 
 Enter a fresh disposable command editor.
 
-[Source](../../puc-cli/tui/input_frame.cpp#L178)
+[Source](../../puc-cli/tui/frames/input_frame.cpp#L178)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1_1_impl_1a149d6ce0a2497f5933d942af9c04628a"></a>
 
@@ -246,7 +246,7 @@ void tui::InputFrame::Impl::enter_terminal_mode()
 
 Show the terminal and request a PTY owner when necessary.
 
-[Source](../../puc-cli/tui/input_frame.cpp#L186)
+[Source](../../puc-cli/tui/frames/input_frame.cpp#L186)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1_1_impl_1abcc3f75eefcd18f620f3100c62291d5a"></a>
 
@@ -258,7 +258,7 @@ Status tui::InputFrame::Impl::apply_command(terminal::Command input_command)
 
 Apply a high-level mode or editor command.
 
-[Source](../../puc-cli/tui/input_frame.cpp#L194)
+[Source](../../puc-cli/tui/frames/input_frame.cpp#L194)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1_1_impl_1a7052e52ed161e2d41cbf0550c6840745"></a>
 
@@ -270,7 +270,7 @@ void tui::InputFrame::Impl::handle_escape(Clock::time_point now, bool decoder_do
 
 Recognize one Escape or a decoder-normalized double Escape.
 
-[Source](../../puc-cli/tui/input_frame.cpp#L213)
+[Source](../../puc-cli/tui/frames/input_frame.cpp#L213)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1_1_impl_1ade1e392e1fd295a238dc107debfb07f3"></a>
 
@@ -282,7 +282,7 @@ Status tui::InputFrame::Impl::handle_committed_text(std::string_view text, Clock
 
 Insert committed text while recognizing Escape mode fallbacks.
 
-[Source](../../puc-cli/tui/input_frame.cpp#L234)
+[Source](../../puc-cli/tui/frames/input_frame.cpp#L234)
 
 <a id="symbol-classpuc_1_1tui_1_1_input_frame_1_1_impl_1a911f7c75252a218eddfeadc69210b86d"></a>
 
@@ -294,4 +294,4 @@ Status tui::InputFrame::Impl::handle_key(const terminal::KeyEvent &event, Clock:
 
 Apply one decoded key with Escape chords handled above the editor model.
 
-[Source](../../puc-cli/tui/input_frame.cpp#L259)
+[Source](../../puc-cli/tui/frames/input_frame.cpp#L259)

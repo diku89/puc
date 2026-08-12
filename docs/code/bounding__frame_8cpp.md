@@ -4,7 +4,7 @@
 
 Colored bounding-box decorator implementation.
 
-[Source](../../puc-cli/tui/bounding_frame.cpp)
+[Source](../../puc-cli/tui/frames/bounding_frame.cpp)
 
 ## Related symbols
 

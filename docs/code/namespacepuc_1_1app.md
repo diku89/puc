@@ -62,7 +62,7 @@ Runtime profile selected before subsystem initialization begins.
 - <a id="symbol-lifecycle_8hpp_1ac1bcb8c4d0e4197f74a9454d0cdcabe0a7a986decd17c08272fa8e9ec93b1bb0a"></a>`TUI` — Interactive terminal user interface.
 - <a id="symbol-lifecycle_8hpp_1ac1bcb8c4d0e4197f74a9454d0cdcabe0a033bd94b1168d7e4f0d644c3c95e35bf"></a>`TEST` — Deterministic test-oriented application composition.
 
-[Source](../../puc-cli/state/lifecycle.hpp#L13)
+[Source](../../state/lifecycle.hpp#L13)
 
 <a id="symbol-lifecycle_8hpp_1a2f9d14f0bc41b83212de7d6b1c4cdfd1"></a>
 
@@ -86,7 +86,7 @@ Complete state of the application subsystem lifecycle.
 - <a id="symbol-lifecycle_8hpp_1a2f9d14f0bc41b83212de7d6b1c4cdfd1a9d725163e44a2e9cf094059c0abfdef1"></a>`TERMINATED` — Final durable state release has completed exactly once.
 - <a id="symbol-lifecycle_8hpp_1a2f9d14f0bc41b83212de7d6b1c4cdfd1a9c51674930e03c276344d19f9e4398fb"></a>`CRASHED` — A lifecycle hook or dependency contract failed.
 
-[Source](../../puc-cli/state/lifecycle.hpp#L19)
+[Source](../../state/lifecycle.hpp#L19)
 
 <a id="symbol-lifecycle_8hpp_1a01c86981579ba6b89336774973c68d60"></a>
 
@@ -112,7 +112,7 @@ Result of subsystem registration and lifecycle orchestration.
 - <a id="symbol-lifecycle_8hpp_1a01c86981579ba6b89336774973c68d60ab28813fe6ace790a3b2e04cf857cda48"></a>`SUBSYSTEM_FAILURE` — A subsystem lifecycle hook failed.
 - <a id="symbol-lifecycle_8hpp_1a01c86981579ba6b89336774973c68d60ae8c0c70879b5895c615677261d64a1ee"></a>`INTERNAL_ERROR` — Lifecycle infrastructure failed.
 
-[Source](../../puc-cli/state/lifecycle.hpp#L33)
+[Source](../../state/lifecycle.hpp#L33)
 
 ## Type aliases
 
@@ -126,7 +126,7 @@ using puc::app::SubsystemId = std::type_index
 
 Concrete C++ type used as one stable subsystem identity.
 
-[Source](../../puc-cli/state/state.hpp#L29)
+[Source](../../state/state.hpp#L29)
 
 ## Variables
 
@@ -140,7 +140,7 @@ std::size_t puc::app::kApplicationSubsystemCount
 
 Number of concrete adapters in the complete default production graph.
 
-[Source](../../puc-cli/state/bootstrap.hpp#L31)
+[Source](../../state/bootstrap.hpp#L31)
 
 ## Functions
 
@@ -158,7 +158,7 @@ Registration is root-to-leaf for readability, although [AppState](classpuc_1_1ap
 
 **Returns:** [Status::OK](#symbol-lifecycle_8hpp_1a01c86981579ba6b89336774973c68d60ae0aa021e21dddbd6d8cecec71e9cf564), [Status::INVALID\_ARGUMENT](#symbol-lifecycle_8hpp_1a01c86981579ba6b89336774973c68d60af295a0c3e37c94f078e1c5476479132d) for a nonempty [AppState](classpuc_1_1app_1_1_app_state.md), or an unexpected registration failure.
 
-[Source](../../puc-cli/state/bootstrap.cpp#L31)
+[Source](../../state/bootstrap.cpp#L31)
 
 <a id="symbol-bootstrap_8hpp_1a77eff784c7ddbc35f6e049ec742ed604"></a>
 
@@ -170,7 +170,7 @@ std::size_t puc::app::application_subsystem_count(const ApplicationSubsystemSele
 
 Return the number of adapters selected by one executable profile.
 
-[Source](../../puc-cli/state/bootstrap.hpp#L34)
+[Source](../../state/bootstrap.hpp#L34)
 
 <a id="symbol-lifecycle_8hpp_1a4b70db1608e49fb1b3c00c6b9f30ecbe"></a>
 
@@ -182,7 +182,7 @@ bool puc::app::is_ok(Status status) noexcept
 
 Return whether an application lifecycle operation succeeded.
 
-[Source](../../puc-cli/state/lifecycle.hpp#L49)
+[Source](../../state/lifecycle.hpp#L49)
 
 <a id="symbol-lifecycle_8hpp_1a91230b086cef56f28b56269d1303a7ca"></a>
 
@@ -194,7 +194,7 @@ std::string_view puc::app::status_message(Status status) noexcept
 
 Return stable human-readable text for an application lifecycle result.
 
-[Source](../../puc-cli/state/lifecycle.hpp#L52)
+[Source](../../state/lifecycle.hpp#L52)
 
 <a id="symbol-state_8hpp_1adf66395e6354437c6e6941040ecaae82"></a>
 
@@ -206,4 +206,4 @@ std::vector< SubsystemId > puc::app::subsystem_dependencies()
 
 Build a concrete dependency list without spelling std::type\_index.
 
-[Source](../../puc-cli/state/state.hpp#L87)
+[Source](../../state/state.hpp#L87)

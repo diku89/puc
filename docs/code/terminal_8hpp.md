@@ -4,7 +4,7 @@
 
 Lifecycle adapter for terminal transport and input decoding.
 
-[Source](../../puc-cli/state/terminal.hpp)
+[Source](../../state/terminal.hpp)
 
 ## Related symbols
 

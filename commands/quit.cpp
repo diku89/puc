@@ -8,7 +8,7 @@
 #include <span>
 #include <string>
 
-#include "puc-cli/state/application_control.hpp"
+#include "state/application_control.hpp"
 
 namespace puc::command {
 

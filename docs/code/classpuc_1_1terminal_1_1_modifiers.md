@@ -4,7 +4,7 @@
 
 Small value type containing zero or more [Modifier](namespacepuc_1_1terminal.md#symbol-event_8hpp_1acc192d99fd878bd9881317983b59cd1a) bits.
 
-[Source](../../puc-cli/terminal/event.hpp#L168)
+[Source](../../puc-cli/tui/terminal/event.hpp#L168)
 
 ## Private data members
 
@@ -18,7 +18,7 @@ std::uint16_t puc::terminal::Modifiers::bits_
 
 Protocol-independent modifier mask.
 
-[Source](../../puc-cli/terminal/event.hpp#L202)
+[Source](../../puc-cli/tui/terminal/event.hpp#L202)
 
 ## Public functions
 
@@ -32,7 +32,7 @@ puc::terminal::Modifiers::Modifiers() noexcept=default
 
 Construct an empty modifier set.
 
-[Source](../../puc-cli/terminal/event.hpp#L171)
+[Source](../../puc-cli/tui/terminal/event.hpp#L171)
 
 <a id="symbol-classpuc_1_1terminal_1_1_modifiers_1a33bbf60506b591b8f88d8c7fd5a420e6"></a>
 
@@ -44,7 +44,7 @@ puc::terminal::Modifiers::Modifiers(Modifier modifier) noexcept
 
 Construct a set containing one modifier.
 
-[Source](../../puc-cli/terminal/event.hpp#L174)
+[Source](../../puc-cli/tui/terminal/event.hpp#L174)
 
 <a id="symbol-classpuc_1_1terminal_1_1_modifiers_1a59e3628604e66acf59b11a6a9cb86908"></a>
 
@@ -56,7 +56,7 @@ std::uint16_t puc::terminal::Modifiers::bits() const noexcept
 
 Return the contained modifier bit field.
 
-[Source](../../puc-cli/terminal/event.hpp#L183)
+[Source](../../puc-cli/tui/terminal/event.hpp#L183)
 
 <a id="symbol-classpuc_1_1terminal_1_1_modifiers_1af3a67649440917d2aab48af473cd9b7e"></a>
 
@@ -68,7 +68,7 @@ bool puc::terminal::Modifiers::contains(Modifier modifier) const noexcept
 
 Test whether a modifier is present.
 
-[Source](../../puc-cli/terminal/event.hpp#L186)
+[Source](../../puc-cli/tui/terminal/event.hpp#L186)
 
 <a id="symbol-classpuc_1_1terminal_1_1_modifiers_1a6e28c598c3fd91cf82a3d0d00f246d58"></a>
 
@@ -80,7 +80,7 @@ Modifiers & puc::terminal::Modifiers::add(Modifier modifier) noexcept
 
 Add one modifier to this set.
 
-[Source](../../puc-cli/terminal/event.hpp#L191)
+[Source](../../puc-cli/tui/terminal/event.hpp#L191)
 
 <a id="symbol-classpuc_1_1terminal_1_1_modifiers_1a8a814bfdf5bc13d0960eb0c9db0e4939"></a>
 
@@ -92,7 +92,7 @@ bool puc::terminal::Modifiers::operator==(const Modifiers &) const noexcept=defa
 
 Compare normalized modifier bit fields.
 
-[Source](../../puc-cli/terminal/event.hpp#L197)
+[Source](../../puc-cli/tui/terminal/event.hpp#L197)
 
 ## Public static functions
 
@@ -106,7 +106,7 @@ static constexpr Modifiers puc::terminal::Modifiers::from_bits(std::uint16_t bit
 
 Construct a set from protocol-normalized modifier bits.
 
-[Source](../../puc-cli/terminal/event.hpp#L178)
+[Source](../../puc-cli/tui/terminal/event.hpp#L178)
 
 ## Private functions
 
@@ -118,4 +118,4 @@ Construct a set from protocol-normalized modifier bits.
 puc::terminal::Modifiers::Modifiers(std::uint16_t bits) noexcept
 ```
 
-[Source](../../puc-cli/terminal/event.hpp#L200)
+[Source](../../puc-cli/tui/terminal/event.hpp#L200)

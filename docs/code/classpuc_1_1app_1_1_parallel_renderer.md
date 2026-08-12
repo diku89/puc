@@ -8,7 +8,7 @@ Render a ZBuffer through a reusable dependency graph on a borrowed pool.
 
 The LayoutDescription, AbsoluteLayout, [Theme](classpuc_1_1app_1_1_theme.md), and [Canvas](classpuc_1_1app_1_1_canvas.md) must remain alive and unmodified until `wait()` returns. Concrete frames capture their own typed application state and may observe different state versions.
 
-[Source](../../puc-cli/tui/renderer.hpp#L35)
+[Source](../../puc-cli/tui/rendering/renderer.hpp#L35)
 
 ## Related symbols
 
@@ -26,7 +26,7 @@ std::unique_ptr<Impl> puc::tui::ParallelRenderer::impl_
 
 Batch coordination hidden from consumers.
 
-[Source](../../puc-cli/tui/renderer.hpp#L84)
+[Source](../../puc-cli/tui/rendering/renderer.hpp#L84)
 
 ## Public functions
 
@@ -42,7 +42,7 @@ Borrow the fixed worker pool used for frame jobs and IPC delivery.
 
 The caller must keep the pool alive and accepting jobs through renderer destruction. [ParallelRenderer](#) never stops or joins it.
 
-[Source](../../puc-cli/tui/renderer.hpp#L43)
+[Source](../../puc-cli/tui/rendering/renderer.hpp#L43)
 
 <a id="symbol-classpuc_1_1app_1_1_parallel_renderer_1afca291365dc3f717f47ba1c116f07829"></a>
 
@@ -52,7 +52,7 @@ The caller must keep the pool alive and accepting jobs through renderer destruct
 puc::tui::ParallelRenderer::ParallelRenderer(const ParallelRenderer &)=delete
 ```
 
-[Source](../../puc-cli/tui/renderer.hpp#L45)
+[Source](../../puc-cli/tui/rendering/renderer.hpp#L45)
 
 <a id="symbol-classpuc_1_1app_1_1_parallel_renderer_1a1dbb4a8d72882e14c59ffe04ae121f92"></a>
 
@@ -62,7 +62,7 @@ puc::tui::ParallelRenderer::ParallelRenderer(const ParallelRenderer &)=delete
 puc::tui::ParallelRenderer::ParallelRenderer(ParallelRenderer &&)=delete
 ```
 
-[Source](../../puc-cli/tui/renderer.hpp#L47)
+[Source](../../puc-cli/tui/rendering/renderer.hpp#L47)
 
 <a id="symbol-classpuc_1_1app_1_1_parallel_renderer_1af884390dba51c3629248378acd157bf0"></a>
 
@@ -72,7 +72,7 @@ puc::tui::ParallelRenderer::ParallelRenderer(ParallelRenderer &&)=delete
 ParallelRenderer & puc::tui::ParallelRenderer::operator=(const ParallelRenderer &)=delete
 ```
 
-[Source](../../puc-cli/tui/renderer.hpp#L46)
+[Source](../../puc-cli/tui/rendering/renderer.hpp#L46)
 
 <a id="symbol-classpuc_1_1app_1_1_parallel_renderer_1a0e9f4258fbbb974d3a2fdea46f221ba2"></a>
 
@@ -82,7 +82,7 @@ ParallelRenderer & puc::tui::ParallelRenderer::operator=(const ParallelRenderer 
 ParallelRenderer & puc::tui::ParallelRenderer::operator=(ParallelRenderer &&)=delete
 ```
 
-[Source](../../puc-cli/tui/renderer.hpp#L48)
+[Source](../../puc-cli/tui/rendering/renderer.hpp#L48)
 
 <a id="symbol-classpuc_1_1app_1_1_parallel_renderer_1adea7c195a616c2d9c44c864d9d718042"></a>
 
@@ -94,7 +94,7 @@ puc::tui::ParallelRenderer::~ParallelRenderer()
 
 Wait for an active batch before releasing renderer state.
 
-[Source](../../puc-cli/tui/renderer.hpp#L51)
+[Source](../../puc-cli/tui/rendering/renderer.hpp#L51)
 
 <a id="symbol-classpuc_1_1app_1_1_parallel_renderer_1a6f036c0c0c7d7cc7ff99e81b0f2db62d"></a>
 
@@ -110,7 +110,7 @@ A supplied `base_cell` clears the writable image before frame jobs begin; an abs
 
 **Returns:** [Status::OK](namespacepuc_1_1app.md#symbol-lifecycle_8hpp_1a01c86981579ba6b89336774973c68d60ae0aa021e21dddbd6d8cecec71e9cf564) once the batch is scheduled, an argument/Canvas/layout validation error before scheduling, or Status::FRAME\_ALREADY\_IN\_PROGRESS when `wait()` has not consumed the previous batch. Frame and scheduling failures are reported by `wait()` after all scheduled work has quiesced.
 
-[Source](../../puc-cli/tui/renderer.hpp#L68)
+[Source](../../puc-cli/tui/rendering/renderer.hpp#L68)
 
 <a id="symbol-classpuc_1_1app_1_1_parallel_renderer_1a912c8474e120f7ae7e92cf367d145377"></a>
 
@@ -122,7 +122,7 @@ Status puc::tui::ParallelRenderer::wait() noexcept
 
 Wait for the current batch and return its aggregate publication status.
 
-[Source](../../puc-cli/tui/renderer.hpp#L74)
+[Source](../../puc-cli/tui/rendering/renderer.hpp#L74)
 
 <a id="symbol-classpuc_1_1app_1_1_parallel_renderer_1aeee7f3fa3c2b4b70ba8f468fe2b862bb"></a>
 
@@ -134,7 +134,7 @@ bool puc::tui::ParallelRenderer::active() const noexcept
 
 Return whether a batch exists whose result has not yet been consumed.
 
-[Source](../../puc-cli/tui/renderer.hpp#L77)
+[Source](../../puc-cli/tui/rendering/renderer.hpp#L77)
 
 <a id="symbol-classpuc_1_1app_1_1_parallel_renderer_1a06e7f4cd86cb525f5c4e05af6c4d8a01"></a>
 
@@ -146,4 +146,4 @@ std::size_t puc::tui::ParallelRenderer::worker_count() const noexcept
 
 Return the number of threads in the borrowed worker pool.
 
-[Source](../../puc-cli/tui/renderer.hpp#L80)
+[Source](../../puc-cli/tui/rendering/renderer.hpp#L80)

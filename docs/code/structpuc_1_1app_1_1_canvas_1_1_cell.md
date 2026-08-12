@@ -6,7 +6,7 @@ One terminal character cell and its complete rendering attributes.
 
 Colors use packed `0xRRGGBB` true-color values. `character` is one Unicode scalar value; display width is interpreted by the terminal renderer.
 
-[Source](../../puc-cli/tui/canvas.hpp#L42)
+[Source](../../puc-cli/tui/rendering/canvas.hpp#L42)
 
 ## Public data members
 
@@ -20,7 +20,7 @@ char32_t puc::tui::Canvas::Cell::character
 
 Unicode character to be displayed.
 
-[Source](../../puc-cli/tui/canvas.hpp#L43)
+[Source](../../puc-cli/tui/rendering/canvas.hpp#L43)
 
 <a id="symbol-structpuc_1_1app_1_1_canvas_1_1_cell_1a5d6ea2615d440bd56e6c70ca28ac9483"></a>
 
@@ -32,7 +32,7 @@ uint32_t puc::tui::Canvas::Cell::foreground_color
 
 Foreground color in RGB format.
 
-[Source](../../puc-cli/tui/canvas.hpp#L44)
+[Source](../../puc-cli/tui/rendering/canvas.hpp#L44)
 
 <a id="symbol-structpuc_1_1app_1_1_canvas_1_1_cell_1a7349febb28b74fab8ae7048fd2750c2b"></a>
 
@@ -44,4 +44,4 @@ uint32_t puc::tui::Canvas::Cell::background_color
 
 Background color in RGB format.
 
-[Source](../../puc-cli/tui/canvas.hpp#L45)
+[Source](../../puc-cli/tui/rendering/canvas.hpp#L45)

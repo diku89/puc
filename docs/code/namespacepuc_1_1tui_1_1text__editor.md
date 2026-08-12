@@ -4,7 +4,7 @@
 
 UTF-8 and lexical helpers shared by editor-like views.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L120)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L120)
 
 ## Functions
 
@@ -18,7 +18,7 @@ void puc::tui::text_editor::append_utf8(char32_t character, std::string &output)
 
 Append one valid Unicode scalar as UTF-8, replacing invalid scalars.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L122)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L122)
 
 <a id="symbol-namespacepuc_1_1tui_1_1text__editor_1a074fb7ae2c32cff0c3e34aca206b52c4"></a>
 
@@ -30,7 +30,7 @@ std::u32string puc::tui::text_editor::decode_utf8(std::string_view text)
 
 Decode complete UTF-8, replacing malformed input with U+FFFD.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L144)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L144)
 
 <a id="symbol-namespacepuc_1_1tui_1_1text__editor_1a0a8a4486fc35654cd1f55dcffdeaae91"></a>
 
@@ -42,7 +42,7 @@ std::string puc::tui::text_editor::encode_utf8(std::u32string_view text)
 
 Encode Unicode scalars as UTF-8.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L149)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L149)
 
 <a id="symbol-namespacepuc_1_1tui_1_1text__editor_1a5bb13f08df6294cba5d9d65477c178a1"></a>
 
@@ -54,7 +54,7 @@ bool puc::tui::text_editor::is_word_character(char32_t character) noexcept
 
 Return whether a scalar participates in editor word navigation.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L157)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L157)
 
 <a id="symbol-namespacepuc_1_1tui_1_1text__editor_1a16ef1699bcf0bf43a4645bae75b75ff9"></a>
 
@@ -66,4 +66,4 @@ bool puc::tui::text_editor::cursor_less(const TextCursor &left, const TextCursor
 
 Return whether `left` precedes `right` in logical reading order.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L93)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L93)

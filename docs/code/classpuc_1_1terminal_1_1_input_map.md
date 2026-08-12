@@ -13,7 +13,7 @@ Mutable builder for the immutable trie consumed by [Decoder](classpuc_1_1termina
 
 Later declarations replace earlier exact paths. Generic protocol actions remain accepting prefixes beneath more-specific terminfo, profile, and TOML sequences; they do not erase those descendants. Consequently the longest matching configured sequence wins before the decoder enters a parameterized fallback parser. After overrides have resolved exact paths, setup rejects every pair of active semantic command sequences for which either byte path is a prefix of the other. Duplicate commands in one physical source file are also rejected; exact declarations from distinct system and user files retain their documented override behavior. Terminal-specific mappings are final so an emulator quirk can replace otherwise correct OS conventions.
 
-[Source](../../puc-cli/terminal/input.hpp#L173)
+[Source](../../puc-cli/tui/terminal/input.hpp#L173)
 
 ## Related symbols
 
@@ -33,7 +33,7 @@ using puc::terminal::InputMap::Trie = containers::Trie<char, InputAction>
 
 Trie containing byte paths and directly stored decoder actions.
 
-[Source](../../puc-cli/terminal/input.hpp#L178)
+[Source](../../puc-cli/tui/terminal/input.hpp#L178)
 
 ## Friends
 
@@ -45,7 +45,7 @@ Trie containing byte paths and directly stored decoder actions.
 friend class Decoder
 ```
 
-[Source](../../puc-cli/terminal/input.hpp#L175)
+[Source](../../puc-cli/tui/terminal/input.hpp#L175)
 
 ## Private data members
 
@@ -59,7 +59,7 @@ Trie puc::terminal::InputMap::trie_
 
 Byte-sequence paths and accepting actions.
 
-[Source](../../puc-cli/terminal/input.hpp#L248)
+[Source](../../puc-cli/tui/terminal/input.hpp#L248)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_map_1a720721a9a4f431b5317d86310ae25edd"></a>
 
@@ -71,7 +71,7 @@ std::vector<TerminfoKeyBinding> puc::terminal::InputMap::terminfo_keys_
 
 Capability names awaiting materialization.
 
-[Source](../../puc-cli/terminal/input.hpp#L250)
+[Source](../../puc-cli/tui/terminal/input.hpp#L250)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_map_1a5d750cc865e4c4cc8335772d8b6cba81"></a>
 
@@ -83,7 +83,7 @@ std::vector<CommandSequence> puc::terminal::InputMap::command_sequences_
 
 Effective semantic command paths.
 
-[Source](../../puc-cli/terminal/input.hpp#L252)
+[Source](../../puc-cli/tui/terminal/input.hpp#L252)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_map_1abc20c78b38a01407f61e3daa8d5b9a6d"></a>
 
@@ -95,7 +95,7 @@ std::vector<ExactCommandConflict> puc::terminal::InputMap::exact_command_conflic
 
 Same-source exact-path conflicts.
 
-[Source](../../puc-cli/terminal/input.hpp#L254)
+[Source](../../puc-cli/tui/terminal/input.hpp#L254)
 
 ## Private functions
 
@@ -109,7 +109,7 @@ puc::terminal::InputMap::InputMap()=default
 
 Construct an empty map containing only the trie's sentinel root.
 
-[Source](../../puc-cli/terminal/input.hpp#L201)
+[Source](../../puc-cli/tui/terminal/input.hpp#L201)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_map_1acc63a77cc8fb8ac964542c44c828b44a"></a>
 
@@ -121,7 +121,7 @@ Status puc::terminal::InputMap::register_sequence(std::string_view sequence, Inp
 
 Insert or replace one exact byte-sequence action.
 
-[Source](../../puc-cli/terminal/input.hpp#L204)
+[Source](../../puc-cli/tui/terminal/input.hpp#L204)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_map_1aeea1195263d2af0ce1430549eb3d29d7"></a>
 
@@ -133,7 +133,7 @@ Status puc::terminal::InputMap::register_key_sequence(std::string_view sequence,
 
 Insert or replace one exact byte sequence that emits a key event.
 
-[Source](../../puc-cli/terminal/input.hpp#L207)
+[Source](../../puc-cli/tui/terminal/input.hpp#L207)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_map_1a34eceb6d904f2b1d5691dd5728388797"></a>
 
@@ -145,7 +145,7 @@ bool puc::terminal::InputMap::disable_sequence(std::string_view sequence)
 
 Remove the action for an exact byte sequence without pruning its path.
 
-[Source](../../puc-cli/terminal/input.hpp#L210)
+[Source](../../puc-cli/tui/terminal/input.hpp#L210)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_map_1a749733ee26a3a3e215a39fd734274c09"></a>
 
@@ -157,7 +157,7 @@ Status puc::terminal::InputMap::register_terminfo_key(std::string_view capabilit
 
 Add or replace a terminfo capability association.
 
-[Source](../../puc-cli/terminal/input.hpp#L213)
+[Source](../../puc-cli/tui/terminal/input.hpp#L213)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_map_1afbe665a9645dfc2a3c76c39e4a0afa5f"></a>
 
@@ -169,7 +169,7 @@ Trie puc::terminal::InputMap::take_trie() noexcept
 
 Transfer the constructed trie into a decoder.
 
-[Source](../../puc-cli/terminal/input.hpp#L216)
+[Source](../../puc-cli/tui/terminal/input.hpp#L216)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_map_1a7ecf67eb834c3bab644cddb827bebef2"></a>
 
@@ -181,7 +181,7 @@ bool puc::terminal::InputMap::find_protocol_sequence(InputProtocol protocol, std
 
 Find one configured exact sequence that enters a protocol behavior.
 
-[Source](../../puc-cli/terminal/input.hpp#L219)
+[Source](../../puc-cli/tui/terminal/input.hpp#L219)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_map_1a40bdb36744f11aaf53a2e65e6ac3ebde"></a>
 
@@ -193,7 +193,7 @@ Status puc::terminal::InputMap::load_terminfo(std::string_view terminal_name, in
 
 Materialize declared key capabilities from one terminfo entry.
 
-[Source](../../puc-cli/terminal/input.hpp#L233)
+[Source](../../puc-cli/tui/terminal/input.hpp#L233)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_map_1a7f22e9e23126558b5f900f13fa52a82e"></a>
 
@@ -203,7 +203,7 @@ Materialize declared key capabilities from one terminfo entry.
 Status puc::terminal::InputMap::validate_config(const properties::Value &root) const
 ```
 
-[Source](../../puc-cli/terminal/input.hpp#L235)
+[Source](../../puc-cli/tui/terminal/input.hpp#L235)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_map_1abd97253fd19a27e144618f8cb033a511"></a>
 
@@ -215,7 +215,7 @@ Status puc::terminal::InputMap::apply_mappings(const properties::Value &root)
 
 Apply one source's mappings in declaration order.
 
-[Source](../../puc-cli/terminal/input.hpp#L237)
+[Source](../../puc-cli/tui/terminal/input.hpp#L237)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_map_1abaea950bae1ac377311c68b8ec0a4947"></a>
 
@@ -225,7 +225,7 @@ Apply one source's mappings in declaration order.
 Status puc::terminal::InputMap::apply_terminfo_bindings(const properties::Value &root)
 ```
 
-[Source](../../puc-cli/terminal/input.hpp#L238)
+[Source](../../puc-cli/tui/terminal/input.hpp#L238)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_map_1ac5ab3211ecaf45216a3b2c285ddde599"></a>
 
@@ -237,7 +237,7 @@ Status puc::terminal::InputMap::validate_command_sequences() const
 
 Reject ambiguous prefix relationships between semantic commands.
 
-[Source](../../puc-cli/terminal/input.hpp#L241)
+[Source](../../puc-cli/tui/terminal/input.hpp#L241)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_map_1a5c34a49100d2fc3b04603c632885adca"></a>
 
@@ -249,7 +249,7 @@ void puc::terminal::InputMap::track_command_sequence(std::string_view sequence, 
 
 Update effective command provenance after one mapping declaration.
 
-[Source](../../puc-cli/terminal/input.hpp#L244)
+[Source](../../puc-cli/tui/terminal/input.hpp#L244)
 
 ## Private static functions
 
@@ -265,4 +265,4 @@ Build the sole configured map used by [Decoder::setup()](classpuc_1_1terminal_1_
 
 Sources are applied in the class-level hierarchy above. Mappings within each TOML document are applied in declaration order. The required files are read at runtime; no TOML document is compiled into the application.
 
-[Source](../../puc-cli/terminal/input.hpp#L229)
+[Source](../../puc-cli/tui/terminal/input.hpp#L229)

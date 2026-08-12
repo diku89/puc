@@ -4,7 +4,7 @@
 
 Lifecycle owner for the property-backed application theme.
 
-[Source](../../puc-cli/state/theme.hpp)
+[Source](../../state/theme.hpp)
 
 ## Related symbols
 

@@ -4,7 +4,7 @@
 
 Application protocol-channel subsystem implementations.
 
-[Source](../../puc-cli/state/channels.cpp)
+[Source](../../state/channels.cpp)
 
 ## Related symbols
 

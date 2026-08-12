@@ -4,7 +4,7 @@
 
 Conversion between terminal events and portable channel messages.
 
-[Source](../../puc-cli/terminal/event_messages.hpp)
+[Source](../../puc-cli/tui/terminal/event_messages.hpp)
 
 ## Related symbols
 

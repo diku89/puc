@@ -4,7 +4,7 @@
 
 Cached geometry together with every input that determines it.
 
-[Source](../../puc-cli/tui/layout.hpp#L133)
+[Source](../../puc-cli/tui/rendering/layout.hpp#L133)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ size_t puc::tui::Layout::CachedAbsoluteLayout::screen_width
 
 Cached terminal column count.
 
-[Source](../../puc-cli/tui/layout.hpp#L134)
+[Source](../../puc-cli/tui/rendering/layout.hpp#L134)
 
 <a id="symbol-structpuc_1_1app_1_1_layout_1_1_cached_absolute_layout_1aa184ac5f79dae3a412ff6daa6dc19888"></a>
 
@@ -30,7 +30,7 @@ size_t puc::tui::Layout::CachedAbsoluteLayout::screen_height
 
 Cached terminal row count.
 
-[Source](../../puc-cli/tui/layout.hpp#L135)
+[Source](../../puc-cli/tui/rendering/layout.hpp#L135)
 
 <a id="symbol-structpuc_1_1app_1_1_layout_1_1_cached_absolute_layout_1a44ba5b1576ea090ee435957f66d97aab"></a>
 
@@ -42,7 +42,7 @@ CellDimensions puc::tui::Layout::CachedAbsoluteLayout::cell_dimensions
 
 Cached physical cell proportions.
 
-[Source](../../puc-cli/tui/layout.hpp#L136)
+[Source](../../puc-cli/tui/rendering/layout.hpp#L136)
 
 <a id="symbol-structpuc_1_1app_1_1_layout_1_1_cached_absolute_layout_1a89ff66df7421a792740d75de87494836"></a>
 
@@ -54,7 +54,7 @@ size_t puc::tui::Layout::CachedAbsoluteLayout::z_buffer_revision
 
 Structural frame generation.
 
-[Source](../../puc-cli/tui/layout.hpp#L137)
+[Source](../../puc-cli/tui/rendering/layout.hpp#L137)
 
 <a id="symbol-structpuc_1_1app_1_1_layout_1_1_cached_absolute_layout_1a97a25e426d66134067945474307b7cb9"></a>
 
@@ -66,7 +66,7 @@ size_t puc::tui::Layout::CachedAbsoluteLayout::constraint_revision
 
 Relative-layout generation.
 
-[Source](../../puc-cli/tui/layout.hpp#L138)
+[Source](../../puc-cli/tui/rendering/layout.hpp#L138)
 
 <a id="symbol-structpuc_1_1app_1_1_layout_1_1_cached_absolute_layout_1a96b957b8a361d1beac6771297bdd50d9"></a>
 
@@ -78,4 +78,4 @@ AbsoluteLayout puc::tui::Layout::CachedAbsoluteLayout::layout
 
 Previously solved rectangles and order.
 
-[Source](../../puc-cli/tui/layout.hpp#L139)
+[Source](../../puc-cli/tui/rendering/layout.hpp#L139)

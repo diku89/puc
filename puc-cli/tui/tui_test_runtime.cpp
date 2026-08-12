@@ -84,17 +84,17 @@
 #include <utility>
 #include <vector>
 
-#include "puc-cli/state/presentation.hpp"
-#include "puc-cli/state/screen.hpp"
-#include "puc-cli/state/theme.hpp"
-#include "puc-cli/tui/canvas.hpp"
-#include "puc-cli/tui/frame.hpp"
-#include "puc-cli/tui/layout.hpp"
-#include "puc-cli/tui/message_frame.hpp"
-#include "puc-cli/tui/renderer.hpp"
-#include "puc-cli/tui/screen.hpp"
-#include "puc-cli/tui/status.hpp"
-#include "puc-cli/tui/theme.hpp"
+#include "puc-cli/tui/frames/message_frame.hpp"
+#include "puc-cli/tui/rendering/canvas.hpp"
+#include "puc-cli/tui/rendering/frame.hpp"
+#include "puc-cli/tui/rendering/layout.hpp"
+#include "puc-cli/tui/rendering/renderer.hpp"
+#include "puc-cli/tui/rendering/screen.hpp"
+#include "puc-cli/tui/rendering/status.hpp"
+#include "puc-cli/tui/rendering/theme.hpp"
+#include "state/presentation.hpp"
+#include "state/screen.hpp"
+#include "state/theme.hpp"
 #include "utils/logger/logger.hpp"
 #include "utils/timer/deadline.hpp"
 

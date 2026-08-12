@@ -4,7 +4,7 @@
 
 Built-in command lifecycle registration implementation.
 
-[Source](../../puc-cli/state/builtin_commands.cpp)
+[Source](../../state/builtin_commands.cpp)
 
 ## Related symbols
 

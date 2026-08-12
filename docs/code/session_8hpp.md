@@ -4,7 +4,7 @@
 
 RAII ownership of POSIX terminal transport and active modes.
 
-[Source](../../puc-cli/terminal/session.hpp)
+[Source](../../puc-cli/tui/terminal/session.hpp)
 
 ## Related symbols
 

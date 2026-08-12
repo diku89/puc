@@ -4,7 +4,7 @@
 
 Terminal-independent input and terminal-response event types.
 
-[Source](../../puc-cli/terminal/event.hpp)
+[Source](../../puc-cli/tui/terminal/event.hpp)
 
 ## Related symbols
 

@@ -4,7 +4,7 @@
 
 Composite input-frame subsystem implementation.
 
-[Source](../../puc-cli/state/input.cpp)
+[Source](../../state/input.cpp)
 
 ## Related symbols
 

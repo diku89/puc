@@ -4,7 +4,7 @@
 
 Reusable Unicode text-buffer mechanics for editor-backed frames.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp)
 
 ## Related symbols
 

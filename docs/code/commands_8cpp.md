@@ -4,7 +4,7 @@
 
 Command registry and dispatcher subsystem implementation.
 
-[Source](../../puc-cli/state/commands.cpp)
+[Source](../../state/commands.cpp)
 
 ## Related symbols
 

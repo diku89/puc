@@ -4,7 +4,7 @@
 
 Logical selection implementation for the terminal conformance app.
 
-[Source](../../puc-cli/terminal/terminal_test_selection.cpp)
+[Source](../../puc-cli/tui/terminal/terminal_test_selection.cpp)
 
 ## Related symbols
 

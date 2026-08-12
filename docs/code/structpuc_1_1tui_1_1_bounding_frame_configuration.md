@@ -4,7 +4,7 @@
 
 Complete geometry and color policy for [BoundingFrame](classpuc_1_1tui_1_1_bounding_frame.md).
 
-[Source](../../puc-cli/tui/bounding_frame.hpp#L42)
+[Source](../../puc-cli/tui/frames/bounding_frame.hpp#L42)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ FrameMargins puc::tui::BoundingFrameConfiguration::outer_margins
 
 Space between assigned rect and box.
 
-[Source](../../puc-cli/tui/bounding_frame.hpp#L43)
+[Source](../../puc-cli/tui/frames/bounding_frame.hpp#L43)
 
 <a id="symbol-structpuc_1_1tui_1_1_bounding_frame_configuration_1af161115131eafdf64d13a3139c816102"></a>
 
@@ -30,7 +30,7 @@ FrameMargins puc::tui::BoundingFrameConfiguration::inner_margins
 
 Space between box interior and child.
 
-[Source](../../puc-cli/tui/bounding_frame.hpp#L44)
+[Source](../../puc-cli/tui/frames/bounding_frame.hpp#L44)
 
 <a id="symbol-structpuc_1_1tui_1_1_bounding_frame_configuration_1aa7e06d21b716382599483c4d9909b4e7"></a>
 
@@ -42,7 +42,7 @@ std::optional<Theme::ColorTypes> puc::tui::BoundingFrameConfiguration::outside_b
 
 Optional fill.
 
-[Source](../../puc-cli/tui/bounding_frame.hpp#L45)
+[Source](../../puc-cli/tui/frames/bounding_frame.hpp#L45)
 
 <a id="symbol-structpuc_1_1tui_1_1_bounding_frame_configuration_1abc187a4128988a985e5c6dde9e530204"></a>
 
@@ -54,7 +54,7 @@ Theme::ColorTypes puc::tui::BoundingFrameConfiguration::inside_color
 
 Box-interior background.
 
-[Source](../../puc-cli/tui/bounding_frame.hpp#L47)
+[Source](../../puc-cli/tui/frames/bounding_frame.hpp#L47)
 
 <a id="symbol-structpuc_1_1tui_1_1_bounding_frame_configuration_1af01bcf8f9b169861adb64fd0728d0440"></a>
 
@@ -66,7 +66,7 @@ std::optional<Theme::ColorTypes> puc::tui::BoundingFrameConfiguration::border_co
 
 Nullopt disables border glyphs.
 
-[Source](../../puc-cli/tui/bounding_frame.hpp#L49)
+[Source](../../puc-cli/tui/frames/bounding_frame.hpp#L49)
 
 <a id="symbol-structpuc_1_1tui_1_1_bounding_frame_configuration_1ac7b5267553e93b5637246bb2f188ac75"></a>
 
@@ -78,4 +78,4 @@ FrameSizeConstraints puc::tui::BoundingFrameConfiguration::size_constraints
 
 Total assigned-rect limits.
 
-[Source](../../puc-cli/tui/bounding_frame.hpp#L51)
+[Source](../../puc-cli/tui/frames/bounding_frame.hpp#L51)

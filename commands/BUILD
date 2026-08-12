@@ -20,7 +20,7 @@ cc_library(
     deps = [
         "//msgs",
         "//properties",
-        "//puc-cli/state",
+        "//state",
         "//utils/containers:trie",
         "//utils/ipc",
         "//utils/logger",
@@ -38,7 +38,7 @@ cc_test(
         ":commands",
         "//msgs",
         "//properties",
-        "//puc-cli/state",
+        "//state",
         "//utils/ipc",
         "//utils/multithreading",
         "@googletest//:gtest",

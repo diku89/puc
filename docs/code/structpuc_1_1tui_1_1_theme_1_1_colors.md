@@ -6,7 +6,7 @@ Complete semantic palette.
 
 All colors are RGB values represented as 32-bit unsigned integers in the format `0xRRGGBB`. Aggregate-initialize every field before passing a value to `load_colors()`; value-initialization produces an all-black palette.
 
-[Source](../../puc-cli/tui/theme.hpp#L63)
+[Source](../../puc-cli/tui/rendering/theme.hpp#L63)
 
 ## Public data members
 
@@ -20,7 +20,7 @@ uint32_t puc::tui::Theme::Colors::primary
 
 Primary accent color.
 
-[Source](../../puc-cli/tui/theme.hpp#L64)
+[Source](../../puc-cli/tui/rendering/theme.hpp#L64)
 
 <a id="symbol-structpuc_1_1tui_1_1_theme_1_1_colors_1af246e48fec120e9d048b6a3513867a5c"></a>
 
@@ -32,7 +32,7 @@ uint32_t puc::tui::Theme::Colors::secondary
 
 Secondary accent color.
 
-[Source](../../puc-cli/tui/theme.hpp#L65)
+[Source](../../puc-cli/tui/rendering/theme.hpp#L65)
 
 <a id="symbol-structpuc_1_1tui_1_1_theme_1_1_colors_1aeadc82b34f1124b10cd4eeb9706c4a7e"></a>
 
@@ -44,7 +44,7 @@ uint32_t puc::tui::Theme::Colors::tertiary
 
 Tertiary accent color.
 
-[Source](../../puc-cli/tui/theme.hpp#L66)
+[Source](../../puc-cli/tui/rendering/theme.hpp#L66)
 
 <a id="symbol-structpuc_1_1tui_1_1_theme_1_1_colors_1a6376a91c6c51242fd6420d08f536cc74"></a>
 
@@ -56,7 +56,7 @@ uint32_t puc::tui::Theme::Colors::highlight_background
 
 Selected-text background color.
 
-[Source](../../puc-cli/tui/theme.hpp#L67)
+[Source](../../puc-cli/tui/rendering/theme.hpp#L67)
 
 <a id="symbol-structpuc_1_1tui_1_1_theme_1_1_colors_1a6df741b3f5aa955c7ea36511cf92470f"></a>
 
@@ -68,7 +68,7 @@ uint32_t puc::tui::Theme::Colors::highlight_text
 
 Selected-text foreground color.
 
-[Source](../../puc-cli/tui/theme.hpp#L68)
+[Source](../../puc-cli/tui/rendering/theme.hpp#L68)
 
 <a id="symbol-structpuc_1_1tui_1_1_theme_1_1_colors_1a48cbd96cd7977402759f71d4b865849e"></a>
 
@@ -80,7 +80,7 @@ uint32_t puc::tui::Theme::Colors::text
 
 Default foreground text.
 
-[Source](../../puc-cli/tui/theme.hpp#L69)
+[Source](../../puc-cli/tui/rendering/theme.hpp#L69)
 
 <a id="symbol-structpuc_1_1tui_1_1_theme_1_1_colors_1aa6fc91ff21e158014f37fbecd6a07030"></a>
 
@@ -92,7 +92,7 @@ uint32_t puc::tui::Theme::Colors::text_secondary
 
 Secondary text color.
 
-[Source](../../puc-cli/tui/theme.hpp#L70)
+[Source](../../puc-cli/tui/rendering/theme.hpp#L70)
 
 <a id="symbol-structpuc_1_1tui_1_1_theme_1_1_colors_1ad08eabc4f1eb53074afa10547931c164"></a>
 
@@ -104,7 +104,7 @@ uint32_t puc::tui::Theme::Colors::text_tertiary
 
 Tertiary text color.
 
-[Source](../../puc-cli/tui/theme.hpp#L71)
+[Source](../../puc-cli/tui/rendering/theme.hpp#L71)
 
 <a id="symbol-structpuc_1_1tui_1_1_theme_1_1_colors_1a63b3893480b817f98f3aca5e7304f084"></a>
 
@@ -116,7 +116,7 @@ uint32_t puc::tui::Theme::Colors::text_muted
 
 Muted text color.
 
-[Source](../../puc-cli/tui/theme.hpp#L72)
+[Source](../../puc-cli/tui/rendering/theme.hpp#L72)
 
 <a id="symbol-structpuc_1_1tui_1_1_theme_1_1_colors_1a8d84fe60b445b76d320bf22ab4a014bc"></a>
 
@@ -128,7 +128,7 @@ uint32_t puc::tui::Theme::Colors::text_disabled
 
 Disabled text color.
 
-[Source](../../puc-cli/tui/theme.hpp#L73)
+[Source](../../puc-cli/tui/rendering/theme.hpp#L73)
 
 <a id="symbol-structpuc_1_1tui_1_1_theme_1_1_colors_1a82e8e11ff15d5cc4d9b9a242e32470a7"></a>
 
@@ -140,7 +140,7 @@ uint32_t puc::tui::Theme::Colors::text_error
 
 Error text color.
 
-[Source](../../puc-cli/tui/theme.hpp#L74)
+[Source](../../puc-cli/tui/rendering/theme.hpp#L74)
 
 <a id="symbol-structpuc_1_1tui_1_1_theme_1_1_colors_1a505dc5445a12853ce5447b6db779f69f"></a>
 
@@ -152,7 +152,7 @@ uint32_t puc::tui::Theme::Colors::text_warning
 
 Warning text color.
 
-[Source](../../puc-cli/tui/theme.hpp#L75)
+[Source](../../puc-cli/tui/rendering/theme.hpp#L75)
 
 <a id="symbol-structpuc_1_1tui_1_1_theme_1_1_colors_1adb1f9fdd995c34020932c045c1d047ee"></a>
 
@@ -164,7 +164,7 @@ uint32_t puc::tui::Theme::Colors::text_alert
 
 Alert text color.
 
-[Source](../../puc-cli/tui/theme.hpp#L76)
+[Source](../../puc-cli/tui/rendering/theme.hpp#L76)
 
 <a id="symbol-structpuc_1_1tui_1_1_theme_1_1_colors_1a0efb8f714aec335671c764b135727ec6"></a>
 
@@ -176,7 +176,7 @@ uint32_t puc::tui::Theme::Colors::text_success
 
 Success text color.
 
-[Source](../../puc-cli/tui/theme.hpp#L77)
+[Source](../../puc-cli/tui/rendering/theme.hpp#L77)
 
 <a id="symbol-structpuc_1_1tui_1_1_theme_1_1_colors_1a2faaad29e8b2bd484878d31d2bd69793"></a>
 
@@ -188,7 +188,7 @@ uint32_t puc::tui::Theme::Colors::text_info
 
 Info text color.
 
-[Source](../../puc-cli/tui/theme.hpp#L78)
+[Source](../../puc-cli/tui/rendering/theme.hpp#L78)
 
 <a id="symbol-structpuc_1_1tui_1_1_theme_1_1_colors_1a0c74f463e4507e44280ad66b1f55886c"></a>
 
@@ -200,7 +200,7 @@ uint32_t puc::tui::Theme::Colors::text_link
 
 Link text color.
 
-[Source](../../puc-cli/tui/theme.hpp#L79)
+[Source](../../puc-cli/tui/rendering/theme.hpp#L79)
 
 <a id="symbol-structpuc_1_1tui_1_1_theme_1_1_colors_1a61ff1a28fee9588fb563878fe4e1af8e"></a>
 
@@ -212,7 +212,7 @@ uint32_t puc::tui::Theme::Colors::text_emphasis
 
 Emphasis text color.
 
-[Source](../../puc-cli/tui/theme.hpp#L80)
+[Source](../../puc-cli/tui/rendering/theme.hpp#L80)
 
 <a id="symbol-structpuc_1_1tui_1_1_theme_1_1_colors_1a55eb8fc85eaf871343db86ea15f09566"></a>
 
@@ -224,7 +224,7 @@ uint32_t puc::tui::Theme::Colors::text_code
 
 Code text color.
 
-[Source](../../puc-cli/tui/theme.hpp#L81)
+[Source](../../puc-cli/tui/rendering/theme.hpp#L81)
 
 <a id="symbol-structpuc_1_1tui_1_1_theme_1_1_colors_1ab5c54740aee52aa9129ef715f08e57be"></a>
 
@@ -236,7 +236,7 @@ uint32_t puc::tui::Theme::Colors::alert_text_primary
 
 Primary text within an alert.
 
-[Source](../../puc-cli/tui/theme.hpp#L82)
+[Source](../../puc-cli/tui/rendering/theme.hpp#L82)
 
 <a id="symbol-structpuc_1_1tui_1_1_theme_1_1_colors_1a4efb4636da6e6757966cbd1d7fe5ea37"></a>
 
@@ -248,7 +248,7 @@ uint32_t puc::tui::Theme::Colors::alert_text_secondary
 
 Secondary text within an alert.
 
-[Source](../../puc-cli/tui/theme.hpp#L83)
+[Source](../../puc-cli/tui/rendering/theme.hpp#L83)
 
 <a id="symbol-structpuc_1_1tui_1_1_theme_1_1_colors_1a7f28b7316c2c7eef51e1dec7ac2ecf41"></a>
 
@@ -260,7 +260,7 @@ uint32_t puc::tui::Theme::Colors::diff_added_text_primary
 
 Primary added-diff text.
 
-[Source](../../puc-cli/tui/theme.hpp#L84)
+[Source](../../puc-cli/tui/rendering/theme.hpp#L84)
 
 <a id="symbol-structpuc_1_1tui_1_1_theme_1_1_colors_1af01a210fe7c1066e0b1b02f61cb24bae"></a>
 
@@ -272,7 +272,7 @@ uint32_t puc::tui::Theme::Colors::diff_added_text_secondary
 
 Diff added text secondary color.
 
-[Source](../../puc-cli/tui/theme.hpp#L85)
+[Source](../../puc-cli/tui/rendering/theme.hpp#L85)
 
 <a id="symbol-structpuc_1_1tui_1_1_theme_1_1_colors_1ae248ef3dcdd74c38c7e2d81341bc6459"></a>
 
@@ -284,7 +284,7 @@ uint32_t puc::tui::Theme::Colors::diff_added_text_background
 
 Diff added text background color.
 
-[Source](../../puc-cli/tui/theme.hpp#L88)
+[Source](../../puc-cli/tui/rendering/theme.hpp#L88)
 
 <a id="symbol-structpuc_1_1tui_1_1_theme_1_1_colors_1a0c3296f7933787b1eda456f9d8afbef4"></a>
 
@@ -296,7 +296,7 @@ uint32_t puc::tui::Theme::Colors::diff_removed_text_primary
 
 Primary removed-diff text.
 
-[Source](../../puc-cli/tui/theme.hpp#L89)
+[Source](../../puc-cli/tui/rendering/theme.hpp#L89)
 
 <a id="symbol-structpuc_1_1tui_1_1_theme_1_1_colors_1a72627231ff2db54bc41ee813f341bb70"></a>
 
@@ -308,7 +308,7 @@ uint32_t puc::tui::Theme::Colors::diff_removed_text_secondary
 
 Diff removed text secondary color.
 
-[Source](../../puc-cli/tui/theme.hpp#L90)
+[Source](../../puc-cli/tui/rendering/theme.hpp#L90)
 
 <a id="symbol-structpuc_1_1tui_1_1_theme_1_1_colors_1ad3102ab9801f471360ff0baa40dc027a"></a>
 
@@ -320,7 +320,7 @@ uint32_t puc::tui::Theme::Colors::diff_removed_text_background
 
 Diff removed text background color.
 
-[Source](../../puc-cli/tui/theme.hpp#L92)
+[Source](../../puc-cli/tui/rendering/theme.hpp#L92)
 
 <a id="symbol-structpuc_1_1tui_1_1_theme_1_1_colors_1a69bde13ea88416806149d958336e84c4"></a>
 
@@ -332,4 +332,4 @@ uint32_t puc::tui::Theme::Colors::background
 
 Background color.
 
-[Source](../../puc-cli/tui/theme.hpp#L94)
+[Source](../../puc-cli/tui/rendering/theme.hpp#L94)

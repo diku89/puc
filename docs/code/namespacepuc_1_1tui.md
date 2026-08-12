@@ -64,7 +64,7 @@ Surface currently occupying the inner input frame.
 - <a id="symbol-namespacepuc_1_1tui_1a934fae8d8b59ef801802451dd8a56d86a26097a57f572fe88a7cdf80543422cb1"></a>`COMMAND` — Edit the temporary green command buffer.
 - <a id="symbol-namespacepuc_1_1tui_1a934fae8d8b59ef801802451dd8a56d86a6c7748bd0ad3fbdff996e81581ad64d6"></a>`TERMINAL` — Render the persistent libtmt virtual-terminal surface.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L22)
+[Source](../../puc-cli/tui/frames/input_frame.hpp#L22)
 
 <a id="symbol-namespacepuc_1_1tui_1a6ec6e7ef6f90768da3386622a10eb37c"></a>
 
@@ -81,7 +81,7 @@ Lifecycle phase of the one selection owned by a [Screen](classpuc_1_1tui_1_1_scr
 - <a id="symbol-namespacepuc_1_1tui_1a6ec6e7ef6f90768da3386622a10eb37caca69f96c768067fbff6c911ca87bccc9"></a>`IN_PROGRESS` — A captured pointer gesture is extending a selection.
 - <a id="symbol-namespacepuc_1_1tui_1a6ec6e7ef6f90768da3386622a10eb37ca3de44296982e58199afc513a715b12ba"></a>`COMPLETE` — A stable selection remains available for copying.
 
-[Source](../../puc-cli/tui/selection.hpp#L21)
+[Source](../../puc-cli/tui/rendering/selection.hpp#L21)
 
 <a id="symbol-namespacepuc_1_1tui_1a144569aef987b76e95d4f5aec6cbca9c"></a>
 
@@ -101,7 +101,7 @@ Semantic operations that a selectable [Frame](classpuc_1_1tui_1_1_frame.md) can 
 - <a id="symbol-namespacepuc_1_1tui_1a144569aef987b76e95d4f5aec6cbca9caa53f1f05ae28f5898af529e0eb864a9a"></a>`SELECT_ALL` — Replace the range with all target-frame text.
 - <a id="symbol-namespacepuc_1_1tui_1a144569aef987b76e95d4f5aec6cbca9cab5859d8721cfdc0312b2838b9c985bc1"></a>`RESET` — Remove the frame's current selection.
 
-[Source](../../puc-cli/tui/selection.hpp#L28)
+[Source](../../puc-cli/tui/rendering/selection.hpp#L28)
 
 <a id="symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270"></a>
 
@@ -143,7 +143,7 @@ Result codes returned by expected TUI operations.
 - <a id="symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270a211ae15df57c9387ca6d65013d7af580"></a>`MESSAGE_DECODING_FAILED` — A typed [Screen](classpuc_1_1tui_1_1_screen.md) event could not be decoded.
 - <a id="symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270a48bfc59ef14509cf5160e41dede02da9"></a>`ASYNC_DISPATCH_FAILED` — Asynchronous work could not be completed.
 
-[Source](../../puc-cli/tui/status.hpp#L23)
+[Source](../../puc-cli/tui/rendering/status.hpp#L23)
 
 ## Type aliases
 
@@ -157,7 +157,7 @@ using puc::tui::InputCursor = TextCursor
 
 Backward-compatible name for the shared reusable editor caret type.
 
-[Source](../../puc-cli/tui/input_frame.hpp#L29)
+[Source](../../puc-cli/tui/frames/input_frame.hpp#L29)
 
 ## Variables
 
@@ -171,7 +171,7 @@ CellDimensions puc::tui::kDefaultCellDimensions
 
 Conventional cell proportions used when a terminal omits pixel metrics.
 
-[Source](../../puc-cli/tui/screen.hpp#L46)
+[Source](../../puc-cli/tui/rendering/screen.hpp#L46)
 
 ## Functions
 
@@ -191,7 +191,7 @@ Test whether a status represents success.
 
 **Returns:** `true` only for [Status::OK](#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ae0aa021e21dddbd6d8cecec71e9cf564).
 
-[Source](../../puc-cli/tui/status.hpp#L63)
+[Source](../../puc-cli/tui/rendering/status.hpp#L63)
 
 <a id="symbol-namespacepuc_1_1tui_1aa6eafcdd424900009e70a0e945d425b8"></a>
 
@@ -211,4 +211,4 @@ Unknown enum values map to `"unknown terminal UI status"` so diagnostic paths ne
 
 **Returns:** A static string suitable for logs and diagnostics.
 
-[Source](../../puc-cli/tui/status.hpp#L74)
+[Source](../../puc-cli/tui/rendering/status.hpp#L74)

@@ -4,7 +4,7 @@
 
 Hidden durable plan and restartable presentation ownership.
 
-[Source](../../puc-cli/terminal/terminal_test_runtime.cpp#L823)
+[Source](../../puc-cli/tui/terminal/terminal_test_runtime.cpp#L823)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::optional<terminal::InputConformanceTest> puc::app::TerminalTestRuntimeSubsy
 
 Durable command-line plan selection.
 
-[Source](../../puc-cli/terminal/terminal_test_runtime.cpp#L830)
+[Source](../../puc-cli/tui/terminal/terminal_test_runtime.cpp#L830)
 
 <a id="symbol-classpuc_1_1app_1_1_terminal_test_runtime_subsystem_1_1_impl_1ac44e275cccee9ba43ae6f93832a8120a"></a>
 
@@ -30,7 +30,7 @@ std::shared_ptr<TerminalTestApplication> puc::app::TerminalTestRuntimeSubsystem:
 
 Durable runner and restartable presentation bindings.
 
-[Source](../../puc-cli/terminal/terminal_test_runtime.cpp#L832)
+[Source](../../puc-cli/tui/terminal/terminal_test_runtime.cpp#L832)
 
 ## Public functions
 
@@ -44,4 +44,4 @@ puc::app::TerminalTestRuntimeSubsystem::Impl::Impl(std::optional< terminal::Inpu
 
 Retain the immutable command-line plan selection.
 
-[Source](../../puc-cli/terminal/terminal_test_runtime.cpp#L826)
+[Source](../../puc-cli/tui/terminal/terminal_test_runtime.cpp#L826)

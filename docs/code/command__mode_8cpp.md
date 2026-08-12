@@ -4,7 +4,7 @@
 
 Command-mode lifecycle and event coordination implementation.
 
-[Source](../../puc-cli/state/command_mode.cpp)
+[Source](../../state/command_mode.cpp)
 
 ## Related symbols
 

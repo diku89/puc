@@ -4,7 +4,7 @@
 
 Synchronized configuration and geometry retained by [BoundingFrame](classpuc_1_1tui_1_1_bounding_frame.md).
 
-[Source](../../puc-cli/tui/bounding_frame.cpp#L74)
+[Source](../../puc-cli/tui/frames/bounding_frame.cpp#L74)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::shared_ptr<Frame> puc::tui::BoundingFrame::Impl::child
 
 Required decorated child.
 
-[Source](../../puc-cli/tui/bounding_frame.cpp#L109)
+[Source](../../puc-cli/tui/frames/bounding_frame.cpp#L109)
 
 <a id="symbol-classpuc_1_1tui_1_1_bounding_frame_1_1_impl_1aeb5bc27d20fe6229ec5a3e426dc367b8"></a>
 
@@ -30,7 +30,7 @@ std::shared_mutex puc::tui::BoundingFrame::Impl::mutex
 
 Synchronizes configuration/geometry.
 
-[Source](../../puc-cli/tui/bounding_frame.cpp#L110)
+[Source](../../puc-cli/tui/frames/bounding_frame.cpp#L110)
 
 <a id="symbol-classpuc_1_1tui_1_1_bounding_frame_1_1_impl_1a5a29c028539d1986e643f4eee95c91b1"></a>
 
@@ -42,7 +42,7 @@ BoundingFrameConfiguration puc::tui::BoundingFrame::Impl::configuration
 
 Active decoration policy.
 
-[Source](../../puc-cli/tui/bounding_frame.cpp#L111)
+[Source](../../puc-cli/tui/frames/bounding_frame.cpp#L111)
 
 <a id="symbol-classpuc_1_1tui_1_1_bounding_frame_1_1_impl_1a6c18f550df2e184dee3dc450d5a892b0"></a>
 
@@ -54,7 +54,7 @@ std::size_t puc::tui::BoundingFrame::Impl::child_offset_x
 
 Last child-local X translation.
 
-[Source](../../puc-cli/tui/bounding_frame.cpp#L112)
+[Source](../../puc-cli/tui/frames/bounding_frame.cpp#L112)
 
 <a id="symbol-classpuc_1_1tui_1_1_bounding_frame_1_1_impl_1afde9948f8f92affa80668fb776a5796a"></a>
 
@@ -66,7 +66,7 @@ std::size_t puc::tui::BoundingFrame::Impl::child_offset_y
 
 Last child-local Y translation.
 
-[Source](../../puc-cli/tui/bounding_frame.cpp#L113)
+[Source](../../puc-cli/tui/frames/bounding_frame.cpp#L113)
 
 <a id="symbol-classpuc_1_1tui_1_1_bounding_frame_1_1_impl_1a87306be19d3f8bdb0137e54ef54290f4"></a>
 
@@ -78,7 +78,7 @@ bool puc::tui::BoundingFrame::Impl::geometry_valid
 
 Whether offsets came from draw.
 
-[Source](../../puc-cli/tui/bounding_frame.cpp#L114)
+[Source](../../puc-cli/tui/frames/bounding_frame.cpp#L114)
 
 ## Public functions
 
@@ -92,7 +92,7 @@ puc::tui::BoundingFrame::Impl::Impl(std::shared_ptr< Frame > supplied_child, Bou
 
 Retain the required child and its initial bounding policy.
 
-[Source](../../puc-cli/tui/bounding_frame.cpp#L77)
+[Source](../../puc-cli/tui/frames/bounding_frame.cpp#L77)
 
 ## Public static functions
 
@@ -106,4 +106,4 @@ static std::optional< Canvas::Rect > puc::tui::BoundingFrame::Impl::content_rect
 
 Compute child geometry from one configuration snapshot.
 
-[Source](../../puc-cli/tui/bounding_frame.cpp#L83)
+[Source](../../puc-cli/tui/frames/bounding_frame.cpp#L83)

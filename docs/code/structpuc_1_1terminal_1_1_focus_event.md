@@ -4,7 +4,7 @@
 
 Terminal focus transition.
 
-[Source](../../puc-cli/terminal/event.hpp#L319)
+[Source](../../puc-cli/tui/terminal/event.hpp#L319)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ bool puc::terminal::FocusEvent::focused
 
 Whether the terminal gained focus.
 
-[Source](../../puc-cli/terminal/event.hpp#L320)
+[Source](../../puc-cli/tui/terminal/event.hpp#L320)
 
 ## Public functions
 
@@ -32,4 +32,4 @@ bool puc::terminal::FocusEvent::operator==(const FocusEvent &) const noexcept=de
 
 Compare focus states.
 
-[Source](../../puc-cli/terminal/event.hpp#L323)
+[Source](../../puc-cli/tui/terminal/event.hpp#L323)

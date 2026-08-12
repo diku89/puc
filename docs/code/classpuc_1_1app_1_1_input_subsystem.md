@@ -6,7 +6,7 @@ Own [InputFrame](classpuc_1_1app_1_1_input_frame.md) and its command-notificatio
 
 The frame is retained across stop/start so draft input survives a temporary application pause. Each running generation receives a fresh subscription to [CommandNotificationChannelSubsystem](classpuc_1_1app_1_1_command_notification_channel_subsystem.md). Presentation code may retain shared frame ownership for render jobs, but must quiesce those jobs before this subsystem terminates.
 
-[Source](../../puc-cli/state/input.hpp#L28)
+[Source](../../state/input.hpp#L28)
 
 ## Private data members
 
@@ -20,7 +20,7 @@ std::shared_ptr<tui::InputFrame> puc::app::InputSubsystem::input_frame_
 
 Editor retained while the app is initialized.
 
-[Source](../../puc-cli/state/input.hpp#L60)
+[Source](../../state/input.hpp#L60)
 
 <a id="symbol-classpuc_1_1app_1_1_input_subsystem_1af60877bd25e1d680f31aa81c4ba545df"></a>
 
@@ -32,7 +32,7 @@ ipc::Subscription puc::app::InputSubsystem::notification_subscription_
 
 Running-generation consumer handle.
 
-[Source](../../puc-cli/state/input.hpp#L62)
+[Source](../../state/input.hpp#L62)
 
 ## Public functions
 
@@ -46,7 +46,7 @@ puc::app::InputSubsystem::InputSubsystem()
 
 Declare the notification-route and channel-directory dependencies.
 
-[Source](../../puc-cli/state/input.hpp#L31)
+[Source](../../state/input.hpp#L31)
 
 <a id="symbol-classpuc_1_1app_1_1_input_subsystem_1a07565406a4fb5e07179a002d6d8bc9c2"></a>
 
@@ -58,7 +58,7 @@ puc::app::InputSubsystem::~InputSubsystem() override
 
 Destroy the released frame and inactive subscription.
 
-[Source](../../puc-cli/state/input.hpp#L34)
+[Source](../../state/input.hpp#L34)
 
 <a id="symbol-classpuc_1_1app_1_1_input_subsystem_1adc90c8d42f1b027314479f7e3fa3777d"></a>
 
@@ -70,7 +70,7 @@ Status puc::app::InputSubsystem::initialize(AppState &app) override
 
 Construct the composite [InputFrame](classpuc_1_1app_1_1_input_frame.md).
 
-[Source](../../puc-cli/state/input.hpp#L37)
+[Source](../../state/input.hpp#L37)
 
 <a id="symbol-classpuc_1_1app_1_1_input_subsystem_1a733cf676ab6c57ffe1ebe3e4acbc0080"></a>
 
@@ -82,7 +82,7 @@ Status puc::app::InputSubsystem::start(AppState &app) override
 
 Subscribe the frame to typed command notifications.
 
-[Source](../../puc-cli/state/input.hpp#L40)
+[Source](../../state/input.hpp#L40)
 
 <a id="symbol-classpuc_1_1app_1_1_input_subsystem_1ac4e85cfbc48f2f1de0521f6ef9575c74"></a>
 
@@ -94,7 +94,7 @@ Status puc::app::InputSubsystem::stop(AppState &app) noexcept override
 
 Disable command notifications while retaining editor state.
 
-[Source](../../puc-cli/state/input.hpp#L43)
+[Source](../../state/input.hpp#L43)
 
 <a id="symbol-classpuc_1_1app_1_1_input_subsystem_1a192f603f6af1f8de0ee9fa348d4ba72d"></a>
 
@@ -106,7 +106,7 @@ Status puc::app::InputSubsystem::terminate(AppState &app) noexcept override
 
 Disable delivery and release the complete input-frame mechanism.
 
-[Source](../../puc-cli/state/input.hpp#L46)
+[Source](../../state/input.hpp#L46)
 
 <a id="symbol-classpuc_1_1app_1_1_input_subsystem_1abfad99ad459b8f8fd482dbc428e2174c"></a>
 
@@ -118,7 +118,7 @@ std::shared_ptr< tui::InputFrame > puc::app::InputSubsystem::input_frame() const
 
 Return shared ownership for layouts and asynchronous render jobs.
 
-[Source](../../puc-cli/state/input.hpp#L49)
+[Source](../../state/input.hpp#L49)
 
 <a id="symbol-classpuc_1_1app_1_1_input_subsystem_1a93022d8307ea8bf003bf6567340037db"></a>
 
@@ -130,4 +130,4 @@ bool puc::app::InputSubsystem::notification_consumer_active() const noexcept
 
 Return whether the notification consumer is currently active.
 
-[Source](../../puc-cli/state/input.hpp#L54)
+[Source](../../state/input.hpp#L54)

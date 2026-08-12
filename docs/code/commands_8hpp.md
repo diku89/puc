@@ -4,7 +4,7 @@
 
 Lifecycle adapter for command registration and dispatch.
 
-[Source](../../puc-cli/state/commands.hpp)
+[Source](../../state/commands.hpp)
 
 ## Related symbols
 

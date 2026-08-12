@@ -4,7 +4,7 @@
 
 Register built-in commands for one initialized [CommandSubsystem](classpuc_1_1app_1_1_command_subsystem.md) registry.
 
-[Source](../../puc-cli/state/builtin_commands.hpp#L17)
+[Source](../../state/builtin_commands.hpp#L17)
 
 ## Private data members
 
@@ -18,7 +18,7 @@ command::CommandDispatcher* puc::app::BuiltinCommandSubsystem::dispatcher_
 
 Registry owned by [CommandSubsystem](classpuc_1_1app_1_1_command_subsystem.md).
 
-[Source](../../puc-cli/state/builtin_commands.hpp#L35)
+[Source](../../state/builtin_commands.hpp#L35)
 
 ## Public functions
 
@@ -32,7 +32,7 @@ puc::app::BuiltinCommandSubsystem::BuiltinCommandSubsystem()
 
 Declare the durable command-registry dependency.
 
-[Source](../../puc-cli/state/builtin_commands.hpp#L20)
+[Source](../../state/builtin_commands.hpp#L20)
 
 <a id="symbol-classpuc_1_1app_1_1_builtin_command_subsystem_1a3560db26b89aa3af64cb65e33f3fc96e"></a>
 
@@ -44,7 +44,7 @@ Status puc::app::BuiltinCommandSubsystem::initialize(AppState &app) override
 
 Register every built-in command and alias exactly once.
 
-[Source](../../puc-cli/state/builtin_commands.hpp#L23)
+[Source](../../state/builtin_commands.hpp#L23)
 
 <a id="symbol-classpuc_1_1app_1_1_builtin_command_subsystem_1ab51cd15d6515a7c5a574c79cc5b2102c"></a>
 
@@ -56,7 +56,7 @@ Status puc::app::BuiltinCommandSubsystem::start(AppState &app) override
 
 Validate that the persistent built-in catalog remains registered.
 
-[Source](../../puc-cli/state/builtin_commands.hpp#L26)
+[Source](../../state/builtin_commands.hpp#L26)
 
 <a id="symbol-classpuc_1_1app_1_1_builtin_command_subsystem_1a10cc7a572a3e3fe78d4a305c76463c30"></a>
 
@@ -68,7 +68,7 @@ Status puc::app::BuiltinCommandSubsystem::stop(AppState &app) noexcept override
 
 Retain registrations across stop/start cycles.
 
-[Source](../../puc-cli/state/builtin_commands.hpp#L29)
+[Source](../../state/builtin_commands.hpp#L29)
 
 <a id="symbol-classpuc_1_1app_1_1_builtin_command_subsystem_1aa70393a753fc15febd61769be6645bc8"></a>
 
@@ -80,4 +80,4 @@ Status puc::app::BuiltinCommandSubsystem::terminate(AppState &app) noexcept over
 
 Drop the registry binding before [CommandSubsystem](classpuc_1_1app_1_1_command_subsystem.md) terminates.
 
-[Source](../../puc-cli/state/builtin_commands.hpp#L32)
+[Source](../../state/builtin_commands.hpp#L32)

@@ -4,7 +4,7 @@
 
 Abstract interface implemented by independently laid-out TUI views.
 
-[Source](../../puc-cli/tui/frame.hpp)
+[Source](../../puc-cli/tui/rendering/frame.hpp)
 
 ## Related symbols
 

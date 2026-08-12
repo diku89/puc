@@ -2,7 +2,7 @@
 
 # Namespace `puc::terminal`
 
-[Source](../../puc-cli/state/terminal.hpp#L19)
+[Source](../../puc-cli/tui/terminal/clipboard.cpp#L21)
 
 ## Related symbols
 
@@ -165,7 +165,7 @@ Named keys that do not have an ordinary Unicode representation.
 - <a id="symbol-event_8hpp_1af63aa78d6ecd63c36e92525c1d814ef4ac73614cc31289aecb08025a672afc137"></a>`ISO_LEVEL3_SHIFT`
 - <a id="symbol-event_8hpp_1af63aa78d6ecd63c36e92525c1d814ef4af2db865673d7cf11b5d992bf3b0ca7ff"></a>`ISO_LEVEL5_SHIFT`
 
-[Source](../../puc-cli/terminal/event.hpp#L18)
+[Source](../../puc-cli/tui/terminal/event.hpp#L18)
 
 <a id="symbol-event_8hpp_1acc192d99fd878bd9881317983b59cd1a"></a>
 
@@ -187,7 +187,7 @@ Modifier
 - <a id="symbol-event_8hpp_1acc192d99fd878bd9881317983b59cd1aae40af1d5cc55c55ae0bb25953f7a7ee2"></a>`CAPS_LOCK`
 - <a id="symbol-event_8hpp_1acc192d99fd878bd9881317983b59cd1aacb0d0bf9279e78f982deba761110e434"></a>`NUM_LOCK`
 
-[Source](../../puc-cli/terminal/event.hpp#L156)
+[Source](../../puc-cli/tui/terminal/event.hpp#L156)
 
 <a id="symbol-event_8hpp_1a166dcd7073e707c562b3d2a47660c378"></a>
 
@@ -204,7 +204,7 @@ Action associated with a key event.
 - <a id="symbol-event_8hpp_1a166dcd7073e707c562b3d2a47660c378a5be68175be14dfaa080165456c2e9555"></a>`REPEAT`
 - <a id="symbol-event_8hpp_1a166dcd7073e707c562b3d2a47660c378a7d649ef069df9885e382417c79f3d5cd"></a>`RELEASE`
 
-[Source](../../puc-cli/terminal/event.hpp#L216)
+[Source](../../puc-cli/tui/terminal/event.hpp#L216)
 
 <a id="symbol-event_8hpp_1a99f9737686704f8d3cf8e71d1749871e"></a>
 
@@ -226,7 +226,7 @@ Mouse buttons represented by xterm SGR mouse reports.
 - <a id="symbol-event_8hpp_1a99f9737686704f8d3cf8e71d1749871ea9a70202f02af4395d893bbc6791941d4"></a>`AUXILIARY_3`
 - <a id="symbol-event_8hpp_1a99f9737686704f8d3cf8e71d1749871eab86231ed5f7ba5e2a17beee084a0eef1"></a>`AUXILIARY_4`
 
-[Source](../../puc-cli/terminal/event.hpp#L255)
+[Source](../../puc-cli/tui/terminal/event.hpp#L255)
 
 <a id="symbol-event_8hpp_1a816a5e84ddc3acd0e07975debe07de6d"></a>
 
@@ -244,7 +244,7 @@ Mouse actions normalized independently of the wire encoding.
 - <a id="symbol-event_8hpp_1a816a5e84ddc3acd0e07975debe07de6daf7f93635f8e193a924ae4a691bb66b8f"></a>`MOVE`
 - <a id="symbol-event_8hpp_1a816a5e84ddc3acd0e07975debe07de6daff3480bb59f4249a9453a0caaa1b2236"></a>`DRAG`
 
-[Source](../../puc-cli/terminal/event.hpp#L267)
+[Source](../../puc-cli/tui/terminal/event.hpp#L267)
 
 <a id="symbol-event_8hpp_1a7965d97ba5d2cf0d5a9fddb300ee99ed"></a>
 
@@ -262,7 +262,7 @@ Stage of a streaming bracketed-paste operation.
 - <a id="symbol-event_8hpp_1a7965d97ba5d2cf0d5a9fddb300ee99edab1a326c06d88bf042f73d70f50197905"></a>`END`
 - <a id="symbol-event_8hpp_1a7965d97ba5d2cf0d5a9fddb300ee99eda2027c027133e22c8929e2874dc44dd36"></a>`CANCEL`
 
-[Source](../../puc-cli/terminal/event.hpp#L302)
+[Source](../../puc-cli/tui/terminal/event.hpp#L302)
 
 <a id="symbol-event_8hpp_1a719261ad4c5cd7768a91e27d0ef4a60d"></a>
 
@@ -278,7 +278,7 @@ Clipboard selections supported by the initial OSC 52 implementation.
 - <a id="symbol-event_8hpp_1a719261ad4c5cd7768a91e27d0ef4a60daec10a7ad0896c0e5562fbba6a1c1808f"></a>`CLIPBOARD`
 - <a id="symbol-event_8hpp_1a719261ad4c5cd7768a91e27d0ef4a60da428429ba9ea83e4841036fb0508fd6dc"></a>`PRIMARY`
 
-[Source](../../puc-cli/terminal/event.hpp#L327)
+[Source](../../puc-cli/tui/terminal/event.hpp#L327)
 
 <a id="symbol-event_8hpp_1ab586d1b5a53718f2f4a09d0efce7421b"></a>
 
@@ -304,7 +304,7 @@ High-level application commands selected by configured input sequences.
 - <a id="symbol-event_8hpp_1ab586d1b5a53718f2f4a09d0efce7421ba89be5e403234d68ac9e8f4a68357a63a"></a>`MOVE_PAGE_UP` — Move an editor caret up one visible page.
 - <a id="symbol-event_8hpp_1ab586d1b5a53718f2f4a09d0efce7421ba5933f9ca3d1a26d2985d0f9dc2d9e38e"></a>`MOVE_PAGE_DOWN` — Move an editor caret down one visible page.
 
-[Source](../../puc-cli/terminal/event.hpp#L343)
+[Source](../../puc-cli/tui/terminal/event.hpp#L343)
 
 <a id="symbol-event_8hpp_1ab51ea62f68e6bd51aaa91d35b2840806"></a>
 
@@ -324,7 +324,7 @@ Kinds of terminal protocol replies routed away from user key input.
 - <a id="symbol-event_8hpp_1ab51ea62f68e6bd51aaa91d35b2840806a32c6bbbb1b7919e0de2b330296d16978"></a>`OPERATING_SYSTEM_COMMAND`
 - <a id="symbol-event_8hpp_1ab51ea62f68e6bd51aaa91d35b2840806af06bbe29848a63bbd711c6c77bd563e3"></a>`DEVICE_CONTROL_STRING`
 
-[Source](../../puc-cli/terminal/event.hpp#L373)
+[Source](../../puc-cli/tui/terminal/event.hpp#L373)
 
 <a id="symbol-event_8hpp_1abefeef863d54c3abe599928f3d869e21"></a>
 
@@ -343,9 +343,9 @@ Reason bytes could not be normalized into a supported event.
 - <a id="symbol-event_8hpp_1abefeef863d54c3abe599928f3d869e21ab26f64128dee356daf83774beee88505"></a>`INCOMPLETE_SEQUENCE`
 - <a id="symbol-event_8hpp_1abefeef863d54c3abe599928f3d869e21a12daed15e373d11c0e26720525ecc201"></a>`LIMIT_EXCEEDED`
 
-[Source](../../puc-cli/terminal/event.hpp#L394)
+[Source](../../puc-cli/tui/terminal/event.hpp#L394)
 
-<a id="symbol-terminal_2input_8hpp_1a8e5a89e22c128ff7b8173404667203b9"></a>
+<a id="symbol-puc-cli_2tui_2terminal_2input_8hpp_1a8e5a89e22c128ff7b8173404667203b9"></a>
 
 ### `OperatingSystem`
 
@@ -356,14 +356,14 @@ OperatingSystem
 Host operating-system families with packaged input defaults.
 
 #### Values
-- <a id="symbol-terminal_2input_8hpp_1a8e5a89e22c128ff7b8173404667203b9a9a60c7d7fc6c5dfa71d40f1fd81a389f"></a>`DARWIN` — Apple Darwin, including macOS.
-- <a id="symbol-terminal_2input_8hpp_1a8e5a89e22c128ff7b8173404667203b9aee86602a23e7a9a5136f6b2138894aa5"></a>`LINUX` — Linux-based systems.
-- <a id="symbol-terminal_2input_8hpp_1a8e5a89e22c128ff7b8173404667203b9ac539e03be7b269c8a84f85437bc8d298"></a>`BSD` — FreeBSD, OpenBSD, NetBSD, or DragonFly BSD.
-- <a id="symbol-terminal_2input_8hpp_1a8e5a89e22c128ff7b8173404667203b9a03570470bad94692ce93e32700d2e1cb"></a>`OTHER` — A system without a packaged input-default profile.
+- <a id="symbol-puc-cli_2tui_2terminal_2input_8hpp_1a8e5a89e22c128ff7b8173404667203b9a9a60c7d7fc6c5dfa71d40f1fd81a389f"></a>`DARWIN` — Apple Darwin, including macOS.
+- <a id="symbol-puc-cli_2tui_2terminal_2input_8hpp_1a8e5a89e22c128ff7b8173404667203b9aee86602a23e7a9a5136f6b2138894aa5"></a>`LINUX` — Linux-based systems.
+- <a id="symbol-puc-cli_2tui_2terminal_2input_8hpp_1a8e5a89e22c128ff7b8173404667203b9ac539e03be7b269c8a84f85437bc8d298"></a>`BSD` — FreeBSD, OpenBSD, NetBSD, or DragonFly BSD.
+- <a id="symbol-puc-cli_2tui_2terminal_2input_8hpp_1a8e5a89e22c128ff7b8173404667203b9a03570470bad94692ce93e32700d2e1cb"></a>`OTHER` — A system without a packaged input-default profile.
 
-[Source](../../puc-cli/terminal/input.hpp#L25)
+[Source](../../puc-cli/tui/terminal/input.hpp#L25)
 
-<a id="symbol-terminal_2input_8hpp_1ad83833e02bad99e13fdc6e45a26979ee"></a>
+<a id="symbol-puc-cli_2tui_2terminal_2input_8hpp_1ad83833e02bad99e13fdc6e45a26979ee"></a>
 
 ### `InputProtocol`
 
@@ -374,20 +374,20 @@ InputProtocol
 Protocol behavior entered after an input-trie sequence is recognized.
 
 #### Values
-- <a id="symbol-terminal_2input_8hpp_1ad83833e02bad99e13fdc6e45a26979eea61a96ffcb251bb9bf0abf8fec19d0ea8"></a>`TEXT` — Decode ordinary UTF-8; fixed controls remain trie mappings.
-- <a id="symbol-terminal_2input_8hpp_1ad83833e02bad99e13fdc6e45a26979eeadaaedac409335b869929ea43fa44be5d"></a>`ESCAPE` — Resolve a standalone Escape or one Alt-modified input.
-- <a id="symbol-terminal_2input_8hpp_1ad83833e02bad99e13fdc6e45a26979eeab9803ac6799686694c606c9f12e58cd0"></a>`SS3` — Capture an SS3 function-key sequence through its final byte.
-- <a id="symbol-terminal_2input_8hpp_1ad83833e02bad99e13fdc6e45a26979eea29231abcf88777a5ff99e2e0feec4718"></a>`CSI` — Capture a generic control-sequence introducer sequence.
-- <a id="symbol-terminal_2input_8hpp_1ad83833e02bad99e13fdc6e45a26979eea0e0ec5752ef20d94dc6fbb13507f5e5e"></a>`OSC` — Capture a generic operating-system command sequence.
-- <a id="symbol-terminal_2input_8hpp_1ad83833e02bad99e13fdc6e45a26979eeaf06bbe29848a63bbd711c6c77bd563e3"></a>`DEVICE_CONTROL_STRING` — Capture a DCS reply through its ST terminator.
-- <a id="symbol-terminal_2input_8hpp_1ad83833e02bad99e13fdc6e45a26979eea560394e0d7053dc5a17914e64ab66f7f"></a>`APPLICATION_PROGRAM_COMMAND` — Capture an APC through ST.
-- <a id="symbol-terminal_2input_8hpp_1ad83833e02bad99e13fdc6e45a26979eea2675833d9f4506f189ea624c828efdde"></a>`PRIVACY_MESSAGE` — Capture a privacy message through ST.
-- <a id="symbol-terminal_2input_8hpp_1ad83833e02bad99e13fdc6e45a26979eeaae4c3e1185607987d1dd00459fe87ac7"></a>`SGR_MOUSE` — Capture numeric SGR mouse fields through `M` or `m`.
-- <a id="symbol-terminal_2input_8hpp_1ad83833e02bad99e13fdc6e45a26979eeaa7778817b478335381c81dd02d429bab"></a>`OSC52` — Capture an OSC 52 clipboard response.
-- <a id="symbol-terminal_2input_8hpp_1ad83833e02bad99e13fdc6e45a26979eea46dc25d563544f7be4275b3106c5c9d2"></a>`PASTE_BEGIN` — Enter bracketed-paste payload mode.
-- <a id="symbol-terminal_2input_8hpp_1ad83833e02bad99e13fdc6e45a26979eea41f02d3b2b353f9b008b6b1d29f54946"></a>`PASTE_END` — Leave bracketed-paste payload mode.
+- <a id="symbol-puc-cli_2tui_2terminal_2input_8hpp_1ad83833e02bad99e13fdc6e45a26979eea61a96ffcb251bb9bf0abf8fec19d0ea8"></a>`TEXT` — Decode ordinary UTF-8; fixed controls remain trie mappings.
+- <a id="symbol-puc-cli_2tui_2terminal_2input_8hpp_1ad83833e02bad99e13fdc6e45a26979eeadaaedac409335b869929ea43fa44be5d"></a>`ESCAPE` — Resolve a standalone Escape or one Alt-modified input.
+- <a id="symbol-puc-cli_2tui_2terminal_2input_8hpp_1ad83833e02bad99e13fdc6e45a26979eeab9803ac6799686694c606c9f12e58cd0"></a>`SS3` — Capture an SS3 function-key sequence through its final byte.
+- <a id="symbol-puc-cli_2tui_2terminal_2input_8hpp_1ad83833e02bad99e13fdc6e45a26979eea29231abcf88777a5ff99e2e0feec4718"></a>`CSI` — Capture a generic control-sequence introducer sequence.
+- <a id="symbol-puc-cli_2tui_2terminal_2input_8hpp_1ad83833e02bad99e13fdc6e45a26979eea0e0ec5752ef20d94dc6fbb13507f5e5e"></a>`OSC` — Capture a generic operating-system command sequence.
+- <a id="symbol-puc-cli_2tui_2terminal_2input_8hpp_1ad83833e02bad99e13fdc6e45a26979eeaf06bbe29848a63bbd711c6c77bd563e3"></a>`DEVICE_CONTROL_STRING` — Capture a DCS reply through its ST terminator.
+- <a id="symbol-puc-cli_2tui_2terminal_2input_8hpp_1ad83833e02bad99e13fdc6e45a26979eea560394e0d7053dc5a17914e64ab66f7f"></a>`APPLICATION_PROGRAM_COMMAND` — Capture an APC through ST.
+- <a id="symbol-puc-cli_2tui_2terminal_2input_8hpp_1ad83833e02bad99e13fdc6e45a26979eea2675833d9f4506f189ea624c828efdde"></a>`PRIVACY_MESSAGE` — Capture a privacy message through ST.
+- <a id="symbol-puc-cli_2tui_2terminal_2input_8hpp_1ad83833e02bad99e13fdc6e45a26979eeaae4c3e1185607987d1dd00459fe87ac7"></a>`SGR_MOUSE` — Capture numeric SGR mouse fields through `M` or `m`.
+- <a id="symbol-puc-cli_2tui_2terminal_2input_8hpp_1ad83833e02bad99e13fdc6e45a26979eeaa7778817b478335381c81dd02d429bab"></a>`OSC52` — Capture an OSC 52 clipboard response.
+- <a id="symbol-puc-cli_2tui_2terminal_2input_8hpp_1ad83833e02bad99e13fdc6e45a26979eea46dc25d563544f7be4275b3106c5c9d2"></a>`PASTE_BEGIN` — Enter bracketed-paste payload mode.
+- <a id="symbol-puc-cli_2tui_2terminal_2input_8hpp_1ad83833e02bad99e13fdc6e45a26979eea41f02d3b2b353f9b008b6b1d29f54946"></a>`PASTE_END` — Leave bracketed-paste payload mode.
 
-[Source](../../puc-cli/terminal/input.hpp#L74)
+[Source](../../puc-cli/tui/terminal/input.hpp#L74)
 
 <a id="symbol-sequences_8hpp_1a9528f3d424c936b31160ee081ea520a4"></a>
 
@@ -413,7 +413,7 @@ Whitelisted terminal modes that PUC may enable and later restore.
 - <a id="symbol-sequences_8hpp_1a9528f3d424c936b31160ee081ea520a4a549872d112fd72e64e77acc307ea2ccc"></a>`APPLICATION_KEYPAD`
 - <a id="symbol-sequences_8hpp_1a9528f3d424c936b31160ee081ea520a4ae8ab545543e8ef851ba64e3a59821941"></a>`SYNCHRONIZED_OUTPUT`
 
-[Source](../../puc-cli/terminal/sequences.hpp#L18)
+[Source](../../puc-cli/tui/terminal/sequences.hpp#L18)
 
 <a id="symbol-sequences_8hpp_1a09a363e2985e980b33b3603504e9cadb"></a>
 
@@ -432,9 +432,9 @@ Kitty progressive-keyboard enhancement flags.
 - <a id="symbol-sequences_8hpp_1a09a363e2985e980b33b3603504e9cadba364ec181f8f8db8b055698b6099f4c58"></a>`REPORT_ALL_KEYS`
 - <a id="symbol-sequences_8hpp_1a09a363e2985e980b33b3603504e9cadba9569eb4d129cd33b3412744087b2ee22"></a>`REPORT_ASSOCIATED_TEXT`
 
-[Source](../../puc-cli/terminal/sequences.hpp#L34)
+[Source](../../puc-cli/tui/terminal/sequences.hpp#L34)
 
-<a id="symbol-puc-cli_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44"></a>
+<a id="symbol-puc-cli_2tui_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44"></a>
 
 ### `Status`
 
@@ -447,24 +447,24 @@ Result codes returned by terminal operations.
 `Status::OK` is the only success value. Protocol errors that can be safely represented as input events do not fail a decoder call; statuses are reserved for invalid API use, resource limits, and operating-system errors.
 
 #### Values
-- <a id="symbol-puc-cli_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44ae0aa021e21dddbd6d8cecec71e9cf564"></a>`OK` — Operation completed successfully.
-- <a id="symbol-puc-cli_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44af295a0c3e37c94f078e1c5476479132d"></a>`INVALID_ARGUMENT` — A supplied argument is invalid.
-- <a id="symbol-puc-cli_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44a7369cb4f9715f86aec473556ddd1a803"></a>`ALREADY_ACTIVE` — The terminal session is already active.
-- <a id="symbol-puc-cli_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44a1b2fe1358d26a4a36841de06904bc0e3"></a>`NOT_ACTIVE` — The terminal session is not active.
-- <a id="symbol-puc-cli_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44ac4254265f0b2240a69dc040eb25d3fa0"></a>`TERMINAL_NOT_AVAILABLE` — A configured descriptor is not a terminal.
-- <a id="symbol-puc-cli_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44aea0a179066f996942bf50edd1b944c97"></a>`TERMINAL_CONFIG_FAILED` — Terminal attributes could not be changed.
-- <a id="symbol-puc-cli_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44abd886bccf2b8f84ee788a149533fd623"></a>`TERMINAL_QUERY_FAILED` — Terminal state or dimensions could not be read.
-- <a id="symbol-puc-cli_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44ab056b6b18fe2e2c923e120af2ba9bd1e"></a>`TERMINAL_READ_FAILED` — Bytes could not be read from the terminal.
-- <a id="symbol-puc-cli_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44ac96841a758410c9a6e5897eee3da9d99"></a>`TERMINAL_WRITE_FAILED` — Bytes could not be written to the terminal.
-- <a id="symbol-puc-cli_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44a767a0073624a94f0852e62c3567a1242"></a>`CHANNEL_SETUP_FAILED` — Screen command/event channels are unavailable.
-- <a id="symbol-puc-cli_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44aefc570be5c2a493e2014fb1f3c6d2601"></a>`INPUT_LIMIT_EXCEEDED` — Buffered untrusted input exceeded its limit.
-- <a id="symbol-puc-cli_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44a1b805077ba82699a1cb6b1c401e59b11"></a>`OUTPUT_LIMIT_EXCEEDED` — Encoded output would exceed its limit.
-- <a id="symbol-puc-cli_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44a409df167ae614cdb4d077761ab7b1ff4"></a>`CONFIGURATION_LOAD_FAILED` — Required terminal configuration is absent or unreadable.
-- <a id="symbol-puc-cli_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44a2d66ab5ca1e21ea033470f093f22f643"></a>`CONFIGURATION_PARSE_FAILED` — TOML configuration is invalid.
-- <a id="symbol-puc-cli_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44a66aa601b5aba32d71c407fc6bad8b5d6"></a>`TERMINFO_LOAD_FAILED` — The selected terminfo entry could not be loaded.
-- <a id="symbol-puc-cli_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44a40aa75f8e8cfdf7b660c5620e953229f"></a>`UNSUPPORTED` — The terminal does not support the operation.
+- <a id="symbol-puc-cli_2tui_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44ae0aa021e21dddbd6d8cecec71e9cf564"></a>`OK` — Operation completed successfully.
+- <a id="symbol-puc-cli_2tui_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44af295a0c3e37c94f078e1c5476479132d"></a>`INVALID_ARGUMENT` — A supplied argument is invalid.
+- <a id="symbol-puc-cli_2tui_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44a7369cb4f9715f86aec473556ddd1a803"></a>`ALREADY_ACTIVE` — The terminal session is already active.
+- <a id="symbol-puc-cli_2tui_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44a1b2fe1358d26a4a36841de06904bc0e3"></a>`NOT_ACTIVE` — The terminal session is not active.
+- <a id="symbol-puc-cli_2tui_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44ac4254265f0b2240a69dc040eb25d3fa0"></a>`TERMINAL_NOT_AVAILABLE` — A configured descriptor is not a terminal.
+- <a id="symbol-puc-cli_2tui_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44aea0a179066f996942bf50edd1b944c97"></a>`TERMINAL_CONFIG_FAILED` — Terminal attributes could not be changed.
+- <a id="symbol-puc-cli_2tui_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44abd886bccf2b8f84ee788a149533fd623"></a>`TERMINAL_QUERY_FAILED` — Terminal state or dimensions could not be read.
+- <a id="symbol-puc-cli_2tui_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44ab056b6b18fe2e2c923e120af2ba9bd1e"></a>`TERMINAL_READ_FAILED` — Bytes could not be read from the terminal.
+- <a id="symbol-puc-cli_2tui_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44ac96841a758410c9a6e5897eee3da9d99"></a>`TERMINAL_WRITE_FAILED` — Bytes could not be written to the terminal.
+- <a id="symbol-puc-cli_2tui_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44a767a0073624a94f0852e62c3567a1242"></a>`CHANNEL_SETUP_FAILED` — Screen command/event channels are unavailable.
+- <a id="symbol-puc-cli_2tui_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44aefc570be5c2a493e2014fb1f3c6d2601"></a>`INPUT_LIMIT_EXCEEDED` — Buffered untrusted input exceeded its limit.
+- <a id="symbol-puc-cli_2tui_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44a1b805077ba82699a1cb6b1c401e59b11"></a>`OUTPUT_LIMIT_EXCEEDED` — Encoded output would exceed its limit.
+- <a id="symbol-puc-cli_2tui_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44a409df167ae614cdb4d077761ab7b1ff4"></a>`CONFIGURATION_LOAD_FAILED` — Required terminal configuration is absent or unreadable.
+- <a id="symbol-puc-cli_2tui_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44a2d66ab5ca1e21ea033470f093f22f643"></a>`CONFIGURATION_PARSE_FAILED` — TOML configuration is invalid.
+- <a id="symbol-puc-cli_2tui_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44a66aa601b5aba32d71c407fc6bad8b5d6"></a>`TERMINFO_LOAD_FAILED` — The selected terminfo entry could not be loaded.
+- <a id="symbol-puc-cli_2tui_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44a40aa75f8e8cfdf7b660c5620e953229f"></a>`UNSUPPORTED` — The terminal does not support the operation.
 
-[Source](../../puc-cli/terminal/status.hpp#L20)
+[Source](../../puc-cli/tui/terminal/status.hpp#L20)
 
 <a id="symbol-terminal__test__options_8hpp_1a0ee4bdf86536dbe26069c776b092cf72"></a>
 
@@ -481,7 +481,7 @@ Top-level operation selected before any terminal resources are acquired.
 - <a id="symbol-terminal__test__options_8hpp_1a0ee4bdf86536dbe26069c776b092cf72a298cb25408234de02baf2085803a464a"></a>`LIST` — Print available test names and exit.
 - <a id="symbol-terminal__test__options_8hpp_1a0ee4bdf86536dbe26069c776b092cf72a4fc963e213bba362778f5c175eb4d5ff"></a>`HELP` — Print command usage and exit.
 
-[Source](../../puc-cli/terminal/terminal_test_options.hpp#L18)
+[Source](../../puc-cli/tui/terminal/terminal_test_options.hpp#L18)
 
 <a id="symbol-terminal__test__options_8hpp_1a68168860cfd5d517a6f87f2d3e7410c0"></a>
 
@@ -500,7 +500,7 @@ Result of parsing terminal-test command-line arguments.
 - <a id="symbol-terminal__test__options_8hpp_1a68168860cfd5d517a6f87f2d3e7410c0afcc5a0f2d15e7467247f777e0e26db15"></a>`UNKNOWN_TEST_NAME` — A name is absent from the test registry.
 - <a id="symbol-terminal__test__options_8hpp_1a68168860cfd5d517a6f87f2d3e7410c0a6cc02f3fbbf75dd3a38c2d5c8894923f"></a>`CONFLICTING_OPTIONS` — More than one operation was requested.
 
-[Source](../../puc-cli/terminal/terminal_test_options.hpp#L25)
+[Source](../../puc-cli/tui/terminal/terminal_test_options.hpp#L25)
 
 <a id="symbol-terminal__test__runner_8hpp_1a84cdf896a9d39b32430b4ca1ce734c70"></a>
 
@@ -528,7 +528,7 @@ Stable identities of the manual input checks, in presentation order.
 - <a id="symbol-terminal__test__runner_8hpp_1a84cdf896a9d39b32430b4ca1ce734c70a1bc4ce30c69a6c319a35121ae8a6ee76"></a>`FILE_DROP`
 - <a id="symbol-terminal__test__runner_8hpp_1a84cdf896a9d39b32430b4ca1ce734c70ad417d2f9c3743990750dbf0334bb8408"></a>`FOCUS`
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L22)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L22)
 
 <a id="symbol-terminal__test__runner_8hpp_1a26c2ec6ae25cad2015d80a2fdf2016a7"></a>
 
@@ -544,7 +544,7 @@ Final result assigned to one completed manual check.
 - <a id="symbol-terminal__test__runner_8hpp_1a26c2ec6ae25cad2015d80a2fdf2016a7a269f3d1562cbd15624e7d2c4b10122e3"></a>`PASSED`
 - <a id="symbol-terminal__test__runner_8hpp_1a26c2ec6ae25cad2015d80a2fdf2016a7adbe2cbac46ffa8283747010d8e1e6396"></a>`TIMED_OUT`
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L52)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L52)
 
 <a id="symbol-terminal__test__runner_8hpp_1aa8c7066b8ae7f7dbda6268532869388f"></a>
 
@@ -562,7 +562,7 @@ Current visual phase of the interactive runner.
 - <a id="symbol-terminal__test__runner_8hpp_1aa8c7066b8ae7f7dbda6268532869388faebef058ffaaae91f785cdc9b0ebad7e1"></a>`TIMED_OUT_FEEDBACK`
 - <a id="symbol-terminal__test__runner_8hpp_1aa8c7066b8ae7f7dbda6268532869388fa3de44296982e58199afc513a715b12ba"></a>`COMPLETE`
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L58)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L58)
 
 ## Type aliases
 
@@ -576,7 +576,7 @@ using puc::terminal::Event = std::variant<KeyEvent, TextEvent, MouseEvent, Scrol
 
 Every semantic input or protocol-reply event emitted by [Decoder](classpuc_1_1terminal_1_1_decoder.md).
 
-[Source](../../puc-cli/terminal/event.hpp#L413)
+[Source](../../puc-cli/tui/terminal/event.hpp#L413)
 
 ## Variables
 
@@ -590,7 +590,7 @@ std::size_t puc::terminal::kDefaultMaximumClipboardBytes
 
 Default maximum decoded clipboard payload accepted or emitted by PUC.
 
-[Source](../../puc-cli/terminal/clipboard.hpp#L19)
+[Source](../../puc-cli/tui/terminal/clipboard.hpp#L19)
 
 <a id="symbol-timeouts_8hpp_1aab41f7566a3cf7d44e9fb9bc5cdf2739"></a>
 
@@ -602,7 +602,7 @@ const char* puc::terminal::kTimeoutConfigurationPath
 
 Fixed convention-over-configuration path for terminal timing policy.
 
-[Source](../../puc-cli/terminal/timeouts.hpp#L44)
+[Source](../../puc-cli/tui/terminal/timeouts.hpp#L44)
 
 ## Functions
 
@@ -623,9 +623,9 @@ Encode UTF-8 bytes into an OSC 52 clipboard-write request.
 - `output` (out) — Receives the complete ST-terminated control sequence.
 - `maximum_bytes` (in) — Maximum accepted unencoded payload size.
 
-**Returns:** [Status::OK](#symbol-puc-cli_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44ae0aa021e21dddbd6d8cecec71e9cf564) or [Status::OUTPUT\_LIMIT\_EXCEEDED](#symbol-puc-cli_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44a1b805077ba82699a1cb6b1c401e59b11).
+**Returns:** [Status::OK](#symbol-puc-cli_2tui_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44ae0aa021e21dddbd6d8cecec71e9cf564) or [Status::OUTPUT\_LIMIT\_EXCEEDED](#symbol-puc-cli_2tui_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44a1b805077ba82699a1cb6b1c401e59b11).
 
-[Source](../../puc-cli/terminal/clipboard.cpp#L90)
+[Source](../../puc-cli/tui/terminal/clipboard.cpp#L90)
 
 <a id="symbol-clipboard_8cpp_1a24dd17a9b5df0bb6820f18c4ba4d219a"></a>
 
@@ -637,7 +637,7 @@ void puc::terminal::build_clipboard_query(ClipboardSelection selection, std::str
 
 Build an OSC 52 query for one clipboard selection.
 
-[Source](../../puc-cli/terminal/clipboard.cpp#L123)
+[Source](../../puc-cli/tui/terminal/clipboard.cpp#L123)
 
 <a id="symbol-clipboard_8cpp_1a17739e3ec50cbd7b5e43e07e63d3e6da"></a>
 
@@ -656,9 +656,9 @@ Decode the Base64 payload from an OSC 52 response.
 - `event` (out) — Receives decoded clipboard data only on success.
 - `maximum_bytes` (in) — Maximum accepted decoded size.
 
-**Returns:** [Status::OK](#symbol-puc-cli_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44ae0aa021e21dddbd6d8cecec71e9cf564), [Status::INVALID\_ARGUMENT](#symbol-puc-cli_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44af295a0c3e37c94f078e1c5476479132d), or [Status::INPUT\_LIMIT\_EXCEEDED](#symbol-puc-cli_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44aefc570be5c2a493e2014fb1f3c6d2601).
+**Returns:** [Status::OK](#symbol-puc-cli_2tui_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44ae0aa021e21dddbd6d8cecec71e9cf564), [Status::INVALID\_ARGUMENT](#symbol-puc-cli_2tui_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44af295a0c3e37c94f078e1c5476479132d), or [Status::INPUT\_LIMIT\_EXCEEDED](#symbol-puc-cli_2tui_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44aefc570be5c2a493e2014fb1f3c6d2601).
 
-[Source](../../puc-cli/terminal/clipboard.cpp#L129)
+[Source](../../puc-cli/tui/terminal/clipboard.cpp#L129)
 
 <a id="symbol-clipboard_8hpp_1a61879198e66935074f1201b1fa7f2423"></a>
 
@@ -670,7 +670,7 @@ char puc::terminal::clipboard_selector(ClipboardSelection selection) noexcept
 
 Return the OSC 52 selector character for a normalized selection.
 
-[Source](../../puc-cli/terminal/clipboard.hpp#L22)
+[Source](../../puc-cli/tui/terminal/clipboard.hpp#L22)
 
 <a id="symbol-configuration__paths_8cpp_1ab688b9d7aa95d37c17282f9695bf18bd"></a>
 
@@ -682,7 +682,7 @@ std::string puc::terminal::environment_value(const char *name)
 
 Copy one environment variable, or return an empty string when absent.
 
-[Source](../../puc-cli/terminal/configuration_paths.cpp#L38)
+[Source](../../puc-cli/tui/terminal/configuration_paths.cpp#L38)
 
 <a id="symbol-configuration__paths_8cpp_1a0f924ba756808755ee1c08750835cf81"></a>
 
@@ -696,7 +696,7 @@ Locate packaged terminal/theme configuration and its user overlay.
 
 `PUC_CONFIG_ROOT` takes precedence. Otherwise the current directory and common Bazel runfiles roots derived from `RUNFILES_DIR` and the executable path are searched. `PUC_USER_CONFIG_ROOT` selects the overlay; without it a deliberately absent path below the primary root disables overrides.
 
-[Source](../../puc-cli/terminal/configuration_paths.cpp#L43)
+[Source](../../puc-cli/tui/terminal/configuration_paths.cpp#L43)
 
 <a id="symbol-event_8hpp_1a81a3232deb4c1a6e197bfb61aaf78eac"></a>
 
@@ -708,7 +708,7 @@ Modifiers puc::terminal::operator|(Modifier left, Modifier right) noexcept
 
 Combine two individual modifiers.
 
-[Source](../../puc-cli/terminal/event.hpp#L206)
+[Source](../../puc-cli/tui/terminal/event.hpp#L206)
 
 <a id="symbol-event_8hpp_1aff20e4a470b87bac524d426dfec37167"></a>
 
@@ -720,7 +720,7 @@ Modifiers puc::terminal::operator|(Modifiers left, Modifier right) noexcept
 
 Add an individual modifier to a modifier set.
 
-[Source](../../puc-cli/terminal/event.hpp#L211)
+[Source](../../puc-cli/tui/terminal/event.hpp#L211)
 
 <a id="symbol-event__messages_8cpp_1ae495480bd5464ad19d55acb992c41a6f"></a>
 
@@ -732,7 +732,7 @@ msg::Status puc::terminal::to_message(const Event &event, msg::TerminalInputEven
 
 Convert one normalized in-process event to its portable message form.
 
-[Source](../../puc-cli/terminal/event_messages.cpp#L39)
+[Source](../../puc-cli/tui/terminal/event_messages.cpp#L39)
 
 <a id="symbol-event__messages_8cpp_1add0cffc1632a0281b8c187e466fe628f"></a>
 
@@ -744,9 +744,9 @@ msg::Status puc::terminal::from_message(const msg::TerminalInputEvent &message, 
 
 Convert one validated portable message back to a normalized event.
 
-[Source](../../puc-cli/terminal/event_messages.cpp#L127)
+[Source](../../puc-cli/tui/terminal/event_messages.cpp#L127)
 
-<a id="symbol-terminal_2input_8hpp_1a813519af89de13cbd6690c833e27af3e"></a>
+<a id="symbol-puc-cli_2tui_2terminal_2input_8hpp_1a813519af89de13cbd6690c833e27af3e"></a>
 
 ### `current_operating_system`
 
@@ -758,9 +758,9 @@ Return the operating-system family selected by the C++ target platform.
 
 **Returns:** Compile-time Darwin, Linux, BSD, or unsupported classification.
 
-[Source](../../puc-cli/terminal/input.hpp#L37)
+[Source](../../puc-cli/tui/terminal/input.hpp#L37)
 
-<a id="symbol-terminal_2input_8hpp_1a0e60447d49ad2043bf3af5e712998998"></a>
+<a id="symbol-puc-cli_2tui_2terminal_2input_8hpp_1a0e60447d49ad2043bf3af5e712998998"></a>
 
 ### `operating_system_defaults_path`
 
@@ -778,7 +778,7 @@ An empty result denotes an unsupported family.
 
 **Returns:** Stable relative TOML path, or an empty view for OTHER.
 
-[Source](../../puc-cli/terminal/input.hpp#L58)
+[Source](../../puc-cli/tui/terminal/input.hpp#L58)
 
 <a id="symbol-sequences_8cpp_1a34c25c748c5598ef94460b24fb164574"></a>
 
@@ -797,7 +797,7 @@ Return the sequence that enables or disables one named mode.
 
 **Returns:** Static escape sequence.
 
-[Source](../../puc-cli/terminal/sequences.cpp#L23)
+[Source](../../puc-cli/tui/terminal/sequences.cpp#L23)
 
 <a id="symbol-sequences_8cpp_1a27b0e9dec1501d18abf7998c828f0475"></a>
 
@@ -814,9 +814,9 @@ Build a sequence that pushes Kitty keyboard enhancement flags.
 - `flags` (in) — Bit field formed from [KeyboardEnhancement](#symbol-sequences_8hpp_1a09a363e2985e980b33b3603504e9cadb) values.
 - `output` (out) — Receives `CSI > flags u` on success.
 
-**Returns:** [Status::OK](#symbol-puc-cli_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44ae0aa021e21dddbd6d8cecec71e9cf564), or [Status::INVALID\_ARGUMENT](#symbol-puc-cli_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44af295a0c3e37c94f078e1c5476479132d) for unsupported flag bits.
+**Returns:** [Status::OK](#symbol-puc-cli_2tui_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44ae0aa021e21dddbd6d8cecec71e9cf564), or [Status::INVALID\_ARGUMENT](#symbol-puc-cli_2tui_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44af295a0c3e37c94f078e1c5476479132d) for unsupported flag bits.
 
-[Source](../../puc-cli/terminal/sequences.cpp#L53)
+[Source](../../puc-cli/tui/terminal/sequences.cpp#L53)
 
 <a id="symbol-sequences_8hpp_1a7e9a0b9774143f2d433040d08e0cc9fb"></a>
 
@@ -828,7 +828,7 @@ std::uint32_t puc::terminal::operator|(KeyboardEnhancement left, KeyboardEnhance
 
 Combine two keyboard enhancement flags into a wire-ready bit field.
 
-[Source](../../puc-cli/terminal/sequences.hpp#L43)
+[Source](../../puc-cli/tui/terminal/sequences.hpp#L43)
 
 <a id="symbol-sequences_8hpp_1a4671707ccc8ebae5de50f32f0b45c0f1"></a>
 
@@ -840,7 +840,7 @@ std::string_view puc::terminal::kitty_keyboard_query() noexcept
 
 Return the Kitty keyboard-protocol capability query.
 
-[Source](../../puc-cli/terminal/sequences.hpp#L58)
+[Source](../../puc-cli/tui/terminal/sequences.hpp#L58)
 
 <a id="symbol-sequences_8hpp_1a5bf9c1b645dd4f243982dbc617418879"></a>
 
@@ -852,9 +852,9 @@ std::string_view puc::terminal::kitty_keyboard_pop() noexcept
 
 Return the sequence that pops one Kitty keyboard mode stack entry.
 
-[Source](../../puc-cli/terminal/sequences.hpp#L61)
+[Source](../../puc-cli/tui/terminal/sequences.hpp#L61)
 
-<a id="symbol-puc-cli_2terminal_2status_8hpp_1aced46ad9374ebd4e2efab745a9ca12f0"></a>
+<a id="symbol-puc-cli_2tui_2terminal_2status_8hpp_1aced46ad9374ebd4e2efab745a9ca12f0"></a>
 
 ### `is_ok`
 
@@ -864,9 +864,9 @@ bool puc::terminal::is_ok(Status status) noexcept
 
 Test whether a status represents success.
 
-[Source](../../puc-cli/terminal/status.hpp#L41)
+[Source](../../puc-cli/tui/terminal/status.hpp#L41)
 
-<a id="symbol-puc-cli_2terminal_2status_8hpp_1aa3edff210900445633b7264eb6ffd7fb"></a>
+<a id="symbol-puc-cli_2tui_2terminal_2status_8hpp_1aa3edff210900445633b7264eb6ffd7fb"></a>
 
 ### `status_message`
 
@@ -878,11 +878,11 @@ Return a stable human-readable description of a status.
 
 **Parameters**
 
-- `status` (in) — [Status](#symbol-puc-cli_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44) value to describe.
+- `status` (in) — [Status](#symbol-puc-cli_2tui_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44) value to describe.
 
 **Returns:** Static diagnostic text that contains no sensitive input data.
 
-[Source](../../puc-cli/terminal/status.hpp#L49)
+[Source](../../puc-cli/tui/terminal/status.hpp#L49)
 
 <a id="symbol-terminal__test__options_8cpp_1a7a57bd5fcea36c2d29a651bad37f5954"></a>
 
@@ -903,7 +903,7 @@ Supported forms are no arguments, `--list`, `--help`, and `--test <test-name>`. 
 
 **Returns:** [TerminalTestOptionsStatus::OK](#symbol-terminal__test__options_8hpp_1a68168860cfd5d517a6f87f2d3e7410c0ae0aa021e21dddbd6d8cecec71e9cf564) or a human-readable parse error.
 
-[Source](../../puc-cli/terminal/terminal_test_options.cpp#L29)
+[Source](../../puc-cli/tui/terminal/terminal_test_options.cpp#L29)
 
 <a id="symbol-terminal__test__options_8cpp_1a6d70eb930faac30a20fe0a94a8eac725"></a>
 
@@ -915,7 +915,7 @@ void puc::terminal::print_terminal_test_usage(std::ostream &output, std::string_
 
 Print every supported command form without acquiring terminal resources.
 
-[Source](../../puc-cli/terminal/terminal_test_options.cpp#L81)
+[Source](../../puc-cli/tui/terminal/terminal_test_options.cpp#L81)
 
 <a id="symbol-terminal__test__options_8cpp_1a4fafee2571c09e07f666415185ae45ce"></a>
 
@@ -927,7 +927,7 @@ void puc::terminal::print_terminal_test_list(std::ostream &output)
 
 Print stable test names, labels, and operator instructions.
 
-[Source](../../puc-cli/terminal/terminal_test_options.cpp#L92)
+[Source](../../puc-cli/tui/terminal/terminal_test_options.cpp#L92)
 
 <a id="symbol-terminal__test__options_8hpp_1ac505af8c33fab2b908cef44052127a64"></a>
 
@@ -939,7 +939,7 @@ std::string_view puc::terminal::terminal_test_options_status_message(TerminalTes
 
 Return human-readable text for every parser result.
 
-[Source](../../puc-cli/terminal/terminal_test_options.hpp#L69)
+[Source](../../puc-cli/tui/terminal/terminal_test_options.hpp#L69)
 
 <a id="symbol-terminal__test__runner_8cpp_1a89392f4ffe04d1f6cac213119107ebc9"></a>
 
@@ -951,7 +951,7 @@ std::span< const InputConformanceTestDescriptor > puc::terminal::input_conforman
 
 Return every conformance descriptor in default execution order.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.cpp#L147)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.cpp#L147)
 
 <a id="symbol-terminal__test__runner_8cpp_1a93a4a22b52727b5773aece6632edeb5f"></a>
 
@@ -963,7 +963,7 @@ std::optional< InputConformanceTest > puc::terminal::find_input_conformance_test
 
 Find a test by the exact kebab-case name accepted by `--test`.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.cpp#L151)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.cpp#L151)
 
 <a id="symbol-terminal__test__runner_8cpp_1a9d493337fae15a3b13021877697b230e"></a>
 
@@ -975,7 +975,7 @@ std::string_view puc::terminal::input_conformance_test_cli_name(InputConformance
 
 Return the stable kebab-case command-line name for one test.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.cpp#L161)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.cpp#L161)
 
 <a id="symbol-terminal__test__runner_8cpp_1ae083a457584c7dd5d417c5e6a05a4588"></a>
 
@@ -987,7 +987,7 @@ std::string_view puc::terminal::input_conformance_test_name(InputConformanceTest
 
 Return a stable short label for one conformance test.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.cpp#L167)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.cpp#L167)
 
 <a id="symbol-terminal__test__runner_8cpp_1a071b320e96d73dc78c3316d56b09d59b"></a>
 
@@ -999,7 +999,7 @@ std::string_view puc::terminal::input_conformance_instruction(InputConformanceTe
 
 Return the operator prompt for one conformance test.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.cpp#L173)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.cpp#L173)
 
 <a id="symbol-terminal__test__runner_8cpp_1abb7b31f2b56971cf67016934874dec1b"></a>
 
@@ -1011,7 +1011,7 @@ std::string_view puc::terminal::input_conformance_outcome_name(InputConformanceO
 
 Return stable report text for one final outcome.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.cpp#L179)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.cpp#L179)
 
 <a id="symbol-timeouts_8cpp_1a968dedf40e2d051fb2b6a301df938ddd"></a>
 
@@ -1025,4 +1025,4 @@ Load mutable terminal timing defaults through the Properties service.
 
 Both integer millisecond values are required and must be positive. Loading is transactional: `output` changes only after the entire file validates.
 
-[Source](../../puc-cli/terminal/timeouts.cpp#L47)
+[Source](../../puc-cli/tui/terminal/timeouts.cpp#L47)

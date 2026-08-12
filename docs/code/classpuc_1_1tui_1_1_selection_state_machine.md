@@ -8,7 +8,7 @@ The state machine owns the selected [Frame](classpuc_1_1tui_1_1_frame.md) strong
 
 [SelectionStateMachine](#) is not internally synchronized. [Screen](classpuc_1_1tui_1_1_screen.md) serializes its terminal-input calls before invoking this object. [Frame](classpuc_1_1tui_1_1_frame.md) callbacks must make their own selection data safe against concurrent rendering.
 
-[Source](../../puc-cli/tui/selection.hpp#L75)
+[Source](../../puc-cli/tui/rendering/selection.hpp#L75)
 
 ## Private data members
 
@@ -22,7 +22,7 @@ SelectionPhase puc::tui::SelectionStateMachine::phase_
 
 Current lifecycle phase.
 
-[Source](../../puc-cli/tui/selection.hpp#L136)
+[Source](../../puc-cli/tui/rendering/selection.hpp#L136)
 
 <a id="symbol-classpuc_1_1tui_1_1_selection_state_machine_1a737b8759e55af0ed628489beff58d173"></a>
 
@@ -34,7 +34,7 @@ std::string puc::tui::SelectionStateMachine::active_frame_id_
 
 Stable id of the active selected frame.
 
-[Source](../../puc-cli/tui/selection.hpp#L137)
+[Source](../../puc-cli/tui/rendering/selection.hpp#L137)
 
 <a id="symbol-classpuc_1_1tui_1_1_selection_state_machine_1a5342bf430b41f89242e682013068f11f"></a>
 
@@ -46,7 +46,7 @@ std::shared_ptr<Frame> puc::tui::SelectionStateMachine::active_frame_
 
 Target retained until successful RESET.
 
-[Source](../../puc-cli/tui/selection.hpp#L139)
+[Source](../../puc-cli/tui/rendering/selection.hpp#L139)
 
 ## Public functions
 
@@ -60,7 +60,7 @@ puc::tui::SelectionStateMachine::SelectionStateMachine()=default
 
 Construct an empty state machine in [SelectionPhase::NONE](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a6ec6e7ef6f90768da3386622a10eb37cab50339a10e1de285ac99d4c3990b8693).
 
-[Source](../../puc-cli/tui/selection.hpp#L78)
+[Source](../../puc-cli/tui/rendering/selection.hpp#L78)
 
 <a id="symbol-classpuc_1_1tui_1_1_selection_state_machine_1ad9aa945672b5a78509daa4127e03c641"></a>
 
@@ -70,7 +70,7 @@ Construct an empty state machine in [SelectionPhase::NONE](namespacepuc_1_1tui.m
 puc::tui::SelectionStateMachine::SelectionStateMachine(const SelectionStateMachine &)=delete
 ```
 
-[Source](../../puc-cli/tui/selection.hpp#L80)
+[Source](../../puc-cli/tui/rendering/selection.hpp#L80)
 
 <a id="symbol-classpuc_1_1tui_1_1_selection_state_machine_1a1d3583c75e33378bd512e8ff780b9f03"></a>
 
@@ -80,7 +80,7 @@ puc::tui::SelectionStateMachine::SelectionStateMachine(const SelectionStateMachi
 SelectionStateMachine & puc::tui::SelectionStateMachine::operator=(const SelectionStateMachine &)=delete
 ```
 
-[Source](../../puc-cli/tui/selection.hpp#L81)
+[Source](../../puc-cli/tui/rendering/selection.hpp#L81)
 
 <a id="symbol-classpuc_1_1tui_1_1_selection_state_machine_1a10b4f0e76f4ff6df889e9fb825ec21c5"></a>
 
@@ -90,7 +90,7 @@ SelectionStateMachine & puc::tui::SelectionStateMachine::operator=(const Selecti
 puc::tui::SelectionStateMachine::SelectionStateMachine(SelectionStateMachine &&)=delete
 ```
 
-[Source](../../puc-cli/tui/selection.hpp#L82)
+[Source](../../puc-cli/tui/rendering/selection.hpp#L82)
 
 <a id="symbol-classpuc_1_1tui_1_1_selection_state_machine_1a4d0731756c8cfa18fdc464e06e0076a5"></a>
 
@@ -100,7 +100,7 @@ puc::tui::SelectionStateMachine::SelectionStateMachine(SelectionStateMachine &&)
 SelectionStateMachine & puc::tui::SelectionStateMachine::operator=(SelectionStateMachine &&)=delete
 ```
 
-[Source](../../puc-cli/tui/selection.hpp#L83)
+[Source](../../puc-cli/tui/rendering/selection.hpp#L83)
 
 <a id="symbol-classpuc_1_1tui_1_1_selection_state_machine_1a55c8defffe9c9bd253b39f7b57dcd554"></a>
 
@@ -112,7 +112,7 @@ puc::tui::SelectionStateMachine::~SelectionStateMachine()=default
 
 Release retained [Frame](classpuc_1_1tui_1_1_frame.md) ownership without invoking application code.
 
-[Source](../../puc-cli/tui/selection.hpp#L86)
+[Source](../../puc-cli/tui/rendering/selection.hpp#L86)
 
 <a id="symbol-classpuc_1_1tui_1_1_selection_state_machine_1a3080cf571346d0f45ee1e30b088480fb"></a>
 
@@ -136,7 +136,7 @@ Apply one semantic operation to a selectable frame.
 
 **Returns:** [Status::OK](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270ae0aa021e21dddbd6d8cecec71e9cf564) on success, or a validation, transition, or [Frame](classpuc_1_1tui_1_1_frame.md) error.
 
-[Source](../../puc-cli/tui/selection.hpp#L106)
+[Source](../../puc-cli/tui/rendering/selection.hpp#L106)
 
 <a id="symbol-classpuc_1_1tui_1_1_selection_state_machine_1a7fab3fb5b7d9c797a9ccab93249dcd7a"></a>
 
@@ -150,7 +150,7 @@ Remove the active selection and return to NONE.
 
 RESET is idempotent. When a [Frame](classpuc_1_1tui_1_1_frame.md) is active, the phase and retained frame change only after that [Frame](classpuc_1_1tui_1_1_frame.md) accepts its RESET event.
 
-[Source](../../puc-cli/tui/selection.hpp#L115)
+[Source](../../puc-cli/tui/rendering/selection.hpp#L115)
 
 <a id="symbol-classpuc_1_1tui_1_1_selection_state_machine_1a5ede8d84ac412ffeaa2ba656fe162577"></a>
 
@@ -162,7 +162,7 @@ SelectionPhase puc::tui::SelectionStateMachine::phase() const noexcept
 
 Return the current lifecycle phase.
 
-[Source](../../puc-cli/tui/selection.hpp#L118)
+[Source](../../puc-cli/tui/rendering/selection.hpp#L118)
 
 <a id="symbol-classpuc_1_1tui_1_1_selection_state_machine_1abe135bafbe6bf9a641a15e0f04d1be31"></a>
 
@@ -174,7 +174,7 @@ std::optional< std::string > puc::tui::SelectionStateMachine::active_frame_id() 
 
 Return the active frame id, or no value while the phase is NONE.
 
-[Source](../../puc-cli/tui/selection.hpp#L121)
+[Source](../../puc-cli/tui/rendering/selection.hpp#L121)
 
 <a id="symbol-classpuc_1_1tui_1_1_selection_state_machine_1a91e5067b45c0975d29af66fba2846288"></a>
 
@@ -188,7 +188,7 @@ Ask the completed [Frame](classpuc_1_1tui_1_1_frame.md) to extract its selected 
 
 Clipboard transport deliberately remains outside [Frame](classpuc_1_1tui_1_1_frame.md). A caller can pass the returned bytes to [Screen](classpuc_1_1tui_1_1_screen.md)'s terminal-session boundary later.
 
-[Source](../../puc-cli/tui/selection.hpp#L129)
+[Source](../../puc-cli/tui/rendering/selection.hpp#L129)
 
 ## Private functions
 
@@ -202,4 +202,4 @@ bool puc::tui::SelectionStateMachine::is_active_target(std::string_view frame_id
 
 Test whether a target is the frame retained by the active phase.
 
-[Source](../../puc-cli/tui/selection.hpp#L133)
+[Source](../../puc-cli/tui/rendering/selection.hpp#L133)

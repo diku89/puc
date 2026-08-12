@@ -4,7 +4,7 @@
 
 One frame together with its stable layout identifier.
 
-[Source](../../puc-cli/tui/zbuf.hpp#L30)
+[Source](../../puc-cli/tui/rendering/zbuf.hpp#L30)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::string puc::tui::ZBuffer::Entry::frame_id
 
 Unique identifier within the Z-buffer.
 
-[Source](../../puc-cli/tui/zbuf.hpp#L31)
+[Source](../../puc-cli/tui/rendering/zbuf.hpp#L31)
 
 <a id="symbol-structpuc_1_1tui_1_1_z_buffer_1_1_entry_1a17da766c42024b481a06e9c91c8d3119"></a>
 
@@ -30,4 +30,4 @@ std::shared_ptr<Frame> puc::tui::ZBuffer::Entry::frame
 
 Shared ownership of the implementation.
 
-[Source](../../puc-cli/tui/zbuf.hpp#L33)
+[Source](../../puc-cli/tui/rendering/zbuf.hpp#L33)

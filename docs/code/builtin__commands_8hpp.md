@@ -4,7 +4,7 @@
 
 Lifecycle registration of commands shipped with PUC.
 
-[Source](../../puc-cli/state/builtin_commands.hpp)
+[Source](../../state/builtin_commands.hpp)
 
 ## Related symbols
 

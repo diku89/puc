@@ -6,7 +6,7 @@ Own durable exit control and process termination-signal handling.
 
 In TUI mode [initialize()](#symbol-classpuc_1_1app_1_1_application_control_subsystem_1aa6d2a68c485e71fd1afb327fdb7f6b1c) installs handlers for SIGINT and SIGTERM, and [terminate()](#symbol-classpuc_1_1app_1_1_application_control_subsystem_1a40c08e6e3be1a04c994afc0a6e819861) restores the dispositions that preceded the application. The handlers remain installed across every restartable [start()](#symbol-classpuc_1_1app_1_1_application_control_subsystem_1a60e398b65d193d587093d547a1dba935)/stop() cycle. TEST mode never changes process signal dispositions.
 
-[Source](../../puc-cli/state/control.hpp#L24)
+[Source](../../state/control.hpp#L24)
 
 ## Related symbols
 
@@ -24,7 +24,7 @@ volatile std::sig_atomic_t puc::app::ApplicationControlSubsystem::termination_si
 
 Process-global async-signal-safe request written only by the handler.
 
-[Source](../../puc-cli/state/control.hpp#L66)
+[Source](../../state/control.hpp#L66)
 
 <a id="symbol-classpuc_1_1app_1_1_application_control_subsystem_1aecf791e73d17d3b1e84f9ef93b184d31"></a>
 
@@ -36,7 +36,7 @@ ApplicationControlSubsystem * puc::app::ApplicationControlSubsystem::signal_owne
 
 Enforce the process-global single-owner nature of signal dispositions.
 
-[Source](../../puc-cli/state/control.hpp#L69)
+[Source](../../state/control.hpp#L69)
 
 ## Private data members
 
@@ -50,7 +50,7 @@ std::unique_ptr<ApplicationControl> puc::app::ApplicationControlSubsystem::contr
 
 Durable request state for one initialized lifetime.
 
-[Source](../../puc-cli/state/control.hpp#L72)
+[Source](../../state/control.hpp#L72)
 
 <a id="symbol-classpuc_1_1app_1_1_application_control_subsystem_1aba6cf2a48894fb592538369caf53b44c"></a>
 
@@ -62,7 +62,7 @@ std::unique_ptr<SignalHandlers> puc::app::ApplicationControlSubsystem::signal_ha
 
 Saved dispositions while this adapter owns them.
 
-[Source](../../puc-cli/state/control.hpp#L74)
+[Source](../../state/control.hpp#L74)
 
 ## Public functions
 
@@ -76,7 +76,7 @@ puc::app::ApplicationControlSubsystem::ApplicationControlSubsystem()
 
 Construct an independent root subsystem.
 
-[Source](../../puc-cli/state/control.hpp#L27)
+[Source](../../state/control.hpp#L27)
 
 <a id="symbol-classpuc_1_1app_1_1_application_control_subsystem_1a8d56e8dbdd740ff4b247eb9a143976c4"></a>
 
@@ -88,7 +88,7 @@ puc::app::ApplicationControlSubsystem::~ApplicationControlSubsystem() override
 
 Restore any remaining process handlers and destroy control state.
 
-[Source](../../puc-cli/state/control.hpp#L30)
+[Source](../../state/control.hpp#L30)
 
 <a id="symbol-classpuc_1_1app_1_1_application_control_subsystem_1aa6d2a68c485e71fd1afb327fdb7f6b1c"></a>
 
@@ -100,7 +100,7 @@ Status puc::app::ApplicationControlSubsystem::initialize(AppState &app) override
 
 Create fresh exit control and install TUI process-signal handlers.
 
-[Source](../../puc-cli/state/control.hpp#L33)
+[Source](../../state/control.hpp#L33)
 
 <a id="symbol-classpuc_1_1app_1_1_application_control_subsystem_1a60e398b65d193d587093d547a1dba935"></a>
 
@@ -112,7 +112,7 @@ Status puc::app::ApplicationControlSubsystem::start(AppState &app) override
 
 Preserve and expose the durable control during a running generation.
 
-[Source](../../puc-cli/state/control.hpp#L36)
+[Source](../../state/control.hpp#L36)
 
 <a id="symbol-classpuc_1_1app_1_1_application_control_subsystem_1ab5bbc5e73a473dbee85cba9c30565692"></a>
 
@@ -124,7 +124,7 @@ Status puc::app::ApplicationControlSubsystem::stop(AppState &app) noexcept overr
 
 Preserve exit state across a suspend-style stop.
 
-[Source](../../puc-cli/state/control.hpp#L39)
+[Source](../../state/control.hpp#L39)
 
 <a id="symbol-classpuc_1_1app_1_1_application_control_subsystem_1a40c08e6e3be1a04c994afc0a6e819861"></a>
 
@@ -136,7 +136,7 @@ Status puc::app::ApplicationControlSubsystem::terminate(AppState &app) noexcept 
 
 Release the control after the final application generation.
 
-[Source](../../puc-cli/state/control.hpp#L42)
+[Source](../../state/control.hpp#L42)
 
 <a id="symbol-classpuc_1_1app_1_1_application_control_subsystem_1ad749b079b5ef52f5ded7f6af611c9b43"></a>
 
@@ -148,7 +148,7 @@ ApplicationControl * puc::app::ApplicationControlSubsystem::control() noexcept
 
 Return the initialized control, or nullptr outside its lifetime.
 
-[Source](../../puc-cli/state/control.hpp#L45)
+[Source](../../state/control.hpp#L45)
 
 <a id="symbol-classpuc_1_1app_1_1_application_control_subsystem_1ac76edc6e0c7c19414ad02cdf2a2855fc"></a>
 
@@ -160,7 +160,7 @@ const ApplicationControl * puc::app::ApplicationControlSubsystem::control() cons
 
 Return the initialized control, or nullptr outside its lifetime.
 
-[Source](../../puc-cli/state/control.hpp#L48)
+[Source](../../state/control.hpp#L48)
 
 <a id="symbol-classpuc_1_1app_1_1_application_control_subsystem_1a034b3fd9598cded3f70446920a720985"></a>
 
@@ -172,7 +172,7 @@ bool puc::app::ApplicationControlSubsystem::exit_requested() const noexcept
 
 Return whether a command or process termination signal requested exit.
 
-[Source](../../puc-cli/state/control.hpp#L51)
+[Source](../../state/control.hpp#L51)
 
 ## Private static functions
 
@@ -186,7 +186,7 @@ void puc::app::ApplicationControlSubsystem::handle_termination_signal(int signal
 
 Record a signal request without invoking lifecycle or library code.
 
-[Source](../../puc-cli/state/control.hpp#L57)
+[Source](../../state/control.hpp#L57)
 
 ## Private functions
 
@@ -200,7 +200,7 @@ Status puc::app::ApplicationControlSubsystem::install_signal_handlers()
 
 Install process-global handlers while preserving prior dispositions.
 
-[Source](../../puc-cli/state/control.hpp#L60)
+[Source](../../state/control.hpp#L60)
 
 <a id="symbol-classpuc_1_1app_1_1_application_control_subsystem_1a38b41ce96d7b3f04536787c9108f8aa1"></a>
 
@@ -212,4 +212,4 @@ Status puc::app::ApplicationControlSubsystem::restore_signal_handlers() noexcept
 
 Restore dispositions retained by install\_signal\_handlers().
 
-[Source](../../puc-cli/state/control.hpp#L63)
+[Source](../../state/control.hpp#L63)

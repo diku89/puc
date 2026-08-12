@@ -4,7 +4,7 @@
 
 Lifecycle owner for the integrated-terminal PTY child.
 
-[Source](../../puc-cli/state/embedded_terminal.hpp)
+[Source](../../state/embedded_terminal.hpp)
 
 ## Related symbols
 

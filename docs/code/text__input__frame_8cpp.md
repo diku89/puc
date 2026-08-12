@@ -4,7 +4,7 @@
 
 Editor event routing and text-cell rendering.
 
-[Source](../../puc-cli/tui/text_input_frame.cpp)
+[Source](../../puc-cli/tui/frames/text_input_frame.cpp)
 
 ## Related symbols
 

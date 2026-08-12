@@ -2,7 +2,7 @@
 
 # Namespace `puc::timer`
 
-[Source](../../puc-cli/state/timer.hpp#L12)
+[Source](../../state/timer.hpp#L12)
 
 ## Related symbols
 

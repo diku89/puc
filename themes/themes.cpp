@@ -12,7 +12,7 @@
 #include <variant>
 
 #include "properties/properties.hpp"
-#include "puc-cli/tui/theme.hpp"
+#include "puc-cli/tui/rendering/theme.hpp"
 
 namespace puc::themes {
 namespace {

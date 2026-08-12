@@ -4,4 +4,4 @@
 
 Complete public set of concrete application subsystem adapters.
 
-[Source](../../puc-cli/state/adapters.hpp)
+[Source](../../state/adapters.hpp)

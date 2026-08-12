@@ -4,7 +4,7 @@
 
 Centered semantic message frame implementation.
 
-[Source](../../puc-cli/tui/message_frame.cpp)
+[Source](../../puc-cli/tui/frames/message_frame.cpp)
 
 ## Related symbols
 

@@ -4,7 +4,7 @@
 
 Installed and Bazel-runfiles configuration-root discovery.
 
-[Source](../../puc-cli/terminal/configuration_paths.cpp)
+[Source](../../puc-cli/tui/terminal/configuration_paths.cpp)
 
 ## Related symbols
 

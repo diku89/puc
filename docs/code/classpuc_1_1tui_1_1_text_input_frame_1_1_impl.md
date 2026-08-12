@@ -4,7 +4,7 @@
 
 Synchronized reusable editor, style, and latest render geometry.
 
-[Source](../../puc-cli/tui/text_input_frame.cpp#L22)
+[Source](../../puc-cli/tui/frames/text_input_frame.cpp#L22)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::shared_mutex puc::tui::TextInputFrame::Impl::mutex
 
 Synchronizes state and rendering.
 
-[Source](../../puc-cli/tui/text_input_frame.cpp#L28)
+[Source](../../puc-cli/tui/frames/text_input_frame.cpp#L28)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_input_frame_1_1_impl_1a83c6818bd796ab3d80b696f63e4d76f5"></a>
 
@@ -30,7 +30,7 @@ TextEditor puc::tui::TextInputFrame::Impl::editor
 
 Reusable logical editor mechanics.
 
-[Source](../../puc-cli/tui/text_input_frame.cpp#L29)
+[Source](../../puc-cli/tui/frames/text_input_frame.cpp#L29)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_input_frame_1_1_impl_1ae3dce48552cfb346736258fd8cc8dab8"></a>
 
@@ -42,7 +42,7 @@ TextInputFrameStyle puc::tui::TextInputFrame::Impl::style
 
 Active semantic color roles.
 
-[Source](../../puc-cli/tui/text_input_frame.cpp#L30)
+[Source](../../puc-cli/tui/frames/text_input_frame.cpp#L30)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_input_frame_1_1_impl_1a3fd4dd4bfa286d643d49fcfdb7c55ba0"></a>
 
@@ -54,7 +54,7 @@ Canvas::Rect puc::tui::TextInputFrame::Impl::viewport
 
 Last absolute draw rectangle.
 
-[Source](../../puc-cli/tui/text_input_frame.cpp#L31)
+[Source](../../puc-cli/tui/frames/text_input_frame.cpp#L31)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_input_frame_1_1_impl_1a52e2f89d1caffa3ec11490713eca52cc"></a>
 
@@ -66,7 +66,7 @@ bool puc::tui::TextInputFrame::Impl::viewport_valid
 
 Whether scroll hit-testing is valid.
 
-[Source](../../puc-cli/tui/text_input_frame.cpp#L32)
+[Source](../../puc-cli/tui/frames/text_input_frame.cpp#L32)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_input_frame_1_1_impl_1a2c8799844bac4f69de13506cc8486a21"></a>
 
@@ -78,7 +78,7 @@ std::vector<AnnotatedTextRow> puc::tui::TextInputFrame::Impl::visible_rows
 
 Latest annotation rows.
 
-[Source](../../puc-cli/tui/text_input_frame.cpp#L33)
+[Source](../../puc-cli/tui/frames/text_input_frame.cpp#L33)
 
 ## Public functions
 
@@ -92,4 +92,4 @@ puc::tui::TextInputFrame::Impl::Impl(TextInputFrameStyle supplied_style, TextEdi
 
 Construct synchronized editor state with its initial style.
 
-[Source](../../puc-cli/tui/text_input_frame.cpp#L25)
+[Source](../../puc-cli/tui/frames/text_input_frame.cpp#L25)

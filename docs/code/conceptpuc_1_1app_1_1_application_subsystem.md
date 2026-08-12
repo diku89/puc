@@ -4,4 +4,4 @@
 
 Types accepted as concrete application subsystem adapters.
 
-[Source](../../puc-cli/state/state.hpp#L82)
+[Source](../../state/state.hpp#L82)

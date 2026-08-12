@@ -4,7 +4,7 @@
 
 Persistent libtmt surface and lifecycle implementation.
 
-[Source](../../puc-cli/tui/integrated_term_frame.cpp)
+[Source](../../puc-cli/tui/frames/integrated_term_frame.cpp)
 
 ## Related symbols
 

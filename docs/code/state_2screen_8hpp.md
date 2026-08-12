@@ -4,7 +4,7 @@
 
 Lifecycle adapter for terminal presentation policy.
 
-[Source](../../puc-cli/state/screen.hpp)
+[Source](../../state/screen.hpp)
 
 ## Related symbols
 

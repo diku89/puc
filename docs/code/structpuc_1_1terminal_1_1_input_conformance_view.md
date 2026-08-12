@@ -4,7 +4,7 @@
 
 Consistent render snapshot copied under the runner's lock.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L91)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L91)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ InputConformanceTest puc::terminal::InputConformanceView::test
 
 Stable id.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L92)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L92)
 
 <a id="symbol-structpuc_1_1terminal_1_1_input_conformance_view_1a4d5bc079b02288620d3ce034e9110ff0"></a>
 
@@ -30,7 +30,7 @@ std::size_t puc::terminal::InputConformanceView::test_number
 
 One-based current number, or total.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L93)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L93)
 
 <a id="symbol-structpuc_1_1terminal_1_1_input_conformance_view_1a9f920f0fd667132cef024432ae1472ac"></a>
 
@@ -42,7 +42,7 @@ std::size_t puc::terminal::InputConformanceView::test_count
 
 Checks selected for this run.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L94)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L94)
 
 <a id="symbol-structpuc_1_1terminal_1_1_input_conformance_view_1a376992c6242cdf1c3cb253ba3d291599"></a>
 
@@ -54,7 +54,7 @@ unsigned int puc::terminal::InputConformanceView::seconds_remaining
 
 Displayed heartbeat countdown.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L95)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L95)
 
 <a id="symbol-structpuc_1_1terminal_1_1_input_conformance_view_1ac01b904e2e6f81db19d2122fe3069bf7"></a>
 
@@ -66,7 +66,7 @@ InputConformancePhase puc::terminal::InputConformanceView::phase
 
 Border and transition state.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L96)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L96)
 
 <a id="symbol-structpuc_1_1terminal_1_1_input_conformance_view_1a617698ebdb74cd8f2183ab8acd0975b6"></a>
 
@@ -78,7 +78,7 @@ std::string puc::terminal::InputConformanceView::name
 
 Current short check label.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L98)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L98)
 
 <a id="symbol-structpuc_1_1terminal_1_1_input_conformance_view_1a5d39a3d0b3e3840c5f933ee331817f0f"></a>
 
@@ -90,7 +90,7 @@ std::string puc::terminal::InputConformanceView::instruction
 
 Current operator prompt.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L99)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L99)
 
 <a id="symbol-structpuc_1_1terminal_1_1_input_conformance_view_1a691e22a23df95fccbbea385c11940a88"></a>
 
@@ -102,7 +102,7 @@ std::string puc::terminal::InputConformanceView::last_observation
 
 Most recently decoded input category.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L100)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L100)
 
 ## Public functions
 
@@ -116,4 +116,4 @@ bool puc::terminal::InputConformanceView::operator==(const InputConformanceView 
 
 Compare complete snapshots.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L103)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L103)

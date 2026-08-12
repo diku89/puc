@@ -4,7 +4,7 @@
 
 Semantic palette roles used by one text-entry surface.
 
-[Source](../../puc-cli/tui/text_input_frame.hpp#L20)
+[Source](../../puc-cli/tui/frames/text_input_frame.hpp#L20)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ Theme::ColorTypes puc::tui::TextInputFrameStyle::text_color
 
 Ordinary text foreground.
 
-[Source](../../puc-cli/tui/text_input_frame.hpp#L21)
+[Source](../../puc-cli/tui/frames/text_input_frame.hpp#L21)
 
 <a id="symbol-structpuc_1_1tui_1_1_text_input_frame_style_1a7a41e0fb09d47a5c2a9ece177c30971c"></a>
 
@@ -30,7 +30,7 @@ Theme::ColorTypes puc::tui::TextInputFrameStyle::cursor_color
 
 Caret background/accent.
 
-[Source](../../puc-cli/tui/text_input_frame.hpp#L23)
+[Source](../../puc-cli/tui/frames/text_input_frame.hpp#L23)
 
 <a id="symbol-structpuc_1_1tui_1_1_text_input_frame_style_1a07d5b920c1bb4ddce8e1d5e2d113bb4a"></a>
 
@@ -42,7 +42,7 @@ Theme::ColorTypes puc::tui::TextInputFrameStyle::background_color
 
 Unoccupied cell background.
 
-[Source](../../puc-cli/tui/text_input_frame.hpp#L25)
+[Source](../../puc-cli/tui/frames/text_input_frame.hpp#L25)
 
 <a id="symbol-structpuc_1_1tui_1_1_text_input_frame_style_1ae852a13dcc4d92afe5a87a5110ea062c"></a>
 
@@ -54,7 +54,7 @@ Theme::ColorTypes puc::tui::TextInputFrameStyle::selection_text_color
 
 Selected text foreground.
 
-[Source](../../puc-cli/tui/text_input_frame.hpp#L27)
+[Source](../../puc-cli/tui/frames/text_input_frame.hpp#L27)
 
 <a id="symbol-structpuc_1_1tui_1_1_text_input_frame_style_1aa175465aa7934397397b6d5ef73a8f20"></a>
 
@@ -66,4 +66,4 @@ Theme::ColorTypes puc::tui::TextInputFrameStyle::selection_background_color
 
 Selected background.
 
-[Source](../../puc-cli/tui/text_input_frame.hpp#L29)
+[Source](../../puc-cli/tui/frames/text_input_frame.hpp#L29)

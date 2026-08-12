@@ -4,7 +4,7 @@
 
 Text clipboard encoding and decoding through terminal OSC 52.
 
-[Source](../../puc-cli/terminal/clipboard.hpp)
+[Source](../../puc-cli/tui/terminal/clipboard.hpp)
 
 ## Related symbols
 

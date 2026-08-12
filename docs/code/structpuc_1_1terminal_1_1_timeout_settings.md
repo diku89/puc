@@ -4,7 +4,7 @@
 
 System-default and user-overridable terminal input timing policy.
 
-[Source](../../puc-cli/terminal/timeouts.hpp#L21)
+[Source](../../puc-cli/tui/terminal/timeouts.hpp#L21)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::chrono::milliseconds puc::terminal::TimeoutSettings::input_sequence
 
 Incomplete input wait.
 
-[Source](../../puc-cli/terminal/timeouts.hpp#L22)
+[Source](../../puc-cli/tui/terminal/timeouts.hpp#L22)
 
 <a id="symbol-structpuc_1_1terminal_1_1_timeout_settings_1a25c2c7549fec5fc16d376cca5344e742"></a>
 
@@ -30,7 +30,7 @@ std::chrono::milliseconds puc::terminal::TimeoutSettings::multiple_click
 
 Click-chain wait.
 
-[Source](../../puc-cli/terminal/timeouts.hpp#L23)
+[Source](../../puc-cli/tui/terminal/timeouts.hpp#L23)
 
 ## Public functions
 
@@ -44,4 +44,4 @@ bool puc::terminal::TimeoutSettings::operator==(const TimeoutSettings &) const n
 
 Compare both configured durations.
 
-[Source](../../puc-cli/terminal/timeouts.hpp#L26)
+[Source](../../puc-cli/tui/terminal/timeouts.hpp#L26)

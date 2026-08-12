@@ -4,7 +4,7 @@
 
 Lifecycle-owned producers for application protocol channels.
 
-[Source](../../puc-cli/state/channels.hpp)
+[Source](../../state/channels.hpp)
 
 ## Related symbols
 

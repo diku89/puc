@@ -6,7 +6,7 @@ Reusable text-buffer state machine independent of rendering and mode UI.
 
 The model owns Unicode-scalar text, a caret, selection, vertical scroll, transactional paste state, and wrapped-row navigation. It deliberately does not own a mutex or clipboard/terminal I/O: a containing [Frame](classpuc_1_1tui_1_1_frame.md) synchronizes access and moves selected UTF-8 through [Screen](classpuc_1_1tui_1_1_screen.md)'s clipboard integration.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L109)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L109)
 
 ## Related symbols
 
@@ -24,7 +24,7 @@ std::unique_ptr<Impl> puc::tui::TextEditor::impl_
 
 Hidden reusable editor representation.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L178)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L178)
 
 ## Public functions
 
@@ -38,7 +38,7 @@ puc::tui::TextEditor::TextEditor(TextEditorOptions options={})
 
 Construct an empty editor with the supplied policy.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L112)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L112)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1a9e6f4cd1ba19d5d9da0379f61987a153"></a>
 
@@ -48,7 +48,7 @@ Construct an empty editor with the supplied policy.
 puc::tui::TextEditor::TextEditor(const TextEditor &)=delete
 ```
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L114)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L114)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1a65b4692cfff1c07a1f14466845d2a1c3"></a>
 
@@ -58,7 +58,7 @@ puc::tui::TextEditor::TextEditor(const TextEditor &)=delete
 TextEditor & puc::tui::TextEditor::operator=(const TextEditor &)=delete
 ```
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L115)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L115)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1a85ddb878667c9e3d1b3674b5c33a5c37"></a>
 
@@ -68,7 +68,7 @@ TextEditor & puc::tui::TextEditor::operator=(const TextEditor &)=delete
 puc::tui::TextEditor::TextEditor(TextEditor &&)=delete
 ```
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L116)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L116)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1aea8a2fa20d6f10295214ba9043c0940b"></a>
 
@@ -78,7 +78,7 @@ puc::tui::TextEditor::TextEditor(TextEditor &&)=delete
 TextEditor & puc::tui::TextEditor::operator=(TextEditor &&)=delete
 ```
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L117)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L117)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1a883c661b91677e35db279ea2551b21a1"></a>
 
@@ -90,7 +90,7 @@ puc::tui::TextEditor::~TextEditor()
 
 Destroy the hidden logical buffer.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L120)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L120)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1a50d0e4a72dc40a0139f3580578153074"></a>
 
@@ -102,7 +102,7 @@ void puc::tui::TextEditor::set_viewport(std::size_t width, std::size_t height)
 
 Replace the current viewport and keep its caret visible.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L123)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L123)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1a5e73671a7b008a6b24b36d8e5caa7d1f"></a>
 
@@ -114,7 +114,7 @@ void puc::tui::TextEditor::set_fallback_width(std::size_t width) noexcept
 
 Change the wrap width used before a nonzero viewport is available.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L126)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L126)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1aa4d04a9298c98e692ba73255a0e55acb"></a>
 
@@ -126,7 +126,7 @@ TextEditorSnapshot puc::tui::TextEditor::snapshot() const
 
 Return a consistent copy of logical editor state.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L129)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L129)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1a9a0c488443a26fd626ee5ee6974b8dbb"></a>
 
@@ -138,7 +138,7 @@ std::string puc::tui::TextEditor::text() const
 
 Return the complete UTF-8 buffer.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L132)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L132)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1a7d00e9f8a37f34ba7c9cb7c1c889f74e"></a>
 
@@ -150,7 +150,7 @@ std::size_t puc::tui::TextEditor::logical_line_count() const noexcept
 
 Return zero for pristine input, otherwise the logical line count.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L135)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L135)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1a84686e6301ad29309a554fea4d548c75"></a>
 
@@ -162,7 +162,7 @@ std::size_t puc::tui::TextEditor::visual_row_count(std::size_t width) const
 
 Return the wrapped-row count for an explicit positive width.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L138)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L138)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1a0c8204bb98a72a72a245af94184c8ea9"></a>
 
@@ -174,7 +174,7 @@ TextEditorRenderState puc::tui::TextEditor::render_state() const
 
 Return cells and caret coordinates for the current visible viewport.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L141)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L141)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1a4c1865461c703371f932cd669f76fd41"></a>
 
@@ -186,7 +186,7 @@ void puc::tui::TextEditor::clear()
 
 Clear text, caret, selection, scrolling, and any paste transaction.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L144)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L144)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1a7cc90a0c36473c635eb4913176540a7f"></a>
 
@@ -198,7 +198,7 @@ void puc::tui::TextEditor::insert_utf8(std::string_view text)
 
 Insert committed UTF-8 at the caret, replacing any selection.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L147)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L147)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1a31593d5f506e278baf1d6b6908cc9f8e"></a>
 
@@ -210,7 +210,7 @@ void puc::tui::TextEditor::handle_key(const terminal::KeyEvent &event)
 
 Apply a decoded key press; releases and modifier-only keys are ignored.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L150)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L150)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1a287d8b321874e0e578c4dcfe2ee480bf"></a>
 
@@ -222,7 +222,7 @@ void puc::tui::TextEditor::handle_text(const terminal::TextEvent &event)
 
 Insert a committed text event unless a paste transaction owns input.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L153)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L153)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1a1a85fbf536ef625218bc972bfeba3cb5"></a>
 
@@ -234,7 +234,7 @@ Status puc::tui::TextEditor::handle_paste(const terminal::PasteEvent &event)
 
 Apply one transactional bracketed-paste stage.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L156)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L156)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1a43c095bbd8bff0f081715e49aff49156"></a>
 
@@ -246,7 +246,7 @@ void puc::tui::TextEditor::apply_command(terminal::Command command)
 
 Apply a reusable navigation or select-all command.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L159)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L159)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1a504d5b22e7cdbcbac3771be235f42e76"></a>
 
@@ -258,7 +258,7 @@ void puc::tui::TextEditor::scroll_vertical(std::int64_t delta)
 
 Scroll vertically by signed wrapped rows; horizontal input has no API.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L162)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L162)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1a936ccf8802beeb082568991844d95673"></a>
 
@@ -270,7 +270,7 @@ Status puc::tui::TextEditor::update_selection(const SelectionEvent &event)
 
 Apply a logical selection event in editor-local cell coordinates.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L165)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L165)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1a2236755184fba4a95711333fd8e7bf25"></a>
 
@@ -282,7 +282,7 @@ Status puc::tui::TextEditor::selected_text(std::string &output) const
 
 Extract selected UTF-8 without performing clipboard I/O.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L168)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L168)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1adc296396711ef03baad18234513855cd"></a>
 
@@ -294,7 +294,7 @@ void puc::tui::TextEditor::reset_selection() noexcept
 
 Clear the active selection without changing text or the caret.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L171)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L171)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1afd27c0ddcd8b488778243b6924683ecf"></a>
 
@@ -306,4 +306,4 @@ Status puc::tui::TextEditor::place_cursor(SelectionPosition position)
 
 Place the caret at an editor-local cell when that cell is visible.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L174)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L174)

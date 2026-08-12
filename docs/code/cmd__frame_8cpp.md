@@ -4,7 +4,7 @@
 
 Composed command-entry view implementation.
 
-[Source](../../puc-cli/tui/cmd_frame.cpp)
+[Source](../../puc-cli/tui/frames/cmd_frame.cpp)
 
 ## Related symbols
 

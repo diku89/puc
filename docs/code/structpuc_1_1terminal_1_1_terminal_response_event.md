@@ -4,7 +4,7 @@
 
 Terminal response that should be consumed by protocol orchestration.
 
-[Source](../../puc-cli/terminal/event.hpp#L383)
+[Source](../../puc-cli/tui/terminal/event.hpp#L383)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ TerminalResponseKind puc::terminal::TerminalResponseEvent::kind
 
 Reply category.
 
-[Source](../../puc-cli/terminal/event.hpp#L384)
+[Source](../../puc-cli/tui/terminal/event.hpp#L384)
 
 <a id="symbol-structpuc_1_1terminal_1_1_terminal_response_event_1a5b6430ffc7466da47595b2472b3044a1"></a>
 
@@ -30,7 +30,7 @@ std::uint32_t puc::terminal::TerminalResponseEvent::value
 
 Parsed numeric value, when applicable.
 
-[Source](../../puc-cli/terminal/event.hpp#L386)
+[Source](../../puc-cli/tui/terminal/event.hpp#L386)
 
 <a id="symbol-structpuc_1_1terminal_1_1_terminal_response_event_1ab05af190c6679fa7b96917aa0417965c"></a>
 
@@ -42,7 +42,7 @@ std::string puc::terminal::TerminalResponseEvent::bytes
 
 Original or remaining protocol bytes.
 
-[Source](../../puc-cli/terminal/event.hpp#L387)
+[Source](../../puc-cli/tui/terminal/event.hpp#L387)
 
 ## Public functions
 
@@ -56,4 +56,4 @@ bool puc::terminal::TerminalResponseEvent::operator==(const TerminalResponseEven
 
 Compare the category and retained response data.
 
-[Source](../../puc-cli/terminal/event.hpp#L390)
+[Source](../../puc-cli/tui/terminal/event.hpp#L390)

@@ -4,7 +4,7 @@
 
 Layered TOML loading for terminal timeout defaults.
 
-[Source](../../puc-cli/terminal/timeouts.cpp)
+[Source](../../puc-cli/tui/terminal/timeouts.cpp)
 
 ## Related symbols
 

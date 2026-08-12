@@ -7,7 +7,7 @@
 
 #include <memory>
 
-#include "puc-cli/state/state.hpp"
+#include "state/state.hpp"
 
 namespace puc::app {
 

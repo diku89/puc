@@ -6,7 +6,7 @@ Own all application configuration and mutable property state.
 
 The service is constructed once during initialize, survives every suspend-style stop/start cycle, and is released only by terminate. No other subsystem may construct or access the low-level TOML Config loader.
 
-[Source](../../puc-cli/state/properties.hpp#L33)
+[Source](../../state/properties.hpp#L33)
 
 ## Property
 
@@ -20,7 +20,7 @@ puc::app::PropertiesSubsystem::__pad0__
 
 Return the initialized service, or nullptr outside its lifetime.
 
-[Source](../../puc-cli/state/properties.hpp#L57)
+[Source](../../state/properties.hpp#L57)
 
 ## Private data members
 
@@ -34,7 +34,7 @@ PropertiesSubsystemOptions puc::app::PropertiesSubsystem::options_
 
 Roots retained until terminate.
 
-[Source](../../puc-cli/state/properties.hpp#L62)
+[Source](../../state/properties.hpp#L62)
 
 <a id="symbol-classpuc_1_1app_1_1_properties_subsystem_1ad200c766113676a6b1da5ae2339850b6"></a>
 
@@ -46,7 +46,7 @@ std::unique_ptr<properties::Properties> puc::app::PropertiesSubsystem::propertie
 
 Durable documents and mutable values.
 
-[Source](../../puc-cli/state/properties.hpp#L64)
+[Source](../../state/properties.hpp#L64)
 
 ## Public functions
 
@@ -60,7 +60,7 @@ puc::app::PropertiesSubsystem::PropertiesSubsystem(PropertiesSubsystemOptions op
 
 Retain roots for the one initialized properties service.
 
-[Source](../../puc-cli/state/properties.hpp#L36)
+[Source](../../state/properties.hpp#L36)
 
 <a id="symbol-classpuc_1_1app_1_1_properties_subsystem_1ace6c72fc4cc2d5f7e5eccedecff87f5a"></a>
 
@@ -72,7 +72,7 @@ puc::app::PropertiesSubsystem::~PropertiesSubsystem() override
 
 Destroy a service already released by [terminate()](#symbol-classpuc_1_1app_1_1_properties_subsystem_1a27b926cbf8c0d68e8f1d22f16cc41ab5).
 
-[Source](../../puc-cli/state/properties.hpp#L39)
+[Source](../../state/properties.hpp#L39)
 
 <a id="symbol-classpuc_1_1app_1_1_properties_subsystem_1a0c9bc459d2144e0d0dfd21248dc5a20c"></a>
 
@@ -84,7 +84,7 @@ Status puc::app::PropertiesSubsystem::initialize(AppState &app) override
 
 Construct the durable properties service exactly once.
 
-[Source](../../puc-cli/state/properties.hpp#L42)
+[Source](../../state/properties.hpp#L42)
 
 <a id="symbol-classpuc_1_1app_1_1_properties_subsystem_1ac60a4c06ab2d1b9d26bb0fbcdee24b2f"></a>
 
@@ -96,7 +96,7 @@ Status puc::app::PropertiesSubsystem::start(AppState &app) override
 
 Validate that initialized property state remains available.
 
-[Source](../../puc-cli/state/properties.hpp#L45)
+[Source](../../state/properties.hpp#L45)
 
 <a id="symbol-classpuc_1_1app_1_1_properties_subsystem_1a873ded2eef590fb446591fa111d98c5d"></a>
 
@@ -108,7 +108,7 @@ Status puc::app::PropertiesSubsystem::stop(AppState &app) noexcept override
 
 Preserve documents and mutations across a suspend-style stop.
 
-[Source](../../puc-cli/state/properties.hpp#L48)
+[Source](../../state/properties.hpp#L48)
 
 <a id="symbol-classpuc_1_1app_1_1_properties_subsystem_1a27b926cbf8c0d68e8f1d22f16cc41ab5"></a>
 
@@ -120,7 +120,7 @@ Status puc::app::PropertiesSubsystem::terminate(AppState &app) noexcept override
 
 Release all property state after the final running generation.
 
-[Source](../../puc-cli/state/properties.hpp#L51)
+[Source](../../state/properties.hpp#L51)
 
 <a id="symbol-classpuc_1_1app_1_1_properties_subsystem_1a99ff51c09fc05011ba32bc638d823657"></a>
 
@@ -132,4 +132,4 @@ properties::Properties * puc::app::PropertiesSubsystem::properties() noexcept
 
 Return the initialized service, or nullptr outside its lifetime.
 
-[Source](../../puc-cli/state/properties.hpp#L54)
+[Source](../../state/properties.hpp#L54)

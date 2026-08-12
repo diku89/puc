@@ -4,7 +4,7 @@
 
 Terminal transport and decoder subsystem implementation.
 
-[Source](../../puc-cli/state/terminal.cpp)
+[Source](../../state/terminal.cpp)
 
 ## Related symbols
 

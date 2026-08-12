@@ -4,7 +4,7 @@
 
 Read-only command-mode state for tests and presentation diagnostics.
 
-[Source](../../puc-cli/state/command_mode.hpp#L39)
+[Source](../../state/command_mode.hpp#L39)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::vector<CommandCompletion> puc::app::CommandModeSnapshot::completions
 
 Current prefix matches.
 
-[Source](../../puc-cli/state/command_mode.hpp#L40)
+[Source](../../state/command_mode.hpp#L40)
 
 <a id="symbol-structpuc_1_1app_1_1_command_mode_snapshot_1a0099b04d689d185fd004674af9502e6a"></a>
 
@@ -30,7 +30,7 @@ std::string puc::app::CommandModeSnapshot::usage
 
 Exact-command help text.
 
-[Source](../../puc-cli/state/command_mode.hpp#L41)
+[Source](../../state/command_mode.hpp#L41)
 
 <a id="symbol-structpuc_1_1app_1_1_command_mode_snapshot_1a0261676ccb4a1c10bbd642d9660479f3"></a>
 
@@ -42,7 +42,7 @@ std::size_t puc::app::CommandModeSnapshot::selected_completion
 
 Arrow-selected candidate.
 
-[Source](../../puc-cli/state/command_mode.hpp#L42)
+[Source](../../state/command_mode.hpp#L42)
 
 <a id="symbol-structpuc_1_1app_1_1_command_mode_snapshot_1a48855e23acdc37a2965c60784b9d427b"></a>
 
@@ -54,7 +54,7 @@ bool puc::app::CommandModeSnapshot::waiting_for_acknowledgement
 
 Command has returned.
 
-[Source](../../puc-cli/state/command_mode.hpp#L43)
+[Source](../../state/command_mode.hpp#L43)
 
 <a id="symbol-structpuc_1_1app_1_1_command_mode_snapshot_1aee6d34d74965576c45397347ac122a99"></a>
 
@@ -66,4 +66,4 @@ bool puc::app::CommandModeSnapshot::active
 
 Running lifecycle generation.
 
-[Source](../../puc-cli/state/command_mode.hpp#L44)
+[Source](../../state/command_mode.hpp#L44)

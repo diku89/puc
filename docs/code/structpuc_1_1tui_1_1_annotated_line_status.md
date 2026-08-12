@@ -4,7 +4,7 @@
 
 One optional marker rendered beside a zero-based logical line.
 
-[Source](../../puc-cli/tui/annotated_text_frame.hpp#L40)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.hpp#L40)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::size_t puc::tui::AnnotatedLineStatus::logical_line
 
 Source line receiving the marker.
 
-[Source](../../puc-cli/tui/annotated_text_frame.hpp#L41)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.hpp#L41)
 
 <a id="symbol-structpuc_1_1tui_1_1_annotated_line_status_1a442baa051689fe42de9244a17de5e22d"></a>
 
@@ -30,7 +30,7 @@ std::u32string puc::tui::AnnotatedLineStatus::text
 
 [Status](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270) characters or emoji scalars.
 
-[Source](../../puc-cli/tui/annotated_text_frame.hpp#L42)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.hpp#L42)
 
 <a id="symbol-structpuc_1_1tui_1_1_annotated_line_status_1ac1f453e4089227ce200942e9562db2d2"></a>
 
@@ -42,4 +42,4 @@ Theme::ColorTypes puc::tui::AnnotatedLineStatus::color
 
 Marker foreground role.
 
-[Source](../../puc-cli/tui/annotated_text_frame.hpp#L43)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.hpp#L43)

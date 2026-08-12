@@ -6,7 +6,7 @@ Register the command and resize channels shared by [Screen](classpuc_1_1app_1_1_
 
 This adapter is the server/producer owner for both canonical channel names. Terminal and presentation consumers depend on it and own only their subscriptions. Stopping the adapter closes both routes before Directory is destroyed.
 
-[Source](../../puc-cli/state/channels.hpp#L28)
+[Source](../../state/channels.hpp#L28)
 
 ## Private data members
 
@@ -20,7 +20,7 @@ ipc::Directory* puc::app::ScreenChannelSubsystem::directory_
 
 Borrowed while this is started.
 
-[Source](../../puc-cli/state/channels.hpp#L61)
+[Source](../../state/channels.hpp#L61)
 
 <a id="symbol-classpuc_1_1app_1_1_screen_channel_subsystem_1aa9980697297e4637f71993eb3346a222"></a>
 
@@ -32,7 +32,7 @@ std::shared_ptr<ipc::Channel> puc::app::ScreenChannelSubsystem::command_channel_
 
 Command producer.
 
-[Source](../../puc-cli/state/channels.hpp#L62)
+[Source](../../state/channels.hpp#L62)
 
 <a id="symbol-classpuc_1_1app_1_1_screen_channel_subsystem_1afd27501a35bf2898b67b3a12c2e82a11"></a>
 
@@ -44,7 +44,7 @@ std::shared_ptr<ipc::Channel> puc::app::ScreenChannelSubsystem::resize_channel_
 
 Resize producer.
 
-[Source](../../puc-cli/state/channels.hpp#L63)
+[Source](../../state/channels.hpp#L63)
 
 <a id="symbol-classpuc_1_1app_1_1_screen_channel_subsystem_1a40a2271183b3a2030fccab6f844288b3"></a>
 
@@ -56,7 +56,7 @@ ipc::ChannelId puc::app::ScreenChannelSubsystem::command_id_
 
 Directory-assigned command id.
 
-[Source](../../puc-cli/state/channels.hpp#L64)
+[Source](../../state/channels.hpp#L64)
 
 <a id="symbol-classpuc_1_1app_1_1_screen_channel_subsystem_1a1199796972f60fda74c29e363a8b7a77"></a>
 
@@ -68,7 +68,7 @@ ipc::ChannelId puc::app::ScreenChannelSubsystem::resize_id_
 
 Directory-assigned resize id.
 
-[Source](../../puc-cli/state/channels.hpp#L65)
+[Source](../../state/channels.hpp#L65)
 
 ## Public functions
 
@@ -82,7 +82,7 @@ puc::app::ScreenChannelSubsystem::ScreenChannelSubsystem()
 
 Declare the channel-directory dependency.
 
-[Source](../../puc-cli/state/channels.hpp#L31)
+[Source](../../state/channels.hpp#L31)
 
 <a id="symbol-classpuc_1_1app_1_1_screen_channel_subsystem_1a0cb1abf29639ed930f668755d87c7673"></a>
 
@@ -94,7 +94,7 @@ Status puc::app::ScreenChannelSubsystem::initialize(AppState &app) override
 
 Validate access to the registered [DirectorySubsystem](classpuc_1_1app_1_1_directory_subsystem.md).
 
-[Source](../../puc-cli/state/channels.hpp#L34)
+[Source](../../state/channels.hpp#L34)
 
 <a id="symbol-classpuc_1_1app_1_1_screen_channel_subsystem_1a5961b85a7984e3612d8b2ca5c5498288"></a>
 
@@ -106,7 +106,7 @@ Status puc::app::ScreenChannelSubsystem::start(AppState &app) override
 
 Create and register both canonical [Screen](classpuc_1_1app_1_1_screen.md) channels.
 
-[Source](../../puc-cli/state/channels.hpp#L37)
+[Source](../../state/channels.hpp#L37)
 
 <a id="symbol-classpuc_1_1app_1_1_screen_channel_subsystem_1a0ed52846dc1bf0722386909b1b04ba8d"></a>
 
@@ -118,7 +118,7 @@ Status puc::app::ScreenChannelSubsystem::stop(AppState &app) noexcept override
 
 Close both canonical routes and release their endpoints.
 
-[Source](../../puc-cli/state/channels.hpp#L40)
+[Source](../../state/channels.hpp#L40)
 
 <a id="symbol-classpuc_1_1app_1_1_screen_channel_subsystem_1a4bd376f3a2e27ef7fe6a240d3ceb6938"></a>
 
@@ -130,7 +130,7 @@ Status puc::app::ScreenChannelSubsystem::terminate(AppState &app) noexcept overr
 
 Release any endpoints retained after partial lifecycle progress.
 
-[Source](../../puc-cli/state/channels.hpp#L43)
+[Source](../../state/channels.hpp#L43)
 
 <a id="symbol-classpuc_1_1app_1_1_screen_channel_subsystem_1a1eb6edf14df3ba6896ddd561ea8333bb"></a>
 
@@ -142,7 +142,7 @@ ipc::Channel * puc::app::ScreenChannelSubsystem::command_channel() noexcept
 
 Return the [Screen](classpuc_1_1app_1_1_screen.md) command endpoint, or nullptr while stopped.
 
-[Source](../../puc-cli/state/channels.hpp#L46)
+[Source](../../state/channels.hpp#L46)
 
 <a id="symbol-classpuc_1_1app_1_1_screen_channel_subsystem_1af604341cc7295fae9048d02777350d4b"></a>
 
@@ -154,7 +154,7 @@ ipc::Channel * puc::app::ScreenChannelSubsystem::resize_channel() noexcept
 
 Return the terminal resize endpoint, or nullptr while stopped.
 
-[Source](../../puc-cli/state/channels.hpp#L49)
+[Source](../../state/channels.hpp#L49)
 
 <a id="symbol-classpuc_1_1app_1_1_screen_channel_subsystem_1ac67190e42abf4a93c01de7982399be50"></a>
 
@@ -166,7 +166,7 @@ ipc::ChannelId puc::app::ScreenChannelSubsystem::command_channel_id() const noex
 
 Return the assigned [Screen](classpuc_1_1app_1_1_screen.md) command identifier, or zero while stopped.
 
-[Source](../../puc-cli/state/channels.hpp#L52)
+[Source](../../state/channels.hpp#L52)
 
 <a id="symbol-classpuc_1_1app_1_1_screen_channel_subsystem_1a9d4a7fee129e2983dae573a79c8a8d20"></a>
 
@@ -178,7 +178,7 @@ ipc::ChannelId puc::app::ScreenChannelSubsystem::resize_channel_id() const noexc
 
 Return the assigned resize-event identifier, or zero while stopped.
 
-[Source](../../puc-cli/state/channels.hpp#L55)
+[Source](../../state/channels.hpp#L55)
 
 ## Private functions
 
@@ -192,4 +192,4 @@ Status puc::app::ScreenChannelSubsystem::close_channels() noexcept
 
 Close registered routes and clear retained state.
 
-[Source](../../puc-cli/state/channels.hpp#L59)
+[Source](../../state/channels.hpp#L59)

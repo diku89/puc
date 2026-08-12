@@ -6,7 +6,7 @@ Application-owned lifecycle adapter around one cohesive mechanism.
 
 Reusable mechanisms such as JobQueue, Directory, Decoder, and Logger remain independent of the application layer. Concrete [AppSubsystem](#) adapters own or borrow those mechanisms and declare dependencies on other adapter types. Hook failure must leave the failing hook's own partial work quiescent; [AppState](classpuc_1_1app_1_1_app_state.md) rolls back hooks that completed successfully before it.
 
-[Source](../../puc-cli/state/state.hpp#L40)
+[Source](../../state/state.hpp#L40)
 
 ## Private data members
 
@@ -20,7 +20,7 @@ std::string puc::app::AppSubsystem::name_
 
 Unique diagnostic name, not registry identity.
 
-[Source](../../puc-cli/state/state.hpp#L75)
+[Source](../../state/state.hpp#L75)
 
 <a id="symbol-classpuc_1_1app_1_1_app_subsystem_1a3d598981be47e29af22944c7a08feb24"></a>
 
@@ -32,7 +32,7 @@ std::vector<SubsystemId> puc::app::AppSubsystem::dependencies_
 
 Concrete prerequisite subsystem types.
 
-[Source](../../puc-cli/state/state.hpp#L77)
+[Source](../../state/state.hpp#L77)
 
 ## Public functions
 
@@ -46,7 +46,7 @@ puc::app::AppSubsystem::AppSubsystem(std::string name, std::vector< SubsystemId 
 
 Construct a named subsystem with concrete-type dependency identities.
 
-[Source](../../puc-cli/state/state.hpp#L43)
+[Source](../../state/state.hpp#L43)
 
 <a id="symbol-classpuc_1_1app_1_1_app_subsystem_1a5c79e41f1565331fec9c56065159bcf5"></a>
 
@@ -56,7 +56,7 @@ Construct a named subsystem with concrete-type dependency identities.
 puc::app::AppSubsystem::AppSubsystem(const AppSubsystem &)=delete
 ```
 
-[Source](../../puc-cli/state/state.hpp#L46)
+[Source](../../state/state.hpp#L46)
 
 <a id="symbol-classpuc_1_1app_1_1_app_subsystem_1a8c59f875dde6adbbdfcdc4c611d791cf"></a>
 
@@ -66,7 +66,7 @@ puc::app::AppSubsystem::AppSubsystem(const AppSubsystem &)=delete
 AppSubsystem & puc::app::AppSubsystem::operator=(const AppSubsystem &)=delete
 ```
 
-[Source](../../puc-cli/state/state.hpp#L47)
+[Source](../../state/state.hpp#L47)
 
 <a id="symbol-classpuc_1_1app_1_1_app_subsystem_1aed38fb541368e35c7238dae3c4ab928e"></a>
 
@@ -76,7 +76,7 @@ AppSubsystem & puc::app::AppSubsystem::operator=(const AppSubsystem &)=delete
 puc::app::AppSubsystem::AppSubsystem(AppSubsystem &&)=delete
 ```
 
-[Source](../../puc-cli/state/state.hpp#L48)
+[Source](../../state/state.hpp#L48)
 
 <a id="symbol-classpuc_1_1app_1_1_app_subsystem_1a234fd49a7bc9870effd5f0f5a2265fb9"></a>
 
@@ -86,7 +86,7 @@ puc::app::AppSubsystem::AppSubsystem(AppSubsystem &&)=delete
 AppSubsystem & puc::app::AppSubsystem::operator=(AppSubsystem &&)=delete
 ```
 
-[Source](../../puc-cli/state/state.hpp#L49)
+[Source](../../state/state.hpp#L49)
 
 <a id="symbol-classpuc_1_1app_1_1_app_subsystem_1a6a92408c48e7a5d34a03ace40e683b47"></a>
 
@@ -98,7 +98,7 @@ puc::app::AppSubsystem::~AppSubsystem()
 
 Destroy one adapter after [AppState](classpuc_1_1app_1_1_app_state.md) has requested termination.
 
-[Source](../../puc-cli/state/state.hpp#L52)
+[Source](../../state/state.hpp#L52)
 
 <a id="symbol-classpuc_1_1app_1_1_app_subsystem_1abcba5b0b3a34f2fed09df248465204a7"></a>
 
@@ -110,7 +110,7 @@ std::string_view puc::app::AppSubsystem::name() const noexcept
 
 Return the unique human-readable diagnostic name.
 
-[Source](../../puc-cli/state/state.hpp#L55)
+[Source](../../state/state.hpp#L55)
 
 <a id="symbol-classpuc_1_1app_1_1_app_subsystem_1ae529220956b767e48247d10e8cd6043d"></a>
 
@@ -122,7 +122,7 @@ std::span< const SubsystemId > puc::app::AppSubsystem::dependencies() const noex
 
 Return concrete subsystem types that must precede this subsystem.
 
-[Source](../../puc-cli/state/state.hpp#L58)
+[Source](../../state/state.hpp#L58)
 
 <a id="symbol-classpuc_1_1app_1_1_app_subsystem_1a72337415b5c2592ed6cadc2ea0693b08"></a>
 
@@ -134,7 +134,7 @@ virtual Status puc::app::AppSubsystem::initialize(AppState &app)=0
 
 Configure durable resources once, without externally observable work.
 
-[Source](../../puc-cli/state/state.hpp#L63)
+[Source](../../state/state.hpp#L63)
 
 <a id="symbol-classpuc_1_1app_1_1_app_subsystem_1ad17f1e7e5d86ec13fe9c762c1e0b50ad"></a>
 
@@ -146,7 +146,7 @@ virtual Status puc::app::AppSubsystem::start(AppState &app)=0
 
 Begin one restartable generation after every dependency has started.
 
-[Source](../../puc-cli/state/state.hpp#L66)
+[Source](../../state/state.hpp#L66)
 
 <a id="symbol-classpuc_1_1app_1_1_app_subsystem_1a723bbbe8f7b5d4bece7d190636766e35"></a>
 
@@ -158,7 +158,7 @@ virtual Status puc::app::AppSubsystem::stop(AppState &app) noexcept=0
 
 Quiesce one generation before any declared dependency is stopped.
 
-[Source](../../puc-cli/state/state.hpp#L69)
+[Source](../../state/state.hpp#L69)
 
 <a id="symbol-classpuc_1_1app_1_1_app_subsystem_1af00aa361b7081c8462a6a646ba805611"></a>
 
@@ -170,4 +170,4 @@ virtual Status puc::app::AppSubsystem::terminate(AppState &app) noexcept=0
 
 Finally release durable resources before dependencies terminate.
 
-[Source](../../puc-cli/state/state.hpp#L72)
+[Source](../../state/state.hpp#L72)

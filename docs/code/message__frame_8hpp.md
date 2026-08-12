@@ -4,7 +4,7 @@
 
 Centered single-line semantic message frame.
 
-[Source](../../puc-cli/tui/message_frame.hpp)
+[Source](../../puc-cli/tui/frames/message_frame.hpp)
 
 ## Related symbols
 

@@ -6,7 +6,7 @@ Positive visual width-to-height ratio for a frame.
 
 `{4, 3}` describes a landscape box four visual units wide and three visual units tall. It does not request four columns by three rows.
 
-[Source](../../puc-cli/tui/layout.hpp#L89)
+[Source](../../puc-cli/tui/rendering/layout.hpp#L89)
 
 ## Public data members
 
@@ -20,7 +20,7 @@ int32_t puc::tui::Layout::AspectRatio::width
 
 Relative visual width.
 
-[Source](../../puc-cli/tui/layout.hpp#L90)
+[Source](../../puc-cli/tui/rendering/layout.hpp#L90)
 
 <a id="symbol-structpuc_1_1app_1_1_layout_1_1_aspect_ratio_1a3be46a687b0503a7e5662e0e21d86c39"></a>
 
@@ -32,4 +32,4 @@ int32_t puc::tui::Layout::AspectRatio::height
 
 Relative visual height.
 
-[Source](../../puc-cli/tui/layout.hpp#L91)
+[Source](../../puc-cli/tui/rendering/layout.hpp#L91)

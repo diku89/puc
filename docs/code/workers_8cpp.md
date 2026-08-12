@@ -4,7 +4,7 @@
 
 Shared worker-pool subsystem implementation.
 
-[Source](../../puc-cli/state/workers.cpp)
+[Source](../../state/workers.cpp)
 
 ## Related symbols
 

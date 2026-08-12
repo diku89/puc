@@ -6,7 +6,7 @@ Consume decoded terminal events and one-hertz ticks as a timed test plan.
 
 The runner contains no terminal I/O and no rendering code. Calls are synchronized because heartbeat delivery, input polling, and frame rendering may occur on different threads. Every test begins with fifteen one-hertz ticks. A match enters a short success phase; a fifteenth unmatched tick records a timeout. `update()` advances after the configured feedback duration.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L116)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L116)
 
 ## Public types
 
@@ -20,7 +20,7 @@ using puc::terminal::InputConformanceRunner::Clock = std::chrono::steady_clock
 
 Monotonic transition clock.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L118)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L118)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_conformance_runner_1aa92a1d346b753d8a87227cb245849ccc"></a>
 
@@ -32,7 +32,7 @@ using puc::terminal::InputConformanceRunner::TimePoint = Clock::time_point
 
 Injectable unit-test time.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L119)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L119)
 
 ## Public static data members
 
@@ -46,7 +46,7 @@ std::string_view puc::terminal::InputConformanceRunner::kClipboardToken
 
 Clipboard nonce that must return through terminal paste input.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L122)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L122)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_conformance_runner_1a6b64bb1f6eb351a373de05f8165b4b15"></a>
 
@@ -58,7 +58,7 @@ unsigned int puc::terminal::InputConformanceRunner::kTimeoutSeconds
 
 Number of one-hertz ticks available to every check.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L125)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L125)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_conformance_runner_1ac2760c9bc82b6ae2e39b8e8f8991c08f"></a>
 
@@ -70,7 +70,7 @@ std::chrono::milliseconds puc::terminal::InputConformanceRunner::kDefaultFeedbac
 
 Normal duration of green/red result feedback.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L128)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L128)
 
 ## Private data members
 
@@ -84,7 +84,7 @@ std::mutex puc::terminal::InputConformanceRunner::mutex_
 
 Protects every field below.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L187)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L187)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_conformance_runner_1a4dd31c1edbaee671621e886617381976"></a>
 
@@ -96,7 +96,7 @@ const std::optional<InputConformanceTest> puc::terminal::InputConformanceRunner:
 
 Optional one-check plan selector.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L189)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L189)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_conformance_runner_1a3e8b15fe600b3792d9e5ae742efa434b"></a>
 
@@ -108,7 +108,7 @@ std::chrono::milliseconds puc::terminal::InputConformanceRunner::feedback_durati
 
 Green/red hold time.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L190)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L190)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_conformance_runner_1a40963b3966b9b0171cb9936f93980b48"></a>
 
@@ -120,7 +120,7 @@ std::size_t puc::terminal::InputConformanceRunner::current_index_
 
 Zero-based descriptor index.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L191)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L191)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_conformance_runner_1a85b1ee9dc691e0dc79477247d3253412"></a>
 
@@ -132,7 +132,7 @@ unsigned int puc::terminal::InputConformanceRunner::seconds_remaining_
 
 Countdown value.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L192)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L192)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_conformance_runner_1af3b354eef9091b7184f0656353904b32"></a>
 
@@ -144,7 +144,7 @@ InputConformancePhase puc::terminal::InputConformanceRunner::phase_
 
 Current transition phase.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L193)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L193)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_conformance_runner_1acdd6a492b2e2ae7437b4b2c4421a9731"></a>
 
@@ -156,7 +156,7 @@ TimePoint puc::terminal::InputConformanceRunner::feedback_until_
 
 Earliest next-test transition.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L195)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L195)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_conformance_runner_1a5c7b8f4dab9b9d6c99452379abff15b6"></a>
 
@@ -168,7 +168,7 @@ InputInteractionRegion puc::terminal::InputConformanceRunner::interaction_region
 
 Mouse target geometry.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L196)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L196)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_conformance_runner_1a4b47e765219716976be1ea51b0080cd7"></a>
 
@@ -180,7 +180,7 @@ std::vector<InputConformanceResult> puc::terminal::InputConformanceRunner::resul
 
 Ordered final outcomes.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L197)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L197)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_conformance_runner_1a21503df9c4994d64f54c1bc225f00bf8"></a>
 
@@ -192,7 +192,7 @@ std::string puc::terminal::InputConformanceRunner::last_observation_
 
 UI diagnostic.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L198)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L198)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_conformance_runner_1aa308cdb5693fe916e08cee908aa147ed"></a>
 
@@ -204,7 +204,7 @@ std::string puc::terminal::InputConformanceRunner::text_buffer_
 
 Text matcher accumulation.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L199)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L199)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_conformance_runner_1a21c6d30565cfd33e9f09b54433c218b7"></a>
 
@@ -216,7 +216,7 @@ bool puc::terminal::InputConformanceRunner::saw_scroll_up_
 
 Current scroll test saw positive Y.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L200)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L200)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_conformance_runner_1ae2c1ab7b3804d1da0b983d826527b1c2"></a>
 
@@ -228,7 +228,7 @@ bool puc::terminal::InputConformanceRunner::saw_scroll_down_
 
 Current scroll test saw negative Y.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L201)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L201)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_conformance_runner_1ac2d3d034ac726a5d2bf2d166a5504ef9"></a>
 
@@ -240,7 +240,7 @@ bool puc::terminal::InputConformanceRunner::drag_started_
 
 Current drag test saw left press.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L202)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L202)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_conformance_runner_1ac68c033b2950e8f651cc87c07e3c5745"></a>
 
@@ -252,7 +252,7 @@ bool puc::terminal::InputConformanceRunner::drag_moved_
 
 Current drag traveled enough cells.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L203)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L203)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_conformance_runner_1ae99c2fc48187319fef51b006cb86beb3"></a>
 
@@ -264,7 +264,7 @@ CellPosition puc::terminal::InputConformanceRunner::drag_origin_
 
 Initial press coordinate.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L204)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L204)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_conformance_runner_1a1dc0e7becaf959e6cc52fd982d77775f"></a>
 
@@ -276,7 +276,7 @@ bool puc::terminal::InputConformanceRunner::paste_started_
 
 Paste-backed check saw a BEGIN event.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L205)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L205)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_conformance_runner_1a6ba298c4da1c91f686a72c8f69db06d5"></a>
 
@@ -288,7 +288,7 @@ std::string puc::terminal::InputConformanceRunner::paste_buffer_
 
 Clipboard token or dropped-path bytes.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L206)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L206)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_conformance_runner_1a5466fa53e6a07e0e84c0e992166283bf"></a>
 
@@ -300,7 +300,7 @@ bool puc::terminal::InputConformanceRunner::focus_lost_
 
 Focus test saw the terminal blur.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L207)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L207)
 
 ## Public functions
 
@@ -314,7 +314,7 @@ puc::terminal::InputConformanceRunner::InputConformanceRunner(std::chrono::milli
 
 Construct the full plan, or a plan containing only `selected_test`.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L132)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L132)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_conformance_runner_1a175ccb0ee2d8d8b089e3d37d917125dd"></a>
 
@@ -324,7 +324,7 @@ Construct the full plan, or a plan containing only `selected_test`.
 puc::terminal::InputConformanceRunner::InputConformanceRunner(const InputConformanceRunner &)=delete
 ```
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L136)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L136)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_conformance_runner_1a71a1da62d44f53d5185d9feb6f697086"></a>
 
@@ -334,7 +334,7 @@ puc::terminal::InputConformanceRunner::InputConformanceRunner(const InputConform
 InputConformanceRunner & puc::terminal::InputConformanceRunner::operator=(const InputConformanceRunner &)=delete
 ```
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L137)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L137)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_conformance_runner_1a2669702ba4d388e49acdfeb24ba108b3"></a>
 
@@ -344,7 +344,7 @@ InputConformanceRunner & puc::terminal::InputConformanceRunner::operator=(const 
 puc::terminal::InputConformanceRunner::InputConformanceRunner(InputConformanceRunner &&)=delete
 ```
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L138)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L138)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_conformance_runner_1a635eadedb9133f1455dd8b5d4b366e94"></a>
 
@@ -354,7 +354,7 @@ puc::terminal::InputConformanceRunner::InputConformanceRunner(InputConformanceRu
 InputConformanceRunner & puc::terminal::InputConformanceRunner::operator=(InputConformanceRunner &&)=delete
 ```
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L139)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L139)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_conformance_runner_1a6fa52fe67b17839174b40749cbd70cc6"></a>
 
@@ -366,7 +366,7 @@ void puc::terminal::InputConformanceRunner::set_interaction_region(InputInteract
 
 Update the current box region used to validate pointer coordinates.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L142)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L142)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_conformance_runner_1a0e455da6d2f00b5bd598e9d30d300ce0"></a>
 
@@ -378,7 +378,7 @@ void puc::terminal::InputConformanceRunner::observe(const Event &event, TimePoin
 
 Consume one decoded input event from the real terminal [Decoder](classpuc_1_1terminal_1_1_decoder.md).
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L145)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L145)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_conformance_runner_1a2dd73d5803009e3d7dfda0bf01572015"></a>
 
@@ -390,7 +390,7 @@ void puc::terminal::InputConformanceRunner::tick(TimePoint now=Clock::now())
 
 Consume one valid NullMessage from `//metronome/1hz`.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L148)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L148)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_conformance_runner_1a82473357aa930f80340a77e3e5bacb56"></a>
 
@@ -402,7 +402,7 @@ void puc::terminal::InputConformanceRunner::update(TimePoint now=Clock::now())
 
 Advance after a pass/timeout feedback interval has elapsed.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L151)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L151)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_conformance_runner_1a62271a9a086f5bd8ace2e43585d37307"></a>
 
@@ -414,7 +414,7 @@ InputConformanceView puc::terminal::InputConformanceRunner::view() const
 
 Return a coherent copy suitable for one frame render.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L154)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L154)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_conformance_runner_1a84da173baefd04e0632245b91105c98f"></a>
 
@@ -426,7 +426,7 @@ std::vector< InputConformanceResult > puc::terminal::InputConformanceRunner::res
 
 Return completed results in test order.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L157)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L157)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_conformance_runner_1ae2075a1be13f6db6a65e82224107e0b4"></a>
 
@@ -438,7 +438,7 @@ bool puc::terminal::InputConformanceRunner::finished() const noexcept
 
 Return whether every test has produced a result.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L160)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L160)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_conformance_runner_1a98dc7be3f1538343c3941115a7127046"></a>
 
@@ -450,7 +450,7 @@ std::size_t puc::terminal::InputConformanceRunner::plan_size() const noexcept
 
 Return the number of checks selected for this runner instance.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L163)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L163)
 
 ## Public static functions
 
@@ -464,7 +464,7 @@ static constexpr std::size_t puc::terminal::InputConformanceRunner::test_count()
 
 Return the fixed number of checks in the complete built-in registry.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L166)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L166)
 
 ## Private functions
 
@@ -478,7 +478,7 @@ InputConformanceTest puc::terminal::InputConformanceRunner::planned_test(std::si
 
 Resolve one plan index to its stable test identifier.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L170)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L170)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_conformance_runner_1a9b4aa8c42a957acc4fc2920c2b810e74"></a>
 
@@ -490,7 +490,7 @@ void puc::terminal::InputConformanceRunner::pass(std::string detail, TimePoint n
 
 Mark the active test passed and begin green feedback.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L173)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L173)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_conformance_runner_1a722379ed85b84693d27f56ebd5d82726"></a>
 
@@ -502,7 +502,7 @@ void puc::terminal::InputConformanceRunner::time_out(TimePoint now)
 
 Mark the active test timed out and begin red feedback.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L176)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L176)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_conformance_runner_1a6bd5c15e6479a9d9e1e1814558b3cf08"></a>
 
@@ -514,7 +514,7 @@ void puc::terminal::InputConformanceRunner::advance_locked() noexcept
 
 Select the next descriptor and clear test-specific matcher state.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L179)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L179)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_conformance_runner_1a026fccbfc995f1f3663c08f2b91b9a3c"></a>
 
@@ -526,7 +526,7 @@ bool puc::terminal::InputConformanceRunner::contains(CellPosition position) cons
 
 Return whether a cell is inside the latest interaction box.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L182)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L182)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_conformance_runner_1aceaf1df3770e29bae97c177e4ddf6fb9"></a>
 
@@ -538,4 +538,4 @@ void puc::terminal::InputConformanceRunner::observe_text(std::string_view text, 
 
 Consume text relevant to ordinary typing or clipboard paste.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L185)
+[Source](../../puc-cli/tui/terminal/terminal_test_runner.hpp#L185)

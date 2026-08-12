@@ -6,7 +6,7 @@ A logical key expressed either as a named functional key or Unicode scalar.
 
 This intentionally does not claim to be a physical scan code. Traditional terminal protocols discard physical-key identity before PUC receives input.
 
-[Source](../../puc-cli/terminal/event.hpp#L138)
+[Source](../../puc-cli/tui/terminal/event.hpp#L138)
 
 ## Public data members
 
@@ -20,7 +20,7 @@ std::variant<NamedKey, char32_t> puc::terminal::KeyCode::value
 
 Named functional key or Unicode scalar carried by this value.
 
-[Source](../../puc-cli/terminal/event.hpp#L140)
+[Source](../../puc-cli/tui/terminal/event.hpp#L140)
 
 ## Public functions
 
@@ -34,7 +34,7 @@ puc::terminal::KeyCode::KeyCode() noexcept=default
 
 Construct the Escape key used as the default value.
 
-[Source](../../puc-cli/terminal/event.hpp#L143)
+[Source](../../puc-cli/tui/terminal/event.hpp#L143)
 
 <a id="symbol-structpuc_1_1terminal_1_1_key_code_1a213745dbf251dc4b57a669c19a968a15"></a>
 
@@ -46,7 +46,7 @@ puc::terminal::KeyCode::KeyCode(NamedKey named_key) noexcept
 
 Construct a key code from a named functional key.
 
-[Source](../../puc-cli/terminal/event.hpp#L146)
+[Source](../../puc-cli/tui/terminal/event.hpp#L146)
 
 <a id="symbol-structpuc_1_1terminal_1_1_key_code_1a06e7c6fe0040f0dc1b0c3610e4446cc2"></a>
 
@@ -58,7 +58,7 @@ puc::terminal::KeyCode::KeyCode(char32_t codepoint) noexcept
 
 Construct a key code from a Unicode scalar.
 
-[Source](../../puc-cli/terminal/event.hpp#L149)
+[Source](../../puc-cli/tui/terminal/event.hpp#L149)
 
 <a id="symbol-structpuc_1_1terminal_1_1_key_code_1a7892e3859eab32d4e0e623b625c06192"></a>
 
@@ -70,4 +70,4 @@ bool puc::terminal::KeyCode::operator==(const KeyCode &) const noexcept=default
 
 Compare the contained key alternatives.
 
-[Source](../../puc-cli/terminal/event.hpp#L152)
+[Source](../../puc-cli/tui/terminal/event.hpp#L152)

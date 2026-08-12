@@ -4,7 +4,7 @@
 
 Lifecycle adapter for parallel frame presentation work.
 
-[Source](../../puc-cli/state/presentation.hpp)
+[Source](../../state/presentation.hpp)
 
 ## Related symbols
 

@@ -4,7 +4,7 @@
 
 Deferred application-exit lifecycle implementation.
 
-[Source](../../puc-cli/state/control.cpp)
+[Source](../../state/control.cpp)
 
 ## Related symbols
 

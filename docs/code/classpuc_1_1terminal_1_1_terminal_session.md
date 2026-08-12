@@ -6,7 +6,7 @@ Own the reversible operating-system and protocol state of one terminal.
 
 File descriptors are borrowed and must outlive the session. This class is a PUC has one interactive terminal contract: signal-generating input remains enabled; alternate-screen presentation, bracketed paste, focus events, drag tracking, and enhanced keyboard reporting are active for the session. `release()` reverses that contract and restores the original termios state.
 
-[Source](../../puc-cli/terminal/session.hpp#L49)
+[Source](../../puc-cli/tui/terminal/session.hpp#L49)
 
 ## Private types
 
@@ -28,7 +28,7 @@ ActiveMode
 - <a id="symbol-classpuc_1_1terminal_1_1_terminal_session_1ae7c86f57a588957b0ca3b5e8bce34802a4f9d76b64c337cc2cf2ccd89e8264d48"></a>`ACTIVE_SGR_MOUSE`
 - <a id="symbol-classpuc_1_1terminal_1_1_terminal_session_1ae7c86f57a588957b0ca3b5e8bce34802a2797106989e5c3f48de24fb366baa8ea"></a>`ACTIVE_KITTY_KEYBOARD`
 
-[Source](../../puc-cli/terminal/session.hpp#L111)
+[Source](../../puc-cli/tui/terminal/session.hpp#L111)
 
 ## Private data members
 
@@ -40,7 +40,7 @@ ActiveMode
 int puc::terminal::TerminalSession::input_fd_
 ```
 
-[Source](../../puc-cli/terminal/session.hpp#L129)
+[Source](../../puc-cli/tui/terminal/session.hpp#L129)
 
 <a id="symbol-classpuc_1_1terminal_1_1_terminal_session_1a34b606fb83af87d799efd617137b17c9"></a>
 
@@ -50,7 +50,7 @@ int puc::terminal::TerminalSession::input_fd_
 int puc::terminal::TerminalSession::output_fd_
 ```
 
-[Source](../../puc-cli/terminal/session.hpp#L130)
+[Source](../../puc-cli/tui/terminal/session.hpp#L130)
 
 <a id="symbol-classpuc_1_1terminal_1_1_terminal_session_1a8b70028593ca28d1ad513c9c1b5e98ad"></a>
 
@@ -60,7 +60,7 @@ int puc::terminal::TerminalSession::output_fd_
 termios puc::terminal::TerminalSession::original_terminal_state_
 ```
 
-[Source](../../puc-cli/terminal/session.hpp#L131)
+[Source](../../puc-cli/tui/terminal/session.hpp#L131)
 
 <a id="symbol-classpuc_1_1terminal_1_1_terminal_session_1a366f21f0be7798e1171f6cc181a9cec4"></a>
 
@@ -70,7 +70,7 @@ termios puc::terminal::TerminalSession::original_terminal_state_
 bool puc::terminal::TerminalSession::has_original_terminal_state_
 ```
 
-[Source](../../puc-cli/terminal/session.hpp#L132)
+[Source](../../puc-cli/tui/terminal/session.hpp#L132)
 
 <a id="symbol-classpuc_1_1terminal_1_1_terminal_session_1ad61e8c58e8d8d4a2c31762ab61a45b5c"></a>
 
@@ -80,7 +80,7 @@ bool puc::terminal::TerminalSession::has_original_terminal_state_
 bool puc::terminal::TerminalSession::active_
 ```
 
-[Source](../../puc-cli/terminal/session.hpp#L133)
+[Source](../../puc-cli/tui/terminal/session.hpp#L133)
 
 <a id="symbol-classpuc_1_1terminal_1_1_terminal_session_1a3856381042e5018d4228749c4682192f"></a>
 
@@ -90,7 +90,7 @@ bool puc::terminal::TerminalSession::active_
 std::uint32_t puc::terminal::TerminalSession::active_modes_
 ```
 
-[Source](../../puc-cli/terminal/session.hpp#L134)
+[Source](../../puc-cli/tui/terminal/session.hpp#L134)
 
 <a id="symbol-classpuc_1_1terminal_1_1_terminal_session_1a0f41f294c79a685af41e67449e92afaa"></a>
 
@@ -102,7 +102,7 @@ ipc::Directory* puc::terminal::TerminalSession::screen_directory_
 
 Bound event directory.
 
-[Source](../../puc-cli/terminal/session.hpp#L135)
+[Source](../../puc-cli/tui/terminal/session.hpp#L135)
 
 <a id="symbol-classpuc_1_1terminal_1_1_terminal_session_1afd97b0f4cd460bf73692212beb6f8162"></a>
 
@@ -114,7 +114,7 @@ ipc::Subscription puc::terminal::TerminalSession::screen_command_subscription_
 
 [Command](namespacepuc_1_1terminal.md#symbol-event_8hpp_1ab586d1b5a53718f2f4a09d0efce7421b) callback.
 
-[Source](../../puc-cli/terminal/session.hpp#L136)
+[Source](../../puc-cli/tui/terminal/session.hpp#L136)
 
 <a id="symbol-classpuc_1_1terminal_1_1_terminal_session_1a776be8e748ef31f88e0dd0348e167e33"></a>
 
@@ -126,7 +126,7 @@ msg::ScreenCommandCodec puc::terminal::TerminalSession::screen_command_codec_
 
 [Command](namespacepuc_1_1terminal.md#symbol-event_8hpp_1ab586d1b5a53718f2f4a09d0efce7421b) decoder.
 
-[Source](../../puc-cli/terminal/session.hpp#L137)
+[Source](../../puc-cli/tui/terminal/session.hpp#L137)
 
 <a id="symbol-classpuc_1_1terminal_1_1_terminal_session_1aceb6bc2b8072be7490ab07ec1539c21e"></a>
 
@@ -138,7 +138,7 @@ msg::ScreenResizeEventCodec puc::terminal::TerminalSession::resize_event_codec_
 
 Resize encoder.
 
-[Source](../../puc-cli/terminal/session.hpp#L138)
+[Source](../../puc-cli/tui/terminal/session.hpp#L138)
 
 <a id="symbol-classpuc_1_1terminal_1_1_terminal_session_1afbcee391270265beece5528233e94298"></a>
 
@@ -150,7 +150,7 @@ std::optional<TerminalSize> puc::terminal::TerminalSession::last_published_size_
 
 Last successfully published geometry.
 
-[Source](../../puc-cli/terminal/session.hpp#L140)
+[Source](../../puc-cli/tui/terminal/session.hpp#L140)
 
 <a id="symbol-classpuc_1_1terminal_1_1_terminal_session_1a69d1093bfc084c94d47e6cabb617508f"></a>
 
@@ -162,7 +162,7 @@ std::string puc::terminal::TerminalSession::screen_final_bytes_
 
 Screen policy applied before release.
 
-[Source](../../puc-cli/terminal/session.hpp#L141)
+[Source](../../puc-cli/tui/terminal/session.hpp#L141)
 
 ## Public functions
 
@@ -176,7 +176,7 @@ puc::terminal::TerminalSession::TerminalSession() noexcept
 
 Construct a session over standard input and standard output.
 
-[Source](../../puc-cli/terminal/session.hpp#L52)
+[Source](../../puc-cli/tui/terminal/session.hpp#L52)
 
 <a id="symbol-classpuc_1_1terminal_1_1_terminal_session_1a2c0e57c0c1b8e9c08fee4badcd86601a"></a>
 
@@ -188,7 +188,7 @@ puc::terminal::TerminalSession::TerminalSession(int input_fd, int output_fd) noe
 
 Construct a session over caller-owned descriptors.
 
-[Source](../../puc-cli/terminal/session.hpp#L55)
+[Source](../../puc-cli/tui/terminal/session.hpp#L55)
 
 <a id="symbol-classpuc_1_1terminal_1_1_terminal_session_1aa91126ce7ceea30e933b4fbe0dee135b"></a>
 
@@ -198,7 +198,7 @@ Construct a session over caller-owned descriptors.
 puc::terminal::TerminalSession::TerminalSession(const TerminalSession &)=delete
 ```
 
-[Source](../../puc-cli/terminal/session.hpp#L57)
+[Source](../../puc-cli/tui/terminal/session.hpp#L57)
 
 <a id="symbol-classpuc_1_1terminal_1_1_terminal_session_1a889c4d61870c82737cfcf11e981b09fc"></a>
 
@@ -208,7 +208,7 @@ puc::terminal::TerminalSession::TerminalSession(const TerminalSession &)=delete
 TerminalSession & puc::terminal::TerminalSession::operator=(const TerminalSession &)=delete
 ```
 
-[Source](../../puc-cli/terminal/session.hpp#L58)
+[Source](../../puc-cli/tui/terminal/session.hpp#L58)
 
 <a id="symbol-classpuc_1_1terminal_1_1_terminal_session_1a955708fcec0fbfd58b9936bc0364eb7c"></a>
 
@@ -220,7 +220,7 @@ puc::terminal::TerminalSession::~TerminalSession()
 
 Release an active session without propagating teardown failures.
 
-[Source](../../puc-cli/terminal/session.hpp#L61)
+[Source](../../puc-cli/tui/terminal/session.hpp#L61)
 
 <a id="symbol-classpuc_1_1terminal_1_1_terminal_session_1a189117a4ea3fa0bff251734fb8b8646e"></a>
 
@@ -232,7 +232,7 @@ Status puc::terminal::TerminalSession::take() noexcept
 
 Enter raw mode and activate PUC's fixed interactive terminal contract.
 
-[Source](../../puc-cli/terminal/session.hpp#L64)
+[Source](../../puc-cli/tui/terminal/session.hpp#L64)
 
 <a id="symbol-classpuc_1_1terminal_1_1_terminal_session_1a83d84d7e718a69cc3dd0e339bad1214f"></a>
 
@@ -244,7 +244,7 @@ Status puc::terminal::TerminalSession::release() noexcept
 
 Restore every mode changed by [take()](#symbol-classpuc_1_1terminal_1_1_terminal_session_1a189117a4ea3fa0bff251734fb8b8646e). Safe to call repeatedly.
 
-[Source](../../puc-cli/terminal/session.hpp#L67)
+[Source](../../puc-cli/tui/terminal/session.hpp#L67)
 
 <a id="symbol-classpuc_1_1terminal_1_1_terminal_session_1a6cf5a8361b38d6bbf6f06b86d932f22e"></a>
 
@@ -256,7 +256,7 @@ Status puc::terminal::TerminalSession::write(std::string_view bytes) noexcept
 
 Write bytes to the active terminal, retrying interrupted writes.
 
-[Source](../../puc-cli/terminal/session.hpp#L70)
+[Source](../../puc-cli/tui/terminal/session.hpp#L70)
 
 <a id="symbol-classpuc_1_1terminal_1_1_terminal_session_1a74054f320e757caeb3b7338a13b13cf8"></a>
 
@@ -268,7 +268,7 @@ Status puc::terminal::TerminalSession::read(Decoder &decoder, std::vector< Event
 
 Read one available block and feed it to a decoder.
 
-[Source](../../puc-cli/terminal/session.hpp#L73)
+[Source](../../puc-cli/tui/terminal/session.hpp#L73)
 
 <a id="symbol-classpuc_1_1terminal_1_1_terminal_session_1ad05a5271c6d85c6381d27df9707b4ca4"></a>
 
@@ -280,7 +280,7 @@ Status puc::terminal::TerminalSession::get_size(TerminalSize &size) const noexce
 
 Query current character-cell dimensions using TIOCGWINSZ.
 
-[Source](../../puc-cli/terminal/session.hpp#L77)
+[Source](../../puc-cli/tui/terminal/session.hpp#L77)
 
 <a id="symbol-classpuc_1_1terminal_1_1_terminal_session_1a9b1b678fe5ffee72d6701c75ba3e28b0"></a>
 
@@ -292,7 +292,7 @@ Status puc::terminal::TerminalSession::set_clipboard(ClipboardSelection selectio
 
 Set a host-terminal clipboard through OSC 52.
 
-[Source](../../puc-cli/terminal/session.hpp#L80)
+[Source](../../puc-cli/tui/terminal/session.hpp#L80)
 
 <a id="symbol-classpuc_1_1terminal_1_1_terminal_session_1aa8820f5d3f54e1cc252f7e38488c27c7"></a>
 
@@ -304,7 +304,7 @@ Status puc::terminal::TerminalSession::query_clipboard(ClipboardSelection select
 
 Request clipboard data asynchronously through OSC 52.
 
-[Source](../../puc-cli/terminal/session.hpp#L84)
+[Source](../../puc-cli/tui/terminal/session.hpp#L84)
 
 <a id="symbol-classpuc_1_1terminal_1_1_terminal_session_1a2ce606e8c1b24c25e8dfa04610dd8c2a"></a>
 
@@ -316,7 +316,7 @@ Status puc::terminal::TerminalSession::query_keyboard_protocol() noexcept
 
 Ask the terminal to report its Kitty keyboard flags.
 
-[Source](../../puc-cli/terminal/session.hpp#L87)
+[Source](../../puc-cli/tui/terminal/session.hpp#L87)
 
 <a id="symbol-classpuc_1_1terminal_1_1_terminal_session_1a86b77729c7fe7a18467e001544fee2c4"></a>
 
@@ -330,7 +330,7 @@ Subscribe this mechanism adapter to the one-way Screen command channel.
 
 The Directory must already contain both channels named by `msgs/screen_msgs.hpp` and must outlive this binding. Delivery policy and worker ownership remain the Directory's responsibility.
 
-[Source](../../puc-cli/terminal/session.hpp#L96)
+[Source](../../puc-cli/tui/terminal/session.hpp#L96)
 
 <a id="symbol-classpuc_1_1terminal_1_1_terminal_session_1a5ea554e7b6fbc9236258b6e03732f0f3"></a>
 
@@ -342,7 +342,7 @@ void puc::terminal::TerminalSession::unbind_screen_channels() noexcept
 
 Disable the Screen command subscription after delivery has quiesced.
 
-[Source](../../puc-cli/terminal/session.hpp#L99)
+[Source](../../puc-cli/tui/terminal/session.hpp#L99)
 
 <a id="symbol-classpuc_1_1terminal_1_1_terminal_session_1a1e47fe34b5684151e2ba25078532c2dd"></a>
 
@@ -354,7 +354,7 @@ bool puc::terminal::TerminalSession::screen_channels_bound() const noexcept
 
 Return whether this session currently has a Screen command subscription.
 
-[Source](../../puc-cli/terminal/session.hpp#L103)
+[Source](../../puc-cli/tui/terminal/session.hpp#L103)
 
 <a id="symbol-classpuc_1_1terminal_1_1_terminal_session_1a961aeffd3878bfa7ab40f2d6f13fd567"></a>
 
@@ -366,7 +366,7 @@ bool puc::terminal::TerminalSession::active() const noexcept
 
 Return whether [take()](#symbol-classpuc_1_1terminal_1_1_terminal_session_1a189117a4ea3fa0bff251734fb8b8646e) has completed successfully.
 
-[Source](../../puc-cli/terminal/session.hpp#L108)
+[Source](../../puc-cli/tui/terminal/session.hpp#L108)
 
 ## Private functions
 
@@ -378,7 +378,7 @@ Return whether [take()](#symbol-classpuc_1_1terminal_1_1_terminal_session_1a1891
 Status puc::terminal::TerminalSession::write_all(std::string_view bytes) noexcept
 ```
 
-[Source](../../puc-cli/terminal/session.hpp#L122)
+[Source](../../puc-cli/tui/terminal/session.hpp#L122)
 
 <a id="symbol-classpuc_1_1terminal_1_1_terminal_session_1a8025a596edb72df547b946453f9a3aa9"></a>
 
@@ -388,7 +388,7 @@ Status puc::terminal::TerminalSession::write_all(std::string_view bytes) noexcep
 void puc::terminal::TerminalSession::build_enter_sequence(std::string &output)
 ```
 
-[Source](../../puc-cli/terminal/session.hpp#L123)
+[Source](../../puc-cli/tui/terminal/session.hpp#L123)
 
 <a id="symbol-classpuc_1_1terminal_1_1_terminal_session_1a1ca6218448fc58af118c113439bfaeb6"></a>
 
@@ -398,7 +398,7 @@ void puc::terminal::TerminalSession::build_enter_sequence(std::string &output)
 void puc::terminal::TerminalSession::build_leave_sequence(std::string &output) const
 ```
 
-[Source](../../puc-cli/terminal/session.hpp#L124)
+[Source](../../puc-cli/tui/terminal/session.hpp#L124)
 
 <a id="symbol-classpuc_1_1terminal_1_1_terminal_session_1a7a388f2f934f3e141384e6448e0a4f25"></a>
 
@@ -408,7 +408,7 @@ void puc::terminal::TerminalSession::build_leave_sequence(std::string &output) c
 void puc::terminal::TerminalSession::receive_screen_command(ipc::Channel::Bytes payload) noexcept
 ```
 
-[Source](../../puc-cli/terminal/session.hpp#L125)
+[Source](../../puc-cli/tui/terminal/session.hpp#L125)
 
 <a id="symbol-classpuc_1_1terminal_1_1_terminal_session_1a1123a02b8a4e3c3ea43998ca1ef20232"></a>
 
@@ -418,7 +418,7 @@ void puc::terminal::TerminalSession::receive_screen_command(ipc::Channel::Bytes 
 void puc::terminal::TerminalSession::execute_screen_command(const msg::ScreenCommand &command) noexcept
 ```
 
-[Source](../../puc-cli/terminal/session.hpp#L126)
+[Source](../../puc-cli/tui/terminal/session.hpp#L126)
 
 <a id="symbol-classpuc_1_1terminal_1_1_terminal_session_1a2c316647a24bc2fd4f12839ac9504484"></a>
 
@@ -428,4 +428,4 @@ void puc::terminal::TerminalSession::execute_screen_command(const msg::ScreenCom
 void puc::terminal::TerminalSession::publish_size_if_changed() noexcept
 ```
 
-[Source](../../puc-cli/terminal/session.hpp#L127)
+[Source](../../puc-cli/tui/terminal/session.hpp#L127)

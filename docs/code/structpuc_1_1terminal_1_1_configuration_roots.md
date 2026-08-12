@@ -4,7 +4,7 @@
 
 Primary packaged defaults and optional user-overlay roots.
 
-[Source](../../puc-cli/terminal/configuration_paths.hpp#L15)
+[Source](../../puc-cli/tui/terminal/configuration_paths.hpp#L15)
 
 ## Public data members
 
@@ -16,7 +16,7 @@ Primary packaged defaults and optional user-overlay roots.
 std::filesystem::path puc::terminal::ConfigurationRoots::primary
 ```
 
-[Source](../../puc-cli/terminal/configuration_paths.hpp#L16)
+[Source](../../puc-cli/tui/terminal/configuration_paths.hpp#L16)
 
 <a id="symbol-structpuc_1_1terminal_1_1_configuration_roots_1a7fddc34c97548ca1fff6bd532bc94c7e"></a>
 
@@ -26,4 +26,4 @@ std::filesystem::path puc::terminal::ConfigurationRoots::primary
 std::filesystem::path puc::terminal::ConfigurationRoots::user_overrides
 ```
 
-[Source](../../puc-cli/terminal/configuration_paths.hpp#L17)
+[Source](../../puc-cli/tui/terminal/configuration_paths.hpp#L17)

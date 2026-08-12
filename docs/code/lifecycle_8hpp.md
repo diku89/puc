@@ -4,7 +4,7 @@
 
 Application operating modes, lifecycle states, and result codes.
 
-[Source](../../puc-cli/state/lifecycle.hpp)
+[Source](../../state/lifecycle.hpp)
 
 ## Related symbols
 

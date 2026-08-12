@@ -4,7 +4,7 @@
 
 Lifecycle adapter for deferred application-exit control.
 
-[Source](../../puc-cli/state/control.hpp)
+[Source](../../state/control.hpp)
 
 ## Related symbols
 

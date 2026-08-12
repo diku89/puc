@@ -4,7 +4,7 @@
 
 Parallel presentation lifecycle implementation.
 
-[Source](../../puc-cli/state/presentation.cpp)
+[Source](../../state/presentation.cpp)
 
 ## Related symbols
 

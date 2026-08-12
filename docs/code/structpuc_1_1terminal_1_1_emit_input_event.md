@@ -4,7 +4,7 @@
 
 An action that immediately emits one fully constructed input event.
 
-[Source](../../puc-cli/terminal/input.hpp#L90)
+[Source](../../puc-cli/tui/terminal/input.hpp#L90)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ Event puc::terminal::EmitInputEvent::event
 
 Immutable event copied to a decoder's output queue.
 
-[Source](../../puc-cli/terminal/input.hpp#L91)
+[Source](../../puc-cli/tui/terminal/input.hpp#L91)
 
 ## Public functions
 
@@ -32,4 +32,4 @@ bool puc::terminal::EmitInputEvent::operator==(const EmitInputEvent &) const =de
 
 Compare the stored event.
 
-[Source](../../puc-cli/terminal/input.hpp#L94)
+[Source](../../puc-cli/tui/terminal/input.hpp#L94)

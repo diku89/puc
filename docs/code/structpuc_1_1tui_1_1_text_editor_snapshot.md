@@ -4,7 +4,7 @@
 
 Read-only logical state of one text editor.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L48)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L48)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::string puc::tui::TextEditorSnapshot::text
 
 Newline-delimited UTF-8 contents.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L49)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L49)
 
 <a id="symbol-structpuc_1_1tui_1_1_text_editor_snapshot_1a10ffb5eecb63fb0a21e9bcd48d18bd14"></a>
 
@@ -30,7 +30,7 @@ TextCursor puc::tui::TextEditorSnapshot::cursor
 
 Active insertion position.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L50)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L50)
 
 <a id="symbol-structpuc_1_1tui_1_1_text_editor_snapshot_1ad181fee5f02a3d4cb9178af581d319f9"></a>
 
@@ -42,7 +42,7 @@ std::size_t puc::tui::TextEditorSnapshot::scroll_row
 
 First visible wrapped row.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L51)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L51)
 
 <a id="symbol-structpuc_1_1tui_1_1_text_editor_snapshot_1adf687d77d9dff688a883a4892de8c66d"></a>
 
@@ -54,7 +54,7 @@ bool puc::tui::TextEditorSnapshot::paste_in_progress
 
 Whether a paste transaction is open.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L52)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L52)
 
 <a id="symbol-structpuc_1_1tui_1_1_text_editor_snapshot_1aac7c60ec1f11281b7f90883fdc035e10"></a>
 
@@ -66,4 +66,4 @@ std::optional<TextSelectionRange> puc::tui::TextEditorSnapshot::selection
 
 Active logical range.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L53)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L53)

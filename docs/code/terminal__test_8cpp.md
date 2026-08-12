@@ -6,7 +6,7 @@ Lifecycle entry point for terminal input conformance testing.
 
 TerminalTestRuntimeSubsystem owns the interactive test plan, presentation, and durable report. `main()` owns command-line handling, static process configuration, subsystem registration, and the single initialized lifetime.
 
-[Source](../../puc-cli/terminal/terminal_test.cpp)
+[Source](../../puc-cli/tui/terminal/terminal_test.cpp)
 
 ## Functions
 
@@ -27,4 +27,4 @@ Run a selected terminal conformance plan and print its restored-screen report.
 
 **Returns:** Zero for help/listing or a completely passing run; two for invalid options; otherwise one.
 
-[Source](../../puc-cli/terminal/terminal_test.cpp#L86)
+[Source](../../puc-cli/tui/terminal/terminal_test.cpp#L86)

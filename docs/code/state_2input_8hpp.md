@@ -4,7 +4,7 @@
 
 Lifecycle adapter for the composite application input frame.
 
-[Source](../../puc-cli/state/input.hpp)
+[Source](../../state/input.hpp)
 
 ## Related symbols
 

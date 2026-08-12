@@ -4,7 +4,7 @@
 
 ZBuffer ownership, lookup, removal, and reordering implementation.
 
-[Source](../../puc-cli/tui/zbuf.cpp)
+[Source](../../puc-cli/tui/rendering/zbuf.cpp)
 
 ## Related symbols
 

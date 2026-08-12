@@ -6,7 +6,7 @@ One explicit timeout delivered to a clock-free state machine.
 
 A producer schedules the token returned by the target state machine. The monotonically changing generation makes an already-scheduled timeout stale when newer input rearms or cancels that machine's wait.
 
-[Source](../../puc-cli/terminal/timeouts.hpp#L36)
+[Source](../../puc-cli/tui/terminal/timeouts.hpp#L36)
 
 ## Public data members
 
@@ -20,7 +20,7 @@ std::uint64_t puc::terminal::TimeoutInput::generation
 
 Nonzero target-issued generation.
 
-[Source](../../puc-cli/terminal/timeouts.hpp#L37)
+[Source](../../puc-cli/tui/terminal/timeouts.hpp#L37)
 
 ## Public functions
 
@@ -34,4 +34,4 @@ bool puc::terminal::TimeoutInput::operator==(const TimeoutInput &) const noexcep
 
 Compare generation identity.
 
-[Source](../../puc-cli/terminal/timeouts.hpp#L40)
+[Source](../../puc-cli/tui/terminal/timeouts.hpp#L40)

@@ -4,7 +4,7 @@
 
 Logical text-selection state used by the terminal conformance frame.
 
-[Source](../../puc-cli/terminal/terminal_test_selection.hpp)
+[Source](../../puc-cli/tui/terminal/terminal_test_selection.hpp)
 
 ## Related symbols
 

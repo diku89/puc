@@ -4,7 +4,7 @@
 
 Process-wide logger subsystem implementation.
 
-[Source](../../puc-cli/state/logger.cpp)
+[Source](../../state/logger.cpp)
 
 ## Related symbols
 

@@ -4,7 +4,7 @@
 
 One selectable logical line and its origin in frame-local cells.
 
-[Source](../../puc-cli/terminal/terminal_test_selection.hpp#L21)
+[Source](../../puc-cli/tui/terminal/terminal_test_selection.hpp#L21)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::int64_t puc::terminal::SelectableLine::x
 
 Column containing the first logical character.
 
-[Source](../../puc-cli/terminal/terminal_test_selection.hpp#L22)
+[Source](../../puc-cli/tui/terminal/terminal_test_selection.hpp#L22)
 
 <a id="symbol-structpuc_1_1terminal_1_1_selectable_line_1a38dd6749265bf812ea4cd9ecf3afb3dd"></a>
 
@@ -30,7 +30,7 @@ std::int64_t puc::terminal::SelectableLine::y
 
 Row containing this logical line.
 
-[Source](../../puc-cli/terminal/terminal_test_selection.hpp#L23)
+[Source](../../puc-cli/tui/terminal/terminal_test_selection.hpp#L23)
 
 <a id="symbol-structpuc_1_1terminal_1_1_selectable_line_1a0daa8b6994eacd74bfaed642b342d4da"></a>
 
@@ -42,7 +42,7 @@ std::string puc::terminal::SelectableLine::text
 
 Text represented one byte per test-app Canvas cell.
 
-[Source](../../puc-cli/terminal/terminal_test_selection.hpp#L24)
+[Source](../../puc-cli/tui/terminal/terminal_test_selection.hpp#L24)
 
 ## Public functions
 
@@ -56,4 +56,4 @@ bool puc::terminal::SelectableLine::operator==(const SelectableLine &) const =de
 
 Compare origin and logical contents.
 
-[Source](../../puc-cli/terminal/terminal_test_selection.hpp#L27)
+[Source](../../puc-cli/tui/terminal/terminal_test_selection.hpp#L27)

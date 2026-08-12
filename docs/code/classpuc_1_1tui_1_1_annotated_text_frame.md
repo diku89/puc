@@ -6,7 +6,7 @@ Decorates a wrapped text [Frame](classpuc_1_1tui_1_1_frame.md) with line-number 
 
 [Status](namespacepuc_1_1tui.md#symbol-namespacepuc_1_1tui_1a54fbc93845e81aad92256b80e55df270) markers are keyed by logical line, so continuation rows remain visually unannotated. The child reports its post-scroll visible rows after drawing; this keeps annotations aligned without duplicating wrap policy.
 
-[Source](../../puc-cli/tui/annotated_text_frame.hpp#L68)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.hpp#L68)
 
 ## Related symbols
 
@@ -24,7 +24,7 @@ std::unique_ptr<Impl> puc::tui::AnnotatedTextFrame::impl_
 
 Hidden synchronized annotation state.
 
-[Source](../../puc-cli/tui/annotated_text_frame.hpp#L122)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.hpp#L122)
 
 ## Public functions
 
@@ -38,7 +38,7 @@ puc::tui::AnnotatedTextFrame::AnnotatedTextFrame(std::string name, std::shared_p
 
 Construct a configured decorator around a required text source.
 
-[Source](../../puc-cli/tui/annotated_text_frame.hpp#L71)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.hpp#L71)
 
 <a id="symbol-classpuc_1_1tui_1_1_annotated_text_frame_1a9d5eeee37746abcfed36643e634598ac"></a>
 
@@ -48,7 +48,7 @@ Construct a configured decorator around a required text source.
 puc::tui::AnnotatedTextFrame::AnnotatedTextFrame(const AnnotatedTextFrame &)=delete
 ```
 
-[Source](../../puc-cli/tui/annotated_text_frame.hpp#L75)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.hpp#L75)
 
 <a id="symbol-classpuc_1_1tui_1_1_annotated_text_frame_1a9f0185ed63393b57e9dc70e4e226e353"></a>
 
@@ -58,7 +58,7 @@ puc::tui::AnnotatedTextFrame::AnnotatedTextFrame(const AnnotatedTextFrame &)=del
 AnnotatedTextFrame & puc::tui::AnnotatedTextFrame::operator=(const AnnotatedTextFrame &)=delete
 ```
 
-[Source](../../puc-cli/tui/annotated_text_frame.hpp#L76)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.hpp#L76)
 
 <a id="symbol-classpuc_1_1tui_1_1_annotated_text_frame_1a587dcff1d7ffd5d655317f6675a301c7"></a>
 
@@ -68,7 +68,7 @@ AnnotatedTextFrame & puc::tui::AnnotatedTextFrame::operator=(const AnnotatedText
 puc::tui::AnnotatedTextFrame::AnnotatedTextFrame(AnnotatedTextFrame &&)=delete
 ```
 
-[Source](../../puc-cli/tui/annotated_text_frame.hpp#L77)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.hpp#L77)
 
 <a id="symbol-classpuc_1_1tui_1_1_annotated_text_frame_1aafa8b61f963aee1d0d8c457dc0826334"></a>
 
@@ -78,7 +78,7 @@ puc::tui::AnnotatedTextFrame::AnnotatedTextFrame(AnnotatedTextFrame &&)=delete
 AnnotatedTextFrame & puc::tui::AnnotatedTextFrame::operator=(AnnotatedTextFrame &&)=delete
 ```
 
-[Source](../../puc-cli/tui/annotated_text_frame.hpp#L78)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.hpp#L78)
 
 <a id="symbol-classpuc_1_1tui_1_1_annotated_text_frame_1a172ae51da77e382878f8d3aa4bdc2f88"></a>
 
@@ -90,7 +90,7 @@ puc::tui::AnnotatedTextFrame::~AnnotatedTextFrame() override
 
 Destroy annotation state and shared child ownership.
 
-[Source](../../puc-cli/tui/annotated_text_frame.hpp#L81)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.hpp#L81)
 
 <a id="symbol-classpuc_1_1tui_1_1_annotated_text_frame_1a80f2cfec967dd4d3fccf79d9b0452af0"></a>
 
@@ -102,7 +102,7 @@ void puc::tui::AnnotatedTextFrame::set_configuration(AnnotatedTextConfiguration 
 
 Atomically replace gutter geometry and colors.
 
-[Source](../../puc-cli/tui/annotated_text_frame.hpp#L84)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.hpp#L84)
 
 <a id="symbol-classpuc_1_1tui_1_1_annotated_text_frame_1ae5c52ce82988a95e1db71c5471928afb"></a>
 
@@ -114,7 +114,7 @@ AnnotatedTextConfiguration puc::tui::AnnotatedTextFrame::configuration() const
 
 Return a copy of the active gutter configuration.
 
-[Source](../../puc-cli/tui/annotated_text_frame.hpp#L87)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.hpp#L87)
 
 <a id="symbol-classpuc_1_1tui_1_1_annotated_text_frame_1a12c5780307458c03be7ad842dd738ef2"></a>
 
@@ -126,7 +126,7 @@ void puc::tui::AnnotatedTextFrame::set_statuses(std::vector< AnnotatedLineStatus
 
 Replace every per-line status marker. Duplicate lines use the last.
 
-[Source](../../puc-cli/tui/annotated_text_frame.hpp#L90)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.hpp#L90)
 
 <a id="symbol-classpuc_1_1tui_1_1_annotated_text_frame_1a186009beaf275f47d8e7189b453619f1"></a>
 
@@ -138,7 +138,7 @@ void puc::tui::AnnotatedTextFrame::clear_statuses()
 
 Remove all status markers without changing number configuration.
 
-[Source](../../puc-cli/tui/annotated_text_frame.hpp#L93)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.hpp#L93)
 
 <a id="symbol-classpuc_1_1tui_1_1_annotated_text_frame_1aa7ac53808d4be4eb80b6277344656280"></a>
 
@@ -150,7 +150,7 @@ std::size_t puc::tui::AnnotatedTextFrame::gutter_width() const noexcept
 
 Return the current total gutter width for the child's line count.
 
-[Source](../../puc-cli/tui/annotated_text_frame.hpp#L96)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.hpp#L96)
 
 <a id="symbol-classpuc_1_1tui_1_1_annotated_text_frame_1a2e822dc63b9534c4f1fc20187c9572a4"></a>
 
@@ -162,7 +162,7 @@ std::optional< Canvas::Rect > puc::tui::AnnotatedTextFrame::content_rect(const C
 
 Compute the absolute child rectangle for a supplied assigned rect.
 
-[Source](../../puc-cli/tui/annotated_text_frame.hpp#L99)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.hpp#L99)
 
 <a id="symbol-classpuc_1_1tui_1_1_annotated_text_frame_1a1204998376b6a5029d5a9ceec9c8c38a"></a>
 
@@ -174,7 +174,7 @@ Status puc::tui::AnnotatedTextFrame::draw(const Theme &theme, Canvas &canvas, co
 
 Draw the text child and its aligned annotation gutter.
 
-[Source](../../puc-cli/tui/annotated_text_frame.hpp#L102)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.hpp#L102)
 
 <a id="symbol-classpuc_1_1tui_1_1_annotated_text_frame_1a35613aeaba2bebf31d31287e4d8e617b"></a>
 
@@ -186,7 +186,7 @@ bool puc::tui::AnnotatedTextFrame::is_selectable() const noexcept override
 
 Return the child [Frame](classpuc_1_1tui_1_1_frame.md)'s selection capability.
 
-[Source](../../puc-cli/tui/annotated_text_frame.hpp#L106)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.hpp#L106)
 
 <a id="symbol-classpuc_1_1tui_1_1_annotated_text_frame_1a9e7df65edad65eb39e7d331a85ddd653"></a>
 
@@ -198,7 +198,7 @@ Status puc::tui::AnnotatedTextFrame::update_selection(const SelectionEvent &even
 
 Translate frame-local coordinates through the gutter.
 
-[Source](../../puc-cli/tui/annotated_text_frame.hpp#L109)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.hpp#L109)
 
 <a id="symbol-classpuc_1_1tui_1_1_annotated_text_frame_1a87d95d68d39d2d095c5ac57fb8ff7216"></a>
 
@@ -210,7 +210,7 @@ Status puc::tui::AnnotatedTextFrame::selected_text(std::string &output) const ov
 
 Delegate selected-text extraction to the child.
 
-[Source](../../puc-cli/tui/annotated_text_frame.hpp#L112)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.hpp#L112)
 
 <a id="symbol-classpuc_1_1tui_1_1_annotated_text_frame_1ac726637aab125d0ead0ca626e4fd78f8"></a>
 
@@ -222,7 +222,7 @@ bool puc::tui::AnnotatedTextFrame::accepts_cursor_placement() const noexcept ove
 
 Return the child [Frame](classpuc_1_1tui_1_1_frame.md)'s caret-placement capability.
 
-[Source](../../puc-cli/tui/annotated_text_frame.hpp#L115)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.hpp#L115)
 
 <a id="symbol-classpuc_1_1tui_1_1_annotated_text_frame_1ab70fed44b8beee5db491999481bee83c"></a>
 
@@ -234,4 +234,4 @@ Status puc::tui::AnnotatedTextFrame::place_cursor(SelectionPosition position) ov
 
 Ignore gutter clicks and delegate child-region caret placement.
 
-[Source](../../puc-cli/tui/annotated_text_frame.hpp#L118)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.hpp#L118)

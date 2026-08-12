@@ -4,7 +4,7 @@
 
 Integrated-terminal PTY lifecycle implementation.
 
-[Source](../../puc-cli/state/embedded_terminal.cpp)
+[Source](../../state/embedded_terminal.cpp)
 
 ## Related symbols
 

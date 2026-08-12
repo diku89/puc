@@ -6,7 +6,7 @@ One back-to-front ordering requirement between overlapping frames.
 
 Indices address `LayoutDescription::z_buffer.frames()`. The dependent frame may begin only after the prerequisite frame has finished drawing.
 
-[Source](../../puc-cli/tui/layout.hpp#L114)
+[Source](../../puc-cli/tui/rendering/layout.hpp#L114)
 
 ## Public data members
 
@@ -20,7 +20,7 @@ size_t puc::tui::Layout::FrameDependency::prerequisite
 
 Backmost frame that must finish first.
 
-[Source](../../puc-cli/tui/layout.hpp#L115)
+[Source](../../puc-cli/tui/rendering/layout.hpp#L115)
 
 <a id="symbol-structpuc_1_1tui_1_1_layout_1_1_frame_dependency_1a58e5fa861b890748030f0f1b289ce41f"></a>
 
@@ -32,7 +32,7 @@ size_t puc::tui::Layout::FrameDependency::dependent
 
 Frontmost frame unblocked afterward.
 
-[Source](../../puc-cli/tui/layout.hpp#L116)
+[Source](../../puc-cli/tui/rendering/layout.hpp#L116)
 
 ## Public functions
 
@@ -46,4 +46,4 @@ bool puc::tui::Layout::FrameDependency::operator==(const FrameDependency &) cons
 
 Compare both endpoints for cached-plan reuse.
 
-[Source](../../puc-cli/tui/layout.hpp#L119)
+[Source](../../puc-cli/tui/rendering/layout.hpp#L119)

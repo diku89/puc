@@ -4,7 +4,7 @@
 
 Borrowed worker pool, reusable graph topology, and render context.
 
-[Source](../../puc-cli/tui/renderer.cpp#L218)
+[Source](../../puc-cli/tui/rendering/renderer.cpp#L218)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ multithreading::JobQueue& puc::tui::ParallelRenderer::Impl::workers
 
 Borrowed caller-owned executor.
 
-[Source](../../puc-cli/tui/renderer.cpp#L274)
+[Source](../../puc-cli/tui/rendering/renderer.cpp#L274)
 
 <a id="symbol-classpuc_1_1app_1_1_parallel_renderer_1_1_impl_1a308f3aec5772ca7c47385cdee7347b34"></a>
 
@@ -30,7 +30,7 @@ std::shared_ptr<RenderContext> puc::tui::ParallelRenderer::Impl::context
 
 Inputs read by stable jobs.
 
-[Source](../../puc-cli/tui/renderer.cpp#L275)
+[Source](../../puc-cli/tui/rendering/renderer.cpp#L275)
 
 <a id="symbol-classpuc_1_1app_1_1_parallel_renderer_1_1_impl_1a056e15a1c7d1765287798dca13807f0a"></a>
 
@@ -42,7 +42,7 @@ std::unique_ptr<execution_graph::ExecutionGraph<std::size_t> > puc::tui::Paralle
 
 Reusable dependency scheduler.
 
-[Source](../../puc-cli/tui/renderer.cpp#L277)
+[Source](../../puc-cli/tui/rendering/renderer.cpp#L277)
 
 <a id="symbol-classpuc_1_1app_1_1_parallel_renderer_1_1_impl_1ab1b5f22e540458d0f985edf130eeb448"></a>
 
@@ -54,7 +54,7 @@ std::optional<RenderTopology> puc::tui::ParallelRenderer::Impl::topology
 
 Shape represented by graph.
 
-[Source](../../puc-cli/tui/renderer.cpp#L278)
+[Source](../../puc-cli/tui/rendering/renderer.cpp#L278)
 
 <a id="symbol-classpuc_1_1app_1_1_parallel_renderer_1_1_impl_1ae281e6d722553b7f717bc33f41e1fc37"></a>
 
@@ -66,7 +66,7 @@ std::mutex puc::tui::ParallelRenderer::Impl::mutex
 
 Serializes coordinator lifecycle methods.
 
-[Source](../../puc-cli/tui/renderer.cpp#L279)
+[Source](../../puc-cli/tui/rendering/renderer.cpp#L279)
 
 <a id="symbol-classpuc_1_1app_1_1_parallel_renderer_1_1_impl_1a9ebc3fd81bca5e0f2ac1d3afdfaa8027"></a>
 
@@ -78,7 +78,7 @@ bool puc::tui::ParallelRenderer::Impl::active
 
 Whether one graph result is unconsumed.
 
-[Source](../../puc-cli/tui/renderer.cpp#L280)
+[Source](../../puc-cli/tui/rendering/renderer.cpp#L280)
 
 ## Public functions
 
@@ -92,7 +92,7 @@ puc::tui::ParallelRenderer::Impl::Impl(multithreading::JobQueue &configured_work
 
 Borrow the worker pool and allocate the reusable render context.
 
-[Source](../../puc-cli/tui/renderer.cpp#L221)
+[Source](../../puc-cli/tui/rendering/renderer.cpp#L221)
 
 <a id="symbol-classpuc_1_1app_1_1_parallel_renderer_1_1_impl_1aa5bab3fc607d30f3bdc033ef7c02a7bf"></a>
 
@@ -104,4 +104,4 @@ Status puc::tui::ParallelRenderer::Impl::prepare_graph(std::size_t frame_count, 
 
 Rebuild the reusable job graph when absolute overlap topology changes.
 
-[Source](../../puc-cli/tui/renderer.cpp#L226)
+[Source](../../puc-cli/tui/rendering/renderer.cpp#L226)

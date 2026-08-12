@@ -4,7 +4,7 @@
 
 Zero-based logical caret position in a newline-delimited text buffer.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L23)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L23)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::size_t puc::tui::TextCursor::line
 
 Logical line index.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L24)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L24)
 
 <a id="symbol-structpuc_1_1tui_1_1_text_cursor_1ac8f30fe4ce847446c3924fdb0ff49a9e"></a>
 
@@ -30,7 +30,7 @@ std::size_t puc::tui::TextCursor::column
 
 Unicode-scalar offset within the line.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L25)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L25)
 
 ## Public functions
 
@@ -44,4 +44,4 @@ bool puc::tui::TextCursor::operator==(const TextCursor &) const noexcept=default
 
 Compare both logical coordinates.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L28)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L28)

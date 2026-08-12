@@ -4,7 +4,7 @@
 
 Immutable roots used by the sole application properties service.
 
-[Source](../../puc-cli/state/properties.hpp#L20)
+[Source](../../state/properties.hpp#L20)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::filesystem::path puc::app::PropertiesSubsystemOptions::primary_root
 
 Packaged/default source root.
 
-[Source](../../puc-cli/state/properties.hpp#L21)
+[Source](../../state/properties.hpp#L21)
 
 <a id="symbol-structpuc_1_1app_1_1_properties_subsystem_options_1a3505a6d0a240523a50a78fa0a7562070"></a>
 
@@ -30,4 +30,4 @@ std::filesystem::path puc::app::PropertiesSubsystemOptions::user_overrides_root
 
 Optional user-overlay source root.
 
-[Source](../../puc-cli/state/properties.hpp#L23)
+[Source](../../state/properties.hpp#L23)

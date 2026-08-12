@@ -6,7 +6,7 @@ Own the one-hertz heartbeat route and periodic job while the app is running.
 
 Every start binds to the current Directory and Timer generations, registers `//metronome/1hz`, and schedules publication. Stop cancels the periodic job and removes the route before either borrowed subsystem can stop.
 
-[Source](../../puc-cli/state/metronome.hpp#L26)
+[Source](../../state/metronome.hpp#L26)
 
 ## Private data members
 
@@ -20,7 +20,7 @@ std::unique_ptr<metronome::Metronome> puc::app::MetronomeSubsystem::metronome_
 
 Publisher for one running generation.
 
-[Source](../../puc-cli/state/metronome.hpp#L54)
+[Source](../../state/metronome.hpp#L54)
 
 <a id="symbol-classpuc_1_1app_1_1_metronome_subsystem_1af8b0a081f7bac7744d9e53b6842606f0"></a>
 
@@ -32,7 +32,7 @@ metronome::Status puc::app::MetronomeSubsystem::status_
 
 Last start status.
 
-[Source](../../puc-cli/state/metronome.hpp#L55)
+[Source](../../state/metronome.hpp#L55)
 
 ## Public functions
 
@@ -46,7 +46,7 @@ puc::app::MetronomeSubsystem::MetronomeSubsystem()
 
 Declare the channel-directory and timer-scheduler dependencies.
 
-[Source](../../puc-cli/state/metronome.hpp#L29)
+[Source](../../state/metronome.hpp#L29)
 
 <a id="symbol-classpuc_1_1app_1_1_metronome_subsystem_1a5945dc36ff20f5b3c6430347ae4d1df8"></a>
 
@@ -58,7 +58,7 @@ puc::app::MetronomeSubsystem::~MetronomeSubsystem() override
 
 Destroy a stopped heartbeat publisher.
 
-[Source](../../puc-cli/state/metronome.hpp#L32)
+[Source](../../state/metronome.hpp#L32)
 
 <a id="symbol-classpuc_1_1app_1_1_metronome_subsystem_1aa24cd4320b465f3286f358eb04197c83"></a>
 
@@ -70,7 +70,7 @@ Status puc::app::MetronomeSubsystem::initialize(AppState &app) override
 
 Validate both registered mechanism owners.
 
-[Source](../../puc-cli/state/metronome.hpp#L35)
+[Source](../../state/metronome.hpp#L35)
 
 <a id="symbol-classpuc_1_1app_1_1_metronome_subsystem_1a07b49319d4197f0c1432587910209b46"></a>
 
@@ -82,7 +82,7 @@ Status puc::app::MetronomeSubsystem::start(AppState &app) override
 
 Construct and start a publisher for the current running generation.
 
-[Source](../../puc-cli/state/metronome.hpp#L38)
+[Source](../../state/metronome.hpp#L38)
 
 <a id="symbol-classpuc_1_1app_1_1_metronome_subsystem_1a19c4ccbc47cc103a85954532c78403d1"></a>
 
@@ -94,7 +94,7 @@ Status puc::app::MetronomeSubsystem::stop(AppState &app) noexcept override
 
 Cancel ticks, close the route, and release the current publisher.
 
-[Source](../../puc-cli/state/metronome.hpp#L41)
+[Source](../../state/metronome.hpp#L41)
 
 <a id="symbol-classpuc_1_1app_1_1_metronome_subsystem_1a32b85e5e67cebeed8972aeb65a73c60a"></a>
 
@@ -106,7 +106,7 @@ Status puc::app::MetronomeSubsystem::terminate(AppState &app) noexcept override
 
 Release any publisher retained after partial lifecycle progress.
 
-[Source](../../puc-cli/state/metronome.hpp#L44)
+[Source](../../state/metronome.hpp#L44)
 
 <a id="symbol-classpuc_1_1app_1_1_metronome_subsystem_1ab25ca5ad209f79a177118d7a631ec54c"></a>
 
@@ -118,7 +118,7 @@ metronome::Metronome * puc::app::MetronomeSubsystem::metronome() noexcept
 
 Return the running heartbeat publisher, or nullptr while stopped.
 
-[Source](../../puc-cli/state/metronome.hpp#L47)
+[Source](../../state/metronome.hpp#L47)
 
 <a id="symbol-classpuc_1_1app_1_1_metronome_subsystem_1a6fb9fc453fdcb6517605d1af51f253fe"></a>
 
@@ -130,4 +130,4 @@ metronome::Status puc::app::MetronomeSubsystem::metronome_status() const noexcep
 
 Return the latest detailed heartbeat lifecycle status.
 
-[Source](../../puc-cli/state/metronome.hpp#L50)
+[Source](../../state/metronome.hpp#L50)

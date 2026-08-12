@@ -4,7 +4,7 @@
 
 Encoding of the terminal control sequences PUC deliberately owns.
 
-[Source](../../puc-cli/terminal/sequences.hpp)
+[Source](../../puc-cli/tui/terminal/sequences.hpp)
 
 ## Related symbols
 

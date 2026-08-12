@@ -6,7 +6,7 @@ Draw one clipped ASCII/UTF-8-byte message centered in its assigned rectangle.
 
 This lightweight fallback component is intended for minimum-size notices and other one-line application states. The current implementation renders each message byte as one terminal cell; callers should use ASCII text until a display-width utility is introduced.
 
-[Source](../../puc-cli/tui/message_frame.hpp#L23)
+[Source](../../puc-cli/tui/frames/message_frame.hpp#L23)
 
 ## Private data members
 
@@ -20,7 +20,7 @@ std::string puc::tui::MessageFrame::message_
 
 Immutable byte text rendered one cell per byte.
 
-[Source](../../puc-cli/tui/message_frame.hpp#L35)
+[Source](../../puc-cli/tui/frames/message_frame.hpp#L35)
 
 <a id="symbol-classpuc_1_1tui_1_1_message_frame_1a30fffb8d410ebf28623626158ffd99fb"></a>
 
@@ -32,7 +32,7 @@ Theme::ColorTypes puc::tui::MessageFrame::foreground_
 
 Semantic foreground role.
 
-[Source](../../puc-cli/tui/message_frame.hpp#L36)
+[Source](../../puc-cli/tui/frames/message_frame.hpp#L36)
 
 <a id="symbol-classpuc_1_1tui_1_1_message_frame_1a38b54a9110664b0290213852e930fd87"></a>
 
@@ -44,7 +44,7 @@ Theme::ColorTypes puc::tui::MessageFrame::background_
 
 Semantic background role.
 
-[Source](../../puc-cli/tui/message_frame.hpp#L37)
+[Source](../../puc-cli/tui/frames/message_frame.hpp#L37)
 
 ## Public functions
 
@@ -58,7 +58,7 @@ puc::tui::MessageFrame::MessageFrame(std::string name, std::string message, Them
 
 Construct one immutable centered message and its semantic colors.
 
-[Source](../../puc-cli/tui/message_frame.hpp#L26)
+[Source](../../puc-cli/tui/frames/message_frame.hpp#L26)
 
 <a id="symbol-classpuc_1_1tui_1_1_message_frame_1aedb16bf14010b287ac2f8745976f5919"></a>
 
@@ -70,4 +70,4 @@ Status puc::tui::MessageFrame::draw(const Theme &theme, Canvas &canvas, const Ca
 
 Draw the clipped message on the vertical and horizontal center.
 
-[Source](../../puc-cli/tui/message_frame.hpp#L31)
+[Source](../../puc-cli/tui/frames/message_frame.hpp#L31)

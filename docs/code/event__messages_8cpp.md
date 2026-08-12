@@ -4,7 +4,7 @@
 
 Terminal-event portable-message conversion implementation.
 
-[Source](../../puc-cli/terminal/event_messages.cpp)
+[Source](../../puc-cli/tui/terminal/event_messages.cpp)
 
 ## Related symbols
 

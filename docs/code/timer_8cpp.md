@@ -4,7 +4,7 @@
 
 Timer scheduler lifecycle implementation.
 
-[Source](../../puc-cli/state/timer.cpp)
+[Source](../../state/timer.cpp)
 
 ## Related symbols
 

@@ -4,7 +4,7 @@
 
 Owning, ordered frame container used to define compositing order.
 
-[Source](../../puc-cli/tui/zbuf.hpp)
+[Source](../../puc-cli/tui/rendering/zbuf.hpp)
 
 ## Related symbols
 

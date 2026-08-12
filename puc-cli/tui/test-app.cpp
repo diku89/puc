@@ -16,10 +16,10 @@
 #include <string_view>
 #include <utility>
 
-#include "puc-cli/state/bootstrap.hpp"
-#include "puc-cli/state/control.hpp"
-#include "puc-cli/terminal/configuration_paths.hpp"
+#include "puc-cli/tui/terminal/configuration_paths.hpp"
 #include "puc-cli/tui/tui_test_runtime.hpp"
+#include "state/bootstrap.hpp"
+#include "state/control.hpp"
 #include "utils/logger/logger.hpp"
 
 /** @cond TUI_TEST_APP_LOGGER_MODULE */

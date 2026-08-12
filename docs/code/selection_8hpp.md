@@ -4,7 +4,7 @@
 
 Semantic text-selection events and their screen-owned state machine.
 
-[Source](../../puc-cli/tui/selection.hpp)
+[Source](../../puc-cli/tui/rendering/selection.hpp)
 
 ## Related symbols
 

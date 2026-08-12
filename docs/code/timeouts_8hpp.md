@@ -4,7 +4,7 @@
 
 Clock-free timeout inputs and configured terminal timing policy.
 
-[Source](../../puc-cli/terminal/timeouts.hpp)
+[Source](../../puc-cli/tui/terminal/timeouts.hpp)
 
 ## Related symbols
 

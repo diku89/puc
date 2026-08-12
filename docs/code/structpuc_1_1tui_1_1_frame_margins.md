@@ -4,7 +4,7 @@
 
 Four independent terminal-cell insets.
 
-[Source](../../puc-cli/tui/bounding_frame.hpp#L18)
+[Source](../../puc-cli/tui/frames/bounding_frame.hpp#L18)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::size_t puc::tui::FrameMargins::top
 
 Rows above the bounded box or child.
 
-[Source](../../puc-cli/tui/bounding_frame.hpp#L19)
+[Source](../../puc-cli/tui/frames/bounding_frame.hpp#L19)
 
 <a id="symbol-structpuc_1_1tui_1_1_frame_margins_1a1cc7126b381e686d60973556f75287a6"></a>
 
@@ -30,7 +30,7 @@ std::size_t puc::tui::FrameMargins::bottom
 
 Rows below the bounded box or child.
 
-[Source](../../puc-cli/tui/bounding_frame.hpp#L20)
+[Source](../../puc-cli/tui/frames/bounding_frame.hpp#L20)
 
 <a id="symbol-structpuc_1_1tui_1_1_frame_margins_1ae0cb827007eff3386119fb4bc267af5c"></a>
 
@@ -42,7 +42,7 @@ std::size_t puc::tui::FrameMargins::left
 
 Columns left of the bounded box or child.
 
-[Source](../../puc-cli/tui/bounding_frame.hpp#L21)
+[Source](../../puc-cli/tui/frames/bounding_frame.hpp#L21)
 
 <a id="symbol-structpuc_1_1tui_1_1_frame_margins_1a250c95669ca050f2f2cdb5fc40d206f4"></a>
 
@@ -54,7 +54,7 @@ std::size_t puc::tui::FrameMargins::right
 
 Columns right of the bounded box or child.
 
-[Source](../../puc-cli/tui/bounding_frame.hpp#L22)
+[Source](../../puc-cli/tui/frames/bounding_frame.hpp#L22)
 
 ## Public functions
 
@@ -68,4 +68,4 @@ bool puc::tui::FrameMargins::operator==(const FrameMargins &) const noexcept=def
 
 Compare every inset.
 
-[Source](../../puc-cli/tui/bounding_frame.hpp#L25)
+[Source](../../puc-cli/tui/frames/bounding_frame.hpp#L25)

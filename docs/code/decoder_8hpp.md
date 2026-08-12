@@ -4,7 +4,7 @@
 
 Incremental decoder for UTF-8 and modern terminal input protocols.
 
-[Source](../../puc-cli/terminal/decoder.hpp)
+[Source](../../puc-cli/tui/terminal/decoder.hpp)
 
 ## Related symbols
 

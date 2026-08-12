@@ -4,7 +4,7 @@
 
 Execution-graph-driven frame rendering and Canvas publication.
 
-[Source](../../puc-cli/tui/renderer.cpp)
+[Source](../../puc-cli/tui/rendering/renderer.cpp)
 
 ## Related symbols
 

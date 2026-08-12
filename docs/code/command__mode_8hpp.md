@@ -4,7 +4,7 @@
 
 Lifecycle coordinator between command input and dispatch.
 
-[Source](../../puc-cli/state/command_mode.hpp)
+[Source](../../state/command_mode.hpp)
 
 ## Related symbols
 

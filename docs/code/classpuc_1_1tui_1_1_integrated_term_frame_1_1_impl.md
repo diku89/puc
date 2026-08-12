@@ -4,7 +4,7 @@
 
 Synchronized libtmt object, pending bytes, and process-owner lifecycle.
 
-[Source](../../puc-cli/tui/integrated_term_frame.cpp#L71)
+[Source](../../puc-cli/tui/frames/integrated_term_frame.cpp#L71)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::shared_mutex puc::tui::IntegratedTermFrame::Impl::mutex
 
 Synchronizes libtmt and lifecycle.
 
-[Source](../../puc-cli/tui/integrated_term_frame.cpp#L146)
+[Source](../../puc-cli/tui/frames/integrated_term_frame.cpp#L146)
 
 <a id="symbol-classpuc_1_1tui_1_1_integrated_term_frame_1_1_impl_1a51d3528afe291db60982b9c58ee8e2fa"></a>
 
@@ -30,7 +30,7 @@ IntegratedTermFrameStyle puc::tui::IntegratedTermFrame::Impl::style
 
 Default terminal semantic colors.
 
-[Source](../../puc-cli/tui/integrated_term_frame.cpp#L147)
+[Source](../../puc-cli/tui/frames/integrated_term_frame.cpp#L147)
 
 <a id="symbol-classpuc_1_1tui_1_1_integrated_term_frame_1_1_impl_1acfad4db445247104009bb6f3e5a565e6"></a>
 
@@ -42,7 +42,7 @@ TMT* puc::tui::IntegratedTermFrame::Impl::terminal
 
 Persistent libtmt object.
 
-[Source](../../puc-cli/tui/integrated_term_frame.cpp#L148)
+[Source](../../puc-cli/tui/frames/integrated_term_frame.cpp#L148)
 
 <a id="symbol-classpuc_1_1tui_1_1_integrated_term_frame_1_1_impl_1a699a9b611eddcc0490fbbeee580c640a"></a>
 
@@ -54,7 +54,7 @@ std::size_t puc::tui::IntegratedTermFrame::Impl::rows
 
 Current libtmt rows.
 
-[Source](../../puc-cli/tui/integrated_term_frame.cpp#L149)
+[Source](../../puc-cli/tui/frames/integrated_term_frame.cpp#L149)
 
 <a id="symbol-classpuc_1_1tui_1_1_integrated_term_frame_1_1_impl_1a3cb59a0221b9f432cc5c091cb126ed97"></a>
 
@@ -66,7 +66,7 @@ std::size_t puc::tui::IntegratedTermFrame::Impl::columns
 
 Current libtmt columns.
 
-[Source](../../puc-cli/tui/integrated_term_frame.cpp#L150)
+[Source](../../puc-cli/tui/frames/integrated_term_frame.cpp#L150)
 
 <a id="symbol-classpuc_1_1tui_1_1_integrated_term_frame_1_1_impl_1a183d467c1a51803179ac15dd0f313483"></a>
 
@@ -78,7 +78,7 @@ bool puc::tui::IntegratedTermFrame::Impl::cursor_visible
 
 Last DECTCEM visibility state.
 
-[Source](../../puc-cli/tui/integrated_term_frame.cpp#L151)
+[Source](../../puc-cli/tui/frames/integrated_term_frame.cpp#L151)
 
 <a id="symbol-classpuc_1_1tui_1_1_integrated_term_frame_1_1_impl_1a43fca1209e865ef6ed34f5cdd2ec7e5e"></a>
 
@@ -90,7 +90,7 @@ std::string puc::tui::IntegratedTermFrame::Impl::pending_output
 
 Bytes queued before allocation.
 
-[Source](../../puc-cli/tui/integrated_term_frame.cpp#L152)
+[Source](../../puc-cli/tui/frames/integrated_term_frame.cpp#L152)
 
 <a id="symbol-classpuc_1_1tui_1_1_integrated_term_frame_1_1_impl_1a85d581b28bcacb8a2f9d6aa48e715615"></a>
 
@@ -102,7 +102,7 @@ std::string puc::tui::IntegratedTermFrame::Impl::responses
 
 Replies waiting for the PTY owner.
 
-[Source](../../puc-cli/tui/integrated_term_frame.cpp#L153)
+[Source](../../puc-cli/tui/frames/integrated_term_frame.cpp#L153)
 
 <a id="symbol-classpuc_1_1tui_1_1_integrated_term_frame_1_1_impl_1a8551d8f71750d1d54d57b53545342c1d"></a>
 
@@ -114,7 +114,7 @@ bool puc::tui::IntegratedTermFrame::Impl::session_active
 
 Whether an owner should live.
 
-[Source](../../puc-cli/tui/integrated_term_frame.cpp#L154)
+[Source](../../puc-cli/tui/frames/integrated_term_frame.cpp#L154)
 
 <a id="symbol-classpuc_1_1tui_1_1_integrated_term_frame_1_1_impl_1a4378fb0c7fd8781da30561626deb24fb"></a>
 
@@ -126,7 +126,7 @@ std::size_t puc::tui::IntegratedTermFrame::Impl::generation
 
 Requested session identity.
 
-[Source](../../puc-cli/tui/integrated_term_frame.cpp#L155)
+[Source](../../puc-cli/tui/frames/integrated_term_frame.cpp#L155)
 
 ## Public functions
 
@@ -140,7 +140,7 @@ puc::tui::IntegratedTermFrame::Impl::Impl(IntegratedTermFrameStyle supplied_styl
 
 Store the initial terminal rendering policy.
 
-[Source](../../puc-cli/tui/integrated_term_frame.cpp#L74)
+[Source](../../puc-cli/tui/frames/integrated_term_frame.cpp#L74)
 
 <a id="symbol-classpuc_1_1tui_1_1_integrated_term_frame_1_1_impl_1a8c7888f4cdad9e70d54a931d218c3fd0"></a>
 
@@ -152,7 +152,7 @@ bool puc::tui::IntegratedTermFrame::Impl::ensure_terminal(std::size_t requested_
 
 Allocate or resize the persistent terminal to exact dimensions.
 
-[Source](../../puc-cli/tui/integrated_term_frame.cpp#L89)
+[Source](../../puc-cli/tui/frames/integrated_term_frame.cpp#L89)
 
 <a id="symbol-classpuc_1_1tui_1_1_integrated_term_frame_1_1_impl_1a11bdde3e2525440abfa938d38706c002"></a>
 
@@ -164,7 +164,7 @@ void puc::tui::IntegratedTermFrame::Impl::destroy_terminal()
 
 Destroy the emulated screen and all stale display data.
 
-[Source](../../puc-cli/tui/integrated_term_frame.cpp#L120)
+[Source](../../puc-cli/tui/frames/integrated_term_frame.cpp#L120)
 
 <a id="symbol-classpuc_1_1tui_1_1_integrated_term_frame_1_1_impl_1aff716133c6f21681471efe3fd08fa139"></a>
 
@@ -176,7 +176,7 @@ void puc::tui::IntegratedTermFrame::Impl::begin_new_session(bool preserve_pendin
 
 Request a distinct external process owner.
 
-[Source](../../puc-cli/tui/integrated_term_frame.cpp#L133)
+[Source](../../puc-cli/tui/frames/integrated_term_frame.cpp#L133)
 
 ## Public static functions
 
@@ -190,4 +190,4 @@ static void puc::tui::IntegratedTermFrame::Impl::callback(tmt_msg_t message, TMT
 
 Receive replies and cursor visibility synchronously from libtmt.
 
-[Source](../../puc-cli/tui/integrated_term_frame.cpp#L78)
+[Source](../../puc-cli/tui/frames/integrated_term_frame.cpp#L78)

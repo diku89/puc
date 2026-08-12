@@ -4,7 +4,7 @@
 
 Constraint validation, dependency resolution, sizing, and composition.
 
-[Source](../../puc-cli/tui/layout.cpp)
+[Source](../../puc-cli/tui/rendering/layout.cpp)
 
 ## Related symbols
 

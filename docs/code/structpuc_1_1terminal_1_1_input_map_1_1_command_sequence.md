@@ -4,7 +4,7 @@
 
 One currently effective semantic command and its owned provenance.
 
-[Source](../../puc-cli/terminal/input.hpp#L187)
+[Source](../../puc-cli/tui/terminal/input.hpp#L187)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::string puc::terminal::InputMap::CommandSequence::sequence
 
 Exact decoded Trie path.
 
-[Source](../../puc-cli/terminal/input.hpp#L188)
+[Source](../../puc-cli/tui/terminal/input.hpp#L188)
 
 <a id="symbol-structpuc_1_1terminal_1_1_input_map_1_1_command_sequence_1a06d8bb0e4b8ca7da0917c648d5ffeacf"></a>
 
@@ -30,7 +30,7 @@ std::string puc::terminal::InputMap::CommandSequence::source
 
 TOML file that declared the active mapping.
 
-[Source](../../puc-cli/terminal/input.hpp#L189)
+[Source](../../puc-cli/tui/terminal/input.hpp#L189)
 
 <a id="symbol-structpuc_1_1terminal_1_1_input_map_1_1_command_sequence_1a8a91a21a6bd1a6ae4fe266f94608d7c8"></a>
 
@@ -42,7 +42,7 @@ std::size_t puc::terminal::InputMap::CommandSequence::line
 
 One-based source line when available.
 
-[Source](../../puc-cli/terminal/input.hpp#L190)
+[Source](../../puc-cli/tui/terminal/input.hpp#L190)
 
 <a id="symbol-structpuc_1_1terminal_1_1_input_map_1_1_command_sequence_1a0a5bf6686b961bcc3df09aec837bdaae"></a>
 
@@ -54,4 +54,4 @@ std::size_t puc::terminal::InputMap::CommandSequence::column
 
 One-based source column when available.
 
-[Source](../../puc-cli/terminal/input.hpp#L191)
+[Source](../../puc-cli/tui/terminal/input.hpp#L191)

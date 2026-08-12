@@ -4,7 +4,7 @@
 
 Transactional, double-buffered storage for terminal character cells.
 
-[Source](../../puc-cli/tui/canvas.hpp)
+[Source](../../puc-cli/tui/rendering/canvas.hpp)
 
 ## Related symbols
 

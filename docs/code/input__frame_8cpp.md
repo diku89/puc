@@ -4,7 +4,7 @@
 
 Composition and mode orchestration for the input-frame stack.
 
-[Source](../../puc-cli/tui/input_frame.cpp)
+[Source](../../puc-cli/tui/frames/input_frame.cpp)
 
 ## Related symbols
 

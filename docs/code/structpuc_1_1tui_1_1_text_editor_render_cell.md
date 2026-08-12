@@ -4,7 +4,7 @@
 
 One renderable Unicode scalar and its selection state.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L57)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L57)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ char32_t puc::tui::TextEditorRenderCell::character
 
 Source Unicode scalar.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L58)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L58)
 
 <a id="symbol-structpuc_1_1tui_1_1_text_editor_render_cell_1ab430e1085fa76bd86e6699b89629fe9e"></a>
 
@@ -30,4 +30,4 @@ bool puc::tui::TextEditorRenderCell::selected
 
 Whether the scalar is selected.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L59)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L59)

@@ -4,7 +4,7 @@
 
 Construction policy shared by reusable editor-backed frames.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L41)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L41)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::size_t puc::tui::TextEditorOptions::tab_width
 
 Spaces between tab stops.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L42)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L42)
 
 <a id="symbol-structpuc_1_1tui_1_1_text_editor_options_1a3f74531a8ada870a39fe30e101ceb57a"></a>
 
@@ -30,7 +30,7 @@ std::size_t puc::tui::TextEditorOptions::fallback_width
 
 Wrap width before the first layout.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L43)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L43)
 
 <a id="symbol-structpuc_1_1tui_1_1_text_editor_options_1a658a434ec497f20a60eba4c7458899d4"></a>
 
@@ -42,4 +42,4 @@ bool puc::tui::TextEditorOptions::reserve_plain_enter
 
 Leave unmodified Enter to the owner.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L44)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L44)

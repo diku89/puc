@@ -4,7 +4,7 @@
 
 Green command-entry view composed from reusable text frames.
 
-[Source](../../puc-cli/tui/cmd_frame.hpp)
+[Source](../../puc-cli/tui/frames/cmd_frame.hpp)
 
 ## Related symbols
 

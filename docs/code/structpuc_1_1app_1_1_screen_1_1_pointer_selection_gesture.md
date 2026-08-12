@@ -4,7 +4,7 @@
 
 One left-button gesture captured by a selectable Frame.
 
-[Source](../../puc-cli/tui/screen.hpp#L233)
+[Source](../../puc-cli/tui/rendering/screen.hpp#L233)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::string puc::tui::Screen::PointerSelectionGesture::frame_id
 
 Stable target id.
 
-[Source](../../puc-cli/tui/screen.hpp#L234)
+[Source](../../puc-cli/tui/rendering/screen.hpp#L234)
 
 <a id="symbol-structpuc_1_1app_1_1_screen_1_1_pointer_selection_gesture_1ab32365ec4e921026bd043896b901e825"></a>
 
@@ -30,7 +30,7 @@ std::shared_ptr<Frame> puc::tui::Screen::PointerSelectionGesture::frame
 
 Captured target implementation.
 
-[Source](../../puc-cli/tui/screen.hpp#L235)
+[Source](../../puc-cli/tui/rendering/screen.hpp#L235)
 
 <a id="symbol-structpuc_1_1app_1_1_screen_1_1_pointer_selection_gesture_1a3451061f2c9283dd819003d9988d06cc"></a>
 
@@ -42,7 +42,7 @@ Canvas::Rect puc::tui::Screen::PointerSelectionGesture::rect
 
 Most recently observed target bounds.
 
-[Source](../../puc-cli/tui/screen.hpp#L236)
+[Source](../../puc-cli/tui/rendering/screen.hpp#L236)
 
 <a id="symbol-structpuc_1_1app_1_1_screen_1_1_pointer_selection_gesture_1ad5b5c4681306a2f0c1536269f31218c7"></a>
 
@@ -54,7 +54,7 @@ terminal::CellPosition puc::tui::Screen::PointerSelectionGesture::press
 
 Absolute press position.
 
-[Source](../../puc-cli/tui/screen.hpp#L237)
+[Source](../../puc-cli/tui/rendering/screen.hpp#L237)
 
 <a id="symbol-structpuc_1_1app_1_1_screen_1_1_pointer_selection_gesture_1ab1ecce92e499c84a1a9a955253b89517"></a>
 
@@ -66,7 +66,7 @@ SelectionPosition puc::tui::Screen::PointerSelectionGesture::anchor
 
 Frame-local press position.
 
-[Source](../../puc-cli/tui/screen.hpp#L238)
+[Source](../../puc-cli/tui/rendering/screen.hpp#L238)
 
 <a id="symbol-structpuc_1_1app_1_1_screen_1_1_pointer_selection_gesture_1a5e972bb91c15b7938269461f4d39fc23"></a>
 
@@ -78,4 +78,4 @@ bool puc::tui::Screen::PointerSelectionGesture::extended
 
 Whether a drag update was dispatched.
 
-[Source](../../puc-cli/tui/screen.hpp#L239)
+[Source](../../puc-cli/tui/rendering/screen.hpp#L239)

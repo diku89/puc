@@ -4,7 +4,7 @@
 
 Mouse button or motion event at a cell position.
 
-[Source](../../puc-cli/terminal/event.hpp#L275)
+[Source](../../puc-cli/tui/terminal/event.hpp#L275)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ CellPosition puc::terminal::MouseEvent::position
 
 Cell containing the pointer.
 
-[Source](../../puc-cli/terminal/event.hpp#L276)
+[Source](../../puc-cli/tui/terminal/event.hpp#L276)
 
 <a id="symbol-structpuc_1_1terminal_1_1_mouse_event_1a4ac2785438f0f30c10dd46396de1e577"></a>
 
@@ -30,7 +30,7 @@ MouseButton puc::terminal::MouseEvent::button
 
 Button associated with motion.
 
-[Source](../../puc-cli/terminal/event.hpp#L277)
+[Source](../../puc-cli/tui/terminal/event.hpp#L277)
 
 <a id="symbol-structpuc_1_1terminal_1_1_mouse_event_1a3efc4982d6d4d7503aa3a4e9ec90481a"></a>
 
@@ -42,7 +42,7 @@ MouseAction puc::terminal::MouseEvent::action
 
 Normalized button or motion action.
 
-[Source](../../puc-cli/terminal/event.hpp#L278)
+[Source](../../puc-cli/tui/terminal/event.hpp#L278)
 
 <a id="symbol-structpuc_1_1terminal_1_1_mouse_event_1aaad6917b05ef289c74e51e5d4ed43577"></a>
 
@@ -54,7 +54,7 @@ Modifiers puc::terminal::MouseEvent::modifiers
 
 Active keyboard modifiers.
 
-[Source](../../puc-cli/terminal/event.hpp#L280)
+[Source](../../puc-cli/tui/terminal/event.hpp#L280)
 
 ## Public functions
 
@@ -68,4 +68,4 @@ bool puc::terminal::MouseEvent::operator==(const MouseEvent &) const noexcept=de
 
 Compare every normalized mouse field.
 
-[Source](../../puc-cli/terminal/event.hpp#L283)
+[Source](../../puc-cli/tui/terminal/event.hpp#L283)

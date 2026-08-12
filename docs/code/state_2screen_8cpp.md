@@ -4,7 +4,7 @@
 
 Terminal presentation subsystem implementation.
 
-[Source](../../puc-cli/state/screen.cpp)
+[Source](../../state/screen.cpp)
 
 ## Related symbols
 

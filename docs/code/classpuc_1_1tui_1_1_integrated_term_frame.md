@@ -6,7 +6,7 @@ A libtmt-owned screen that renders process output but owns no process.
 
 The application remains responsible for creating a PTY, forwarding keyboard input, feeding output through [write()](#symbol-classpuc_1_1tui_1_1_integrated_term_frame_1aaaa6e688f09874b1b47209edea8fab04), and observing lifecycle generations. This separation lets command mode later reset, replace, or close terminals without coupling the reusable view to one process implementation.
 
-[Source](../../puc-cli/tui/integrated_term_frame.hpp#L45)
+[Source](../../puc-cli/tui/frames/integrated_term_frame.hpp#L45)
 
 ## Related symbols
 
@@ -24,7 +24,7 @@ std::unique_ptr<Impl> puc::tui::IntegratedTermFrame::impl_
 
 Hidden synchronized libtmt state.
 
-[Source](../../puc-cli/tui/integrated_term_frame.hpp#L86)
+[Source](../../puc-cli/tui/frames/integrated_term_frame.hpp#L86)
 
 ## Public functions
 
@@ -38,7 +38,7 @@ puc::tui::IntegratedTermFrame::IntegratedTermFrame(std::string name="integrated 
 
 Construct an unallocated virtual-terminal view.
 
-[Source](../../puc-cli/tui/integrated_term_frame.hpp#L48)
+[Source](../../puc-cli/tui/frames/integrated_term_frame.hpp#L48)
 
 <a id="symbol-classpuc_1_1tui_1_1_integrated_term_frame_1ab1f27f2f052934094b0d5b1d10f988f8"></a>
 
@@ -48,7 +48,7 @@ Construct an unallocated virtual-terminal view.
 puc::tui::IntegratedTermFrame::IntegratedTermFrame(const IntegratedTermFrame &)=delete
 ```
 
-[Source](../../puc-cli/tui/integrated_term_frame.hpp#L51)
+[Source](../../puc-cli/tui/frames/integrated_term_frame.hpp#L51)
 
 <a id="symbol-classpuc_1_1tui_1_1_integrated_term_frame_1ae733a88e0221a379e5763764dcb5f8f7"></a>
 
@@ -58,7 +58,7 @@ puc::tui::IntegratedTermFrame::IntegratedTermFrame(const IntegratedTermFrame &)=
 IntegratedTermFrame & puc::tui::IntegratedTermFrame::operator=(const IntegratedTermFrame &)=delete
 ```
 
-[Source](../../puc-cli/tui/integrated_term_frame.hpp#L52)
+[Source](../../puc-cli/tui/frames/integrated_term_frame.hpp#L52)
 
 <a id="symbol-classpuc_1_1tui_1_1_integrated_term_frame_1a43a8613cd4ad5925c49c4e21a3fbd32f"></a>
 
@@ -68,7 +68,7 @@ IntegratedTermFrame & puc::tui::IntegratedTermFrame::operator=(const IntegratedT
 puc::tui::IntegratedTermFrame::IntegratedTermFrame(IntegratedTermFrame &&)=delete
 ```
 
-[Source](../../puc-cli/tui/integrated_term_frame.hpp#L53)
+[Source](../../puc-cli/tui/frames/integrated_term_frame.hpp#L53)
 
 <a id="symbol-classpuc_1_1tui_1_1_integrated_term_frame_1a617b0cc8e84a09f8ee19f070fea2501f"></a>
 
@@ -78,7 +78,7 @@ puc::tui::IntegratedTermFrame::IntegratedTermFrame(IntegratedTermFrame &&)=delet
 IntegratedTermFrame & puc::tui::IntegratedTermFrame::operator=(IntegratedTermFrame &&)=delete
 ```
 
-[Source](../../puc-cli/tui/integrated_term_frame.hpp#L54)
+[Source](../../puc-cli/tui/frames/integrated_term_frame.hpp#L54)
 
 <a id="symbol-classpuc_1_1tui_1_1_integrated_term_frame_1a90af5a4cd7ca9fd790ffb7c28179a58e"></a>
 
@@ -90,7 +90,7 @@ puc::tui::IntegratedTermFrame::~IntegratedTermFrame() override
 
 Close libtmt after synchronized users have stopped.
 
-[Source](../../puc-cli/tui/integrated_term_frame.hpp#L57)
+[Source](../../puc-cli/tui/frames/integrated_term_frame.hpp#L57)
 
 <a id="symbol-classpuc_1_1tui_1_1_integrated_term_frame_1aaaa6e688f09874b1b47209edea8fab04"></a>
 
@@ -102,7 +102,7 @@ Status puc::tui::IntegratedTermFrame::write(std::string_view output)
 
 Feed child-process output now or queue it until the first draw.
 
-[Source](../../puc-cli/tui/integrated_term_frame.hpp#L60)
+[Source](../../puc-cli/tui/frames/integrated_term_frame.hpp#L60)
 
 <a id="symbol-classpuc_1_1tui_1_1_integrated_term_frame_1a7ef51d4c5c656c1a636a7a57bccf12db"></a>
 
@@ -114,7 +114,7 @@ std::string puc::tui::IntegratedTermFrame::take_responses()
 
 Consume terminal replies such as device-status responses.
 
-[Source](../../puc-cli/tui/integrated_term_frame.hpp#L63)
+[Source](../../puc-cli/tui/frames/integrated_term_frame.hpp#L63)
 
 <a id="symbol-classpuc_1_1tui_1_1_integrated_term_frame_1a4b858967ecba6a172877b5f330e3b33c"></a>
 
@@ -126,7 +126,7 @@ void puc::tui::IntegratedTermFrame::reset()
 
 Reset display state while retaining the current PTY generation.
 
-[Source](../../puc-cli/tui/integrated_term_frame.hpp#L66)
+[Source](../../puc-cli/tui/frames/integrated_term_frame.hpp#L66)
 
 <a id="symbol-classpuc_1_1tui_1_1_integrated_term_frame_1adf956308a0fbe700e490491655658594"></a>
 
@@ -138,7 +138,7 @@ void puc::tui::IntegratedTermFrame::activate_session()
 
 Activate a session, preserving output queued before first use.
 
-[Source](../../puc-cli/tui/integrated_term_frame.hpp#L69)
+[Source](../../puc-cli/tui/frames/integrated_term_frame.hpp#L69)
 
 <a id="symbol-classpuc_1_1tui_1_1_integrated_term_frame_1a99f18e9e1bbd52528a1f8f18cf5f2745"></a>
 
@@ -150,7 +150,7 @@ void puc::tui::IntegratedTermFrame::start_new_session()
 
 Request a new cleared terminal and advance the PTY generation.
 
-[Source](../../puc-cli/tui/integrated_term_frame.hpp#L72)
+[Source](../../puc-cli/tui/frames/integrated_term_frame.hpp#L72)
 
 <a id="symbol-classpuc_1_1tui_1_1_integrated_term_frame_1a3aa7a3a76eaf837f6c983c80960d40e2"></a>
 
@@ -162,7 +162,7 @@ void puc::tui::IntegratedTermFrame::close_session()
 
 End the PTY lifecycle and destroy the virtual screen.
 
-[Source](../../puc-cli/tui/integrated_term_frame.hpp#L75)
+[Source](../../puc-cli/tui/frames/integrated_term_frame.hpp#L75)
 
 <a id="symbol-classpuc_1_1tui_1_1_integrated_term_frame_1a591c97ce682aaa7d1cf96faabfafe172"></a>
 
@@ -174,7 +174,7 @@ IntegratedTermFrameSnapshot puc::tui::IntegratedTermFrame::snapshot() const
 
 Return a consistent display/lifecycle snapshot.
 
-[Source](../../puc-cli/tui/integrated_term_frame.hpp#L78)
+[Source](../../puc-cli/tui/frames/integrated_term_frame.hpp#L78)
 
 <a id="symbol-classpuc_1_1tui_1_1_integrated_term_frame_1a24ffc6566f24288452ad3e9b067a8d50"></a>
 
@@ -186,4 +186,4 @@ Status puc::tui::IntegratedTermFrame::draw(const Theme &theme, Canvas &canvas, c
 
 Draw and resize the virtual terminal to the exact assigned rectangle.
 
-[Source](../../puc-cli/tui/integrated_term_frame.hpp#L81)
+[Source](../../puc-cli/tui/frames/integrated_term_frame.hpp#L81)

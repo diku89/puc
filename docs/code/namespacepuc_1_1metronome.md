@@ -2,7 +2,7 @@
 
 # Namespace `puc::metronome`
 
-[Source](../../puc-cli/state/metronome.hpp#L13)
+[Source](../../state/metronome.hpp#L13)
 
 ## Related symbols
 

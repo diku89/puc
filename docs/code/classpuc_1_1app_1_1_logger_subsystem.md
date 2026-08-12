@@ -6,7 +6,7 @@ Install and release the process-wide logger for one initialized application.
 
 Other adapters that need complete lifecycle diagnostics declare this type as a dependency. On termination, the adapter clears only the exact Logger instance it installed, preserving any deliberate replacement made by another owner. The logger remains available while [AppState](classpuc_1_1app_1_1_app_state.md) is stopped.
 
-[Source](../../puc-cli/state/logger.hpp#L23)
+[Source](../../state/logger.hpp#L23)
 
 ## Private data members
 
@@ -20,7 +20,7 @@ logger::LoggerConf puc::app::LoggerSubsystem::configuration_
 
 Configuration retained for restart.
 
-[Source](../../puc-cli/state/logger.hpp#L54)
+[Source](../../state/logger.hpp#L54)
 
 <a id="symbol-classpuc_1_1app_1_1_logger_subsystem_1afee28a3f25766e7d47f5522a2101f8ff"></a>
 
@@ -32,7 +32,7 @@ std::shared_ptr<logger::Logger> puc::app::LoggerSubsystem::installed_logger_
 
 Exact instance owned while initialized.
 
-[Source](../../puc-cli/state/logger.hpp#L56)
+[Source](../../state/logger.hpp#L56)
 
 ## Public functions
 
@@ -46,7 +46,7 @@ puc::app::LoggerSubsystem::LoggerSubsystem(logger::LoggerConf configuration={})
 
 Construct an adapter retaining an immutable logger configuration.
 
-[Source](../../puc-cli/state/logger.hpp#L26)
+[Source](../../state/logger.hpp#L26)
 
 <a id="symbol-classpuc_1_1app_1_1_logger_subsystem_1a9a3b20db296112881dd83e7232d34bee"></a>
 
@@ -58,7 +58,7 @@ Status puc::app::LoggerSubsystem::initialize(AppState &app) override
 
 Construct and install the global Logger before dependents initialize.
 
-[Source](../../puc-cli/state/logger.hpp#L29)
+[Source](../../state/logger.hpp#L29)
 
 <a id="symbol-classpuc_1_1app_1_1_logger_subsystem_1a0d51f1362140155fc4f441ba7a49d42f"></a>
 
@@ -70,7 +70,7 @@ Status puc::app::LoggerSubsystem::start(AppState &app) override
 
 Verify that initialization retained a Logger instance.
 
-[Source](../../puc-cli/state/logger.hpp#L32)
+[Source](../../state/logger.hpp#L32)
 
 <a id="symbol-classpuc_1_1app_1_1_logger_subsystem_1a83086d32546023c2edbf7d67d263849c"></a>
 
@@ -82,7 +82,7 @@ Status puc::app::LoggerSubsystem::stop(AppState &app) noexcept override
 
 Keep logging available while the initialized application is stopped.
 
-[Source](../../puc-cli/state/logger.hpp#L35)
+[Source](../../state/logger.hpp#L35)
 
 <a id="symbol-classpuc_1_1app_1_1_logger_subsystem_1a5a4b88effaa782a5aa279a4c3e4b05bc"></a>
 
@@ -94,7 +94,7 @@ Status puc::app::LoggerSubsystem::terminate(AppState &app) noexcept override
 
 Release any Logger retained after partial lifecycle progress.
 
-[Source](../../puc-cli/state/logger.hpp#L38)
+[Source](../../state/logger.hpp#L38)
 
 <a id="symbol-classpuc_1_1app_1_1_logger_subsystem_1abe1d16cb05c68e98c97cdca2beefd2b2"></a>
 
@@ -106,7 +106,7 @@ std::shared_ptr< logger::Logger > puc::app::LoggerSubsystem::logger() const noex
 
 Return this adapter's installed Logger, or nullptr before/after use.
 
-[Source](../../puc-cli/state/logger.hpp#L41)
+[Source](../../state/logger.hpp#L41)
 
 <a id="symbol-classpuc_1_1app_1_1_logger_subsystem_1ab0420f09f683f54336b9b783bf20e456"></a>
 
@@ -118,7 +118,7 @@ const logger::LoggerConf & puc::app::LoggerSubsystem::configuration() const noex
 
 Return the immutable configuration used during initialization.
 
-[Source](../../puc-cli/state/logger.hpp#L46)
+[Source](../../state/logger.hpp#L46)
 
 ## Private functions
 
@@ -132,4 +132,4 @@ void puc::app::LoggerSubsystem::release_logger() noexcept
 
 Relinquish the installed global logger; safe to call repeatedly.
 
-[Source](../../puc-cli/state/logger.hpp#L52)
+[Source](../../state/logger.hpp#L52)

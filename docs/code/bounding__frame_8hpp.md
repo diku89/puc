@@ -4,7 +4,7 @@
 
 Reusable colored box, margins, padding, and size constraints.
 
-[Source](../../puc-cli/tui/bounding_frame.hpp)
+[Source](../../puc-cli/tui/frames/bounding_frame.hpp)
 
 ## Related symbols
 

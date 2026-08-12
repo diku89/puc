@@ -4,7 +4,7 @@
 
 Application lifecycle adapter for the shared worker pool.
 
-[Source](../../puc-cli/state/workers.hpp)
+[Source](../../state/workers.hpp)
 
 ## Related symbols
 

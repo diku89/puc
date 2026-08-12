@@ -4,7 +4,7 @@
 
 Editable, vertically scrollable terminal input frame.
 
-[Source](../../puc-cli/tui/input_frame.hpp)
+[Source](../../puc-cli/tui/frames/input_frame.hpp)
 
 ## Related symbols
 
