@@ -481,7 +481,7 @@ Top-level operation selected before any terminal resources are acquired.
 - <a id="symbol-terminal__test__options_8hpp_1a0ee4bdf86536dbe26069c776b092cf72a298cb25408234de02baf2085803a464a"></a>`LIST` — Print available test names and exit.
 - <a id="symbol-terminal__test__options_8hpp_1a0ee4bdf86536dbe26069c776b092cf72a4fc963e213bba362778f5c175eb4d5ff"></a>`HELP` — Print command usage and exit.
 
-[Source](../../puc-cli/terminal/terminal_test_options.hpp#L17)
+[Source](../../puc-cli/terminal/terminal_test_options.hpp#L18)
 
 <a id="symbol-terminal__test__options_8hpp_1a68168860cfd5d517a6f87f2d3e7410c0"></a>
 
@@ -500,7 +500,7 @@ Result of parsing terminal-test command-line arguments.
 - <a id="symbol-terminal__test__options_8hpp_1a68168860cfd5d517a6f87f2d3e7410c0afcc5a0f2d15e7467247f777e0e26db15"></a>`UNKNOWN_TEST_NAME` — A name is absent from the test registry.
 - <a id="symbol-terminal__test__options_8hpp_1a68168860cfd5d517a6f87f2d3e7410c0a6cc02f3fbbf75dd3a38c2d5c8894923f"></a>`CONFLICTING_OPTIONS` — More than one operation was requested.
 
-[Source](../../puc-cli/terminal/terminal_test_options.hpp#L24)
+[Source](../../puc-cli/terminal/terminal_test_options.hpp#L25)
 
 <a id="symbol-terminal__test__runner_8hpp_1a84cdf896a9d39b32430b4ca1ce734c70"></a>
 
@@ -903,7 +903,31 @@ Supported forms are no arguments, `--list`, `--help`, and `--test <test-name>`. 
 
 **Returns:** [TerminalTestOptionsStatus::OK](#symbol-terminal__test__options_8hpp_1a68168860cfd5d517a6f87f2d3e7410c0ae0aa021e21dddbd6d8cecec71e9cf564) or a human-readable parse error.
 
-[Source](../../puc-cli/terminal/terminal_test_options.cpp#L28)
+[Source](../../puc-cli/terminal/terminal_test_options.cpp#L29)
+
+<a id="symbol-terminal__test__options_8cpp_1a6d70eb930faac30a20fe0a94a8eac725"></a>
+
+### `print_terminal_test_usage`
+
+```cpp
+void puc::terminal::print_terminal_test_usage(std::ostream &output, std::string_view executable)
+```
+
+Print every supported command form without acquiring terminal resources.
+
+[Source](../../puc-cli/terminal/terminal_test_options.cpp#L81)
+
+<a id="symbol-terminal__test__options_8cpp_1a4fafee2571c09e07f666415185ae45ce"></a>
+
+### `print_terminal_test_list`
+
+```cpp
+void puc::terminal::print_terminal_test_list(std::ostream &output)
+```
+
+Print stable test names, labels, and operator instructions.
+
+[Source](../../puc-cli/terminal/terminal_test_options.cpp#L92)
 
 <a id="symbol-terminal__test__options_8hpp_1ac505af8c33fab2b908cef44052127a64"></a>
 
@@ -915,7 +939,7 @@ std::string_view puc::terminal::terminal_test_options_status_message(TerminalTes
 
 Return human-readable text for every parser result.
 
-[Source](../../puc-cli/terminal/terminal_test_options.hpp#L61)
+[Source](../../puc-cli/terminal/terminal_test_options.hpp#L69)
 
 <a id="symbol-terminal__test__runner_8cpp_1a89392f4ffe04d1f6cac213119107ebc9"></a>
 

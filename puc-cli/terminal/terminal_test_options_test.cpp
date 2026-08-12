@@ -7,6 +7,8 @@
 
 #include <array>
 #include <span>
+#include <sstream>
+#include <string>
 #include <string_view>
 
 #include "gtest/gtest.h"
@@ -84,6 +86,26 @@ TEST(TerminalTestOptionsTest, EveryStatusHasReadableText) {
   EXPECT_NE(terminal_test_options_status_message(
                 static_cast<TerminalTestOptionsStatus>(-1)),
             "");
+}
+
+TEST(TerminalTestOptionsTest, UsageUsesFallbackOrSuppliedExecutable) {
+  std::ostringstream fallback;
+  print_terminal_test_usage(fallback, {});
+  EXPECT_NE(fallback.str().find("terminal-test --list"), std::string::npos);
+
+  std::ostringstream supplied;
+  print_terminal_test_usage(supplied, "puc-terminal-check");
+  EXPECT_NE(supplied.str().find("puc-terminal-check --test <test-name>"),
+            std::string::npos);
+}
+
+TEST(TerminalTestOptionsTest, ListContainsEveryStableTestName) {
+  std::ostringstream output;
+  print_terminal_test_list(output);
+  for (const InputConformanceTestDescriptor& descriptor :
+       input_conformance_tests()) {
+    EXPECT_NE(output.str().find(descriptor.cli_name), std::string::npos);
+  }
 }
 
 }  // namespace

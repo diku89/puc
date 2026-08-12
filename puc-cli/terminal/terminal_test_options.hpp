@@ -5,6 +5,7 @@
  * @brief Non-throwing command-line parser for the terminal conformance app.
  */
 
+#include <iosfwd>
 #include <optional>
 #include <span>
 #include <string_view>
@@ -56,6 +57,13 @@ struct TerminalTestOptions {
 TerminalTestOptionsStatus parse_terminal_test_options(
     std::span<const std::string_view> arguments,
     TerminalTestOptions& options) noexcept;
+
+/** Print every supported command form without acquiring terminal resources. */
+void print_terminal_test_usage(std::ostream& output,
+                               std::string_view executable);
+
+/** Print stable test names, labels, and operator instructions. */
+void print_terminal_test_list(std::ostream& output);
 
 /** Return human-readable text for every parser result. */
 constexpr std::string_view terminal_test_options_status_message(

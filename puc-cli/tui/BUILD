@@ -63,7 +63,11 @@ cc_library(
 
 cc_binary(
     name = "test-app",
-    srcs = ["test-app.cpp"],
+    srcs = [
+        "test-app.cpp",
+        "tui_test_runtime.cpp",
+        "tui_test_runtime.hpp",
+    ],
     data = ["//themes:default_dark_config"],
     deps = [
         ":tui",

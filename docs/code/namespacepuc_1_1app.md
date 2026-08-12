@@ -39,9 +39,11 @@
 - [puc::app::TerminalInputChannelSubsystem](classpuc_1_1app_1_1_terminal_input_channel_subsystem.md)
 - [puc::app::TerminalSubsystem](classpuc_1_1app_1_1_terminal_subsystem.md)
 - [puc::app::TerminalSubsystemOptions](structpuc_1_1app_1_1_terminal_subsystem_options.md)
+- [puc::app::TerminalTestRuntimeSubsystem](classpuc_1_1app_1_1_terminal_test_runtime_subsystem.md)
 - [puc::app::Theme](classpuc_1_1app_1_1_theme.md)
 - [puc::app::ThemeSubsystem](classpuc_1_1app_1_1_theme_subsystem.md)
 - [puc::app::TimerSubsystem](classpuc_1_1app_1_1_timer_subsystem.md)
+- [puc::app::TuiTestRuntimeSubsystem](classpuc_1_1app_1_1_tui_test_runtime_subsystem.md)
 - [puc::app::WorkerSubsystem](classpuc_1_1app_1_1_worker_subsystem.md)
 
 ## Enumerations

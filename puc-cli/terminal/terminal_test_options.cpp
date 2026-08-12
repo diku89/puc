@@ -7,6 +7,7 @@
 
 #include <cstddef>
 #include <optional>
+#include <ostream>
 #include <span>
 #include <string_view>
 
@@ -75,6 +76,27 @@ TerminalTestOptionsStatus parse_terminal_test_options(
   }
   options = parsed;
   return TerminalTestOptionsStatus::OK;
+}
+
+void print_terminal_test_usage(std::ostream& output,
+                               std::string_view executable) {
+  const std::string_view program =
+      executable.empty() ? std::string_view{"terminal-test"} : executable;
+  output << "Usage:\n"
+         << "  " << program << "\n"
+         << "  " << program << " --list\n"
+         << "  " << program << " --test <test-name>\n"
+         << "  " << program << " --help\n";
+}
+
+void print_terminal_test_list(std::ostream& output) {
+  output << "Available terminal input tests:\n";
+  for (const InputConformanceTestDescriptor& descriptor :
+       input_conformance_tests()) {
+    output << "  " << descriptor.cli_name << "\n"
+           << "      " << descriptor.name << ": " << descriptor.instruction
+           << '\n';
+  }
 }
 
 }  // namespace puc::terminal

@@ -96,6 +96,8 @@ cc_binary(
         "terminal_test_options.hpp",
         "terminal_test_runner.cpp",
         "terminal_test_runner.hpp",
+        "terminal_test_runtime.cpp",
+        "terminal_test_runtime.hpp",
         "terminal_test_selection.cpp",
         "terminal_test_selection.hpp",
     ],
