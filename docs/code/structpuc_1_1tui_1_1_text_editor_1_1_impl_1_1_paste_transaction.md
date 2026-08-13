@@ -4,7 +4,7 @@
 
 Rollback state for one streaming bracketed paste.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L178)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L178)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::vector<std::u32string> puc::tui::TextEditor::Impl::PasteTransaction::lines
 
 Exact pre-paste contents.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L179)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L179)
 
 <a id="symbol-structpuc_1_1tui_1_1_text_editor_1_1_impl_1_1_paste_transaction_1a838a4f2b369744a6415b4a4cec8fe9e9"></a>
 
@@ -30,7 +30,7 @@ TextCursor puc::tui::TextEditor::Impl::PasteTransaction::cursor
 
 Exact pre-paste caret.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L180)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L180)
 
 <a id="symbol-structpuc_1_1tui_1_1_text_editor_1_1_impl_1_1_paste_transaction_1a09f625fcc367182b263aa9f9e775a837"></a>
 
@@ -42,7 +42,7 @@ std::optional<TextSelectionRange> puc::tui::TextEditor::Impl::PasteTransaction::
 
 Prior selection.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L181)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L181)
 
 <a id="symbol-structpuc_1_1tui_1_1_text_editor_1_1_impl_1_1_paste_transaction_1a604935b468afc3b18b00493a0a2c5446"></a>
 
@@ -54,7 +54,7 @@ std::optional<TextCursor> puc::tui::TextEditor::Impl::PasteTransaction::keyboard
 
 Prior Shift anchor.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L182)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L182)
 
 <a id="symbol-structpuc_1_1tui_1_1_text_editor_1_1_impl_1_1_paste_transaction_1adfaa1d13bce1ca4b9ad1eb81632ddb15"></a>
 
@@ -66,7 +66,7 @@ std::size_t puc::tui::TextEditor::Impl::PasteTransaction::scroll_row
 
 Prior viewport origin.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L183)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L183)
 
 <a id="symbol-structpuc_1_1tui_1_1_text_editor_1_1_impl_1_1_paste_transaction_1a5996f78e88919ced2b4df72a0ed9d15d"></a>
 
@@ -78,7 +78,7 @@ std::size_t puc::tui::TextEditor::Impl::PasteTransaction::desired_column
 
 Prior sticky column.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L184)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L184)
 
 <a id="symbol-structpuc_1_1tui_1_1_text_editor_1_1_impl_1_1_paste_transaction_1ad99f13fc6d3491432e87c2d576be92af"></a>
 
@@ -90,7 +90,7 @@ bool puc::tui::TextEditor::Impl::PasteTransaction::has_desired_column
 
 Prior sticky-column state.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L185)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L185)
 
 <a id="symbol-structpuc_1_1tui_1_1_text_editor_1_1_impl_1_1_paste_transaction_1ad2281293623a629db2f85fa73a2dc07c"></a>
 
@@ -102,7 +102,7 @@ std::string puc::tui::TextEditor::Impl::PasteTransaction::pending_utf8
 
 Incomplete UTF-8 suffix across chunks.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L186)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L186)
 
 <a id="symbol-structpuc_1_1tui_1_1_text_editor_1_1_impl_1_1_paste_transaction_1aba409b5253762977267582d5b49d3fbe"></a>
 
@@ -114,4 +114,4 @@ bool puc::tui::TextEditor::Impl::PasteTransaction::preceding_cr
 
 Whether the preceding scalar was CR.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L187)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L187)

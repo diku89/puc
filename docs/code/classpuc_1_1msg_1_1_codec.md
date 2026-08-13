@@ -10,7 +10,7 @@ Derived codecs implement only `encode_payload()` and `decode_payload()`. The fac
 
 - `T` — Regular message value whose default format is valid JSON.
 
-[Source](../../msgs/codec.hpp#L129)
+[Source](../../msgs/codec.hpp#L139)
 
 ## Public types
 
@@ -24,7 +24,7 @@ using puc::msg::Codec< T >::value_type = T
 
 Type encoded and decoded by this codec.
 
-[Source](../../msgs/codec.hpp#L132)
+[Source](../../msgs/codec.hpp#L142)
 
 ## Public functions
 
@@ -38,7 +38,7 @@ puc::msg::Codec< T >::~Codec() override=default
 
 Destroy a typed codec through either typed or erased ownership.
 
-[Source](../../msgs/codec.hpp#L135)
+[Source](../../msgs/codec.hpp#L145)
 
 <a id="symbol-classpuc_1_1msg_1_1_codec_1ae84e05d9232f4720a8cdc4923f3e1344"></a>
 
@@ -52,7 +52,7 @@ Encode a typed value into owned payload bytes.
 
 Output is cleared before encoding and remains empty on failure.
 
-[Source](../../msgs/codec.hpp#L142)
+[Source](../../msgs/codec.hpp#L152)
 
 <a id="symbol-classpuc_1_1msg_1_1_codec_1a7bb8149ff16092ea23942ba1d89d1d75"></a>
 
@@ -66,7 +66,7 @@ Decode complete payload bytes into a typed value.
 
 Output is reset before decoding and remains default-initialized on failure. A codec must reject trailing bytes that are not part of its schema.
 
-[Source](../../msgs/codec.hpp#L160)
+[Source](../../msgs/codec.hpp#L170)
 
 <a id="symbol-classpuc_1_1msg_1_1_codec_1af36abcc8448ec44c2dafdb284e1f2e51"></a>
 
@@ -78,7 +78,7 @@ std::string puc::msg::Codec< T >::to_json(const T &object) const
 
 Format a typed value as JSON through its `std::formatter` specialization.
 
-[Source](../../msgs/codec.hpp#L173)
+[Source](../../msgs/codec.hpp#L183)
 
 <a id="symbol-classpuc_1_1msg_1_1_codec_1ad190cd4a577b9cce1df0e044c6de1f6d"></a>
 
@@ -90,7 +90,7 @@ Status puc::msg::Codec< T >::decode_to_json(std::span< const std::uint8_t > payl
 
 Implement type-erased payload decoding followed by struct formatting.
 
-[Source](../../msgs/codec.hpp#L178)
+[Source](../../msgs/codec.hpp#L188)
 
 ## Protected functions
 
@@ -104,7 +104,7 @@ puc::msg::Codec< T >::Codec(MessageId message_id) noexcept
 
 Construct a typed codec for one payload schema identifier.
 
-[Source](../../msgs/codec.hpp#L192)
+[Source](../../msgs/codec.hpp#L202)
 
 <a id="symbol-classpuc_1_1msg_1_1_codec_1ae59e4759fd8e394d122655124ddc5271"></a>
 
@@ -116,7 +116,7 @@ virtual Status puc::msg::Codec< T >::encode_payload(const T &object, std::vector
 
 Encode one typed value into a temporary owned payload.
 
-[Source](../../msgs/codec.hpp#L196)
+[Source](../../msgs/codec.hpp#L206)
 
 <a id="symbol-classpuc_1_1msg_1_1_codec_1a5949cf7d800859cb344f572a233b5d23"></a>
 
@@ -128,4 +128,4 @@ virtual Status puc::msg::Codec< T >::decode_payload(std::span< const std::uint8_
 
 Decode all supplied payload bytes into a temporary typed value.
 
-[Source](../../msgs/codec.hpp#L200)
+[Source](../../msgs/codec.hpp#L210)

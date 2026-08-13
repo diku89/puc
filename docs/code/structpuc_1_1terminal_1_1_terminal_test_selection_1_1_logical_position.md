@@ -4,7 +4,7 @@
 
 Zero-based address of one logical character.
 
-[Source](../../puc-cli/terminal/terminal_test_selection.hpp#L68)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_selection.hpp#L68)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::size_t puc::terminal::TerminalTestSelection::LogicalPosition::line
 
 Selectable-line index.
 
-[Source](../../puc-cli/terminal/terminal_test_selection.hpp#L69)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_selection.hpp#L69)
 
 <a id="symbol-structpuc_1_1terminal_1_1_terminal_test_selection_1_1_logical_position_1a857fdf553a2ad5c7e5d255045c8b8185"></a>
 
@@ -30,7 +30,7 @@ std::size_t puc::terminal::TerminalTestSelection::LogicalPosition::column
 
 Character index in that line.
 
-[Source](../../puc-cli/terminal/terminal_test_selection.hpp#L70)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_selection.hpp#L70)
 
 ## Public functions
 
@@ -44,4 +44,4 @@ bool puc::terminal::TerminalTestSelection::LogicalPosition::operator<(const Logi
 
 Compare positions in reading order.
 
-[Source](../../puc-cli/terminal/terminal_test_selection.hpp#L73)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_selection.hpp#L73)

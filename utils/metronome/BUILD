@@ -16,7 +16,22 @@ cc_library(
         "//msgs",
         "//utils/ipc",
         "//utils/logger",
-        "//utils/multithreading",
+        "//utils/timer",
+    ],
+)
+
+cc_library(
+    name = "metronome_subsystem",
+    srcs = ["metronome_subsystem.cpp"],
+    hdrs = ["metronome_subsystem.hpp"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":metronome",
+        "//state",
+        "//utils/ipc",
+        "//utils/ipc:ipc_subsystems",
+        "//utils/timer",
+        "//utils/timer:timer_subsystem",
     ],
 )
 
@@ -31,6 +46,7 @@ cc_test(
         "//msgs",
         "//utils/ipc",
         "//utils/multithreading",
+        "//utils/timer",
         "@googletest//:gtest",
         "@googletest//:gtest_main",
     ],

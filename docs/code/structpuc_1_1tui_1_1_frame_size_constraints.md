@@ -4,7 +4,7 @@
 
 Static total-rectangle constraints enforced before a child is drawn.
 
-[Source](../../puc-cli/tui/bounding_frame.hpp#L29)
+[Source](../../puc-cli/tui/frames/bounding_frame.hpp#L29)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::size_t puc::tui::FrameSizeConstraints::minimum_width
 
 Smallest accepted total width.
 
-[Source](../../puc-cli/tui/bounding_frame.hpp#L30)
+[Source](../../puc-cli/tui/frames/bounding_frame.hpp#L30)
 
 <a id="symbol-structpuc_1_1tui_1_1_frame_size_constraints_1a60674bf10683c19fb98b69e15f2065d6"></a>
 
@@ -30,7 +30,7 @@ std::size_t puc::tui::FrameSizeConstraints::minimum_height
 
 Smallest accepted total height.
 
-[Source](../../puc-cli/tui/bounding_frame.hpp#L31)
+[Source](../../puc-cli/tui/frames/bounding_frame.hpp#L31)
 
 <a id="symbol-structpuc_1_1tui_1_1_frame_size_constraints_1ad7418ee67396fce056c566227f014ef0"></a>
 
@@ -42,7 +42,7 @@ std::optional<std::size_t> puc::tui::FrameSizeConstraints::maximum_width
 
 Optional largest width.
 
-[Source](../../puc-cli/tui/bounding_frame.hpp#L32)
+[Source](../../puc-cli/tui/frames/bounding_frame.hpp#L32)
 
 <a id="symbol-structpuc_1_1tui_1_1_frame_size_constraints_1a0c524402acc15b99b88e5999f85e2158"></a>
 
@@ -54,7 +54,7 @@ std::optional<std::size_t> puc::tui::FrameSizeConstraints::maximum_height
 
 Optional largest height.
 
-[Source](../../puc-cli/tui/bounding_frame.hpp#L33)
+[Source](../../puc-cli/tui/frames/bounding_frame.hpp#L33)
 
 <a id="symbol-structpuc_1_1tui_1_1_frame_size_constraints_1a4c3c8bb593da115f47a34fb6b7c1f563"></a>
 
@@ -66,7 +66,7 @@ bool puc::tui::FrameSizeConstraints::require_full_canvas_width
 
 Require x=0 and canvas width.
 
-[Source](../../puc-cli/tui/bounding_frame.hpp#L34)
+[Source](../../puc-cli/tui/frames/bounding_frame.hpp#L34)
 
 ## Public functions
 
@@ -80,4 +80,4 @@ bool puc::tui::FrameSizeConstraints::operator==(const FrameSizeConstraints &) co
 
 Compare all constraint values.
 
-[Source](../../puc-cli/tui/bounding_frame.hpp#L37)
+[Source](../../puc-cli/tui/frames/bounding_frame.hpp#L37)

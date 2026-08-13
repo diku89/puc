@@ -6,7 +6,7 @@ Stores and resolves semantic colors independently of rendering policy.
 
 Frames ask for roles such as text, warning, or diff background instead of embedding RGB literals. [Theme](#) itself does not emit terminal escape sequences; [Canvas](classpuc_1_1tui_1_1_canvas.md) cells carry the resolved values to [Screen](classpuc_1_1tui_1_1_screen.md).
 
-[Source](../../puc-cli/tui/theme.hpp#L20)
+[Source](../../puc-cli/tui/rendering/theme.hpp#L20)
 
 ## Related symbols
 
@@ -53,7 +53,7 @@ Semantic roles addressable through `get_color()`.
 - <a id="symbol-classpuc_1_1tui_1_1_theme_1a9e3465a5aa51fe8db53bf14c9575e7d8a70f7443658c1b85763d77da9871d29bd"></a>`DIFF_REMOVED_TEXT_BACKGROUND` — Diff removed text background color.
 - <a id="symbol-classpuc_1_1tui_1_1_theme_1a9e3465a5aa51fe8db53bf14c9575e7d8a87ed58ce5596142e11cb65deb049bb4b"></a>`BACKGROUND` — Default canvas background.
 
-[Source](../../puc-cli/tui/theme.hpp#L25)
+[Source](../../puc-cli/tui/rendering/theme.hpp#L25)
 
 ## Private data members
 
@@ -67,7 +67,7 @@ Colors puc::tui::Theme::colors_
 
 Current palette, value-initialized to all zeros.
 
-[Source](../../puc-cli/tui/theme.hpp#L128)
+[Source](../../puc-cli/tui/rendering/theme.hpp#L128)
 
 ## Public functions
 
@@ -81,7 +81,7 @@ puc::tui::Theme::Theme()=default
 
 Construct a theme whose complete palette is zero-initialized.
 
-[Source](../../puc-cli/tui/theme.hpp#L98)
+[Source](../../puc-cli/tui/rendering/theme.hpp#L98)
 
 <a id="symbol-classpuc_1_1tui_1_1_theme_1a1deda87e3e1836b071fb060365638285"></a>
 
@@ -93,7 +93,7 @@ virtual puc::tui::Theme::~Theme()=default
 
 Destroy a theme through its public interface.
 
-[Source](../../puc-cli/tui/theme.hpp#L101)
+[Source](../../puc-cli/tui/rendering/theme.hpp#L101)
 
 <a id="symbol-classpuc_1_1tui_1_1_theme_1ac2aed471292de225de8a027a73b74a39"></a>
 
@@ -109,7 +109,7 @@ Replace the complete semantic palette.
 
 - `colors` (in) — Palette copied into this [Theme](#).
 
-[Source](../../puc-cli/tui/theme.hpp#L108)
+[Source](../../puc-cli/tui/rendering/theme.hpp#L108)
 
 <a id="symbol-classpuc_1_1tui_1_1_theme_1a3f3745da57ceaf16e8b8ef3058afdd20"></a>
 
@@ -123,7 +123,7 @@ Get the current color theme.
 
 **Returns:** A copy of the current complete palette.
 
-[Source](../../puc-cli/tui/theme.hpp#L115)
+[Source](../../puc-cli/tui/rendering/theme.hpp#L115)
 
 <a id="symbol-classpuc_1_1tui_1_1_theme_1a6be84b18be7f9f5747739e8cda6733dc"></a>
 
@@ -141,4 +141,4 @@ Resolve a semantic color type to its RGB value.
 
 **Returns:** The corresponding `0xRRGGBB` value, or zero for an unknown enum value.
 
-[Source](../../puc-cli/tui/theme.hpp#L124)
+[Source](../../puc-cli/tui/rendering/theme.hpp#L124)

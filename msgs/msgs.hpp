@@ -13,3 +13,4 @@
 #include "msgs/null_message.hpp"
 #include "msgs/screen_msgs.hpp"
 #include "msgs/status.hpp"
+#include "msgs/terminal_msgs.hpp"

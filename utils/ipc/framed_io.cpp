@@ -6,17 +6,18 @@
 #include "utils/ipc/framed_io.hpp"
 
 #include <fcntl.h>
-#include <poll.h>
 #include <sys/socket.h>
 #include <unistd.h>
 
 #include <array>
 #include <cerrno>
+#include <chrono>
 #include <cstddef>
 #include <cstdint>
 #include <limits>
 
 #include "utils/logger/logger.hpp"
+#include "utils/timer/poller.hpp"
 
 /** @cond IPC_FRAMED_IO_LOGGER_MODULE */
 LOGGER_MODULE("IPC Framed I/O");
@@ -25,38 +26,25 @@ LOGGER_MODULE("IPC Framed I/O");
 namespace puc::ipc::detail {
 namespace {
 
-constexpr int kPollIntervalMilliseconds = 50;
+constexpr std::chrono::milliseconds kPollInterval{50};
 
 /** Wait until a nonblocking descriptor can perform the requested operation. */
-Status wait_until_ready(int descriptor, short events,
+Status wait_until_ready(int descriptor, timer::PollInterest interest,
                         const std::atomic<bool>& stopping) noexcept {
   while (!stopping.load(std::memory_order_acquire)) {
-    pollfd descriptor_event{
-        .fd      = descriptor,
-        .events  = events,
-        .revents = 0,
-    };
-    const int result = ::poll(&descriptor_event, 1U, kPollIntervalMilliseconds);
-    if (result > 0) {
-      if ((descriptor_event.revents & POLLNVAL) != 0) {
-        return Status::IO_ERROR;
-      }
-      if ((descriptor_event.revents & events) != 0) {
-        return Status::OK;
-      }
-      if ((descriptor_event.revents & POLLHUP) != 0) {
-        return Status::END_OF_STREAM;
-      }
-      if ((descriptor_event.revents & POLLERR) != 0) {
-        return Status::IO_ERROR;
-      }
+    const timer::PollResult result =
+        timer::poll_descriptor(descriptor, interest, kPollInterval);
+    if (result.status == timer::Status::TIMED_OUT) {
       continue;
     }
-    if (result == 0 || errno == EINTR) {
-      continue;
+    if (result.status == timer::Status::CLOSED) {
+      return Status::END_OF_STREAM;
     }
-    Logger<ERROR> << "poll() failed for IPC descriptor " << descriptor
-                  << " with errno " << errno;
+    if (timer::is_ok(result.status)) {
+      return Status::OK;
+    }
+    Logger<ERROR> << "Polling failed for IPC descriptor " << descriptor << ": "
+                  << timer::status_message(result.status);
     return Status::IO_ERROR;
   }
   return Status::CHANNEL_UNAVAILABLE;
@@ -90,7 +78,8 @@ Status read_exactly(int descriptor, std::span<std::uint8_t> bytes,
                     const std::atomic<bool>& stopping) noexcept {
   std::size_t offset = 0U;
   while (offset < bytes.size()) {
-    const Status ready = wait_until_ready(descriptor, POLLIN, stopping);
+    const Status ready =
+        wait_until_ready(descriptor, timer::PollInterest::READABLE, stopping);
     if (!is_ok(ready)) {
       return ready == Status::END_OF_STREAM && offset != 0U
                  ? Status::TRUNCATED_MESSAGE
@@ -119,7 +108,8 @@ Status write_all(int descriptor, std::span<const std::uint8_t> bytes,
                  StreamKind kind, const std::atomic<bool>& stopping) noexcept {
   std::size_t offset = 0U;
   while (offset < bytes.size()) {
-    const Status ready = wait_until_ready(descriptor, POLLOUT, stopping);
+    const Status ready =
+        wait_until_ready(descriptor, timer::PollInterest::WRITABLE, stopping);
     if (!is_ok(ready)) {
       return ready;
     }

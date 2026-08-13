@@ -4,7 +4,7 @@
 
 Semantic true-color palette used by terminal UI frames.
 
-[Source](../../puc-cli/tui/theme.hpp)
+[Source](../../puc-cli/tui/rendering/theme.hpp)
 
 ## Related symbols
 

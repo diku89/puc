@@ -4,7 +4,7 @@
 
 Decoded response to an asynchronous clipboard query.
 
-[Source](../../puc-cli/terminal/event.hpp#L333)
+[Source](../../puc-cli/tui/terminal/event.hpp#L333)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ ClipboardSelection puc::terminal::ClipboardEvent::selection
 
 Selection that supplied the data.
 
-[Source](../../puc-cli/terminal/event.hpp#L334)
+[Source](../../puc-cli/tui/terminal/event.hpp#L334)
 
 <a id="symbol-structpuc_1_1terminal_1_1_clipboard_event_1a8dd9eb129c87c0e4f6e68adb52746f27"></a>
 
@@ -30,7 +30,7 @@ std::string puc::terminal::ClipboardEvent::data
 
 Decoded clipboard bytes.
 
-[Source](../../puc-cli/terminal/event.hpp#L336)
+[Source](../../puc-cli/tui/terminal/event.hpp#L336)
 
 ## Public functions
 
@@ -44,4 +44,4 @@ bool puc::terminal::ClipboardEvent::operator==(const ClipboardEvent &) const =de
 
 Compare selection and decoded bytes.
 
-[Source](../../puc-cli/terminal/event.hpp#L339)
+[Source](../../puc-cli/tui/terminal/event.hpp#L339)

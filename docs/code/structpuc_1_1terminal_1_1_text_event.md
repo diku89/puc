@@ -4,7 +4,7 @@
 
 UTF-8 text committed by a keyboard layout, IME, or legacy terminal.
 
-[Source](../../puc-cli/terminal/event.hpp#L238)
+[Source](../../puc-cli/tui/terminal/event.hpp#L238)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::string puc::terminal::TextEvent::utf8
 
 One or more complete UTF-8 scalars.
 
-[Source](../../puc-cli/terminal/event.hpp#L239)
+[Source](../../puc-cli/tui/terminal/event.hpp#L239)
 
 ## Public functions
 
@@ -32,4 +32,4 @@ bool puc::terminal::TextEvent::operator==(const TextEvent &) const =default
 
 Compare committed UTF-8 bytes.
 
-[Source](../../puc-cli/terminal/event.hpp#L242)
+[Source](../../puc-cli/tui/terminal/event.hpp#L242)

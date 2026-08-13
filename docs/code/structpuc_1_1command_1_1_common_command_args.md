@@ -4,7 +4,7 @@
 
 Shared application services available to every command invocation.
 
-[Source](../../commands/command.hpp#L37)
+[Source](../../commands/command.hpp#L42)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ multithreading::JobQueue* puc::command::CommonCommandArgs::workers
 
 Borrowed worker pool.
 
-[Source](../../commands/command.hpp#L38)
+[Source](../../commands/command.hpp#L43)
 
 <a id="symbol-structpuc_1_1command_1_1_common_command_args_1a6a566b0326f50ce3e08779a95454715d"></a>
 
@@ -30,7 +30,7 @@ tui::Screen* puc::command::CommonCommandArgs::screen
 
 Borrowed active terminal presentation.
 
-[Source](../../commands/command.hpp#L39)
+[Source](../../commands/command.hpp#L44)
 
 <a id="symbol-structpuc_1_1command_1_1_common_command_args_1a107c10102ffe9c09a0302b49eefbef1f"></a>
 
@@ -42,7 +42,31 @@ ipc::Directory* puc::command::CommonCommandArgs::directory
 
 Borrowed channel directory.
 
-[Source](../../commands/command.hpp#L40)
+[Source](../../commands/command.hpp#L45)
+
+<a id="symbol-structpuc_1_1command_1_1_common_command_args_1af80a49c9f937814ee4a2fab0d33ca50c"></a>
+
+### `properties`
+
+```cpp
+properties::Properties* puc::command::CommonCommandArgs::properties
+```
+
+Application-owned configuration and runtime settings.
+
+[Source](../../commands/command.hpp#L46)
+
+<a id="symbol-structpuc_1_1command_1_1_common_command_args_1a3df8a8b18140755102b93e7ee203f8cb"></a>
+
+### `control`
+
+```cpp
+app::ApplicationControl* puc::command::CommonCommandArgs::control
+```
+
+Deferred application-exit control.
+
+[Source](../../commands/command.hpp#L48)
 
 <a id="symbol-structpuc_1_1command_1_1_common_command_args_1a69279a7f0f7600ac1492e52ff110124e"></a>
 
@@ -54,4 +78,4 @@ app::AppState* puc::command::CommonCommandArgs::state
 
 Borrowed application lifecycle.
 
-[Source](../../commands/command.hpp#L41)
+[Source](../../commands/command.hpp#L50)

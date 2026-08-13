@@ -1,0 +1,32 @@
+# Default dark terminal-UI theme. Values are packed 0xRRGGBB colors and are
+# user-mutable through the properties service (for example,
+# `config set theme.colors.primary 0x66d9ef`).
+
+[colors]
+primary = 0x66d9ef
+secondary = 0x252c34
+tertiary = 0xae81ff
+highlight_background = 0x3b5266
+highlight_text = 0xf8f8f2
+text = 0xf8f8f2
+text_secondary = 0xe8e8e2
+text_tertiary = 0xcfcfc2
+text_muted = 0x7e8e91
+text_disabled = 0x5c6370
+text_error = 0xf92672
+text_warning = 0xfd971f
+text_alert = 0xf92672
+text_success = 0xa6e22e
+text_info = 0x66d9ef
+text_link = 0x66d9ef
+text_emphasis = 0xffffff
+text_code = 0xe6db74
+alert_text_primary = 0xffffff
+alert_text_secondary = 0xe8e8e2
+diff_added_text_primary = 0xa6e22e
+diff_added_text_secondary = 0xb8e994
+diff_added_text_background = 0x263c2c
+diff_removed_text_primary = 0xf92672
+diff_removed_text_secondary = 0xff6b9a
+diff_removed_text_background = 0x462630
+background = 0x1b2026

@@ -4,7 +4,7 @@
 
 Row identity exposed by a wrapped text child after drawing.
 
-[Source](../../puc-cli/tui/annotated_text_frame.hpp#L19)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.hpp#L19)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::size_t puc::tui::AnnotatedTextRow::logical_line
 
 Zero-based source line.
 
-[Source](../../puc-cli/tui/annotated_text_frame.hpp#L20)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.hpp#L20)
 
 <a id="symbol-structpuc_1_1tui_1_1_annotated_text_row_1a3dcb649fd308a3c074e2220f0ab1c4c7"></a>
 
@@ -30,4 +30,4 @@ bool puc::tui::AnnotatedTextRow::first_visual_row
 
 False for hard-wrapped continuation.
 
-[Source](../../puc-cli/tui/annotated_text_frame.hpp#L21)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.hpp#L21)

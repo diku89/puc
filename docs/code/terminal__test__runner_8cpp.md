@@ -4,7 +4,7 @@
 
 Event matching and heartbeat-driven terminal conformance plan.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.cpp)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_runner.cpp)
 
 ## Related symbols
 

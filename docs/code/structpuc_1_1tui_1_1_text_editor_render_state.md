@@ -4,7 +4,7 @@
 
 Consistent render snapshot for the current editor viewport.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L71)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L71)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::vector<TextEditorRenderRow> puc::tui::TextEditorRenderState::rows
 
 Visible wrapped rows.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L72)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L72)
 
 <a id="symbol-structpuc_1_1tui_1_1_text_editor_render_state_1abaf04368854478d80f152b2ff4fadcf9"></a>
 
@@ -30,7 +30,7 @@ std::optional<std::size_t> puc::tui::TextEditorRenderState::cursor_row
 
 Viewport-relative caret row.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L73)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L73)
 
 <a id="symbol-structpuc_1_1tui_1_1_text_editor_render_state_1a390cd91a9d6fab203fccd3c58933c84c"></a>
 
@@ -42,4 +42,4 @@ std::size_t puc::tui::TextEditorRenderState::cursor_column
 
 Viewport-relative caret column.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L74)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L74)

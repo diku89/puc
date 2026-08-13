@@ -8,7 +8,7 @@ Registration is keyed by concrete C++ type and freezes permanently when [initial
 
 [initialize()](#symbol-classpuc_1_1app_1_1_app_state_1a0bf227cecde6dd3453882b3cbd9631d0) and [terminate()](#symbol-classpuc_1_1app_1_1_app_state_1a9f074be63b6adcc4dc8e0a47c7a39c26) form the one durable application lifetime and invoke each corresponding hook at most once. Any number of [start()](#symbol-classpuc_1_1app_1_1_app_state_1a9d4faaf8dfd35bbc9bc1fd41957cc030)/stop() cycles may occur between them, with fresh active resources acquired and quiesced on each cycle. Lifecycle calls are serialized and may safely resolve other subsystems from inside a hook. Lookup pointers remain valid through [AppState](#) destruction; callers must not retain them beyond that boundary.
 
-[Source](../../puc-cli/state/state.hpp#L109)
+[Source](../../state/state.hpp#L109)
 
 ## Related symbols
 
@@ -24,7 +24,7 @@ Registration is keyed by concrete C++ type and freezes permanently when [initial
 using puc::app::AppState::Topology = execution_graph::DependencyGraph<SubsystemId>
 ```
 
-[Source](../../puc-cli/state/state.hpp#L187)
+[Source](../../state/state.hpp#L187)
 
 <a id="symbol-classpuc_1_1app_1_1_app_state_1a6ec45607967aec75b3a2e61d56317c86"></a>
 
@@ -34,7 +34,7 @@ using puc::app::AppState::Topology = execution_graph::DependencyGraph<SubsystemI
 using puc::app::AppState::Layers = Topology::Layers
 ```
 
-[Source](../../puc-cli/state/state.hpp#L188)
+[Source](../../state/state.hpp#L188)
 
 ## Private data members
 
@@ -48,7 +48,7 @@ std::recursive_mutex puc::app::AppState::lifecycle_mutex_
 
 Serializes transitions while permitting queries.
 
-[Source](../../puc-cli/state/state.hpp#L214)
+[Source](../../state/state.hpp#L214)
 
 <a id="symbol-classpuc_1_1app_1_1_app_state_1a788cc058db4e8a5fb9bf5996a81d6148"></a>
 
@@ -60,7 +60,7 @@ std::shared_mutex puc::app::AppState::registry_mutex_
 
 Protects registration and type lookup.
 
-[Source](../../puc-cli/state/state.hpp#L216)
+[Source](../../state/state.hpp#L216)
 
 <a id="symbol-classpuc_1_1app_1_1_app_state_1ae91fcc52c9ccfc5105cd823becee6d78"></a>
 
@@ -72,7 +72,7 @@ std::unordered_map<SubsystemId, Entry> puc::app::AppState::subsystems_
 
 Concrete-type registry and exclusive ownership.
 
-[Source](../../puc-cli/state/state.hpp#L218)
+[Source](../../state/state.hpp#L218)
 
 <a id="symbol-classpuc_1_1app_1_1_app_state_1a9f2f69d735521582146335e5bab539da"></a>
 
@@ -84,7 +84,7 @@ std::unordered_map<std::string, SubsystemId> puc::app::AppState::subsystem_names
 
 Diagnostic-name uniqueness index.
 
-[Source](../../puc-cli/state/state.hpp#L220)
+[Source](../../state/state.hpp#L220)
 
 <a id="symbol-classpuc_1_1app_1_1_app_state_1a904968197b9293505529b32a63f1bfb0"></a>
 
@@ -96,7 +96,7 @@ std::vector<SubsystemId> puc::app::AppState::registration_order_
 
 Stable order within independent layers.
 
-[Source](../../puc-cli/state/state.hpp#L222)
+[Source](../../state/state.hpp#L222)
 
 <a id="symbol-classpuc_1_1app_1_1_app_state_1a9b78ff636553c979b49a7e6f39ecd830"></a>
 
@@ -108,7 +108,7 @@ std::unique_ptr<Topology> puc::app::AppState::topology_
 
 Validated shared DAG mechanism.
 
-[Source](../../puc-cli/state/state.hpp#L223)
+[Source](../../state/state.hpp#L223)
 
 <a id="symbol-classpuc_1_1app_1_1_app_state_1a00e717186a94f37cd6bdc9d2b92c835a"></a>
 
@@ -120,7 +120,7 @@ Layers puc::app::AppState::forward_layers_
 
 Dependency-first initialization/start order.
 
-[Source](../../puc-cli/state/state.hpp#L224)
+[Source](../../state/state.hpp#L224)
 
 <a id="symbol-classpuc_1_1app_1_1_app_state_1a519a77871f102814c368faa376bf082b"></a>
 
@@ -132,7 +132,7 @@ Layers puc::app::AppState::reverse_layers_
 
 Dependent-first stop/termination order.
 
-[Source](../../puc-cli/state/state.hpp#L225)
+[Source](../../state/state.hpp#L225)
 
 <a id="symbol-classpuc_1_1app_1_1_app_state_1a2b97da0a2f059b4162a24e1b154d49cd"></a>
 
@@ -144,7 +144,7 @@ LifecycleState puc::app::AppState::state_
 
 Current phase.
 
-[Source](../../puc-cli/state/state.hpp#L226)
+[Source](../../state/state.hpp#L226)
 
 <a id="symbol-classpuc_1_1app_1_1_app_state_1a079d53267bf71c9f236c463da3c3e3b5"></a>
 
@@ -156,7 +156,7 @@ OperatingMode puc::app::AppState::mode_
 
 Selected runtime profile.
 
-[Source](../../puc-cli/state/state.hpp#L227)
+[Source](../../state/state.hpp#L227)
 
 <a id="symbol-classpuc_1_1app_1_1_app_state_1a7bf2f337e38857842fb237b9015c745f"></a>
 
@@ -168,7 +168,7 @@ bool puc::app::AppState::registration_frozen_
 
 Whether graph construction began.
 
-[Source](../../puc-cli/state/state.hpp#L228)
+[Source](../../state/state.hpp#L228)
 
 ## Public functions
 
@@ -182,7 +182,7 @@ puc::app::AppState::AppState()=default
 
 Construct an empty, open subsystem registry in TUI mode.
 
-[Source](../../puc-cli/state/state.hpp#L112)
+[Source](../../state/state.hpp#L112)
 
 <a id="symbol-classpuc_1_1app_1_1_app_state_1ab0b156606535c2ff4e49acbd8bccfa31"></a>
 
@@ -192,7 +192,7 @@ Construct an empty, open subsystem registry in TUI mode.
 puc::app::AppState::AppState(const AppState &)=delete
 ```
 
-[Source](../../puc-cli/state/state.hpp#L114)
+[Source](../../state/state.hpp#L114)
 
 <a id="symbol-classpuc_1_1app_1_1_app_state_1ae291b9977c8b526b003e4a710dc3c436"></a>
 
@@ -202,7 +202,7 @@ puc::app::AppState::AppState(const AppState &)=delete
 AppState & puc::app::AppState::operator=(const AppState &)=delete
 ```
 
-[Source](../../puc-cli/state/state.hpp#L115)
+[Source](../../state/state.hpp#L115)
 
 <a id="symbol-classpuc_1_1app_1_1_app_state_1ab7ef5720c111a14f3dc8522fea0e7b44"></a>
 
@@ -212,7 +212,7 @@ AppState & puc::app::AppState::operator=(const AppState &)=delete
 puc::app::AppState::AppState(AppState &&)=delete
 ```
 
-[Source](../../puc-cli/state/state.hpp#L116)
+[Source](../../state/state.hpp#L116)
 
 <a id="symbol-classpuc_1_1app_1_1_app_state_1afffc7e17b55555683fc8f31ff9801387"></a>
 
@@ -222,7 +222,7 @@ puc::app::AppState::AppState(AppState &&)=delete
 AppState & puc::app::AppState::operator=(AppState &&)=delete
 ```
 
-[Source](../../puc-cli/state/state.hpp#L117)
+[Source](../../state/state.hpp#L117)
 
 <a id="symbol-classpuc_1_1app_1_1_app_state_1afafcaea1b436b450360419c0c76c77f8"></a>
 
@@ -234,7 +234,7 @@ puc::app::AppState::~AppState()
 
 Perform best-effort dependent-first teardown.
 
-[Source](../../puc-cli/state/state.hpp#L120)
+[Source](../../state/state.hpp#L120)
 
 <a id="symbol-classpuc_1_1app_1_1_app_state_1a556eb7670caad4b49cadf576f1264cb4"></a>
 
@@ -248,7 +248,7 @@ Register one exclusively owned adapter under its concrete C++ type.
 
 A diagnostic name must also be unique. No registration is accepted after the first [initialize()](#symbol-classpuc_1_1app_1_1_app_state_1a0bf227cecde6dd3453882b3cbd9631d0) attempt, including an attempt that fails.
 
-[Source](../../puc-cli/state/state.hpp#L129)
+[Source](../../state/state.hpp#L129)
 
 <a id="symbol-classpuc_1_1app_1_1_app_state_1a9ad9be78bb49f8f525a9dda7a5c60d1a"></a>
 
@@ -260,7 +260,7 @@ SubsystemType * puc::app::AppState::get_subsystem() noexcept
 
 Return a borrowed adapter of exactly `SubsystemType`, or nullptr.
 
-[Source](../../puc-cli/state/state.hpp#L137)
+[Source](../../state/state.hpp#L137)
 
 <a id="symbol-classpuc_1_1app_1_1_app_state_1ad4ea23de0da25770055475890c20a775"></a>
 
@@ -272,7 +272,7 @@ const SubsystemType * puc::app::AppState::get_subsystem() const noexcept
 
 Return a borrowed const adapter of exactly `SubsystemType`, or nullptr.
 
-[Source](../../puc-cli/state/state.hpp#L144)
+[Source](../../state/state.hpp#L144)
 
 <a id="symbol-classpuc_1_1app_1_1_app_state_1a3289eaa73f0f891d73c6287960485254"></a>
 
@@ -284,7 +284,7 @@ AppSubsystem * puc::app::AppState::find_subsystem(SubsystemId id) noexcept
 
 Return a borrowed type-erased adapter, or nullptr when absent.
 
-[Source](../../puc-cli/state/state.hpp#L150)
+[Source](../../state/state.hpp#L150)
 
 <a id="symbol-classpuc_1_1app_1_1_app_state_1ad193566187a31311d5615c411dc03750"></a>
 
@@ -296,7 +296,7 @@ const AppSubsystem * puc::app::AppState::find_subsystem(SubsystemId id) const no
 
 Return a borrowed const type-erased adapter, or nullptr when absent.
 
-[Source](../../puc-cli/state/state.hpp#L153)
+[Source](../../state/state.hpp#L153)
 
 <a id="symbol-classpuc_1_1app_1_1_app_state_1a0bf227cecde6dd3453882b3cbd9631d0"></a>
 
@@ -308,7 +308,7 @@ Status puc::app::AppState::initialize(OperatingMode mode=OperatingMode::TUI)
 
 Validate dependencies and initialize every subsystem dependency-first.
 
-[Source](../../puc-cli/state/state.hpp#L156)
+[Source](../../state/state.hpp#L156)
 
 <a id="symbol-classpuc_1_1app_1_1_app_state_1a9d4faaf8dfd35bbc9bc1fd41957cc030"></a>
 
@@ -320,7 +320,7 @@ Status puc::app::AppState::start()
 
 Start every initialized subsystem dependency-first.
 
-[Source](../../puc-cli/state/state.hpp#L159)
+[Source](../../state/state.hpp#L159)
 
 <a id="symbol-classpuc_1_1app_1_1_app_state_1a6966e3f055344ce49ac09c32c081dc58"></a>
 
@@ -332,7 +332,7 @@ Status puc::app::AppState::stop() noexcept
 
 Stop every started subsystem dependent-first.
 
-[Source](../../puc-cli/state/state.hpp#L162)
+[Source](../../state/state.hpp#L162)
 
 <a id="symbol-classpuc_1_1app_1_1_app_state_1a9f074be63b6adcc4dc8e0a47c7a39c26"></a>
 
@@ -344,7 +344,7 @@ Status puc::app::AppState::terminate() noexcept
 
 Stop active work and terminate initialized subsystems dependent-first.
 
-[Source](../../puc-cli/state/state.hpp#L165)
+[Source](../../state/state.hpp#L165)
 
 <a id="symbol-classpuc_1_1app_1_1_app_state_1aace9f7bbe387bb0617f0ddc03f5d2a02"></a>
 
@@ -356,7 +356,7 @@ std::size_t puc::app::AppState::size() const noexcept
 
 Return the number of exclusively owned subsystem adapters.
 
-[Source](../../puc-cli/state/state.hpp#L168)
+[Source](../../state/state.hpp#L168)
 
 <a id="symbol-classpuc_1_1app_1_1_app_state_1ad49a3538cc2f862d0f214791df0a7ea3"></a>
 
@@ -368,7 +368,7 @@ bool puc::app::AppState::registration_frozen() const noexcept
 
 Return whether no later subsystem registration can succeed.
 
-[Source](../../puc-cli/state/state.hpp#L171)
+[Source](../../state/state.hpp#L171)
 
 <a id="symbol-classpuc_1_1app_1_1_app_state_1a79030edca83ed0332938b9e584a602ba"></a>
 
@@ -380,7 +380,7 @@ LifecycleState puc::app::AppState::lifecycle_state() const noexcept
 
 Return the current serialized lifecycle state.
 
-[Source](../../puc-cli/state/state.hpp#L174)
+[Source](../../state/state.hpp#L174)
 
 <a id="symbol-classpuc_1_1app_1_1_app_state_1a7c363d9f2ad1204b4b63129d14221ee9"></a>
 
@@ -392,7 +392,7 @@ OperatingMode puc::app::AppState::operating_mode() const noexcept
 
 Return the operating mode selected by [initialize()](#symbol-classpuc_1_1app_1_1_app_state_1a0bf227cecde6dd3453882b3cbd9631d0).
 
-[Source](../../puc-cli/state/state.hpp#L177)
+[Source](../../state/state.hpp#L177)
 
 ## Private functions
 
@@ -406,7 +406,7 @@ Status puc::app::AppState::register_subsystem_erased(SubsystemId id, std::unique
 
 Register one adapter after its concrete type has been erased.
 
-[Source](../../puc-cli/state/state.hpp#L191)
+[Source](../../state/state.hpp#L191)
 
 <a id="symbol-classpuc_1_1app_1_1_app_state_1a4b9324960f92c18d4ff64717813b0dc5"></a>
 
@@ -418,7 +418,7 @@ Status puc::app::AppState::build_topology()
 
 Construct and cache validated forward and reverse lifecycle layers.
 
-[Source](../../puc-cli/state/state.hpp#L195)
+[Source](../../state/state.hpp#L195)
 
 <a id="symbol-classpuc_1_1app_1_1_app_state_1a4c920dc88191eecd3f44e77eb43517ec"></a>
 
@@ -430,7 +430,7 @@ AppState::Entry * puc::app::AppState::find_entry(SubsystemId id) noexcept
 
 Return stable entry storage after registration has frozen.
 
-[Source](../../puc-cli/state/state.hpp#L198)
+[Source](../../state/state.hpp#L198)
 
 <a id="symbol-classpuc_1_1app_1_1_app_state_1adfe2610052d659f0202e5f68f61fedec"></a>
 
@@ -442,7 +442,7 @@ Status puc::app::AppState::stop_started(bool best_effort) noexcept
 
 Stop started entries without crossing a failed dependency layer.
 
-[Source](../../puc-cli/state/state.hpp#L201)
+[Source](../../state/state.hpp#L201)
 
 <a id="symbol-classpuc_1_1app_1_1_app_state_1a572b97a398463b64436ee65d13152589"></a>
 
@@ -454,7 +454,7 @@ Status puc::app::AppState::terminate_initialized() noexcept
 
 Terminate every initialized entry in cached reverse layer order.
 
-[Source](../../puc-cli/state/state.hpp#L204)
+[Source](../../state/state.hpp#L204)
 
 <a id="symbol-classpuc_1_1app_1_1_app_state_1a5925a11556386f4496b1babce4894b1d"></a>
 
@@ -466,7 +466,7 @@ Status puc::app::AppState::rollback_started(const std::vector< SubsystemId > &st
 
 Roll back a successful prefix of a failed start operation.
 
-[Source](../../puc-cli/state/state.hpp#L207)
+[Source](../../state/state.hpp#L207)
 
 <a id="symbol-classpuc_1_1app_1_1_app_state_1a3f85aa9704551a16bd563f2664ae3c45"></a>
 
@@ -478,4 +478,4 @@ Status puc::app::AppState::rollback_initialized(const std::vector< SubsystemId >
 
 Roll back a successful prefix of a failed initialize operation.
 
-[Source](../../puc-cli/state/state.hpp#L210)
+[Source](../../state/state.hpp#L210)

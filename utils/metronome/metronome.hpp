@@ -14,8 +14,8 @@ namespace puc::ipc {
 class Directory;
 }
 
-namespace puc::multithreading {
-class JobQueue;
+namespace puc::timer {
+class Scheduler;
 }
 
 namespace puc::metronome {
@@ -31,17 +31,18 @@ namespace puc::metronome {
 inline constexpr std::string_view kOneHertzChannel = "//metronome/1hz";
 
 /**
- * Publish NullMessage heartbeats using a caller-owned Directory and JobQueue.
+ * Publish NullMessage heartbeats using a caller-owned Directory and Scheduler.
  *
  * `start()` registers `kOneHertzChannel` and schedules its first tick one
  * second later. `stop()` cancels only this periodic job and removes its
- * channel; it never shuts down the shared workers. The Directory and JobQueue
+ * channel; it never shuts down the shared timer. The Directory and Scheduler
  * must outlive this object and remain active until it is stopped or destroyed.
  */
 class Metronome {
  public:
-  /** Borrow the routing directory and worker pool used by this publisher. */
-  Metronome(ipc::Directory& directory, multithreading::JobQueue& workers);
+  /** Borrow the routing directory and timer scheduler used by this publisher.
+   */
+  Metronome(ipc::Directory& directory, timer::Scheduler& scheduler);
 
   Metronome(const Metronome&)            = delete;
   Metronome& operator=(const Metronome&) = delete;

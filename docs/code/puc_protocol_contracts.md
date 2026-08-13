@@ -2,9 +2,9 @@
 
 # PUC Protocol Contracts
 
-## Member [puc::metronome::kOneHertzChannel](namespacepuc_1_1metronome.md#symbol-utils_2metronome_2metronome_8hpp_1ad712d1722112c3e9598cb3e96ee87db6)
+## Member [puc::metronome::kOneHertzChannel](namespacepuc_1_1metronome.md#symbol-metronome_8hpp_1ad712d1722112c3e9598cb3e96ee87db6)
 
-<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000012"></a> **Kind:** Channel  
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000015"></a> **Kind:** Channel  
 **Name:** `//metronome/1hz`  
 **Purpose:** Publishes a process-local one-hertz heartbeat as [puc.msg.NullMessage](structpuc_1_1msg_1_1_null_message.md). Only the newest pending heartbeat is retained, so a delayed consumer never receives a burst of stale clock ticks.  
 **Producers:** [puc.metronome.Metronome](classpuc_1_1metronome_1_1_metronome.md).  
@@ -37,7 +37,7 @@
 
 ## Member [puc::msg::kScreenCommandChannel](namespacepuc_1_1msg.md#symbol-namespacepuc_1_1msg_1ab3c15431e3548f48110d613240af05d9)
 
-<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000008"></a> **Kind:** Channel  
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000009"></a> **Kind:** Channel  
 **Name:** `//screen/commands`  
 **Purpose:** Carries ordered, one-way terminal ownership and presentation operations without a result path.  
 **Producers:** [Screen](classpuc_1_1tui_1_1_screen.md).  
@@ -45,11 +45,19 @@
 
 ## Member [puc::msg::kScreenResizeEventChannel](namespacepuc_1_1msg.md#symbol-namespacepuc_1_1msg_1aac82f776baf22130dde29f2cb56284dd)
 
-<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000009"></a> **Kind:** Channel  
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000010"></a> **Kind:** Channel  
 **Name:** `//screen/resize_events`  
 **Purpose:** Publishes the newest observed character and optional pixel geometry as convergent state.  
 **Producers:** [TerminalSession](classpuc_1_1terminal_1_1_terminal_session.md).  
 **Consumers:** [Screen](classpuc_1_1tui_1_1_screen.md) and subscribed geometry observers.
+
+## Member [puc::msg::kTerminalInputEventChannel](namespacepuc_1_1msg.md#symbol-namespacepuc_1_1msg_1a03288ead64679521f461fcc1f83b2262)
+
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000013"></a> **Kind:** Channel  
+**Name:** `//terminal/input_events`  
+**Purpose:** Publishes ordered, terminal-independent keyboard, text, pointer, paste, focus, clipboard, command, protocol-response, and diagnostic events after the terminal Decoder has applied its input Trie.  
+**Producers:** The lifecycle-owned terminal input producer.  
+**Consumers:** The TUI Screen, which retains decoded events for application-specific handling.
 
 ## Member [puc::msg::NULL\_MESSAGE](namespacepuc_1_1msg.md#symbol-namespacepuc_1_1msg_1a24b154890bf81939005e112918c3813fabba60353fe62a4eed8c486b71c20f573)
 
@@ -62,7 +70,7 @@
 
 ## Struct [puc::msg::NullMessage](structpuc_1_1msg_1_1_null_message.md)
 
-<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000007"></a> **Kind:** Message  
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000008"></a> **Kind:** Message  
 **Type:** [puc::msg::NullMessage](structpuc_1_1msg_1_1_null_message.md)  
 **Purpose:** Represents an explicit typed no-data payload and gives generic dispatch a valid schema at message ID zero.  
 **Producers:** Components that need a typed no-data envelope.  
@@ -88,7 +96,7 @@
 
 ## Struct [puc::msg::ScreenCommand](structpuc_1_1msg_1_1_screen_command.md)
 
-<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000010"></a> **Kind:** Message  
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000011"></a> **Kind:** Message  
 **Type:** [puc::msg::ScreenCommand](structpuc_1_1msg_1_1_screen_command.md)  
 **Purpose:** Carries one fire-and-forget terminal take, presentation, clipboard-write, or release operation.  
 **Producers:** [Screen](classpuc_1_1tui_1_1_screen.md).  
@@ -96,8 +104,25 @@
 
 ## Struct [puc::msg::ScreenResizeEvent](structpuc_1_1msg_1_1_screen_resize_event.md)
 
-<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000011"></a> **Kind:** Message  
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000012"></a> **Kind:** Message  
 **Type:** [puc::msg::ScreenResizeEvent](structpuc_1_1msg_1_1_screen_resize_event.md)  
 **Purpose:** Publishes changed terminal geometry as latest-value state rather than as a command reply.  
 **Producers:** [TerminalSession](classpuc_1_1terminal_1_1_terminal_session.md).  
 **Consumers:** [Screen](classpuc_1_1tui_1_1_screen.md) and subscribed geometry observers.
+
+## Member [puc::msg::TERMINAL\_INPUT\_EVENT](namespacepuc_1_1msg.md#symbol-namespacepuc_1_1msg_1a24b154890bf81939005e112918c3813fa0dc388ed7715695dc47c7fd9a7e0cef2)
+
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000007"></a> **Kind:** Message ID  
+**ID:** `4`  
+**Message:** [puc::msg::TerminalInputEvent](structpuc_1_1msg_1_1_terminal_input_event.md)  
+**Purpose:** Selects the portable tagged terminal-event schema published on //terminal/input\_events.  
+**Producers:** The lifecycle-owned terminal input producer.  
+**Consumers:** The TUI Screen transport consumer.
+
+## Struct [puc::msg::TerminalInputEvent](structpuc_1_1msg_1_1_terminal_input_event.md)
+
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000014"></a> **Kind:** Message  
+**Type:** [puc::msg::TerminalInputEvent](structpuc_1_1msg_1_1_terminal_input_event.md)  
+**Purpose:** Carries one portable normalized terminal input event or protocol response.  
+**Producers:** The lifecycle-owned terminal input producer.  
+**Consumers:** The TUI Screen transport consumer.

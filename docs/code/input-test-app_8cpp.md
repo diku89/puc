@@ -2,19 +2,11 @@
 
 # File `input-test-app.cpp`
 
-Interactive manual test application for InputFrame.
+Lifecycle entry point for the InputFrame manual test application.
 
-This executable gives InputFrame the same real terminal pipeline validated by the terminal conformance app: Screen owns the alternate terminal buffer, Decoder loads terminfo and layered TOML mappings, and normalized keyboard, paste, scroll, and mouse events are routed into the editor. The input remains anchored to the bottom edge and grows with wrapped content up to its screen-relative maximum.
+Primary application logic lives in InputTestRuntimeSubsystem. `main()` owns the process boundary: subsystem registration and the one initialize/start/stop/terminate lifetime.
 
-Run from a real terminal with: `bazel run //puc-cli/tui:input-test-app`
-
-The animation below demonstrates normal text input and line numbering, shared selection behavior, command mode, and the integrated terminal:
-
-![The PUC input frame demonstrating normal, command, and terminal modes.](../assets/puc-cli-input-frame-demo.gif)
-
-Ctrl-C restores the terminal and exits. `PUC_CONFIG_ROOT` and `PUC_USER_CONFIG_ROOT` have the same meaning as in terminal-test. `PUC_TEST_SHELL` may replace the embedded `/bin/sh` used for terminal mode.
-
-[Source](../../puc-cli/tui/input-test-app.cpp)
+[Source](../../puc-cli/test_apps/input/input-test-app.cpp)
 
 ## Functions
 
@@ -26,13 +18,4 @@ Ctrl-C restores the terminal and exits. `PUC_CONFIG_ROOT` and `PUC_USER_CONFIG_R
 int main(int argc, char **argv)
 ```
 
-Run the standalone InputFrame manual test until interrupted.
-
-**Parameters**
-
-- `argc` (in) — Conventional process argument count.
-- `argv` (in) — Conventional argument vector; argv\[0\] locates runfiles.
-
-**Returns:** Zero after successful setup, rendering, and terminal restoration.
-
-[Source](../../puc-cli/tui/input-test-app.cpp#L880)
+[Source](../../puc-cli/test_apps/input/input-test-app.cpp#L77)

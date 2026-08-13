@@ -4,7 +4,7 @@
 
 Format ScreenResizeEvent as complete JSON.
 
-[Source](../../msgs/screen_msgs.hpp#L244)
+[Source](../../msgs/screen_msgs.hpp#L192)
 
 ## Public functions
 
@@ -18,7 +18,7 @@ auto std::formatter< puc::msg::ScreenResizeEvent, char >::parse(format_parse_con
 
 Accept only the formatter's empty format specification.
 
-[Source](../../msgs/screen_msgs.hpp#L246)
+[Source](../../msgs/screen_msgs.hpp#L194)
 
 <a id="symbol-structstd_1_1formatter_3_01puc_1_1msg_1_1_screen_resize_event_00_01char_01_4_1a59feb2c7a2ea80f6779835d9f6a38c87"></a>
 
@@ -30,4 +30,4 @@ auto std::formatter< puc::msg::ScreenResizeEvent, char >::format(const puc::msg:
 
 Write all character-cell and optional pixel dimensions as JSON.
 
-[Source](../../msgs/screen_msgs.hpp#L252)
+[Source](../../msgs/screen_msgs.hpp#L200)

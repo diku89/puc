@@ -6,7 +6,7 @@ Own the process-local channel Directory above [WorkerSubsystem](classpuc_1_1app_
 
 Each start creates a Directory borrowing that lifecycle generation's live worker pool. Each stop destroys the Directory first, detaching and draining every registered channel while its delivery workers still accept work.
 
-[Source](../../puc-cli/state/directory.hpp#L25)
+[Source](../../utils/ipc/directory_subsystem.hpp#L25)
 
 ## Private data members
 
@@ -20,7 +20,7 @@ std::unique_ptr<ipc::Directory> puc::app::DirectorySubsystem::directory_
 
 Registry present only while this adapter is started.
 
-[Source](../../puc-cli/state/directory.hpp#L53)
+[Source](../../utils/ipc/directory_subsystem.hpp#L53)
 
 ## Public functions
 
@@ -34,7 +34,7 @@ puc::app::DirectorySubsystem::DirectorySubsystem()
 
 Declare the worker-pool dependency used for channel delivery.
 
-[Source](../../puc-cli/state/directory.hpp#L28)
+[Source](../../utils/ipc/directory_subsystem.hpp#L28)
 
 <a id="symbol-classpuc_1_1app_1_1_directory_subsystem_1a4bb4767f269fe335ebe63aafcac8e905"></a>
 
@@ -46,7 +46,7 @@ puc::app::DirectorySubsystem::~DirectorySubsystem() override
 
 Destroy a released channel directory.
 
-[Source](../../puc-cli/state/directory.hpp#L31)
+[Source](../../utils/ipc/directory_subsystem.hpp#L31)
 
 <a id="symbol-classpuc_1_1app_1_1_directory_subsystem_1af326c74fa1a56de273202d632dc6267f"></a>
 
@@ -58,7 +58,7 @@ Status puc::app::DirectorySubsystem::initialize(AppState &app) override
 
 Validate that the registered [WorkerSubsystem](classpuc_1_1app_1_1_worker_subsystem.md) can be resolved.
 
-[Source](../../puc-cli/state/directory.hpp#L34)
+[Source](../../utils/ipc/directory_subsystem.hpp#L34)
 
 <a id="symbol-classpuc_1_1app_1_1_directory_subsystem_1a1dba32bcd6bbdc89f87a94502a5c340f"></a>
 
@@ -70,7 +70,7 @@ Status puc::app::DirectorySubsystem::start(AppState &app) override
 
 Construct a Directory over the currently running worker pool.
 
-[Source](../../puc-cli/state/directory.hpp#L37)
+[Source](../../utils/ipc/directory_subsystem.hpp#L37)
 
 <a id="symbol-classpuc_1_1app_1_1_directory_subsystem_1a9f632c8e4a4d842de3dcd7f7f85c2eda"></a>
 
@@ -82,7 +82,7 @@ Status puc::app::DirectorySubsystem::stop(AppState &app) noexcept override
 
 Detach all channels and release the Directory.
 
-[Source](../../puc-cli/state/directory.hpp#L40)
+[Source](../../utils/ipc/directory_subsystem.hpp#L40)
 
 <a id="symbol-classpuc_1_1app_1_1_directory_subsystem_1a8937b7ed0a19c7526013840f156d333f"></a>
 
@@ -94,7 +94,7 @@ Status puc::app::DirectorySubsystem::terminate(AppState &app) noexcept override
 
 Release any Directory retained after partial lifecycle progress.
 
-[Source](../../puc-cli/state/directory.hpp#L43)
+[Source](../../utils/ipc/directory_subsystem.hpp#L43)
 
 <a id="symbol-classpuc_1_1app_1_1_directory_subsystem_1a0efc4019e8b28b2cf56babf7c00a5ac2"></a>
 
@@ -106,7 +106,7 @@ ipc::Directory * puc::app::DirectorySubsystem::directory() noexcept
 
 Return the live Directory, or nullptr outside the running phase.
 
-[Source](../../puc-cli/state/directory.hpp#L46)
+[Source](../../utils/ipc/directory_subsystem.hpp#L46)
 
 <a id="symbol-classpuc_1_1app_1_1_directory_subsystem_1a4b3c8d33decf3a52ba56d601c4058a38"></a>
 
@@ -118,4 +118,4 @@ const ipc::Directory * puc::app::DirectorySubsystem::directory() const noexcept
 
 Return the live Directory, or nullptr outside the running phase.
 
-[Source](../../puc-cli/state/directory.hpp#L49)
+[Source](../../utils/ipc/directory_subsystem.hpp#L49)

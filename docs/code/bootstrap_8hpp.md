@@ -4,7 +4,7 @@
 
 Canonical registration of application subsystem graph profiles.
 
-[Source](../../puc-cli/state/bootstrap.hpp)
+[Source](../../puc-cli/application/bootstrap.hpp)
 
 ## Related symbols
 

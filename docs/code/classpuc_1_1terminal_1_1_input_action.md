@@ -6,7 +6,7 @@ Immutable value stored at an accepting input-trie node.
 
 The wrapper keeps `std::variant` out of the public decoding logic and gives configuration loading one validated domain type. Mutable capture data is held by the decoder cursor rather than by this shared trie value.
 
-[Source](../../puc-cli/terminal/input.hpp#L112)
+[Source](../../puc-cli/tui/terminal/input.hpp#L112)
 
 ## Private types
 
@@ -18,7 +18,7 @@ The wrapper keeps `std::variant` out of the public decoding logic and gives conf
 using puc::terminal::InputAction::Storage = std::variant<std::monostate, EmitInputEvent, EnterInputProtocol>
 ```
 
-[Source](../../puc-cli/terminal/input.hpp#L138)
+[Source](../../puc-cli/tui/terminal/input.hpp#L138)
 
 ## Private data members
 
@@ -32,7 +32,7 @@ Storage puc::terminal::InputAction::storage_
 
 Direct, allocation-free action representation.
 
-[Source](../../puc-cli/terminal/input.hpp#L141)
+[Source](../../puc-cli/tui/terminal/input.hpp#L141)
 
 ## Public functions
 
@@ -46,7 +46,7 @@ puc::terminal::InputAction::InputAction() noexcept=default
 
 Construct an inert action suitable for prefix-only trie nodes.
 
-[Source](../../puc-cli/terminal/input.hpp#L115)
+[Source](../../puc-cli/tui/terminal/input.hpp#L115)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_action_1a9c7e742ce80589aa1764a388c7989223"></a>
 
@@ -58,7 +58,7 @@ puc::terminal::InputAction::InputAction(Event event)
 
 Construct an action that emits a fixed event.
 
-[Source](../../puc-cli/terminal/input.hpp#L118)
+[Source](../../puc-cli/tui/terminal/input.hpp#L118)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_action_1a2736958dab2c8e5c23bf886a2ae1926a"></a>
 
@@ -70,7 +70,7 @@ puc::terminal::InputAction::InputAction(InputProtocol protocol) noexcept
 
 Construct an action that enters protocol-specific capture behavior.
 
-[Source](../../puc-cli/terminal/input.hpp#L122)
+[Source](../../puc-cli/tui/terminal/input.hpp#L122)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_action_1a42d8c58ee5394d0045760f5b2f016d4a"></a>
 
@@ -82,7 +82,7 @@ const Event * puc::terminal::InputAction::event() const noexcept
 
 Return the fixed event, or `nullptr` for a non-emitting action.
 
-[Source](../../puc-cli/terminal/input.hpp#L126)
+[Source](../../puc-cli/tui/terminal/input.hpp#L126)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_action_1a654d608a91bd06e31b360f64004a748a"></a>
 
@@ -94,7 +94,7 @@ const EnterInputProtocol * puc::terminal::InputAction::protocol() const noexcept
 
 Return the protocol action, or `nullptr` for a non-protocol action.
 
-[Source](../../puc-cli/terminal/input.hpp#L129)
+[Source](../../puc-cli/tui/terminal/input.hpp#L129)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_action_1a343a29d4b69966ff420c6845068d1a9a"></a>
 
@@ -106,7 +106,7 @@ bool puc::terminal::InputAction::empty() const noexcept
 
 Return whether this is the inert default action.
 
-[Source](../../puc-cli/terminal/input.hpp#L132)
+[Source](../../puc-cli/tui/terminal/input.hpp#L132)
 
 <a id="symbol-classpuc_1_1terminal_1_1_input_action_1a1338f397072f970e5f8bb0a1ee9d2248"></a>
 
@@ -118,4 +118,4 @@ bool puc::terminal::InputAction::operator==(const InputAction &) const =default
 
 Compare complete action state.
 
-[Source](../../puc-cli/terminal/input.hpp#L135)
+[Source](../../puc-cli/tui/terminal/input.hpp#L135)

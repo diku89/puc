@@ -14,7 +14,7 @@
 
 ## Enumerations
 
-<a id="symbol-utils_2logger_2logger_8hpp_1a5fdb3855daa421a9cb63ed59a356b278"></a>
+<a id="symbol-logger_8hpp_1a5fdb3855daa421a9cb63ed59a356b278"></a>
 
 ### `LogLevel`
 
@@ -25,10 +25,10 @@ LogLevel
 Log levels.
 
 #### Values
-- <a id="symbol-utils_2logger_2logger_8hpp_1a5fdb3855daa421a9cb63ed59a356b278adc30ec20708ef7b0f641ef78b7880a15"></a>`DEBUG` — Debug logs.
-- <a id="symbol-utils_2logger_2logger_8hpp_1a5fdb3855daa421a9cb63ed59a356b278a551b723eafd6a31d444fcb2f5920fbd3"></a>`INFO` — Informational logs.
-- <a id="symbol-utils_2logger_2logger_8hpp_1a5fdb3855daa421a9cb63ed59a356b278a32bd8a1db2275458673903bdb84cb277"></a>`WARN` — Warning logs.
-- <a id="symbol-utils_2logger_2logger_8hpp_1a5fdb3855daa421a9cb63ed59a356b278abb1ca97ec761fc37101737ba0aa2e7c5"></a>`ERROR` — Error logs.
+- <a id="symbol-logger_8hpp_1a5fdb3855daa421a9cb63ed59a356b278adc30ec20708ef7b0f641ef78b7880a15"></a>`DEBUG` — Debug logs.
+- <a id="symbol-logger_8hpp_1a5fdb3855daa421a9cb63ed59a356b278a551b723eafd6a31d444fcb2f5920fbd3"></a>`INFO` — Informational logs.
+- <a id="symbol-logger_8hpp_1a5fdb3855daa421a9cb63ed59a356b278a32bd8a1db2275458673903bdb84cb277"></a>`WARN` — Warning logs.
+- <a id="symbol-logger_8hpp_1a5fdb3855daa421a9cb63ed59a356b278abb1ca97ec761fc37101737ba0aa2e7c5"></a>`ERROR` — Error logs.
 
 [Source](../../utils/logger/logger.hpp#L39)
 
@@ -44,7 +44,7 @@ void puc::logger::init_logger(const LoggerConf &config)
 
 Initialize the global logger with the provided configuration.
 
-Use [LOGGER\_INIT()](utils_2logger_2logger_8hpp.md#symbol-utils_2logger_2logger_8hpp_1a9d7cb17bff1907d5e09ecfbd2a779683) instead of calling this function directly. Calling it again atomically replaces the global logger for subsequent messages.
+Use [LOGGER\_INIT()](logger_8hpp.md#symbol-logger_8hpp_1a9d7cb17bff1907d5e09ecfbd2a779683) instead of calling this function directly. Calling it again atomically replaces the global logger for subsequent messages.
 
 **Parameters**
 
@@ -66,7 +66,7 @@ std::shared_ptr< Logger > puc::logger::get_logger()
 
 Get the current global logger instance.
 
-**Returns:** The logger, or an empty std::shared\_ptr if [LOGGER\_INIT()](utils_2logger_2logger_8hpp.md#symbol-utils_2logger_2logger_8hpp_1a9d7cb17bff1907d5e09ecfbd2a779683) has not yet been called.
+**Returns:** The logger, or an empty std::shared\_ptr if [LOGGER\_INIT()](logger_8hpp.md#symbol-logger_8hpp_1a9d7cb17bff1907d5e09ecfbd2a779683) has not yet been called.
 
 [Source](../../utils/logger/logger.cc#L91)
 

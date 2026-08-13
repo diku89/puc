@@ -4,7 +4,7 @@
 
 One display row produced by wrapping one logical line.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L171)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L171)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::size_t puc::tui::TextEditor::Impl::VisualRow::line
 
 Logical source line.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L172)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L172)
 
 <a id="symbol-structpuc_1_1tui_1_1_text_editor_1_1_impl_1_1_visual_row_1ad3a682f25da742bd2a99acc9f2d79a48"></a>
 
@@ -30,7 +30,7 @@ std::size_t puc::tui::TextEditor::Impl::VisualRow::first
 
 First source scalar on this row.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L173)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L173)
 
 <a id="symbol-structpuc_1_1tui_1_1_text_editor_1_1_impl_1_1_visual_row_1a2d21ba845a654e2dbeb97d9e6b0dedda"></a>
 
@@ -42,4 +42,4 @@ std::size_t puc::tui::TextEditor::Impl::VisualRow::length
 
 Source scalars on this row.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L174)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L174)

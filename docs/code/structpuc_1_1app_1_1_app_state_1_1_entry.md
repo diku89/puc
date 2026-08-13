@@ -4,7 +4,7 @@
 
 Per-adapter ownership and successfully completed lifecycle phases.
 
-[Source](../../puc-cli/state/state.hpp#L181)
+[Source](../../state/state.hpp#L181)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::unique_ptr<AppSubsystem> puc::app::AppState::Entry::subsystem
 
 Exclusively owned adapter.
 
-[Source](../../puc-cli/state/state.hpp#L182)
+[Source](../../state/state.hpp#L182)
 
 <a id="symbol-structpuc_1_1app_1_1_app_state_1_1_entry_1a8fa18945a24334e24f2fde49a6b0315f"></a>
 
@@ -30,7 +30,7 @@ bool puc::app::AppState::Entry::initialized
 
 Whether [initialize()](classpuc_1_1app_1_1_app_state.md#symbol-classpuc_1_1app_1_1_app_state_1a0bf227cecde6dd3453882b3cbd9631d0) completed.
 
-[Source](../../puc-cli/state/state.hpp#L183)
+[Source](../../state/state.hpp#L183)
 
 <a id="symbol-structpuc_1_1app_1_1_app_state_1_1_entry_1a650098a0492f9babcb675df4c5ae37ce"></a>
 
@@ -42,4 +42,4 @@ bool puc::app::AppState::Entry::started
 
 Whether [start()](classpuc_1_1app_1_1_app_state.md#symbol-classpuc_1_1app_1_1_app_state_1a9d4faaf8dfd35bbc9bc1fd41957cc030) completed without [stop()](classpuc_1_1app_1_1_app_state.md#symbol-classpuc_1_1app_1_1_app_state_1a6966e3f055344ce49ac09c32c081dc58).
 
-[Source](../../puc-cli/state/state.hpp#L184)
+[Source](../../state/state.hpp#L184)

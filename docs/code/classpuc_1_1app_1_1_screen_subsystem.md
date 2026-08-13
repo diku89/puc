@@ -2,25 +2,13 @@
 
 # Class `puc::app::ScreenSubsystem`
 
-Own Screen while borrowing [DirectorySubsystem](classpuc_1_1app_1_1_directory_subsystem.md) and [TerminalSubsystem](classpuc_1_1app_1_1_terminal_subsystem.md).
+Own [Screen](classpuc_1_1app_1_1_screen.md) while borrowing [DirectorySubsystem](classpuc_1_1app_1_1_directory_subsystem.md), [TerminalSubsystem](classpuc_1_1app_1_1_terminal_subsystem.md), and the lifecycle-owned terminal-input route.
 
-In TUI mode [start()](#symbol-classpuc_1_1app_1_1_screen_subsystem_1a6c85c253eb4622cbc5ab7fde351a1d77) normally requests terminal ownership after constructing Screen over the lifecycle-owned mechanisms. TEST mode constructs the same presentation and subscription graph without mutating a host terminal.
+In TUI mode [start()](#symbol-classpuc_1_1app_1_1_screen_subsystem_1a6c85c253eb4622cbc5ab7fde351a1d77) requests terminal ownership after constructing [Screen](classpuc_1_1app_1_1_screen.md) over the lifecycle-owned mechanisms. TEST mode constructs the same presentation and subscription graph without mutating a host terminal.
 
-[Source](../../puc-cli/state/screen.hpp#L36)
+[Source](../../puc-cli/tui/rendering/screen_subsystem.hpp#L27)
 
 ## Private data members
-
-<a id="symbol-classpuc_1_1app_1_1_screen_subsystem_1ac5e8e15f6602afb5a53ba3adcddd90c7"></a>
-
-### `options_`
-
-```cpp
-ScreenSubsystemOptions puc::app::ScreenSubsystem::options_
-```
-
-Terminal ownership policy.
-
-[Source](../../puc-cli/state/screen.hpp#L66)
 
 <a id="symbol-classpuc_1_1app_1_1_screen_subsystem_1acfe7db38ef91526373107505e036c366"></a>
 
@@ -32,7 +20,7 @@ std::unique_ptr<tui::Screen> puc::app::ScreenSubsystem::screen_
 
 Active presentation object.
 
-[Source](../../puc-cli/state/screen.hpp#L67)
+[Source](../../puc-cli/tui/rendering/screen_subsystem.hpp#L57)
 
 <a id="symbol-classpuc_1_1app_1_1_screen_subsystem_1a0942f8d1c93ee339393e95a6af3ffaf1"></a>
 
@@ -44,21 +32,21 @@ tui::Status puc::app::ScreenSubsystem::screen_status_
 
 Latest mechanism-specific detail.
 
-[Source](../../puc-cli/state/screen.hpp#L68)
+[Source](../../puc-cli/tui/rendering/screen_subsystem.hpp#L58)
 
 ## Public functions
 
-<a id="symbol-classpuc_1_1app_1_1_screen_subsystem_1a1bdc37d4d78a07ec056645fe509c304f"></a>
+<a id="symbol-classpuc_1_1app_1_1_screen_subsystem_1a95234b88d8deb2ccbedd08a08a84dddb"></a>
 
 ### `ScreenSubsystem`
 
 ```cpp
-puc::app::ScreenSubsystem::ScreenSubsystem(ScreenSubsystemOptions options={})
+puc::app::ScreenSubsystem::ScreenSubsystem()
 ```
 
-Construct an adapter with terminal-ownership policy.
+Construct the canonical [Screen](classpuc_1_1app_1_1_screen.md) lifecycle adapter.
 
-[Source](../../puc-cli/state/screen.hpp#L39)
+[Source](../../puc-cli/tui/rendering/screen_subsystem.hpp#L30)
 
 <a id="symbol-classpuc_1_1app_1_1_screen_subsystem_1ad6715900a50587d80d9a5ecb1cc3aeeb"></a>
 
@@ -68,9 +56,9 @@ Construct an adapter with terminal-ownership policy.
 puc::app::ScreenSubsystem::~ScreenSubsystem() override
 ```
 
-Destroy a released Screen.
+Destroy a released [Screen](classpuc_1_1app_1_1_screen.md).
 
-[Source](../../puc-cli/state/screen.hpp#L42)
+[Source](../../puc-cli/tui/rendering/screen_subsystem.hpp#L33)
 
 <a id="symbol-classpuc_1_1app_1_1_screen_subsystem_1afb09c28d76f3c6e8d04b0cc3b5ff50b1"></a>
 
@@ -82,7 +70,7 @@ Status puc::app::ScreenSubsystem::initialize(AppState &app) override
 
 Validate terminal and directory adapter registration.
 
-[Source](../../puc-cli/state/screen.hpp#L45)
+[Source](../../puc-cli/tui/rendering/screen_subsystem.hpp#L36)
 
 <a id="symbol-classpuc_1_1app_1_1_screen_subsystem_1a6c85c253eb4622cbc5ab7fde351a1d77"></a>
 
@@ -92,9 +80,9 @@ Validate terminal and directory adapter registration.
 Status puc::app::ScreenSubsystem::start(AppState &app) override
 ```
 
-Construct Screen and optionally request terminal ownership.
+Construct [Screen](classpuc_1_1app_1_1_screen.md) and request terminal ownership in TUI mode.
 
-[Source](../../puc-cli/state/screen.hpp#L48)
+[Source](../../puc-cli/tui/rendering/screen_subsystem.hpp#L39)
 
 <a id="symbol-classpuc_1_1app_1_1_screen_subsystem_1ab7e0f0ff63796b44723ad76389d22926"></a>
 
@@ -104,9 +92,9 @@ Construct Screen and optionally request terminal ownership.
 Status puc::app::ScreenSubsystem::stop(AppState &app) noexcept override
 ```
 
-Request release and destroy Screen before its borrowed mechanisms stop.
+Request release and destroy [Screen](classpuc_1_1app_1_1_screen.md) before its borrowed mechanisms stop.
 
-[Source](../../puc-cli/state/screen.hpp#L51)
+[Source](../../puc-cli/tui/rendering/screen_subsystem.hpp#L42)
 
 <a id="symbol-classpuc_1_1app_1_1_screen_subsystem_1af25d3801bae746ce131313dbb74aaa6b"></a>
 
@@ -116,9 +104,9 @@ Request release and destroy Screen before its borrowed mechanisms stop.
 Status puc::app::ScreenSubsystem::terminate(AppState &app) noexcept override
 ```
 
-Release any Screen retained after partial lifecycle progress.
+Release any [Screen](classpuc_1_1app_1_1_screen.md) retained after partial lifecycle progress.
 
-[Source](../../puc-cli/state/screen.hpp#L54)
+[Source](../../puc-cli/tui/rendering/screen_subsystem.hpp#L45)
 
 <a id="symbol-classpuc_1_1app_1_1_screen_subsystem_1a6b1fe5fdcd8b5b7eaa9c6c0a71072f95"></a>
 
@@ -130,7 +118,7 @@ tui::Screen * puc::app::ScreenSubsystem::screen() noexcept
 
 Return the running presentation object, or nullptr while stopped.
 
-[Source](../../puc-cli/state/screen.hpp#L57)
+[Source](../../puc-cli/tui/rendering/screen_subsystem.hpp#L48)
 
 <a id="symbol-classpuc_1_1app_1_1_screen_subsystem_1a2486ae5bd095a28d9c1671e9cd370517"></a>
 
@@ -142,7 +130,7 @@ const tui::Screen * puc::app::ScreenSubsystem::screen() const noexcept
 
 Return the running presentation object, or nullptr while stopped.
 
-[Source](../../puc-cli/state/screen.hpp#L60)
+[Source](../../puc-cli/tui/rendering/screen_subsystem.hpp#L51)
 
 <a id="symbol-classpuc_1_1app_1_1_screen_subsystem_1a9bc531bedccf11de2f6ba818cf77b4af"></a>
 
@@ -152,6 +140,6 @@ Return the running presentation object, or nullptr while stopped.
 tui::Status puc::app::ScreenSubsystem::screen_status() const noexcept
 ```
 
-Return the latest Screen status observed by a lifecycle hook.
+Return the latest [Screen](classpuc_1_1app_1_1_screen.md) status observed by a lifecycle hook.
 
-[Source](../../puc-cli/state/screen.hpp#L63)
+[Source](../../puc-cli/tui/rendering/screen_subsystem.hpp#L54)

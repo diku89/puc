@@ -4,7 +4,7 @@
 
 Recoverable unrecognized or malformed input retained for diagnostics.
 
-[Source](../../puc-cli/terminal/event.hpp#L403)
+[Source](../../puc-cli/tui/terminal/event.hpp#L403)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ UnknownInputReason puc::terminal::UnknownEvent::reason
 
 Why decoding stopped.
 
-[Source](../../puc-cli/terminal/event.hpp#L404)
+[Source](../../puc-cli/tui/terminal/event.hpp#L404)
 
 <a id="symbol-structpuc_1_1terminal_1_1_unknown_event_1a5a613f9f5380345238912b80d5b37e28"></a>
 
@@ -30,7 +30,7 @@ std::string puc::terminal::UnknownEvent::bytes
 
 Safe bytes retained when diagnostics benefit.
 
-[Source](../../puc-cli/terminal/event.hpp#L406)
+[Source](../../puc-cli/tui/terminal/event.hpp#L406)
 
 ## Public functions
 
@@ -44,4 +44,4 @@ bool puc::terminal::UnknownEvent::operator==(const UnknownEvent &) const =defaul
 
 Compare the reason and retained bytes.
 
-[Source](../../puc-cli/terminal/event.hpp#L409)
+[Source](../../puc-cli/tui/terminal/event.hpp#L409)

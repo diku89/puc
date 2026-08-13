@@ -4,7 +4,7 @@
 
 Canonical application subsystem registration implementation.
 
-[Source](../../puc-cli/state/bootstrap.cpp)
+[Source](../../puc-cli/application/bootstrap.cpp)
 
 ## Related symbols
 

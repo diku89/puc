@@ -4,7 +4,7 @@
 
 Hidden logical text buffer and reusable editing operations.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L168)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L168)
 
 ## Related symbols
 
@@ -23,7 +23,7 @@ TextEditorOptions puc::tui::TextEditor::Impl::options
 
 Editing policy.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L703)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L703)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1_1_impl_1af4c2b6cf5c7c6955634c057dd599b714"></a>
 
@@ -35,7 +35,7 @@ std::vector<std::u32string> puc::tui::TextEditor::Impl::lines
 
 Newline-delimited text.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L704)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L704)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1_1_impl_1a4db840623744274e50411c9025da9cc9"></a>
 
@@ -47,7 +47,7 @@ TextCursor puc::tui::TextEditor::Impl::cursor
 
 Active insertion position.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L705)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L705)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1_1_impl_1a0aa5a4715124bd8a3473aa8378ae3c0b"></a>
 
@@ -59,7 +59,7 @@ std::optional<TextSelectionRange> puc::tui::TextEditor::Impl::selection
 
 Active logical range.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L706)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L706)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1_1_impl_1a83f17898255810b14ea8f3413e0f5d00"></a>
 
@@ -71,7 +71,7 @@ std::optional<TextCursor> puc::tui::TextEditor::Impl::keyboard_anchor
 
 Shift-navigation origin.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L707)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L707)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1_1_impl_1acb139c87ca18c4b5fc82eec8930ade9e"></a>
 
@@ -83,7 +83,7 @@ std::size_t puc::tui::TextEditor::Impl::scroll_row
 
 First visible wrapped row.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L708)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L708)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1_1_impl_1a2e994a166ead748a5036d02c701529ed"></a>
 
@@ -95,7 +95,7 @@ std::size_t puc::tui::TextEditor::Impl::desired_column
 
 Sticky vertical-motion column.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L709)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L709)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1_1_impl_1ac712fe63e6721ac7d889c0321b5b6bca"></a>
 
@@ -107,7 +107,7 @@ bool puc::tui::TextEditor::Impl::has_desired_column
 
 Whether desired\_column is active.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L710)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L710)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1_1_impl_1a1b0ca57a2a247395331a881760176905"></a>
 
@@ -119,7 +119,7 @@ std::size_t puc::tui::TextEditor::Impl::viewport_width
 
 Latest render width.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L711)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L711)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1_1_impl_1a5e4f8f298cc3d9356800503326a560f0"></a>
 
@@ -131,7 +131,7 @@ std::size_t puc::tui::TextEditor::Impl::viewport_height
 
 Latest render height.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L712)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L712)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1_1_impl_1a9c05f324313e3bb97c9c71c1bf8dd025"></a>
 
@@ -143,7 +143,7 @@ std::optional<PasteTransaction> puc::tui::TextEditor::Impl::paste
 
 Active transactional paste.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L713)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L713)
 
 ## Public functions
 
@@ -157,7 +157,7 @@ puc::tui::TextEditor::Impl::Impl(TextEditorOptions supplied)
 
 Normalize and retain the reusable editor policy.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L191)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L191)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1_1_impl_1a619f89a87948b85e3a9850b08c84120d"></a>
 
@@ -169,7 +169,7 @@ bool puc::tui::TextEditor::Impl::has_input() const noexcept
 
 Return whether any user-created logical input exists.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L197)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L197)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1_1_impl_1a98e3c1632807ae83c7c0cb5ddca637d8"></a>
 
@@ -181,7 +181,7 @@ std::size_t puc::tui::TextEditor::Impl::editable_width() const noexcept
 
 Return the active positive wrap width.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L202)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L202)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1_1_impl_1a497d34403841f523419f0a2df439505e"></a>
 
@@ -193,7 +193,7 @@ void puc::tui::TextEditor::Impl::materialize_word_wraps(std::size_t first_line)
 
 Replace word-boundary soft wraps with logical newline boundaries.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L236)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L236)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1_1_impl_1aceceb753393cbea5e4745eb8be303959"></a>
 
@@ -205,7 +205,7 @@ std::vector< VisualRow > puc::tui::TextEditor::Impl::visual_rows(std::size_t wid
 
 Wrap all logical lines for one positive width.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L264)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L264)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1_1_impl_1a5f4b0dd0902e5c34ee2fe634a28c3df3"></a>
 
@@ -217,7 +217,7 @@ std::pair< std::size_t, std::size_t > puc::tui::TextEditor::Impl::visual_cursor(
 
 Find the wrapped row and column containing the caret.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L308)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L308)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1_1_impl_1aa3295655849e43c234973a8695bf44d0"></a>
 
@@ -229,7 +229,7 @@ void puc::tui::TextEditor::Impl::clamp_scroll()
 
 Restrict scroll origin to the current wrapped content.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L330)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L330)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1_1_impl_1a37959cf632ec0579f97d63bb5e7dd897"></a>
 
@@ -241,7 +241,7 @@ void puc::tui::TextEditor::Impl::ensure_cursor_visible()
 
 Scroll just enough to keep the caret visible.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L342)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L342)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1_1_impl_1a5d599ef06b5fdf9b1eb77a9bc2fb3bfb"></a>
 
@@ -253,7 +253,7 @@ TextCursor puc::tui::TextEditor::Impl::after_character(TextCursor position) cons
 
 Return a caret one scalar after a mapped character.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L363)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L363)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1_1_impl_1a77cbdd322ce86590b5e2b8f1a1f5b8ac"></a>
 
@@ -265,7 +265,7 @@ bool puc::tui::TextEditor::Impl::delete_selection()
 
 Delete the active range and place the caret at its start.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L372)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L372)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1_1_impl_1a5dcf56237fa340c1afa59cf80eb8a505"></a>
 
@@ -277,7 +277,7 @@ void puc::tui::TextEditor::Impl::insert(std::u32string_view characters, bool &pr
 
 Insert normalized Unicode scalars at the caret.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L397)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L397)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1_1_impl_1a360552f55d8721da7c9db3d6fd5caf1f"></a>
 
@@ -289,7 +289,7 @@ void puc::tui::TextEditor::Impl::backspace()
 
 Remove the scalar before the caret or join the preceding line.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L441)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L441)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1_1_impl_1a2f8598458b8fbcc0f75433124332fab8"></a>
 
@@ -301,7 +301,7 @@ void puc::tui::TextEditor::Impl::delete_forward()
 
 Remove the scalar under the caret or join the following line.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L463)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L463)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1_1_impl_1af6a5413ea9fa9786729c1b3bac456f9b"></a>
 
@@ -313,7 +313,7 @@ void puc::tui::TextEditor::Impl::finish_navigation(TextCursor old_cursor, bool e
 
 Update a Shift-navigation range after moving the caret.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L482)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L482)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1_1_impl_1ad78191f6c1133a764eff879a173c3d56"></a>
 
@@ -325,7 +325,7 @@ void puc::tui::TextEditor::Impl::move_horizontal(bool right, bool extend)
 
 Move one scalar horizontally across logical newline boundaries.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L502)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L502)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1_1_impl_1a89950c61aa7790b8d6c51693d7f8eeca"></a>
 
@@ -337,7 +337,7 @@ void puc::tui::TextEditor::Impl::move_word_left(bool extend=false)
 
 Move to the start of the preceding word.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L523)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L523)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1_1_impl_1ad0524ee1e0bef50768e4d2b8a2c08b26"></a>
 
@@ -349,7 +349,7 @@ void puc::tui::TextEditor::Impl::move_word_right(bool extend=false)
 
 Move to the start of the following word.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L548)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L548)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1_1_impl_1a7d1967698dc831a495819e3c76a02d66"></a>
 
@@ -361,7 +361,7 @@ void puc::tui::TextEditor::Impl::move_vertical(std::int64_t row_delta, bool exte
 
 Move vertically through wrapped rows with a sticky desired column.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L570)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L570)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1_1_impl_1a4c9760053030ab7ab40105196635f6a3"></a>
 
@@ -373,7 +373,7 @@ void puc::tui::TextEditor::Impl::move_row_boundary(bool end, bool extend)
 
 Move to one wrapped-row boundary.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L604)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L604)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1_1_impl_1a6337398a8f600eb849dde1076f979aea"></a>
 
@@ -385,7 +385,7 @@ void puc::tui::TextEditor::Impl::move_buffer_boundary(bool end, bool extend)
 
 Move to the first or final caret in the buffer.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L621)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L621)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1_1_impl_1ab2c7fdbc3c9c88a3ab1a6a353919774e"></a>
 
@@ -397,7 +397,7 @@ void puc::tui::TextEditor::Impl::move_page(bool down, bool extend=false)
 
 Move by one visible viewport.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L632)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L632)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1_1_impl_1ae6154e686e08cc943e6530d01a5d33f6"></a>
 
@@ -409,7 +409,7 @@ std::optional< TextCursor > puc::tui::TextEditor::Impl::map_character(SelectionP
 
 Map a local cell to a visible source character, clamping drag extents.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L641)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L641)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1_1_impl_1a22390eda5b87776d068673a87ec04b5a"></a>
 
@@ -421,7 +421,7 @@ std::optional< TextCursor > puc::tui::TextEditor::Impl::map_caret(SelectionPosit
 
 Map an in-viewport local cell to a caret boundary.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L675)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L675)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_editor_1_1_impl_1a5f9d9a7fc1a7eda768701d287159f5c0"></a>
 
@@ -433,7 +433,7 @@ bool puc::tui::TextEditor::Impl::is_selected(TextCursor position) const noexcept
 
 Return whether a source scalar lies inside the active range.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L697)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L697)
 
 ## Public static functions
 
@@ -447,4 +447,4 @@ static std::optional< std::size_t > puc::tui::TextEditor::Impl::materialized_wra
 
 Find the separator before the first word that overflows a visual row.
 
-[Source](../../puc-cli/tui/text_editor_utils.cpp#L207)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.cpp#L207)

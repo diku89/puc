@@ -4,7 +4,7 @@
 
 One semantic selection update dispatched by [Screen](classpuc_1_1tui_1_1_screen.md) to a [Frame](classpuc_1_1tui_1_1_frame.md).
 
-[Source](../../puc-cli/tui/selection.hpp#L53)
+[Source](../../puc-cli/tui/rendering/selection.hpp#L53)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ SelectionEventType puc::tui::SelectionEvent::type
 
 Operation represented by this event.
 
-[Source](../../puc-cli/tui/selection.hpp#L54)
+[Source](../../puc-cli/tui/rendering/selection.hpp#L54)
 
 <a id="symbol-structpuc_1_1tui_1_1_selection_event_1a9eebeb46b0d00682fc94cc31018630b1"></a>
 
@@ -30,7 +30,7 @@ SelectionPosition puc::tui::SelectionEvent::anchor
 
 Original press position for drag operations.
 
-[Source](../../puc-cli/tui/selection.hpp#L56)
+[Source](../../puc-cli/tui/rendering/selection.hpp#L56)
 
 <a id="symbol-structpuc_1_1tui_1_1_selection_event_1a133a83ad4761c0936d51fb862a76539c"></a>
 
@@ -42,7 +42,7 @@ SelectionPosition puc::tui::SelectionEvent::extent
 
 Latest pointer or click position.
 
-[Source](../../puc-cli/tui/selection.hpp#L57)
+[Source](../../puc-cli/tui/rendering/selection.hpp#L57)
 
 ## Public functions
 
@@ -56,4 +56,4 @@ bool puc::tui::SelectionEvent::operator==(const SelectionEvent &) const noexcept
 
 Compare the operation and both local positions.
 
-[Source](../../puc-cli/tui/selection.hpp#L60)
+[Source](../../puc-cli/tui/rendering/selection.hpp#L60)

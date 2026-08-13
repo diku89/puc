@@ -6,7 +6,7 @@ Own the application-wide JobQueue for one running lifecycle generation.
 
 The queue is created by [start()](#symbol-classpuc_1_1app_1_1_worker_subsystem_1afbdfc95aa506b81d9dc7081cefd67978) and synchronously joined by [stop()](#symbol-classpuc_1_1app_1_1_worker_subsystem_1a6aca28ed9fedd58541f7f77eff4455e8). This keeps initialization free of worker activity and allows an [AppState](classpuc_1_1app_1_1_app_state.md) that was stopped to start again with a fresh queue. Dependent adapters may borrow the returned pointer only while [AppState](classpuc_1_1app_1_1_app_state.md) is running. [LoggerSubsystem](classpuc_1_1app_1_1_logger_subsystem.md) precedes worker creation and remains installed until every worker has joined.
 
-[Source](../../puc-cli/state/workers.hpp#L28)
+[Source](../../utils/multithreading/worker_subsystem.hpp#L28)
 
 ## Private data members
 
@@ -20,7 +20,7 @@ std::uint8_t puc::app::WorkerSubsystem::worker_count_
 
 Fixed thread count for every generation.
 
-[Source](../../puc-cli/state/workers.hpp#L65)
+[Source](../../utils/multithreading/worker_subsystem.hpp#L65)
 
 <a id="symbol-classpuc_1_1app_1_1_worker_subsystem_1a0c785a68c09104b72d79a0e0d72edb2d"></a>
 
@@ -32,7 +32,7 @@ std::unique_ptr<multithreading::JobQueue> puc::app::WorkerSubsystem::workers_
 
 Pool present only while this adapter is started.
 
-[Source](../../puc-cli/state/workers.hpp#L67)
+[Source](../../utils/multithreading/worker_subsystem.hpp#L67)
 
 ## Public functions
 
@@ -46,7 +46,7 @@ puc::app::WorkerSubsystem::WorkerSubsystem(std::uint8_t worker_count=4U)
 
 Construct an adapter that starts `worker_count` worker threads.
 
-[Source](../../puc-cli/state/workers.hpp#L31)
+[Source](../../utils/multithreading/worker_subsystem.hpp#L31)
 
 <a id="symbol-classpuc_1_1app_1_1_worker_subsystem_1a81e09a4329ccc484b9f8360690dcd9db"></a>
 
@@ -58,7 +58,7 @@ puc::app::WorkerSubsystem::~WorkerSubsystem() override
 
 Destroy a released worker pool.
 
-[Source](../../puc-cli/state/workers.hpp#L34)
+[Source](../../utils/multithreading/worker_subsystem.hpp#L34)
 
 <a id="symbol-classpuc_1_1app_1_1_worker_subsystem_1a98952a9cd7c573b9e5b271f956ea97b2"></a>
 
@@ -70,7 +70,7 @@ Status puc::app::WorkerSubsystem::initialize(AppState &app) override
 
 Validate the configured worker count without starting threads.
 
-[Source](../../puc-cli/state/workers.hpp#L37)
+[Source](../../utils/multithreading/worker_subsystem.hpp#L37)
 
 <a id="symbol-classpuc_1_1app_1_1_worker_subsystem_1afbdfc95aa506b81d9dc7081cefd67978"></a>
 
@@ -82,7 +82,7 @@ Status puc::app::WorkerSubsystem::start(AppState &app) override
 
 Construct and start a fresh JobQueue.
 
-[Source](../../puc-cli/state/workers.hpp#L40)
+[Source](../../utils/multithreading/worker_subsystem.hpp#L40)
 
 <a id="symbol-classpuc_1_1app_1_1_worker_subsystem_1a6aca28ed9fedd58541f7f77eff4455e8"></a>
 
@@ -94,7 +94,7 @@ Status puc::app::WorkerSubsystem::stop(AppState &app) noexcept override
 
 Shut down, join, and release the active JobQueue.
 
-[Source](../../puc-cli/state/workers.hpp#L43)
+[Source](../../utils/multithreading/worker_subsystem.hpp#L43)
 
 <a id="symbol-classpuc_1_1app_1_1_worker_subsystem_1a620c2cef77bdad0d0b3bfe54fc76879a"></a>
 
@@ -106,7 +106,7 @@ Status puc::app::WorkerSubsystem::terminate(AppState &app) noexcept override
 
 Release any queue retained after partial lifecycle progress.
 
-[Source](../../puc-cli/state/workers.hpp#L46)
+[Source](../../utils/multithreading/worker_subsystem.hpp#L46)
 
 <a id="symbol-classpuc_1_1app_1_1_worker_subsystem_1a47a847b7fa89e163d613078959a1fac3"></a>
 
@@ -118,7 +118,7 @@ multithreading::JobQueue * puc::app::WorkerSubsystem::workers() noexcept
 
 Return the running worker pool, or nullptr outside the running phase.
 
-[Source](../../puc-cli/state/workers.hpp#L49)
+[Source](../../utils/multithreading/worker_subsystem.hpp#L49)
 
 <a id="symbol-classpuc_1_1app_1_1_worker_subsystem_1a6e98946fd976a0d8b763fdbe2558b966"></a>
 
@@ -130,7 +130,7 @@ const multithreading::JobQueue * puc::app::WorkerSubsystem::workers() const noex
 
 Return the running worker pool, or nullptr outside the running phase.
 
-[Source](../../puc-cli/state/workers.hpp#L52)
+[Source](../../utils/multithreading/worker_subsystem.hpp#L52)
 
 <a id="symbol-classpuc_1_1app_1_1_worker_subsystem_1a455b0947807eec6cf7642af0efe081ca"></a>
 
@@ -142,7 +142,7 @@ std::uint8_t puc::app::WorkerSubsystem::configured_worker_count() const noexcept
 
 Return the configured number of worker threads.
 
-[Source](../../puc-cli/state/workers.hpp#L57)
+[Source](../../utils/multithreading/worker_subsystem.hpp#L57)
 
 ## Private functions
 
@@ -156,4 +156,4 @@ void puc::app::WorkerSubsystem::release_workers() noexcept
 
 Join and release the active queue; safe to call repeatedly.
 
-[Source](../../puc-cli/state/workers.hpp#L63)
+[Source](../../utils/multithreading/worker_subsystem.hpp#L63)

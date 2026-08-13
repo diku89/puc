@@ -10,3 +10,4 @@
 - [std::formatter< puc::msg::NullMessage, char >](structstd_1_1formatter_3_01puc_1_1msg_1_1_null_message_00_01char_01_4.md)
 - [std::formatter< puc::msg::ScreenCommand, char >](structstd_1_1formatter_3_01puc_1_1msg_1_1_screen_command_00_01char_01_4.md)
 - [std::formatter< puc::msg::ScreenResizeEvent, char >](structstd_1_1formatter_3_01puc_1_1msg_1_1_screen_resize_event_00_01char_01_4.md)
+- [std::formatter< puc::msg::TerminalInputEvent, char >](structstd_1_1formatter_3_01puc_1_1msg_1_1_terminal_input_event_00_01char_01_4.md)

@@ -4,7 +4,7 @@
 
 Half-open logical selection range.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L32)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L32)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ TextCursor puc::tui::TextSelectionRange::first
 
 First included caret position.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L33)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L33)
 
 <a id="symbol-structpuc_1_1tui_1_1_text_selection_range_1aaec08727c9a57ec7f27ec8fa4e8ea647"></a>
 
@@ -30,7 +30,7 @@ TextCursor puc::tui::TextSelectionRange::last
 
 First excluded caret position.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L34)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L34)
 
 ## Public functions
 
@@ -44,4 +44,4 @@ bool puc::tui::TextSelectionRange::operator==(const TextSelectionRange &) const 
 
 Compare both range endpoints.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp#L37)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp#L37)

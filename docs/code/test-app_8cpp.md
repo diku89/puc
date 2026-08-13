@@ -2,49 +2,29 @@
 
 # File `test-app.cpp`
 
-Interactive visual integration test for the complete TUI rendering pipeline.
+Lifecycle entry point for the interactive TUI rendering smoke test.
 
-This executable is a manual smoke test rather than an automated unit test. It exercises the integration between Screen, Canvas, Layout, ZBuffer, Frame, Theme, TerminalSession, bounded IPC channels, terminal resize events, Unicode rendering, true color, and parallel Canvas publication. AppState owns the worker, channel, terminal, Screen, renderer, and executable-runtime subsystems and orders their lifecycle from declared dependencies. Every ready frame in the layout is rendered as an independent job, and the last real frame to complete publishes the Canvas A/B transaction. Run it from a real terminal with: `bazel run //puc-cli/tui:test-app`
+Primary application logic lives in TuiTestRuntimeSubsystem. `main()` owns only command-independent process setup, graph registration, and the one initialize/start/stop/terminate lifetime.
 
-The animation below demonstrates the normal layout, live terminal resizing, and the small-screen fallback:
-
-![The PUC TUI test app responding to terminal resizes.](../assets/puc-cli-tui-test-app-resize-demo.gif)
-
-**Expected display**
-
-On a terminal large enough for the normal layout, the application should display all of the following on a black background:
-
-- One red marker touching each of the four screen corners. Each marker is two character cells wide and one cell tall, which appears approximately square with the proportions used by typical terminal fonts.
-- One white `+` in the center cell of the screen.
-- A single-line Unicode box touching the top and right screen edges. The box has a visual width-to-height ratio of 4:3, accounting for the measured pixel dimensions of a terminal cell; it is not expected to contain four columns for every three rows. The top-right red marker is drawn over the box corner to verify Z-ordering.
-- Three lines inside the box reporting the current terminal width in characters, height in characters, and sampled frame rate. The frame rate normally settles near the loop's 60 FPS cap, but its exact value depends on the terminal and host load.
-
-If either terminal dimension is below the minimum required by the layout, the normal display should be cleared and replaced by a centered `Screen too small` message. The message may be clipped when the terminal is narrower than the message itself.
-
-**Visual verification**
-
-1. Start with a comfortably large terminal and confirm that all four red markers touch their respective pairs of edges, the `+` is centered, and the metrics box is wider than it is tall.
-2. Compare the width and height shown in the box with the terminal's reported row and column counts.
-3. Resize the terminal in both directions. The corner markers must remain anchored, the `+` must move to the new center, the metrics values must update, and the box must retain a visually 4:3 shape without leaving stale borders or text behind.
-4. Shrink the terminal until `Screen too small` appears. No corner markers, center glyph, metrics box, or old frame contents should remain. Enlarge the terminal and confirm that the normal layout returns.
-5. Press Ctrl-C and verify that the alternate screen is left, the cursor and terminal input mode are restored, and the shell remains usable.
-
-**Note:** A terminal window can contain a thin strip of pixels that is smaller than one character cell, especially along its bottom edge. A cell-based TUI cannot draw into that strip; anchors should be judged against the terminal's addressable character grid.
-
-[Source](../../puc-cli/tui/test-app.cpp)
+[Source](../../puc-cli/test_apps/tui/test-app.cpp)
 
 ## Functions
 
-<a id="symbol-test-app_8cpp_1ae66f6b31b5ad750f1fe042a706a4e3d4"></a>
+<a id="symbol-test-app_8cpp_1a3c04138a5bfe5d72780bb7e82a18e627"></a>
 
 ### `main`
 
 ```cpp
-int main()
+int main(int argc, char **argv)
 ```
 
-Run the interactive TUI smoke test until signaled or an operation fails.
+Run the smoke test until application control requests termination.
 
-**Returns:** Zero after successful setup, drawing, and terminal restoration; otherwise one.
+**Parameters**
 
-[Source](../../puc-cli/tui/test-app.cpp#L874)
+- `argc` (in) — Conventional process argument count.
+- `argv` (in) — Conventional process argument vector; argv\[0\] locates the packaged theme configuration.
+
+**Returns:** Zero when setup, drawing, and lifecycle teardown succeed; otherwise one.
+
+[Source](../../puc-cli/test_apps/tui/test-app.cpp#L80)

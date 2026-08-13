@@ -4,7 +4,7 @@
 
 Persistent libtmt virtual-terminal rendering surface.
 
-[Source](../../puc-cli/tui/integrated_term_frame.hpp)
+[Source](../../puc-cli/tui/frames/integrated_term_frame.hpp)
 
 ## Related symbols
 

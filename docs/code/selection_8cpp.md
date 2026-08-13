@@ -4,7 +4,7 @@
 
 Screen-owned semantic text-selection state transitions.
 
-[Source](../../puc-cli/tui/selection.cpp)
+[Source](../../puc-cli/tui/rendering/selection.cpp)
 
 ## Related symbols
 

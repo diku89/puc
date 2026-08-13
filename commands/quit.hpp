@@ -1,7 +1,8 @@
 #pragma once
 
 /**
- * Implement the quit command.
+ * @file quit.hpp
+ * @brief Deferred application-exit command.
  *
  * \command quit || Quit the application.
  * \alias q
@@ -13,7 +14,7 @@
 namespace puc {
 namespace command {
 
-class QuitCommand : public CommandApp {
+class QuitCommand final : public CommandApp {
  public:
   QuitCommand()           = default;
   ~QuitCommand() override = default;

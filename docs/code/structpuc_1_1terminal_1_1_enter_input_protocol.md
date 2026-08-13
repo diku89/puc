@@ -4,7 +4,7 @@
 
 An action that selects protocol behavior for subsequent input bytes.
 
-[Source](../../puc-cli/terminal/input.hpp#L98)
+[Source](../../puc-cli/tui/terminal/input.hpp#L98)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ InputProtocol puc::terminal::EnterInputProtocol::protocol
 
 Behavior to activate.
 
-[Source](../../puc-cli/terminal/input.hpp#L99)
+[Source](../../puc-cli/tui/terminal/input.hpp#L99)
 
 ## Public functions
 
@@ -32,4 +32,4 @@ bool puc::terminal::EnterInputProtocol::operator==(const EnterInputProtocol &) c
 
 Compare selected protocol behaviors.
 
-[Source](../../puc-cli/terminal/input.hpp#L102)
+[Source](../../puc-cli/tui/terminal/input.hpp#L102)

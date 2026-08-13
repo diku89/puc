@@ -6,7 +6,7 @@ Decode arbitrarily chunked terminal bytes into semantic events.
 
 [Decoder](#) is deliberately independent of file descriptors and clocks. A caller feeds bytes obtained from any transport and explicitly delivers the generation-tagged token returned by `pending_timeout()`. Every byte sequence begins in one contiguous Trie; an accepting node either emits an event or selects a bounded parameterized-protocol capture. The caller owns clocks and synchronization.
 
-[Source](../../puc-cli/terminal/decoder.hpp#L44)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L44)
 
 ## Related symbols
 
@@ -26,7 +26,7 @@ ParseResult
 - <a id="symbol-classpuc_1_1terminal_1_1_decoder_1a5585a232f60bc804b38595d4b3a447f5a5fd4e4caa04c7a478debcf06da9a3b0c"></a>`CONSUMED`
 - <a id="symbol-classpuc_1_1terminal_1_1_decoder_1a5585a232f60bc804b38595d4b3a447f5acc1c7047145711a76492d27e52e322a2"></a>`NEED_MORE`
 
-[Source](../../puc-cli/terminal/decoder.hpp#L116)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L116)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1a1d6520e89dcf0edfc45328b8444e638d"></a>
 
@@ -36,7 +36,7 @@ ParseResult
 using puc::terminal::Decoder::InputTrie = InputMap::Trie
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L121)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L121)
 
 ## Private data members
 
@@ -48,7 +48,7 @@ using puc::terminal::Decoder::InputTrie = InputMap::Trie
 DecoderLimits puc::terminal::Decoder::limits_
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L165)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L165)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1aaf5e3c07ce71c0498c45fb18bdc48b51"></a>
 
@@ -58,7 +58,7 @@ DecoderLimits puc::terminal::Decoder::limits_
 std::string puc::terminal::Decoder::buffer_
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L166)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L166)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1ac534d1f1d85bbf07b5b71c65ee4b9311"></a>
 
@@ -68,7 +68,7 @@ std::string puc::terminal::Decoder::buffer_
 std::size_t puc::terminal::Decoder::offset_
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L167)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L167)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1a4813af99c30f7b488ef6e213b13eab00"></a>
 
@@ -78,7 +78,7 @@ std::size_t puc::terminal::Decoder::offset_
 InputTrie puc::terminal::Decoder::input_trie_
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L168)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L168)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1ac1b86450df32fb42cd8a6d1de01071c2"></a>
 
@@ -88,7 +88,7 @@ InputTrie puc::terminal::Decoder::input_trie_
 TrieCursor puc::terminal::Decoder::trie_cursor_
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L169)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L169)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1a0676d92826782ffeba4f6694c481ec8b"></a>
 
@@ -98,7 +98,7 @@ TrieCursor puc::terminal::Decoder::trie_cursor_
 InputTrie::NodeIndex puc::terminal::Decoder::active_action_node_
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L170)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L170)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1a25f569899c4ee607365a33bd5d36a07f"></a>
 
@@ -108,7 +108,7 @@ InputTrie::NodeIndex puc::terminal::Decoder::active_action_node_
 std::string puc::terminal::Decoder::active_sequence_
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L171)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L171)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1a2bc41164a7581d04e4b8fc0413ed330d"></a>
 
@@ -118,7 +118,7 @@ std::string puc::terminal::Decoder::active_sequence_
 std::string puc::terminal::Decoder::paste_candidate_
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L172)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L172)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1adbc32d119a82007e1528b9accd7f9aa8"></a>
 
@@ -128,7 +128,7 @@ std::string puc::terminal::Decoder::paste_candidate_
 std::string puc::terminal::Decoder::paste_end_sequence_
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L173)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L173)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1a8903e4c38e41ece40ff5cace166befca"></a>
 
@@ -138,7 +138,7 @@ std::string puc::terminal::Decoder::paste_end_sequence_
 bool puc::terminal::Decoder::paste_in_progress_
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L174)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L174)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1a3f25bea7a0260761335c5c4297e89039"></a>
 
@@ -148,7 +148,7 @@ bool puc::terminal::Decoder::paste_in_progress_
 bool puc::terminal::Decoder::paste_discarding_
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L175)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L175)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1a0443559edd334f747c3c0993ff609209"></a>
 
@@ -158,7 +158,7 @@ bool puc::terminal::Decoder::paste_discarding_
 std::size_t puc::terminal::Decoder::paste_bytes_
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L176)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L176)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1a830a9825bdc636877134d85fe1e65a62"></a>
 
@@ -168,7 +168,7 @@ std::size_t puc::terminal::Decoder::paste_bytes_
 std::uint64_t puc::terminal::Decoder::next_timeout_generation_
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L177)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L177)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1a6a126c49d1c29d180a5a7ecf02f58da4"></a>
 
@@ -178,7 +178,7 @@ std::uint64_t puc::terminal::Decoder::next_timeout_generation_
 std::optional<TimeoutInput> puc::terminal::Decoder::pending_timeout_
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L178)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L178)
 
 ## Public functions
 
@@ -192,7 +192,7 @@ puc::terminal::Decoder::Decoder()
 
 Construct an unconfigured decoder with default resource limits.
 
-[Source](../../puc-cli/terminal/decoder.hpp#L47)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L47)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1afb9abc02bb3187f7d97deb9e5a988051"></a>
 
@@ -204,14 +204,14 @@ puc::terminal::Decoder::Decoder(DecoderLimits limits)
 
 Construct an unconfigured decoder with explicit resource limits.
 
-[Source](../../puc-cli/terminal/decoder.hpp#L50)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L50)
 
-<a id="symbol-classpuc_1_1terminal_1_1_decoder_1a6a0aa9f8b3e7c5ffeee0ba1998dd22d7"></a>
+<a id="symbol-classpuc_1_1terminal_1_1_decoder_1aadb32b3dc0eeddd9745da0abef4605f0"></a>
 
 ### `setup`
 
 ```cpp
-Status puc::terminal::Decoder::setup(const config::Config &configurations, std::string_view terminal_name={}, int output_fd=1)
+Status puc::terminal::Decoder::setup(properties::Properties &properties, std::string_view terminal_name={}, int output_fd=1)
 ```
 
 Load the complete input source hierarchy into this decoder.
@@ -220,13 +220,13 @@ Setup applies terminfo first, then an optional terminal-specific profile, the me
 
 **Parameters**
 
-- `configurations` (in) — Primary and user configuration roots.
+- `properties` (in) — Application-owned immutable properties gateway.
 - `terminal_name` (in) — terminfo/profile name, or empty to use `TERM`.
 - `output_fd` (in) — Descriptor supplied to terminfo initialization.
 
-**Returns:** [Status::OK](namespacepuc_1_1terminal.md#symbol-puc-cli_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44ae0aa021e21dddbd6d8cecec71e9cf564) or a configuration/terminfo error.
+**Returns:** [Status::OK](namespacepuc_1_1terminal.md#symbol-puc-cli_2tui_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44ae0aa021e21dddbd6d8cecec71e9cf564) or a configuration/terminfo error.
 
-[Source](../../puc-cli/terminal/decoder.hpp#L66)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L66)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1af052b1e5cffb3fff63abca54eba965ee"></a>
 
@@ -240,9 +240,9 @@ Append bytes and emit every complete event now available.
 
 Incomplete UTF-8 and control sequences remain buffered across calls. Malformed sequences become [UnknownEvent](structpuc_1_1terminal_1_1_unknown_event.md) values so decoding can recover.
 
-**Returns:** [Status::OK](namespacepuc_1_1terminal.md#symbol-puc-cli_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44ae0aa021e21dddbd6d8cecec71e9cf564) or [Status::INPUT\_LIMIT\_EXCEEDED](namespacepuc_1_1terminal.md#symbol-puc-cli_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44aefc570be5c2a493e2014fb1f3c6d2601).
+**Returns:** [Status::OK](namespacepuc_1_1terminal.md#symbol-puc-cli_2tui_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44ae0aa021e21dddbd6d8cecec71e9cf564) or [Status::INPUT\_LIMIT\_EXCEEDED](namespacepuc_1_1terminal.md#symbol-puc-cli_2tui_2terminal_2status_8hpp_1a94badecc698bce45d98094102a0d9e44aefc570be5c2a493e2014fb1f3c6d2601).
 
-[Source](../../puc-cli/terminal/decoder.hpp#L77)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L77)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1a60f4578891fbbdb07db387a23e21f337"></a>
 
@@ -254,7 +254,7 @@ std::optional< TimeoutInput > puc::terminal::Decoder::pending_timeout() const no
 
 Return the current timeout token, or none when no input path is pending.
 
-[Source](../../puc-cli/terminal/decoder.hpp#L81)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L81)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1a4e31078816a8dc72f0bf04aa2510d1c5"></a>
 
@@ -268,7 +268,7 @@ Resolve one explicitly timed-out Trie or parameterized-protocol path.
 
 Stale generations are harmless no-ops. A current timeout commits the longest exact match when one exists, reports a path with no exact match as an incomplete [UnknownEvent](structpuc_1_1terminal_1_1_unknown_event.md), resets the cursor, and retries any suffix from the root. Bracketed paste is never interrupted.
 
-[Source](../../puc-cli/terminal/decoder.hpp#L93)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L93)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1a983482e4e6695fe00a4d9e5b930b5563"></a>
 
@@ -282,7 +282,7 @@ Finish an input stream and report any truncated sequence as unknown.
 
 An active paste emits its remaining safe data followed by CANCEL.
 
-[Source](../../puc-cli/terminal/decoder.hpp#L100)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L100)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1a697e942fb2f4c09f6ade77f50b5497aa"></a>
 
@@ -294,7 +294,7 @@ void puc::terminal::Decoder::reset() noexcept
 
 Discard pending protocol state while preserving configured key mappings.
 
-[Source](../../puc-cli/terminal/decoder.hpp#L104)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L104)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1a136fa49a134b57ab2b75ccbb9b28c84b"></a>
 
@@ -306,7 +306,7 @@ std::size_t puc::terminal::Decoder::pending_bytes() const noexcept
 
 Return the number of bytes currently awaiting more input.
 
-[Source](../../puc-cli/terminal/decoder.hpp#L107)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L107)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1aa97520ff71ccaa603d9bd46f112ec417"></a>
 
@@ -318,7 +318,7 @@ bool puc::terminal::Decoder::paste_in_progress() const noexcept
 
 Return whether input is currently inside a bracketed paste.
 
-[Source](../../puc-cli/terminal/decoder.hpp#L110)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L110)
 
 ## Private functions
 
@@ -330,9 +330,9 @@ Return whether input is currently inside a bracketed paste.
 puc::terminal::Decoder::Decoder(InputMap input_map, DecoderLimits limits)
 ```
 
-Take ownership of one fully merged map built by [setup()](#symbol-classpuc_1_1terminal_1_1_decoder_1a6a0aa9f8b3e7c5ffeee0ba1998dd22d7).
+Take ownership of one fully merged map built by [setup()](#symbol-classpuc_1_1terminal_1_1_decoder_1aadb32b3dc0eeddd9745da0abef4605f0).
 
-[Source](../../puc-cli/terminal/decoder.hpp#L114)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L114)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1a85a9297d48f50ae12d89a71ad5e32de7"></a>
 
@@ -342,7 +342,7 @@ Take ownership of one fully merged map built by [setup()](#symbol-classpuc_1_1te
 Status puc::terminal::Decoder::process(std::vector< Event > &events)
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L139)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L139)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1a79e664b616ef4faf2892361983b1c6b4"></a>
 
@@ -352,7 +352,7 @@ Status puc::terminal::Decoder::process(std::vector< Event > &events)
 Status puc::terminal::Decoder::advance_trie(std::vector< Event > &events, ParseResult &result)
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L140)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L140)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1a8b2b3c7ca49b38fe8f240c7b935be0be"></a>
 
@@ -362,7 +362,7 @@ Status puc::terminal::Decoder::advance_trie(std::vector< Event > &events, ParseR
 Status puc::terminal::Decoder::execute_action(InputTrie::NodeIndex node, std::size_t byte_count, std::vector< Event > &events, ParseResult &result)
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L141)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L141)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1ae2d1dd20d6a6d3ef8f31817cbb779554"></a>
 
@@ -372,7 +372,7 @@ Status puc::terminal::Decoder::execute_action(InputTrie::NodeIndex node, std::si
 Status puc::terminal::Decoder::advance_active_action(std::vector< Event > &events, ParseResult &result)
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L143)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L143)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1a09757bd5867593023439ede3ced8a469"></a>
 
@@ -382,7 +382,7 @@ Status puc::terminal::Decoder::advance_active_action(std::vector< Event > &event
 Status puc::terminal::Decoder::parse_alt_key(std::vector< Event > &events, ParseResult &result)
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L144)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L144)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1aa513b2553c0af7f6d3e5e01d5d344675"></a>
 
@@ -392,7 +392,7 @@ Status puc::terminal::Decoder::parse_alt_key(std::vector< Event > &events, Parse
 Status puc::terminal::Decoder::capture_ss3(std::vector< Event > &events, ParseResult &result)
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L145)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L145)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1a983da098f09fc38c438abb6d69bc6678"></a>
 
@@ -402,7 +402,7 @@ Status puc::terminal::Decoder::capture_ss3(std::vector< Event > &events, ParseRe
 Status puc::terminal::Decoder::capture_csi(std::vector< Event > &events, ParseResult &result)
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L146)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L146)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1a14fe0e1434bc0e6c0aef0d06671024f0"></a>
 
@@ -412,7 +412,7 @@ Status puc::terminal::Decoder::capture_csi(std::vector< Event > &events, ParseRe
 Status puc::terminal::Decoder::capture_osc(std::vector< Event > &events, ParseResult &result)
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L147)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L147)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1ae076c865e614593384bb96f480eb8c75"></a>
 
@@ -422,7 +422,7 @@ Status puc::terminal::Decoder::capture_osc(std::vector< Event > &events, ParseRe
 Status puc::terminal::Decoder::capture_st_string(std::vector< Event > &events, ParseResult &result)
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L148)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L148)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1a58bd7c198ed533e32f1507d95e2ce804"></a>
 
@@ -432,7 +432,7 @@ Status puc::terminal::Decoder::capture_st_string(std::vector< Event > &events, P
 Status puc::terminal::Decoder::capture_paste(std::vector< Event > &events, ParseResult &result)
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L149)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L149)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1ab0ee8c395f5b2fb80fd937cbdf4e47b2"></a>
 
@@ -442,7 +442,7 @@ Status puc::terminal::Decoder::capture_paste(std::vector< Event > &events, Parse
 Status puc::terminal::Decoder::append_paste_data(std::string_view data, std::vector< Event > &events)
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L150)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L150)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1aa3f6b0ca28f72824cc0e098373cadd7b"></a>
 
@@ -452,7 +452,7 @@ Status puc::terminal::Decoder::append_paste_data(std::string_view data, std::vec
 void puc::terminal::Decoder::reset_trie_cursor() noexcept
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L151)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L151)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1a15f46ee194ddc8be66d0f5a7fa30aab7"></a>
 
@@ -462,7 +462,7 @@ void puc::terminal::Decoder::reset_trie_cursor() noexcept
 void puc::terminal::Decoder::reset_active_action() noexcept
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L152)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L152)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1a0dc1061dea128707b16d1296bfce147a"></a>
 
@@ -472,7 +472,7 @@ void puc::terminal::Decoder::reset_active_action() noexcept
 void puc::terminal::Decoder::update_pending_timeout(bool rearm) noexcept
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L153)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L153)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1acf5a5643aaab23428f96b47622c15898"></a>
 
@@ -482,7 +482,7 @@ void puc::terminal::Decoder::update_pending_timeout(bool rearm) noexcept
 Status puc::terminal::Decoder::resolve_timed_out_active_action(std::vector< Event > &events)
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L154)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L154)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1a937f846f0c424130d48a5b2defb24e4e"></a>
 
@@ -492,7 +492,7 @@ Status puc::terminal::Decoder::resolve_timed_out_active_action(std::vector< Even
 const EnterInputProtocol * puc::terminal::Decoder::active_protocol() const noexcept
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L155)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L155)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1a808a4d878631ad40c62191d78cdbff51"></a>
 
@@ -502,7 +502,7 @@ const EnterInputProtocol * puc::terminal::Decoder::active_protocol() const noexc
 Status puc::terminal::Decoder::parse_csi(std::string_view sequence, std::vector< Event > &events)
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L156)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L156)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1a9dd6e1a198be385c8643bd194b8e348a"></a>
 
@@ -512,7 +512,7 @@ Status puc::terminal::Decoder::parse_csi(std::string_view sequence, std::vector<
 Status puc::terminal::Decoder::parse_sgr_mouse(std::string_view sequence, std::vector< Event > &events)
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L157)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L157)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1a2355e520b73ecea9112a8cc99bc88f5e"></a>
 
@@ -522,7 +522,7 @@ Status puc::terminal::Decoder::parse_sgr_mouse(std::string_view sequence, std::v
 Status puc::terminal::Decoder::parse_osc(std::string_view sequence, std::vector< Event > &events)
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L158)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L158)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1a951a10e091258603abdd556fb9292817"></a>
 
@@ -532,7 +532,7 @@ Status puc::terminal::Decoder::parse_osc(std::string_view sequence, std::vector<
 Status puc::terminal::Decoder::parse_osc52(std::string_view sequence, std::vector< Event > &events)
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L159)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L159)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1a5b28bf8d133c3cff0694c0c24e1a5887"></a>
 
@@ -542,7 +542,7 @@ Status puc::terminal::Decoder::parse_osc52(std::string_view sequence, std::vecto
 Decoder::ParseResult puc::terminal::Decoder::parse_text(std::vector< Event > &events)
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L160)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L160)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1a4c3d0aaf9c539f0bb4081d3bca499568"></a>
 
@@ -552,7 +552,7 @@ Decoder::ParseResult puc::terminal::Decoder::parse_text(std::vector< Event > &ev
 void puc::terminal::Decoder::consume(std::size_t byte_count) noexcept
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L161)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L161)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1ad9e6cd398db858e99849f3ab3be314aa"></a>
 
@@ -562,7 +562,7 @@ void puc::terminal::Decoder::consume(std::size_t byte_count) noexcept
 void puc::terminal::Decoder::compact()
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L162)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L162)
 
 <a id="symbol-classpuc_1_1terminal_1_1_decoder_1a3fa022ea9e25dab57207be4212c72b82"></a>
 
@@ -572,4 +572,4 @@ void puc::terminal::Decoder::compact()
 std::string_view puc::terminal::Decoder::pending() const noexcept
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L163)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L163)

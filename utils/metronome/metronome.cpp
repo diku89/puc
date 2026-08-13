@@ -6,8 +6,8 @@
 #include "utils/metronome/metronome.hpp"
 
 #include <atomic>
+#include <chrono>
 #include <cstddef>
-#include <cstdint>
 #include <exception>
 #include <memory>
 #include <mutex>
@@ -19,7 +19,7 @@
 #include "utils/ipc/directory.hpp"
 #include "utils/ipc/smem_channel.hpp"
 #include "utils/logger/logger.hpp"
-#include "utils/multithreading/job_queue.hpp"
+#include "utils/timer/scheduler.hpp"
 
 /** @cond METRONOME_LOGGER_MODULE */
 LOGGER_MODULE("Metronome");
@@ -28,8 +28,8 @@ LOGGER_MODULE("Metronome");
 namespace puc::metronome {
 namespace {
 
-/** Number of milliseconds between one-hertz ticks. */
-constexpr std::uint64_t kOneSecondMilliseconds = 1000U;
+/** Duration between one-hertz ticks. */
+constexpr std::chrono::seconds kOneSecond{1};
 
 /** Heartbeats are state-like: retain only the newest pending tick. */
 constexpr std::size_t kHeartbeatChannelDepth = 1U;
@@ -45,35 +45,22 @@ struct TickState {
 };
 
 /** Publish one heartbeat and treat a live-route failure as unrecoverable. */
-class TickJob final : public multithreading::Job {
- public:
-  /** Retain complete publication state for an in-flight invocation. */
-  explicit TickJob(std::shared_ptr<TickState> state)
-      : state_(std::move(state)) {}
-
-  /** Publish one NullMessage when the metronome remains active. */
-  void execute() noexcept override {
-    if (!state_->running.load(std::memory_order_acquire)) {
-      return;
-    }
-    const ipc::TransferResult transfer = state_->channel->transmit(
-        ipc::Channel::Bytes{state_->payload.data(), state_->payload.size()});
-    if (ipc::is_ok(transfer.status) &&
-        transfer.bytes == state_->payload.size()) {
-      return;
-    }
-    if (!state_->running.load(std::memory_order_acquire)) {
-      return;
-    }
-    Logger<ERROR> << "Could not publish heartbeat on '" << kOneHertzChannel
-                  << "': " << ipc::status_message(transfer.status);
-    std::terminate();
+void publish_tick(const std::shared_ptr<TickState>& state) noexcept {
+  if (!state->running.load(std::memory_order_acquire)) {
+    return;
   }
-
- private:
-  std::shared_ptr<TickState>
-      state_; /**< Publication state retained through execution. */
-};
+  const ipc::TransferResult transfer = state->channel->transmit(
+      ipc::Channel::Bytes{state->payload.data(), state->payload.size()});
+  if (ipc::is_ok(transfer.status) && transfer.bytes == state->payload.size()) {
+    return;
+  }
+  if (!state->running.load(std::memory_order_acquire)) {
+    return;
+  }
+  Logger<ERROR> << "Could not publish heartbeat on '" << kOneHertzChannel
+                << "': " << ipc::status_message(transfer.status);
+  std::terminate();
+}
 
 }  // namespace
 
@@ -82,8 +69,8 @@ class Metronome::Impl {
  public:
   /** Borrow dependencies that outlive this implementation. */
   Impl(ipc::Directory& configured_directory,
-       multithreading::JobQueue& configured_workers) noexcept
-      : directory(configured_directory), workers(configured_workers) {}
+       timer::Scheduler& configured_scheduler) noexcept
+      : directory(configured_directory), scheduler(configured_scheduler) {}
 
   /** Stop any active publication before borrowed dependencies disappear. */
   ~Impl() { stop(); }
@@ -120,11 +107,11 @@ class Metronome::Impl {
     auto next_state     = std::make_shared<TickState>();
     next_state->channel = next_channel;
     next_state->payload = std::move(payload);
-    multithreading::PeriodicJobHandle next_handle;
-    const multithreading::Status scheduling = workers.add_periodic(
-        kOneSecondMilliseconds, std::make_shared<TickJob>(next_state),
+    timer::PeriodicHandle next_handle;
+    const timer::Status scheduling = scheduler.every(
+        kOneSecond, [next_state]() noexcept { publish_tick(next_state); },
         next_handle);
-    if (!multithreading::is_ok(scheduling)) {
+    if (!timer::is_ok(scheduling)) {
       next_state->running.store(false, std::memory_order_release);
       const ipc::Status close_status =
           directory.close_channel(kOneHertzChannel);
@@ -133,7 +120,7 @@ class Metronome::Impl {
                       << ipc::status_message(close_status);
       }
       Logger<ERROR> << "Could not schedule metronome: "
-                    << multithreading::status_message(scheduling);
+                    << timer::status_message(scheduling);
       return Status::SCHEDULING_FAILED;
     }
 
@@ -168,17 +155,16 @@ class Metronome::Impl {
     return state != nullptr && schedule.active();
   }
 
-  ipc::Directory& directory;         /**< Borrowed named-channel registry. */
-  multithreading::JobQueue& workers; /**< Borrowed periodic scheduler. */
-  mutable std::mutex mutex; /**< Serializes start, stop, and inspection. */
+  ipc::Directory& directory;   /**< Borrowed named-channel registry. */
+  timer::Scheduler& scheduler; /**< Borrowed periodic scheduler. */
+  mutable std::mutex mutex;    /**< Serializes start, stop, and inspection. */
   std::shared_ptr<TickState> state; /**< Current in-flight-safe tick state. */
-  std::shared_ptr<ipc::Channel> channel;      /**< Owned registered endpoint. */
-  multithreading::PeriodicJobHandle schedule; /**< Periodic cancellation. */
+  std::shared_ptr<ipc::Channel> channel; /**< Owned registered endpoint. */
+  timer::PeriodicHandle schedule;        /**< Periodic cancellation. */
 };
 
-Metronome::Metronome(ipc::Directory& directory,
-                     multithreading::JobQueue& workers)
-    : impl_(std::make_unique<Impl>(directory, workers)) {}
+Metronome::Metronome(ipc::Directory& directory, timer::Scheduler& scheduler)
+    : impl_(std::make_unique<Impl>(directory, scheduler)) {}
 
 Metronome::~Metronome() = default;
 

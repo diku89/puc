@@ -4,7 +4,7 @@
 
 Renderable and selectable text-entry surface.
 
-[Source](../../puc-cli/tui/text_input_frame.hpp)
+[Source](../../puc-cli/tui/frames/text_input_frame.hpp)
 
 ## Related symbols
 

@@ -4,7 +4,7 @@
 
 Parallel Z-buffer frame rendering and transactional publication.
 
-[Source](../../puc-cli/tui/renderer.hpp)
+[Source](../../puc-cli/tui/rendering/renderer.hpp)
 
 ## Related symbols
 

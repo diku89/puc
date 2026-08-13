@@ -4,7 +4,7 @@
 
 Child process and master side of one embedded pseudo-terminal.
 
-[Source](../../puc-cli/state/embedded_terminal.cpp#L253)
+[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.cpp#L253)
 
 ## Public types
 
@@ -23,7 +23,7 @@ Result of one nonblocking output and exit-status pump.
 - <a id="symbol-classpuc_1_1app_1_1_embedded_terminal_subsystem_1_1_impl_1ad817bbddac8aee21a136755df7dd038ca263e070213f2e7d03ee5094731cde95e"></a>`EXITED`
 - <a id="symbol-classpuc_1_1app_1_1_embedded_terminal_subsystem_1_1_impl_1ad817bbddac8aee21a136755df7dd038cab9e14d9b2886bcff408b85aefa780419"></a>`FAILED`
 
-[Source](../../puc-cli/state/embedded_terminal.cpp#L256)
+[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.cpp#L256)
 
 ## Private data members
 
@@ -37,7 +37,7 @@ int puc::app::EmbeddedTerminalSubsystem::Impl::master_fd_
 
 Nonblocking PTY master descriptor.
 
-[Source](../../puc-cli/state/embedded_terminal.cpp#L422)
+[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.cpp#L422)
 
 <a id="symbol-classpuc_1_1app_1_1_embedded_terminal_subsystem_1_1_impl_1a690aa3bd15eed5500729f0a4a65d39b8"></a>
 
@@ -49,7 +49,7 @@ pid_t puc::app::EmbeddedTerminalSubsystem::Impl::child_pid_
 
 Shell process awaiting waitpid.
 
-[Source](../../puc-cli/state/embedded_terminal.cpp#L423)
+[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.cpp#L423)
 
 <a id="symbol-classpuc_1_1app_1_1_embedded_terminal_subsystem_1_1_impl_1a5a0ff47521dc1e773824dcf63cc455b1"></a>
 
@@ -59,9 +59,9 @@ Shell process awaiting waitpid.
 std::size_t puc::app::EmbeddedTerminalSubsystem::Impl::generation_
 ```
 
-InputFrame session being served.
+[InputFrame](classpuc_1_1app_1_1_input_frame.md) session being served.
 
-[Source](../../puc-cli/state/embedded_terminal.cpp#L424)
+[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.cpp#L424)
 
 <a id="symbol-classpuc_1_1app_1_1_embedded_terminal_subsystem_1_1_impl_1a9a702c931632f4fa70b07982deedfc81"></a>
 
@@ -73,7 +73,7 @@ std::string puc::app::EmbeddedTerminalSubsystem::Impl::pending_input_
 
 Unwritten nonblocking PTY input.
 
-[Source](../../puc-cli/state/embedded_terminal.cpp#L425)
+[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.cpp#L425)
 
 ## Public functions
 
@@ -87,7 +87,7 @@ puc::app::EmbeddedTerminalSubsystem::Impl::~Impl()
 
 Terminate and reap only the child process created by this object.
 
-[Source](../../puc-cli/state/embedded_terminal.cpp#L259)
+[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.cpp#L259)
 
 <a id="symbol-classpuc_1_1app_1_1_embedded_terminal_subsystem_1_1_impl_1aca126c7f4419a75e8c7210da881a711a"></a>
 
@@ -99,7 +99,7 @@ bool puc::app::EmbeddedTerminalSubsystem::Impl::start(std::string_view shell, st
 
 Start an interactive shell with the requested terminal geometry.
 
-[Source](../../puc-cli/state/embedded_terminal.cpp#L262)
+[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.cpp#L262)
 
 <a id="symbol-classpuc_1_1app_1_1_embedded_terminal_subsystem_1_1_impl_1a65bd5bbfb66a782053e3e7099a8ece51"></a>
 
@@ -111,7 +111,7 @@ bool puc::app::EmbeddedTerminalSubsystem::Impl::resize(std::size_t columns, std:
 
 Change geometry and let the kernel deliver SIGWINCH to the child.
 
-[Source](../../puc-cli/state/embedded_terminal.cpp#L308)
+[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.cpp#L308)
 
 <a id="symbol-classpuc_1_1app_1_1_embedded_terminal_subsystem_1_1_impl_1afa92684985b15c2165bda594da589ffb"></a>
 
@@ -123,7 +123,7 @@ bool puc::app::EmbeddedTerminalSubsystem::Impl::send(std::string_view input)
 
 Queue bytes for the child and flush nonblocking output as far as possible.
 
-[Source](../../puc-cli/state/embedded_terminal.cpp#L322)
+[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.cpp#L322)
 
 <a id="symbol-classpuc_1_1app_1_1_embedded_terminal_subsystem_1_1_impl_1ad63123b619c235036a1e9a2025023efe"></a>
 
@@ -135,7 +135,7 @@ PumpResult puc::app::EmbeddedTerminalSubsystem::Impl::pump(std::string &output)
 
 Read every available output block and observe natural child termination.
 
-[Source](../../puc-cli/state/embedded_terminal.cpp#L329)
+[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.cpp#L329)
 
 <a id="symbol-classpuc_1_1app_1_1_embedded_terminal_subsystem_1_1_impl_1a263004c19fbeeb12ab2923a054f58fac"></a>
 
@@ -147,7 +147,7 @@ void puc::app::EmbeddedTerminalSubsystem::Impl::stop() noexcept
 
 Close the PTY, terminate the owned child, and synchronously reap it.
 
-[Source](../../puc-cli/state/embedded_terminal.cpp#L372)
+[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.cpp#L372)
 
 <a id="symbol-classpuc_1_1app_1_1_embedded_terminal_subsystem_1_1_impl_1ac8eee2d4cb47144923d3d56044574894"></a>
 
@@ -157,7 +157,7 @@ Close the PTY, terminate the owned child, and synchronously reap it.
 bool puc::app::EmbeddedTerminalSubsystem::Impl::running() const noexcept
 ```
 
-[Source](../../puc-cli/state/embedded_terminal.cpp#L388)
+[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.cpp#L388)
 
 <a id="symbol-classpuc_1_1app_1_1_embedded_terminal_subsystem_1_1_impl_1ae70fbcf7c21dcf8b2a60ebef125b1fd2"></a>
 
@@ -167,7 +167,7 @@ bool puc::app::EmbeddedTerminalSubsystem::Impl::running() const noexcept
 std::size_t puc::app::EmbeddedTerminalSubsystem::Impl::generation() const noexcept
 ```
 
-[Source](../../puc-cli/state/embedded_terminal.cpp#L389)
+[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.cpp#L389)
 
 ## Private functions
 
@@ -181,7 +181,7 @@ bool puc::app::EmbeddedTerminalSubsystem::Impl::flush_input()
 
 Flush the pending-input prefix while retaining an EAGAIN suffix.
 
-[Source](../../puc-cli/state/embedded_terminal.cpp#L393)
+[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.cpp#L393)
 
 <a id="symbol-classpuc_1_1app_1_1_embedded_terminal_subsystem_1_1_impl_1a910888754fa136efb4fa5e56d013b9d8"></a>
 
@@ -193,4 +193,4 @@ void puc::app::EmbeddedTerminalSubsystem::Impl::finish_child() noexcept
 
 Release descriptors after waitpid has already reaped the child.
 
-[Source](../../puc-cli/state/embedded_terminal.cpp#L412)
+[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.cpp#L412)

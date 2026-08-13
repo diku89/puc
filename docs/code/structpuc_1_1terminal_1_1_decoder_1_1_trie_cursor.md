@@ -4,7 +4,7 @@
 
 Persistent longest-match cursor over the immutable input trie.
 
-[Source](../../puc-cli/terminal/decoder.hpp#L124)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L124)
 
 ## Public data members
 
@@ -16,7 +16,7 @@ Persistent longest-match cursor over the immutable input trie.
 InputTrie::NodeIndex puc::terminal::Decoder::TrieCursor::node
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L125)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L125)
 
 <a id="symbol-structpuc_1_1terminal_1_1_decoder_1_1_trie_cursor_1a7feef22665ccf3464cce0aa030f7249f"></a>
 
@@ -26,7 +26,7 @@ InputTrie::NodeIndex puc::terminal::Decoder::TrieCursor::node
 InputTrie::NodeIndex puc::terminal::Decoder::TrieCursor::last_match
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L126)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L126)
 
 <a id="symbol-structpuc_1_1terminal_1_1_decoder_1_1_trie_cursor_1a61777b62a382ef08e4db4b4c544a2b86"></a>
 
@@ -36,7 +36,7 @@ InputTrie::NodeIndex puc::terminal::Decoder::TrieCursor::last_match
 std::size_t puc::terminal::Decoder::TrieCursor::scanned
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L127)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L127)
 
 <a id="symbol-structpuc_1_1terminal_1_1_decoder_1_1_trie_cursor_1a136129120a4c4ba7ae08405fcf1ffe16"></a>
 
@@ -46,7 +46,7 @@ std::size_t puc::terminal::Decoder::TrieCursor::scanned
 std::size_t puc::terminal::Decoder::TrieCursor::last_match_size
 ```
 
-[Source](../../puc-cli/terminal/decoder.hpp#L128)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L128)
 
 ## Public functions
 
@@ -60,4 +60,4 @@ void puc::terminal::Decoder::TrieCursor::reset() noexcept
 
 Return the cursor to the sentinel root.
 
-[Source](../../puc-cli/terminal/decoder.hpp#L131)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L131)

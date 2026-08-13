@@ -4,7 +4,7 @@
 
 Half-open terminal-cell region used by mouse checks.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L66)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_runner.hpp#L66)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::size_t puc::terminal::InputInteractionRegion::x
 
 Zero-based left column.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L67)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_runner.hpp#L67)
 
 <a id="symbol-structpuc_1_1terminal_1_1_input_interaction_region_1a680ef096e9344610f392df26618866d8"></a>
 
@@ -30,7 +30,7 @@ std::size_t puc::terminal::InputInteractionRegion::y
 
 Zero-based top row.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L68)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_runner.hpp#L68)
 
 <a id="symbol-structpuc_1_1terminal_1_1_input_interaction_region_1ad2bae89f47ad85563d774b5b0da154b2"></a>
 
@@ -42,7 +42,7 @@ std::size_t puc::terminal::InputInteractionRegion::width
 
 Number of included columns.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L69)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_runner.hpp#L69)
 
 <a id="symbol-structpuc_1_1terminal_1_1_input_interaction_region_1aadc95f2515172c3b4d2112d6a5c35afd"></a>
 
@@ -54,7 +54,7 @@ std::size_t puc::terminal::InputInteractionRegion::height
 
 Number of included rows.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L70)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_runner.hpp#L70)
 
 ## Public functions
 
@@ -68,4 +68,4 @@ bool puc::terminal::InputInteractionRegion::operator==(const InputInteractionReg
 
 Compare complete region geometry.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L73)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_runner.hpp#L73)

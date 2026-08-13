@@ -4,7 +4,7 @@
 
 Typed subsystem registry and dependency-aware application lifecycle.
 
-[Source](../../puc-cli/state/state.hpp)
+[Source](../../state/state.hpp)
 
 ## Related symbols
 

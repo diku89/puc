@@ -4,7 +4,7 @@
 
 Semantic Theme palette storage and color-role resolution.
 
-[Source](../../puc-cli/tui/theme.cpp)
+[Source](../../puc-cli/tui/rendering/theme.cpp)
 
 ## Related symbols
 

@@ -2,7 +2,7 @@
 
 # Namespace `puc::metronome`
 
-[Source](../../puc-cli/state/metronome.hpp#L13)
+[Source](../../utils/metronome/metronome.cpp#L28)
 
 ## Related symbols
 
@@ -30,7 +30,7 @@ Result of starting a [Metronome](classpuc_1_1metronome_1_1_metronome.md) publish
 
 ## Variables
 
-<a id="symbol-utils_2metronome_2metronome_8hpp_1ad712d1722112c3e9598cb3e96ee87db6"></a>
+<a id="symbol-metronome_8hpp_1ad712d1722112c3e9598cb3e96ee87db6"></a>
 
 ### `kOneHertzChannel`
 
@@ -40,7 +40,7 @@ std::string_view puc::metronome::kOneHertzChannel
 
 Canonical channel carrying one empty heartbeat payload per second.
 
-**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000012):**
+**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000015):**
 
 **Kind:** Channel  
 **Name:** `//metronome/1hz`  

@@ -4,7 +4,7 @@
 
 A logical key event decoded from a legacy or extended keyboard protocol.
 
-[Source](../../puc-cli/terminal/event.hpp#L223)
+[Source](../../puc-cli/tui/terminal/event.hpp#L223)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ KeyCode puc::terminal::KeyEvent::key
 
 Logical key whose state changed.
 
-[Source](../../puc-cli/terminal/event.hpp#L224)
+[Source](../../puc-cli/tui/terminal/event.hpp#L224)
 
 <a id="symbol-structpuc_1_1terminal_1_1_key_event_1a084b4b022bfed27f4618987c53aed40e"></a>
 
@@ -30,7 +30,7 @@ Modifiers puc::terminal::KeyEvent::modifiers
 
 [Modifiers](classpuc_1_1terminal_1_1_modifiers.md) active for this event.
 
-[Source](../../puc-cli/terminal/event.hpp#L225)
+[Source](../../puc-cli/tui/terminal/event.hpp#L225)
 
 <a id="symbol-structpuc_1_1terminal_1_1_key_event_1a130c15c2dfd485ca8e93560b65209c48"></a>
 
@@ -42,7 +42,7 @@ KeyAction puc::terminal::KeyEvent::action
 
 Press, repeat, or release action.
 
-[Source](../../puc-cli/terminal/event.hpp#L226)
+[Source](../../puc-cli/tui/terminal/event.hpp#L226)
 
 <a id="symbol-structpuc_1_1terminal_1_1_key_event_1a2c814c0fe684c11003ea8499b22997a0"></a>
 
@@ -54,7 +54,7 @@ std::optional<char32_t> puc::terminal::KeyEvent::shifted_key
 
 Shifted alternate key, when known.
 
-[Source](../../puc-cli/terminal/event.hpp#L228)
+[Source](../../puc-cli/tui/terminal/event.hpp#L228)
 
 <a id="symbol-structpuc_1_1terminal_1_1_key_event_1a70c0b72c7c3a8abd6de95a00c3f42ce3"></a>
 
@@ -66,7 +66,7 @@ std::optional<char32_t> puc::terminal::KeyEvent::base_layout_key
 
 Base-layout alternate key, when known.
 
-[Source](../../puc-cli/terminal/event.hpp#L230)
+[Source](../../puc-cli/tui/terminal/event.hpp#L230)
 
 <a id="symbol-structpuc_1_1terminal_1_1_key_event_1aa1994853583c9aeb12ab0570ae412585"></a>
 
@@ -78,7 +78,7 @@ std::string puc::terminal::KeyEvent::text
 
 Associated UTF-8 text from an extended protocol.
 
-[Source](../../puc-cli/terminal/event.hpp#L231)
+[Source](../../puc-cli/tui/terminal/event.hpp#L231)
 
 ## Public functions
 
@@ -92,4 +92,4 @@ bool puc::terminal::KeyEvent::operator==(const KeyEvent &) const =default
 
 Compare every normalized key field.
 
-[Source](../../puc-cli/terminal/event.hpp#L234)
+[Source](../../puc-cli/tui/terminal/event.hpp#L234)

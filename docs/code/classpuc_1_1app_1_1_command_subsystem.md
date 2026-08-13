@@ -6,7 +6,7 @@ Own CommandDispatcher for the initialized application lifetime.
 
 The registry survives [AppState](classpuc_1_1app_1_1_app_state.md) stop/start cycles, while its borrowed common services are resolved from the currently running adapter generation for each invocation. [CommandNotificationChannelSubsystem](classpuc_1_1app_1_1_command_notification_channel_subsystem.md) owns transport lifetime; CommandDispatcher remains concerned only with names, metadata, and calls.
 
-[Source](../../puc-cli/state/commands.hpp#L23)
+[Source](../../commands/command_subsystem.hpp#L23)
 
 ## Private data members
 
@@ -20,7 +20,7 @@ std::unique_ptr<command::CommandDispatcher> puc::app::CommandSubsystem::dispatch
 
 Registry retained until application termination.
 
-[Source](../../puc-cli/state/commands.hpp#L55)
+[Source](../../commands/command_subsystem.hpp#L55)
 
 ## Public functions
 
@@ -32,9 +32,9 @@ Registry retained until application termination.
 puc::app::CommandSubsystem::CommandSubsystem()
 ```
 
-Declare notification and Screen service dependencies.
+Declare invocation-service and notification-route dependencies.
 
-[Source](../../puc-cli/state/commands.hpp#L26)
+[Source](../../commands/command_subsystem.hpp#L26)
 
 <a id="symbol-classpuc_1_1app_1_1_command_subsystem_1aca0235ed19a88ef455426aa37d3a68e7"></a>
 
@@ -46,7 +46,7 @@ Status puc::app::CommandSubsystem::initialize(AppState &app) override
 
 Construct the persistent command registry.
 
-[Source](../../puc-cli/state/commands.hpp#L29)
+[Source](../../commands/command_subsystem.hpp#L29)
 
 <a id="symbol-classpuc_1_1app_1_1_command_subsystem_1a3c8fd3e17660ef27929d61dfabc9f32f"></a>
 
@@ -58,7 +58,7 @@ Status puc::app::CommandSubsystem::start(AppState &app) override
 
 Validate the running services supplied to command invocations.
 
-[Source](../../puc-cli/state/commands.hpp#L32)
+[Source](../../commands/command_subsystem.hpp#L32)
 
 <a id="symbol-classpuc_1_1app_1_1_command_subsystem_1abbe00c0baaeb327232a01bc840fd06dd"></a>
 
@@ -70,7 +70,7 @@ Status puc::app::CommandSubsystem::stop(AppState &app) noexcept override
 
 Quiesce command entry while retaining registered commands for restart.
 
-[Source](../../puc-cli/state/commands.hpp#L35)
+[Source](../../commands/command_subsystem.hpp#L35)
 
 <a id="symbol-classpuc_1_1app_1_1_command_subsystem_1a6a8547d3f0cb92d48d86b964baabdef9"></a>
 
@@ -82,7 +82,7 @@ Status puc::app::CommandSubsystem::terminate(AppState &app) noexcept override
 
 Release the registry and every registered command implementation.
 
-[Source](../../puc-cli/state/commands.hpp#L38)
+[Source](../../commands/command_subsystem.hpp#L38)
 
 <a id="symbol-classpuc_1_1app_1_1_command_subsystem_1a78786b732027e39f271d64353b6d881a"></a>
 
@@ -94,7 +94,7 @@ command::CommandDispatcher * puc::app::CommandSubsystem::dispatcher() noexcept
 
 Return the initialized dispatcher, or nullptr outside its lifetime.
 
-[Source](../../puc-cli/state/commands.hpp#L41)
+[Source](../../commands/command_subsystem.hpp#L41)
 
 <a id="symbol-classpuc_1_1app_1_1_command_subsystem_1a2a3b0843ff23b9a4152891a9c7c31d7e"></a>
 
@@ -106,7 +106,7 @@ const command::CommandDispatcher * puc::app::CommandSubsystem::dispatcher() cons
 
 Return the initialized dispatcher, or nullptr outside its lifetime.
 
-[Source](../../puc-cli/state/commands.hpp#L46)
+[Source](../../commands/command_subsystem.hpp#L46)
 
 <a id="symbol-classpuc_1_1app_1_1_command_subsystem_1af6c1ad27d0d0040fc81e10d55561b286"></a>
 
@@ -118,4 +118,4 @@ command::CommonCommandArgs puc::app::CommandSubsystem::common_args(AppState &app
 
 Resolve borrowed services for one synchronous command invocation.
 
-[Source](../../puc-cli/state/commands.hpp#L51)
+[Source](../../commands/command_subsystem.hpp#L51)

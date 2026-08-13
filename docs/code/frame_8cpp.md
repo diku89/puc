@@ -4,7 +4,7 @@
 
 Default behavior for nonselectable terminal UI Frames.
 
-[Source](../../puc-cli/tui/frame.cpp)
+[Source](../../puc-cli/tui/rendering/frame.cpp)
 
 ## Related symbols
 

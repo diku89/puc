@@ -4,7 +4,7 @@
 
 Immutable report entry for one resolved conformance check.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L78)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_runner.hpp#L78)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ InputConformanceTest puc::terminal::InputConformanceResult::test
 
 Check id.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L79)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_runner.hpp#L79)
 
 <a id="symbol-structpuc_1_1terminal_1_1_input_conformance_result_1a7d305e77cf0dd40f831034d7eddfbe2c"></a>
 
@@ -30,7 +30,7 @@ InputConformanceOutcome puc::terminal::InputConformanceResult::outcome
 
 Pass or timeout.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L80)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_runner.hpp#L80)
 
 <a id="symbol-structpuc_1_1terminal_1_1_input_conformance_result_1a6952a13823e2f3a27e7dbc917cb7eba3"></a>
 
@@ -42,7 +42,7 @@ std::string puc::terminal::InputConformanceResult::name
 
 Short report label.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L82)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_runner.hpp#L82)
 
 <a id="symbol-structpuc_1_1terminal_1_1_input_conformance_result_1acc385f96905c6d6532da26437b0919a8"></a>
 
@@ -54,7 +54,7 @@ std::string puc::terminal::InputConformanceResult::instruction
 
 Prompt shown to the operator.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L83)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_runner.hpp#L83)
 
 <a id="symbol-structpuc_1_1terminal_1_1_input_conformance_result_1ad4afb07d39ea4b27f6cb3ba4cb31555c"></a>
 
@@ -66,7 +66,7 @@ std::string puc::terminal::InputConformanceResult::detail
 
 [Decoder](classpuc_1_1terminal_1_1_decoder.md) evidence or timeout explanation.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L84)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_runner.hpp#L84)
 
 ## Public functions
 
@@ -80,4 +80,4 @@ bool puc::terminal::InputConformanceResult::operator==(const InputConformanceRes
 
 Compare every report field.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L87)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_runner.hpp#L87)

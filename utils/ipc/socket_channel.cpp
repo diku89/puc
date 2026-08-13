@@ -5,7 +5,6 @@
 
 #include "utils/ipc/socket_channel.hpp"
 
-#include <poll.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <sys/un.h>
@@ -13,6 +12,7 @@
 
 #include <atomic>
 #include <cerrno>
+#include <chrono>
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
@@ -26,6 +26,7 @@
 
 #include "utils/ipc/framed_io.hpp"
 #include "utils/logger/logger.hpp"
+#include "utils/timer/poller.hpp"
 
 /** @cond IPC_SOCKET_LOGGER_MODULE */
 LOGGER_MODULE("IPC Socket Channel");
@@ -34,8 +35,8 @@ LOGGER_MODULE("IPC Socket Channel");
 namespace puc::ipc {
 namespace {
 
-constexpr int kListenBacklog          = 1;
-constexpr int kAcceptPollMilliseconds = 50;
+constexpr int kListenBacklog = 1;
+constexpr std::chrono::milliseconds kAcceptPollInterval{50};
 
 /** Close a valid descriptor and mark it invalid. */
 void close_descriptor(int& descriptor) noexcept {
@@ -240,28 +241,19 @@ class SocketChannel::Impl {
   /** Accept and serve one connection at a time until stopping. */
   void run_server() noexcept {
     while (!stopping_.load(std::memory_order_acquire)) {
-      pollfd event{
-          .fd      = listener_descriptor_,
-          .events  = POLLIN,
-          .revents = 0,
-      };
-      const int poll_result = ::poll(&event, 1U, kAcceptPollMilliseconds);
-      if (poll_result == 0 || (poll_result < 0 && errno == EINTR)) {
+      const timer::PollResult readiness =
+          timer::poll_readable(listener_descriptor_, kAcceptPollInterval);
+      if (readiness.status == timer::Status::TIMED_OUT) {
         continue;
       }
-      if (poll_result < 0) {
-        Logger<ERROR> << "accept poll failed with errno " << errno;
-        owner_.set_status(Status::IO_ERROR);
-        return;
-      }
-      if ((event.revents & POLLIN) == 0) {
-        if ((event.revents & (POLLERR | POLLHUP | POLLNVAL)) != 0) {
-          Logger<ERROR> << "Listener became unavailable for '" << path_text_
-                        << "'";
-          owner_.set_status(Status::CHANNEL_UNAVAILABLE);
+      if (!timer::is_ok(readiness.status) || !readiness.readable) {
+        if (stopping_.load(std::memory_order_acquire)) {
           return;
         }
-        continue;
+        Logger<ERROR> << "Accept polling failed for '" << path_text_
+                      << "': " << timer::status_message(readiness.status);
+        owner_.set_status(Status::IO_ERROR);
+        return;
       }
       int accepted = ::accept(listener_descriptor_, nullptr, nullptr);
       if (accepted < 0) {

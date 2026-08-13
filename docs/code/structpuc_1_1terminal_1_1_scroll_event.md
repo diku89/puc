@@ -6,7 +6,7 @@ Wheel motion normalized from xterm's synthetic mouse buttons.
 
 Positive vertical deltas move up and positive horizontal deltas move right.
 
-[Source](../../puc-cli/terminal/event.hpp#L291)
+[Source](../../puc-cli/tui/terminal/event.hpp#L291)
 
 ## Public data members
 
@@ -20,7 +20,7 @@ CellPosition puc::terminal::ScrollEvent::position
 
 Cell containing the pointer.
 
-[Source](../../puc-cli/terminal/event.hpp#L292)
+[Source](../../puc-cli/tui/terminal/event.hpp#L292)
 
 <a id="symbol-structpuc_1_1terminal_1_1_scroll_event_1ad3456a73844597d4456604d57d5b61e3"></a>
 
@@ -32,7 +32,7 @@ int puc::terminal::ScrollEvent::delta_x
 
 Horizontal wheel steps; right is positive.
 
-[Source](../../puc-cli/terminal/event.hpp#L293)
+[Source](../../puc-cli/tui/terminal/event.hpp#L293)
 
 <a id="symbol-structpuc_1_1terminal_1_1_scroll_event_1ae08f9a102ff11cc918f80ea3fecc4599"></a>
 
@@ -44,7 +44,7 @@ int puc::terminal::ScrollEvent::delta_y
 
 Vertical wheel steps; up is positive.
 
-[Source](../../puc-cli/terminal/event.hpp#L294)
+[Source](../../puc-cli/tui/terminal/event.hpp#L294)
 
 <a id="symbol-structpuc_1_1terminal_1_1_scroll_event_1ace18651259a77e1b0b0f80507609f0de"></a>
 
@@ -56,7 +56,7 @@ Modifiers puc::terminal::ScrollEvent::modifiers
 
 Active keyboard modifiers.
 
-[Source](../../puc-cli/terminal/event.hpp#L295)
+[Source](../../puc-cli/tui/terminal/event.hpp#L295)
 
 ## Public functions
 
@@ -70,4 +70,4 @@ bool puc::terminal::ScrollEvent::operator==(const ScrollEvent &) const noexcept=
 
 Compare position, deltas, and modifiers.
 
-[Source](../../puc-cli/terminal/event.hpp#L298)
+[Source](../../puc-cli/tui/terminal/event.hpp#L298)

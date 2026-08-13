@@ -4,7 +4,7 @@
 
 Raw terminal geometry reported by the operating system.
 
-[Source](../../puc-cli/terminal/session.hpp#L28)
+[Source](../../puc-cli/tui/terminal/session.hpp#L28)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::size_t puc::terminal::TerminalSize::width
 
 Character-cell columns.
 
-[Source](../../puc-cli/terminal/session.hpp#L29)
+[Source](../../puc-cli/tui/terminal/session.hpp#L29)
 
 <a id="symbol-structpuc_1_1terminal_1_1_terminal_size_1a0f2d4ba13ec46fa61181eab59b90038a"></a>
 
@@ -30,7 +30,7 @@ std::size_t puc::terminal::TerminalSize::height
 
 Character-cell rows.
 
-[Source](../../puc-cli/terminal/session.hpp#L30)
+[Source](../../puc-cli/tui/terminal/session.hpp#L30)
 
 <a id="symbol-structpuc_1_1terminal_1_1_terminal_size_1a30ad26f295b780e3fcd5da08814bbe5a"></a>
 
@@ -42,7 +42,7 @@ std::size_t puc::terminal::TerminalSize::pixel_width
 
 Total pixel width, or zero if unavailable.
 
-[Source](../../puc-cli/terminal/session.hpp#L31)
+[Source](../../puc-cli/tui/terminal/session.hpp#L31)
 
 <a id="symbol-structpuc_1_1terminal_1_1_terminal_size_1a2f9689a6a5909c6f116e4ff5e33af7b7"></a>
 
@@ -54,7 +54,7 @@ std::size_t puc::terminal::TerminalSize::pixel_height
 
 Total pixel height, or zero if unavailable.
 
-[Source](../../puc-cli/terminal/session.hpp#L33)
+[Source](../../puc-cli/tui/terminal/session.hpp#L33)
 
 ## Public functions
 
@@ -68,4 +68,4 @@ bool puc::terminal::TerminalSize::operator==(const TerminalSize &) const noexcep
 
 Compare cell and optional pixel dimensions.
 
-[Source](../../puc-cli/terminal/session.hpp#L37)
+[Source](../../puc-cli/tui/terminal/session.hpp#L37)

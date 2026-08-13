@@ -4,7 +4,7 @@
 
 Bounded OSC 52 and Base64 clipboard protocol implementation.
 
-[Source](../../puc-cli/terminal/clipboard.cpp)
+[Source](../../puc-cli/tui/terminal/clipboard.cpp)
 
 ## Related symbols
 

@@ -4,7 +4,7 @@
 
 Synchronized gutter policy, markers, and most recent geometry.
 
-[Source](../../puc-cli/tui/annotated_text_frame.cpp#L45)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.cpp#L45)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::shared_ptr<AnnotatedTextSource> puc::tui::AnnotatedTextFrame::Impl::child
 
 Required wrapped source.
 
-[Source](../../puc-cli/tui/annotated_text_frame.cpp#L76)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.cpp#L76)
 
 <a id="symbol-classpuc_1_1tui_1_1_annotated_text_frame_1_1_impl_1a793d0477a1cbee30003e22c504fffe3a"></a>
 
@@ -30,7 +30,7 @@ std::shared_mutex puc::tui::AnnotatedTextFrame::Impl::mutex
 
 Synchronizes policy and marker state.
 
-[Source](../../puc-cli/tui/annotated_text_frame.cpp#L77)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.cpp#L77)
 
 <a id="symbol-classpuc_1_1tui_1_1_annotated_text_frame_1_1_impl_1abfea097e36cdf12b01670e654ed77fb9"></a>
 
@@ -42,7 +42,7 @@ AnnotatedTextConfiguration puc::tui::AnnotatedTextFrame::Impl::configuration
 
 Active gutter policy.
 
-[Source](../../puc-cli/tui/annotated_text_frame.cpp#L78)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.cpp#L78)
 
 <a id="symbol-classpuc_1_1tui_1_1_annotated_text_frame_1_1_impl_1a470a06fc736bbd1993d5c7d41ce0ee03"></a>
 
@@ -54,7 +54,7 @@ std::map<std::size_t, AnnotatedLineStatus> puc::tui::AnnotatedTextFrame::Impl::s
 
 Markers by line.
 
-[Source](../../puc-cli/tui/annotated_text_frame.cpp#L79)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.cpp#L79)
 
 <a id="symbol-classpuc_1_1tui_1_1_annotated_text_frame_1_1_impl_1aa0087e32a80ae587380cf75a5ade3c9c"></a>
 
@@ -66,7 +66,7 @@ std::size_t puc::tui::AnnotatedTextFrame::Impl::last_gutter_width
 
 Translation from latest draw.
 
-[Source](../../puc-cli/tui/annotated_text_frame.cpp#L80)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.cpp#L80)
 
 <a id="symbol-classpuc_1_1tui_1_1_annotated_text_frame_1_1_impl_1aa46723f3fcc83e5f45dc6a7a87e4cc89"></a>
 
@@ -78,7 +78,7 @@ bool puc::tui::AnnotatedTextFrame::Impl::geometry_valid
 
 Whether translation is current.
 
-[Source](../../puc-cli/tui/annotated_text_frame.cpp#L81)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.cpp#L81)
 
 ## Public functions
 
@@ -92,7 +92,7 @@ puc::tui::AnnotatedTextFrame::Impl::Impl(std::shared_ptr< AnnotatedTextSource > 
 
 Retain the required text source and its initial annotation policy.
 
-[Source](../../puc-cli/tui/annotated_text_frame.cpp#L48)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.cpp#L48)
 
 ## Public static functions
 
@@ -106,4 +106,4 @@ static std::size_t puc::tui::AnnotatedTextFrame::Impl::gutter_width(const Annota
 
 Compute the active gutter width from a configuration snapshot.
 
-[Source](../../puc-cli/tui/annotated_text_frame.cpp#L54)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.cpp#L54)

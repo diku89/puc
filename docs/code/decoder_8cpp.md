@@ -4,7 +4,7 @@
 
 Streaming UTF-8, keyboard, mouse, paste, and response decoder.
 
-[Source](../../puc-cli/terminal/decoder.cpp)
+[Source](../../puc-cli/tui/terminal/decoder.cpp)
 
 ## Related symbols
 

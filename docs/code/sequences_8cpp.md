@@ -4,7 +4,7 @@
 
 Implementation of deliberately supported terminal mode encodings.
 
-[Source](../../puc-cli/terminal/sequences.cpp)
+[Source](../../puc-cli/tui/terminal/sequences.cpp)
 
 ## Related symbols
 

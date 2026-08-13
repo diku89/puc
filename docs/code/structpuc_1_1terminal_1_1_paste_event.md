@@ -4,7 +4,7 @@
 
 One stage or data chunk from a bracketed paste.
 
-[Source](../../puc-cli/terminal/event.hpp#L310)
+[Source](../../puc-cli/tui/terminal/event.hpp#L310)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ PastePhase puc::terminal::PasteEvent::phase
 
 Stage represented by this event.
 
-[Source](../../puc-cli/terminal/event.hpp#L311)
+[Source](../../puc-cli/tui/terminal/event.hpp#L311)
 
 <a id="symbol-structpuc_1_1terminal_1_1_paste_event_1a428cbe43e6e8eec0eb623698b5bc777a"></a>
 
@@ -30,7 +30,7 @@ std::string puc::terminal::PasteEvent::data
 
 Uninterpreted bytes carried by a DATA event.
 
-[Source](../../puc-cli/terminal/event.hpp#L312)
+[Source](../../puc-cli/tui/terminal/event.hpp#L312)
 
 ## Public functions
 
@@ -44,4 +44,4 @@ bool puc::terminal::PasteEvent::operator==(const PasteEvent &) const =default
 
 Compare the paste phase and payload bytes.
 
-[Source](../../puc-cli/terminal/event.hpp#L315)
+[Source](../../puc-cli/tui/terminal/event.hpp#L315)

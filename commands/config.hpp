@@ -1,7 +1,8 @@
 #pragma once
 
 /**
- * Implement the config comand.
+ * @file config.hpp
+ * @brief Inspect and mutate application-owned properties.
  *
  * \command config || View, edit, or reload the configuration.
  * \subcommand get <full.key.path> || Get the value of a configuration key.
@@ -16,7 +17,7 @@
 namespace puc {
 namespace command {
 
-class ConfigCommand : public CommandApp {
+class ConfigCommand final : public CommandApp {
  public:
   ConfigCommand()           = default;
   ~ConfigCommand() override = default;
@@ -29,9 +30,9 @@ class ConfigCommand : public CommandApp {
   }
 
   std::string get_usage() const override {
-    return "get <full.key.path> \n"
-           "set <full.key.path> <value> \n"
-           "list [partial.prefix] \n"
+    return "get <full.key.path>\n"
+           "set <full.key.path> <value>\n"
+           "list [partial.prefix]\n"
            "reload";
   }
 

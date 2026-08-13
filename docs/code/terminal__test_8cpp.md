@@ -2,21 +2,11 @@
 
 # File `terminal_test.cpp`
 
-Interactive end-to-end conformance test for terminal input decoding.
+Lifecycle entry point for terminal input conformance testing.
 
-This manual executable complements `puc-cli/tui/test-app.cpp`. The TUI test app validates presentation; this program reuses its Screen, Canvas, Layout, ZBuffer, Theme, ParallelRenderer, four-worker ownership, resize handling, and small-screen behavior as a trusted interface around the real terminal input stack. Bytes are read through Screen's owned TerminalSession, decoded by the runtime-configured terminfo/TOML Trie, and matched as normalized terminal Events.
+TerminalTestRuntimeSubsystem owns the interactive test plan, presentation, and durable report. `main()` owns command-line handling, static process configuration, subsystem registration, and the single initialized lifetime.
 
-Run `bazel run //puc-cli/terminal:terminal-test` in a real terminal for the complete plan. Append `-- --list` to inspect stable test names without entering terminal mode, or `-- --test clipboard-paste` to execute only the named check.
-
-The central box shows one of fourteen actions and a fifteen-heartbeat countdown. A correct event turns the border green briefly; a timeout turns it red and advances. The top-right panel identifies the selected terminal environment. Mouse tracking, focus reporting, and bracketed paste are enabled only for this reversible alternate-screen session. After the final check, the terminal is restored before a durable pass/timeout report is printed.
-
-During the clipboard check, normal mouse input creates a PUC-owned logical selection and highlight. Selection alone never mutates the host clipboard. The active OS-default or user-overridden Trie mapping emits a CommandEvent; COPY then calls Screen::copy\_selection() before the operator pastes the result back. No key chord is hardcoded in this application.
-
-The file-drop check records the portable fallback exposed by most terminal emulators: ordinary or bracketed-paste text containing a path. PUC does not infer a structured drop from arbitrary text, and this test does not enable a terminal-specific drag-and-drop extension.
-
-`PUC_CONFIG_ROOT` may select the primary configuration directory and `PUC_USER_CONFIG_ROOT` its user-overlay directory. Without them, the program locates Bazel's `input_keys.toml` runfile and uses no user overlay.
-
-[Source](../../puc-cli/terminal/terminal_test.cpp)
+[Source](../../puc-cli/test_apps/terminal/terminal_test.cpp)
 
 ## Functions
 
@@ -28,13 +18,13 @@ The file-drop check records the portable fallback exposed by most terminal emula
 int main(int argc, char **argv)
 ```
 
-Run the interactive terminal input conformance plan and print its report.
+Run a selected terminal conformance plan and print its restored-screen report.
 
 **Parameters**
 
 - `argc` (in) — Conventional process argument count.
-- `argv` (in) — Conventional process argument vector; argv\[0\] helps locate Bazel runfiles.
+- `argv` (in) — Conventional process argument vector; argv\[0\] locates the packaged terminal and theme configuration.
 
-**Returns:** Zero for successful listing/help, or when every selected check, setup operation, and terminal restoration succeeds; otherwise nonzero.
+**Returns:** Zero for help/listing or a completely passing run; two for invalid options; otherwise one.
 
-[Source](../../puc-cli/terminal/terminal_test.cpp#L1171)
+[Source](../../puc-cli/test_apps/terminal/terminal_test.cpp#L86)

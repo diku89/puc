@@ -4,7 +4,7 @@
 
 Gutter geometry and colors for [AnnotatedTextFrame](classpuc_1_1tui_1_1_annotated_text_frame.md).
 
-[Source](../../puc-cli/tui/annotated_text_frame.hpp#L48)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.hpp#L48)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ bool puc::tui::AnnotatedTextConfiguration::show_line_numbers
 
 Render numbers on first visual rows.
 
-[Source](../../puc-cli/tui/annotated_text_frame.hpp#L49)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.hpp#L49)
 
 <a id="symbol-structpuc_1_1tui_1_1_annotated_text_configuration_1af18e763a831d93e094fb5fca01b4ea19"></a>
 
@@ -30,7 +30,7 @@ std::size_t puc::tui::AnnotatedTextConfiguration::minimum_line_number_columns
 
 Stable small-count width.
 
-[Source](../../puc-cli/tui/annotated_text_frame.hpp#L50)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.hpp#L50)
 
 <a id="symbol-structpuc_1_1tui_1_1_annotated_text_configuration_1a1a4a0b9cc2020d0ca86ca710ede7e9e1"></a>
 
@@ -42,7 +42,7 @@ std::size_t puc::tui::AnnotatedTextConfiguration::status_columns
 
 Reserved marker cells per row.
 
-[Source](../../puc-cli/tui/annotated_text_frame.hpp#L52)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.hpp#L52)
 
 <a id="symbol-structpuc_1_1tui_1_1_annotated_text_configuration_1abf1b02919e785d27669961aa2ebc5cc7"></a>
 
@@ -54,7 +54,7 @@ std::size_t puc::tui::AnnotatedTextConfiguration::separator_columns
 
 Blank cells before child text.
 
-[Source](../../puc-cli/tui/annotated_text_frame.hpp#L53)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.hpp#L53)
 
 <a id="symbol-structpuc_1_1tui_1_1_annotated_text_configuration_1ad46176ffdb26b94aa358688477531c83"></a>
 
@@ -66,7 +66,7 @@ std::size_t puc::tui::AnnotatedTextConfiguration::minimum_gutter_width
 
 Optional total-width floor.
 
-[Source](../../puc-cli/tui/annotated_text_frame.hpp#L54)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.hpp#L54)
 
 <a id="symbol-structpuc_1_1tui_1_1_annotated_text_configuration_1ad5a484d0e24d233b0ce41b901f44b3ff"></a>
 
@@ -78,7 +78,7 @@ Theme::ColorTypes puc::tui::AnnotatedTextConfiguration::background_color
 
 Gutter background role.
 
-[Source](../../puc-cli/tui/annotated_text_frame.hpp#L55)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.hpp#L55)
 
 <a id="symbol-structpuc_1_1tui_1_1_annotated_text_configuration_1af5e3a2f60b6e5d61c467fcdfee7a5eec"></a>
 
@@ -90,4 +90,4 @@ Theme::ColorTypes puc::tui::AnnotatedTextConfiguration::line_number_color
 
 Number foreground role.
 
-[Source](../../puc-cli/tui/annotated_text_frame.hpp#L57)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.hpp#L57)

@@ -2,33 +2,48 @@
 
 # Namespace `puc::app`
 
-[Source](../../commands/command.hpp#L26)
+[Source](../../commands/builtin_command_subsystem.cpp#L18)
 
 ## Related symbols
 
+- [puc::app::ApplicationControl](classpuc_1_1app_1_1_application_control.md)
+- [puc::app::ApplicationControlSubsystem](classpuc_1_1app_1_1_application_control_subsystem.md)
 - [puc::app::ApplicationSubsystemOptions](structpuc_1_1app_1_1_application_subsystem_options.md)
 - [puc::app::ApplicationSubsystemSelection](structpuc_1_1app_1_1_application_subsystem_selection.md)
 - [puc::app::AppState](classpuc_1_1app_1_1_app_state.md)
 - [puc::app::AppSubsystem](classpuc_1_1app_1_1_app_subsystem.md)
+- [puc::app::BuiltinCommandSubsystem](classpuc_1_1app_1_1_builtin_command_subsystem.md)
+- [puc::app::Canvas](classpuc_1_1app_1_1_canvas.md)
+- [puc::app::CellDimensions](structpuc_1_1app_1_1_cell_dimensions.md)
 - [puc::app::CommandCompletion](structpuc_1_1app_1_1_command_completion.md)
 - [puc::app::CommandModeSnapshot](structpuc_1_1app_1_1_command_mode_snapshot.md)
 - [puc::app::CommandModeSubsystem](classpuc_1_1app_1_1_command_mode_subsystem.md)
 - [puc::app::CommandNotificationChannelSubsystem](classpuc_1_1app_1_1_command_notification_channel_subsystem.md)
 - [puc::app::CommandSubsystem](classpuc_1_1app_1_1_command_subsystem.md)
-- [puc::app::ConfigurationSubsystem](classpuc_1_1app_1_1_configuration_subsystem.md)
-- [puc::app::ConfigurationSubsystemOptions](structpuc_1_1app_1_1_configuration_subsystem_options.md)
 - [puc::app::DirectorySubsystem](classpuc_1_1app_1_1_directory_subsystem.md)
 - [puc::app::EmbeddedTerminalSubsystem](classpuc_1_1app_1_1_embedded_terminal_subsystem.md)
 - [puc::app::EmbeddedTerminalSubsystemOptions](structpuc_1_1app_1_1_embedded_terminal_subsystem_options.md)
+- [puc::app::InputFrame](classpuc_1_1app_1_1_input_frame.md)
 - [puc::app::InputSubsystem](classpuc_1_1app_1_1_input_subsystem.md)
+- [puc::app::InputTestRuntimeSubsystem](classpuc_1_1app_1_1_input_test_runtime_subsystem.md)
+- [puc::app::Layout](classpuc_1_1app_1_1_layout.md)
 - [puc::app::LoggerSubsystem](classpuc_1_1app_1_1_logger_subsystem.md)
 - [puc::app::MetronomeSubsystem](classpuc_1_1app_1_1_metronome_subsystem.md)
+- [puc::app::ParallelRenderer](classpuc_1_1app_1_1_parallel_renderer.md)
 - [puc::app::PresentationSubsystem](classpuc_1_1app_1_1_presentation_subsystem.md)
+- [puc::app::PropertiesSubsystem](classpuc_1_1app_1_1_properties_subsystem.md)
+- [puc::app::PropertiesSubsystemOptions](structpuc_1_1app_1_1_properties_subsystem_options.md)
+- [puc::app::Screen](classpuc_1_1app_1_1_screen.md)
 - [puc::app::ScreenChannelSubsystem](classpuc_1_1app_1_1_screen_channel_subsystem.md)
 - [puc::app::ScreenSubsystem](classpuc_1_1app_1_1_screen_subsystem.md)
-- [puc::app::ScreenSubsystemOptions](structpuc_1_1app_1_1_screen_subsystem_options.md)
+- [puc::app::TerminalInputChannelSubsystem](classpuc_1_1app_1_1_terminal_input_channel_subsystem.md)
 - [puc::app::TerminalSubsystem](classpuc_1_1app_1_1_terminal_subsystem.md)
 - [puc::app::TerminalSubsystemOptions](structpuc_1_1app_1_1_terminal_subsystem_options.md)
+- [puc::app::TerminalTestRuntimeSubsystem](classpuc_1_1app_1_1_terminal_test_runtime_subsystem.md)
+- [puc::app::Theme](classpuc_1_1app_1_1_theme.md)
+- [puc::app::ThemeSubsystem](classpuc_1_1app_1_1_theme_subsystem.md)
+- [puc::app::TimerSubsystem](classpuc_1_1app_1_1_timer_subsystem.md)
+- [puc::app::TuiTestRuntimeSubsystem](classpuc_1_1app_1_1_tui_test_runtime_subsystem.md)
 - [puc::app::WorkerSubsystem](classpuc_1_1app_1_1_worker_subsystem.md)
 
 ## Enumerations
@@ -47,7 +62,7 @@ Runtime profile selected before subsystem initialization begins.
 - <a id="symbol-lifecycle_8hpp_1ac1bcb8c4d0e4197f74a9454d0cdcabe0a7a986decd17c08272fa8e9ec93b1bb0a"></a>`TUI` — Interactive terminal user interface.
 - <a id="symbol-lifecycle_8hpp_1ac1bcb8c4d0e4197f74a9454d0cdcabe0a033bd94b1168d7e4f0d644c3c95e35bf"></a>`TEST` — Deterministic test-oriented application composition.
 
-[Source](../../puc-cli/state/lifecycle.hpp#L13)
+[Source](../../state/lifecycle.hpp#L13)
 
 <a id="symbol-lifecycle_8hpp_1a2f9d14f0bc41b83212de7d6b1c4cdfd1"></a>
 
@@ -71,7 +86,7 @@ Complete state of the application subsystem lifecycle.
 - <a id="symbol-lifecycle_8hpp_1a2f9d14f0bc41b83212de7d6b1c4cdfd1a9d725163e44a2e9cf094059c0abfdef1"></a>`TERMINATED` — Final durable state release has completed exactly once.
 - <a id="symbol-lifecycle_8hpp_1a2f9d14f0bc41b83212de7d6b1c4cdfd1a9c51674930e03c276344d19f9e4398fb"></a>`CRASHED` — A lifecycle hook or dependency contract failed.
 
-[Source](../../puc-cli/state/lifecycle.hpp#L19)
+[Source](../../state/lifecycle.hpp#L19)
 
 <a id="symbol-lifecycle_8hpp_1a01c86981579ba6b89336774973c68d60"></a>
 
@@ -97,7 +112,7 @@ Result of subsystem registration and lifecycle orchestration.
 - <a id="symbol-lifecycle_8hpp_1a01c86981579ba6b89336774973c68d60ab28813fe6ace790a3b2e04cf857cda48"></a>`SUBSYSTEM_FAILURE` — A subsystem lifecycle hook failed.
 - <a id="symbol-lifecycle_8hpp_1a01c86981579ba6b89336774973c68d60ae8c0c70879b5895c615677261d64a1ee"></a>`INTERNAL_ERROR` — Lifecycle infrastructure failed.
 
-[Source](../../puc-cli/state/lifecycle.hpp#L33)
+[Source](../../state/lifecycle.hpp#L33)
 
 ## Type aliases
 
@@ -111,7 +126,7 @@ using puc::app::SubsystemId = std::type_index
 
 Concrete C++ type used as one stable subsystem identity.
 
-[Source](../../puc-cli/state/state.hpp#L29)
+[Source](../../state/state.hpp#L29)
 
 ## Variables
 
@@ -125,7 +140,7 @@ std::size_t puc::app::kApplicationSubsystemCount
 
 Number of concrete adapters in the complete default production graph.
 
-[Source](../../puc-cli/state/bootstrap.hpp#L32)
+[Source](../../puc-cli/application/bootstrap.hpp#L31)
 
 ## Functions
 
@@ -143,7 +158,7 @@ Registration is root-to-leaf for readability, although [AppState](classpuc_1_1ap
 
 **Returns:** [Status::OK](#symbol-lifecycle_8hpp_1a01c86981579ba6b89336774973c68d60ae0aa021e21dddbd6d8cecec71e9cf564), [Status::INVALID\_ARGUMENT](#symbol-lifecycle_8hpp_1a01c86981579ba6b89336774973c68d60af295a0c3e37c94f078e1c5476479132d) for a nonempty [AppState](classpuc_1_1app_1_1_app_state.md), or an unexpected registration failure.
 
-[Source](../../puc-cli/state/bootstrap.cpp#L27)
+[Source](../../puc-cli/application/bootstrap.cpp#L31)
 
 <a id="symbol-bootstrap_8hpp_1a77eff784c7ddbc35f6e049ec742ed604"></a>
 
@@ -155,7 +170,7 @@ std::size_t puc::app::application_subsystem_count(const ApplicationSubsystemSele
 
 Return the number of adapters selected by one executable profile.
 
-[Source](../../puc-cli/state/bootstrap.hpp#L35)
+[Source](../../puc-cli/application/bootstrap.hpp#L34)
 
 <a id="symbol-lifecycle_8hpp_1a4b70db1608e49fb1b3c00c6b9f30ecbe"></a>
 
@@ -167,7 +182,7 @@ bool puc::app::is_ok(Status status) noexcept
 
 Return whether an application lifecycle operation succeeded.
 
-[Source](../../puc-cli/state/lifecycle.hpp#L49)
+[Source](../../state/lifecycle.hpp#L49)
 
 <a id="symbol-lifecycle_8hpp_1a91230b086cef56f28b56269d1303a7ca"></a>
 
@@ -179,7 +194,7 @@ std::string_view puc::app::status_message(Status status) noexcept
 
 Return stable human-readable text for an application lifecycle result.
 
-[Source](../../puc-cli/state/lifecycle.hpp#L52)
+[Source](../../state/lifecycle.hpp#L52)
 
 <a id="symbol-state_8hpp_1adf66395e6354437c6e6941040ecaae82"></a>
 
@@ -191,4 +206,4 @@ std::vector< SubsystemId > puc::app::subsystem_dependencies()
 
 Build a concrete dependency list without spelling std::type\_index.
 
-[Source](../../puc-cli/state/state.hpp#L87)
+[Source](../../state/state.hpp#L87)

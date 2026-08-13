@@ -4,9 +4,9 @@
 
 Own one TerminalSession, Decoder, and the Decoder's immutable input Trie.
 
-Initialization constructs and optionally configures both mechanisms without taking terminal ownership. Start binds TerminalSession as the consumer of [ScreenChannelSubsystem](classpuc_1_1app_1_1_screen_channel_subsystem.md)'s command route. Screen remains the producer that requests take, presentation, clipboard, and release operations.
+Initialization constructs both durable mechanisms without taking terminal ownership. Each start reapplies the current Properties-backed Trie and timeout settings, binds TerminalSession as the consumer of [ScreenChannelSubsystem](classpuc_1_1app_1_1_screen_channel_subsystem.md)'s command route, and publishes decoded input through [TerminalInputChannelSubsystem](classpuc_1_1app_1_1_terminal_input_channel_subsystem.md). [Screen](classpuc_1_1app_1_1_screen.md) remains the producer that requests take, presentation, clipboard, and release operations.
 
-[Source](../../puc-cli/state/terminal.hpp#L39)
+[Source](../../puc-cli/tui/terminal/terminal_subsystem.hpp#L49)
 
 ## Private data members
 
@@ -20,7 +20,7 @@ TerminalSubsystemOptions puc::app::TerminalSubsystem::options_
 
 Inputs retained across restarts.
 
-[Source](../../puc-cli/state/terminal.hpp#L79)
+[Source](../../puc-cli/tui/terminal/terminal_subsystem.hpp#L115)
 
 <a id="symbol-classpuc_1_1app_1_1_terminal_subsystem_1a0aab8396ba69e68cf5270828a200653a"></a>
 
@@ -32,7 +32,7 @@ std::unique_ptr<terminal::TerminalSession> puc::app::TerminalSubsystem::session_
 
 Transport retained from initialize through terminate.
 
-[Source](../../puc-cli/state/terminal.hpp#L81)
+[Source](../../puc-cli/tui/terminal/terminal_subsystem.hpp#L117)
 
 <a id="symbol-classpuc_1_1app_1_1_terminal_subsystem_1a7b2d5dad4b172d533856f559b1e44cad"></a>
 
@@ -44,7 +44,43 @@ std::unique_ptr<terminal::Decoder> puc::app::TerminalSubsystem::decoder_
 
 Decoder and input Trie retained while initialized.
 
-[Source](../../puc-cli/state/terminal.hpp#L83)
+[Source](../../puc-cli/tui/terminal/terminal_subsystem.hpp#L119)
+
+<a id="symbol-classpuc_1_1app_1_1_terminal_subsystem_1aa32fb551402459623ae8634f05c870de"></a>
+
+### `directory_`
+
+```cpp
+ipc::Directory* puc::app::TerminalSubsystem::directory_
+```
+
+Event route during one run.
+
+[Source](../../puc-cli/tui/terminal/terminal_subsystem.hpp#L120)
+
+<a id="symbol-classpuc_1_1app_1_1_terminal_subsystem_1ad8925105380fc260e73a98d790a19fe2"></a>
+
+### `timeout_settings_`
+
+```cpp
+terminal::TimeoutSettings puc::app::TerminalSubsystem::timeout_settings_
+```
+
+Input timing policy.
+
+[Source](../../puc-cli/tui/terminal/terminal_subsystem.hpp#L121)
+
+<a id="symbol-classpuc_1_1app_1_1_terminal_subsystem_1ad122a2b01284f5cc159d16cc96312562"></a>
+
+### `decoder_timeout_`
+
+```cpp
+timer::TokenDeadline<terminal::TimeoutInput> puc::app::TerminalSubsystem::decoder_timeout_
+```
+
+Pending ambiguous-input generation.
+
+[Source](../../puc-cli/tui/terminal/terminal_subsystem.hpp#L123)
 
 <a id="symbol-classpuc_1_1app_1_1_terminal_subsystem_1a759874ca394a5a46bd9cb36afa546b37"></a>
 
@@ -56,7 +92,7 @@ terminal::Status puc::app::TerminalSubsystem::terminal_status_
 
 Detail.
 
-[Source](../../puc-cli/state/terminal.hpp#L84)
+[Source](../../puc-cli/tui/terminal/terminal_subsystem.hpp#L124)
 
 ## Public functions
 
@@ -70,7 +106,7 @@ puc::app::TerminalSubsystem::TerminalSubsystem(TerminalSubsystemOptions options=
 
 Construct an adapter retaining terminal descriptors and decoder inputs.
 
-[Source](../../puc-cli/state/terminal.hpp#L42)
+[Source](../../puc-cli/tui/terminal/terminal_subsystem.hpp#L52)
 
 <a id="symbol-classpuc_1_1app_1_1_terminal_subsystem_1afdc25a5ec81ebe9e70539daa0c0c089e"></a>
 
@@ -82,7 +118,7 @@ puc::app::TerminalSubsystem::~TerminalSubsystem() override
 
 Destroy released terminal mechanisms.
 
-[Source](../../puc-cli/state/terminal.hpp#L45)
+[Source](../../puc-cli/tui/terminal/terminal_subsystem.hpp#L55)
 
 <a id="symbol-classpuc_1_1app_1_1_terminal_subsystem_1ac7d9cfe16147a9e298f19ad4b1307a96"></a>
 
@@ -92,9 +128,9 @@ Destroy released terminal mechanisms.
 Status puc::app::TerminalSubsystem::initialize(AppState &app) override
 ```
 
-Construct and optionally configure TerminalSession and Decoder.
+Construct the durable TerminalSession and Decoder mechanisms.
 
-[Source](../../puc-cli/state/terminal.hpp#L48)
+[Source](../../puc-cli/tui/terminal/terminal_subsystem.hpp#L58)
 
 <a id="symbol-classpuc_1_1app_1_1_terminal_subsystem_1ae3c172c3748fc59b58b75bc212f97eb1"></a>
 
@@ -104,9 +140,9 @@ Construct and optionally configure TerminalSession and Decoder.
 Status puc::app::TerminalSubsystem::start(AppState &app) override
 ```
 
-Subscribe TerminalSession to the lifecycle-owned Screen channels.
+Apply current properties and bind lifecycle-owned terminal channels.
 
-[Source](../../puc-cli/state/terminal.hpp#L51)
+[Source](../../puc-cli/tui/terminal/terminal_subsystem.hpp#L61)
 
 <a id="symbol-classpuc_1_1app_1_1_terminal_subsystem_1a25b63caded25fd5b8b73345c7a6ecbb7"></a>
 
@@ -118,7 +154,7 @@ Status puc::app::TerminalSubsystem::stop(AppState &app) noexcept override
 
 Unsubscribe and synchronously restore any active terminal modes.
 
-[Source](../../puc-cli/state/terminal.hpp#L54)
+[Source](../../puc-cli/tui/terminal/terminal_subsystem.hpp#L64)
 
 <a id="symbol-classpuc_1_1app_1_1_terminal_subsystem_1ac01f6d7d593688667f718e39c61c05e4"></a>
 
@@ -130,7 +166,7 @@ Status puc::app::TerminalSubsystem::terminate(AppState &app) noexcept override
 
 Release the terminal mechanisms retained while stopped.
 
-[Source](../../puc-cli/state/terminal.hpp#L57)
+[Source](../../puc-cli/tui/terminal/terminal_subsystem.hpp#L67)
 
 <a id="symbol-classpuc_1_1app_1_1_terminal_subsystem_1a3c1bbf2e026c632a2208d31a7fec8d3a"></a>
 
@@ -142,7 +178,7 @@ terminal::TerminalSession * puc::app::TerminalSubsystem::session() noexcept
 
 Return the initialized terminal session, or nullptr outside its lifetime.
 
-[Source](../../puc-cli/state/terminal.hpp#L61)
+[Source](../../puc-cli/tui/terminal/terminal_subsystem.hpp#L71)
 
 <a id="symbol-classpuc_1_1app_1_1_terminal_subsystem_1a5e3d78eb221aa0db5c4928a560d3c868"></a>
 
@@ -154,7 +190,7 @@ const terminal::TerminalSession * puc::app::TerminalSubsystem::session() const n
 
 Return the initialized terminal session, or nullptr outside its lifetime.
 
-[Source](../../puc-cli/state/terminal.hpp#L65)
+[Source](../../puc-cli/tui/terminal/terminal_subsystem.hpp#L75)
 
 <a id="symbol-classpuc_1_1app_1_1_terminal_subsystem_1aa4867f2e83027f8293fb09d2d37755b9"></a>
 
@@ -166,7 +202,7 @@ terminal::Decoder * puc::app::TerminalSubsystem::decoder() noexcept
 
 Return the initialized decoder, or nullptr outside its lifetime.
 
-[Source](../../puc-cli/state/terminal.hpp#L70)
+[Source](../../puc-cli/tui/terminal/terminal_subsystem.hpp#L80)
 
 <a id="symbol-classpuc_1_1app_1_1_terminal_subsystem_1a0db8e1d997dedb4b92201840c3d86061"></a>
 
@@ -178,7 +214,45 @@ const terminal::Decoder * puc::app::TerminalSubsystem::decoder() const noexcept
 
 Return the initialized decoder, or nullptr outside its lifetime.
 
-[Source](../../puc-cli/state/terminal.hpp#L73)
+[Source](../../puc-cli/tui/terminal/terminal_subsystem.hpp#L83)
+
+<a id="symbol-classpuc_1_1app_1_1_terminal_subsystem_1a0d7382b6d71a9a3e0cedd31a065a5a5e"></a>
+
+### `input_fd`
+
+```cpp
+int puc::app::TerminalSubsystem::input_fd() const noexcept
+```
+
+Return the borrowed terminal input descriptor.
+
+[Source](../../puc-cli/tui/terminal/terminal_subsystem.hpp#L86)
+
+<a id="symbol-classpuc_1_1app_1_1_terminal_subsystem_1ad3545818c725b552cbf01207cd80a54b"></a>
+
+### `poll_input`
+
+```cpp
+Status puc::app::TerminalSubsystem::poll_input(std::chrono::milliseconds timeout, bool &end_of_input)
+```
+
+Poll, decode, and publish all currently available terminal input.
+
+A timeout is not an error: it also gives Decoder's pending ambiguity deadline an opportunity to emit an event. `end_of_input` is reset on entry and set when the descriptor closes or a read reaches EOF.
+
+[Source](../../puc-cli/tui/terminal/terminal_subsystem.hpp#L95)
+
+<a id="symbol-classpuc_1_1app_1_1_terminal_subsystem_1a6a9ea7469e3b07e0bf71f21505ba7d48"></a>
+
+### `timeout_settings`
+
+```cpp
+const terminal::TimeoutSettings & puc::app::TerminalSubsystem::timeout_settings() const noexcept
+```
+
+Return the configured terminal input and click timing policy.
+
+[Source](../../puc-cli/tui/terminal/terminal_subsystem.hpp#L98)
 
 <a id="symbol-classpuc_1_1app_1_1_terminal_subsystem_1a821179bdd8d19438648f411ede086be1"></a>
 
@@ -190,4 +264,42 @@ terminal::Status puc::app::TerminalSubsystem::terminal_status() const noexcept
 
 Return the latest mechanism status observed by a lifecycle hook.
 
-[Source](../../puc-cli/state/terminal.hpp#L76)
+[Source](../../puc-cli/tui/terminal/terminal_subsystem.hpp#L103)
+
+## Private functions
+
+<a id="symbol-classpuc_1_1app_1_1_terminal_subsystem_1ad5aeeccb73c171fd4c414420fed3cefc"></a>
+
+### `publish_events`
+
+```cpp
+Status puc::app::TerminalSubsystem::publish_events(const std::vector< terminal::Event > &events)
+```
+
+Publish normalized events on the lifecycle-owned terminal route.
+
+[Source](../../puc-cli/tui/terminal/terminal_subsystem.hpp#L107)
+
+<a id="symbol-classpuc_1_1app_1_1_terminal_subsystem_1a1e25cd225ba427664d9e0bd47086f71e"></a>
+
+### `resolve_decoder_timeout`
+
+```cpp
+Status puc::app::TerminalSubsystem::resolve_decoder_timeout()
+```
+
+Deliver Decoder's pending generation when its deadline has elapsed.
+
+[Source](../../puc-cli/tui/terminal/terminal_subsystem.hpp#L110)
+
+<a id="symbol-classpuc_1_1app_1_1_terminal_subsystem_1ae7d19a849a2a5953f0a7c4c7b3b153eb"></a>
+
+### `refresh_decoder_timeout`
+
+```cpp
+void puc::app::TerminalSubsystem::refresh_decoder_timeout() noexcept
+```
+
+Synchronize the timer primitive with Decoder's current generation.
+
+[Source](../../puc-cli/tui/terminal/terminal_subsystem.hpp#L113)

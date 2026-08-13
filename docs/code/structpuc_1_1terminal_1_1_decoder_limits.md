@@ -4,7 +4,7 @@
 
 Resource limits applied to untrusted terminal input.
 
-[Source](../../puc-cli/terminal/decoder.hpp#L23)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L23)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::size_t puc::terminal::DecoderLimits::maximum_pending_bytes
 
 Bytes retained between feed calls.
 
-[Source](../../puc-cli/terminal/decoder.hpp#L24)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L24)
 
 <a id="symbol-structpuc_1_1terminal_1_1_decoder_limits_1af5cbe48bec59164d6ccaad573c27dfb6"></a>
 
@@ -30,7 +30,7 @@ std::size_t puc::terminal::DecoderLimits::maximum_sequence_bytes
 
 Bytes accepted in a non-clipboard control sequence.
 
-[Source](../../puc-cli/terminal/decoder.hpp#L26)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L26)
 
 <a id="symbol-structpuc_1_1terminal_1_1_decoder_limits_1a90604995db4a710dc7d0efff5ffdb80b"></a>
 
@@ -42,7 +42,7 @@ std::size_t puc::terminal::DecoderLimits::maximum_paste_bytes
 
 Bytes emitted by one bracketed paste.
 
-[Source](../../puc-cli/terminal/decoder.hpp#L28)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L28)
 
 <a id="symbol-structpuc_1_1terminal_1_1_decoder_limits_1a92bfedcbae8b3255b7f6441da47820df"></a>
 
@@ -54,4 +54,4 @@ std::size_t puc::terminal::DecoderLimits::maximum_clipboard_bytes
 
 Decoded bytes accepted from one OSC 52 response.
 
-[Source](../../puc-cli/terminal/decoder.hpp#L30)
+[Source](../../puc-cli/tui/terminal/decoder.hpp#L30)

@@ -2,23 +2,11 @@
 
 # Struct `puc::msg::ScreenTakeCommand`
 
-Request terminal ownership with caller-selected presentation modes.
+Request terminal ownership under PUC's fixed interactive mode contract.
 
-[Source](../../msgs/screen_msgs.hpp#L66)
+[Source](../../msgs/screen_msgs.hpp#L42)
 
 ## Public data members
-
-<a id="symbol-structpuc_1_1msg_1_1_screen_take_command_1a639ff6c489641c29cce99c6cf72ec304"></a>
-
-### `options`
-
-```cpp
-ScreenSessionOptions puc::msg::ScreenTakeCommand::options
-```
-
-Complete desired terminal mode state.
-
-[Source](../../msgs/screen_msgs.hpp#L67)
 
 <a id="symbol-structpuc_1_1msg_1_1_screen_take_command_1a59ffff97ae60738f0fbab019f8172772"></a>
 
@@ -30,7 +18,7 @@ std::string puc::msg::ScreenTakeCommand::initial_bytes
 
 Screen-owned bytes written after mode setup.
 
-[Source](../../msgs/screen_msgs.hpp#L69)
+[Source](../../msgs/screen_msgs.hpp#L44)
 
 <a id="symbol-structpuc_1_1msg_1_1_screen_take_command_1a9069c4750f248782a8505baf9c629405"></a>
 
@@ -42,7 +30,7 @@ std::string puc::msg::ScreenTakeCommand::final_bytes
 
 Screen-owned bytes guaranteed before teardown.
 
-[Source](../../msgs/screen_msgs.hpp#L71)
+[Source](../../msgs/screen_msgs.hpp#L46)
 
 ## Public functions
 
@@ -56,4 +44,4 @@ bool puc::msg::ScreenTakeCommand::operator==(const ScreenTakeCommand &) const =d
 
 Compare complete take requests.
 
-[Source](../../msgs/screen_msgs.hpp#L74)
+[Source](../../msgs/screen_msgs.hpp#L49)

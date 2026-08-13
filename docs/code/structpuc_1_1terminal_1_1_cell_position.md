@@ -4,7 +4,7 @@
 
 Zero-based position in terminal character cells.
 
-[Source](../../puc-cli/terminal/event.hpp#L246)
+[Source](../../puc-cli/tui/terminal/event.hpp#L246)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::size_t puc::terminal::CellPosition::x
 
 Zero-based column.
 
-[Source](../../puc-cli/terminal/event.hpp#L247)
+[Source](../../puc-cli/tui/terminal/event.hpp#L247)
 
 <a id="symbol-structpuc_1_1terminal_1_1_cell_position_1a6b92b5b6f405ac313306bd00bbc7be46"></a>
 
@@ -30,7 +30,7 @@ std::size_t puc::terminal::CellPosition::y
 
 Zero-based row.
 
-[Source](../../puc-cli/terminal/event.hpp#L248)
+[Source](../../puc-cli/tui/terminal/event.hpp#L248)
 
 ## Public functions
 
@@ -44,4 +44,4 @@ bool puc::terminal::CellPosition::operator==(const CellPosition &) const noexcep
 
 Compare both cell coordinates.
 
-[Source](../../puc-cli/terminal/event.hpp#L251)
+[Source](../../puc-cli/tui/terminal/event.hpp#L251)

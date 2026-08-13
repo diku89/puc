@@ -32,6 +32,27 @@ cc_library(
     deps = [
         "//utils/logger",
         "//utils/multithreading",
+        "//utils/timer",
+    ],
+)
+
+cc_library(
+    name = "ipc_subsystems",
+    srcs = [
+        "channel_subsystems.cpp",
+        "directory_subsystem.cpp",
+    ],
+    hdrs = [
+        "channel_subsystems.hpp",
+        "directory_subsystem.hpp",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":ipc",
+        "//msgs",
+        "//state",
+        "//utils/multithreading",
+        "//utils/multithreading:worker_subsystem",
     ],
 )
 

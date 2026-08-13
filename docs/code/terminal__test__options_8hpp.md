@@ -4,7 +4,7 @@
 
 Non-throwing command-line parser for the terminal conformance app.
 
-[Source](../../puc-cli/terminal/terminal_test_options.hpp)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_options.hpp)
 
 ## Related symbols
 

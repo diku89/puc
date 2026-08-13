@@ -4,7 +4,7 @@
 
 POSIX terminal lifecycle, transport, dimensions, and clipboard I/O.
 
-[Source](../../puc-cli/terminal/session.cpp)
+[Source](../../puc-cli/tui/terminal/session.cpp)
 
 ## Related symbols
 

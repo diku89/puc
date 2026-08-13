@@ -4,7 +4,7 @@
 
 Starts a log line at a compile-time log level.
 
-[LOGGER\_MODULE()](utils_2logger_2logger_8hpp.md#symbol-utils_2logger_2logger_8hpp_1afe144fc32be52607c8eac7e98ecdbc8b) creates one variable-template instance of this class for each log level used by a translation unit.
+[LOGGER\_MODULE()](logger_8hpp.md#symbol-logger_8hpp_1afe144fc32be52607c8eac7e98ecdbc8b) creates one variable-template instance of this class for each log level used by a translation unit.
 
 **Template parameters**
 

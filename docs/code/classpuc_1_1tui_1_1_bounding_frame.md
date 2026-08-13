@@ -6,7 +6,7 @@ Decorates one child [Frame](classpuc_1_1tui_1_1_frame.md) with margins, an optio
 
 Outer margins remain outside the border and can be painted with `outside_box_color` or left untouched. Inner margins remain inside the box and use `inside_color`. Selection and caret positions are translated through both layers before being delegated to the child.
 
-[Source](../../puc-cli/tui/bounding_frame.hpp#L62)
+[Source](../../puc-cli/tui/frames/bounding_frame.hpp#L62)
 
 ## Related symbols
 
@@ -24,7 +24,7 @@ std::unique_ptr<Impl> puc::tui::BoundingFrame::impl_
 
 Hidden synchronized decorator state.
 
-[Source](../../puc-cli/tui/bounding_frame.hpp#L112)
+[Source](../../puc-cli/tui/frames/bounding_frame.hpp#L112)
 
 ## Public functions
 
@@ -38,7 +38,7 @@ puc::tui::BoundingFrame::BoundingFrame(std::string name, std::shared_ptr< Frame 
 
 Construct a configured bounding decorator around a required child.
 
-[Source](../../puc-cli/tui/bounding_frame.hpp#L65)
+[Source](../../puc-cli/tui/frames/bounding_frame.hpp#L65)
 
 <a id="symbol-classpuc_1_1tui_1_1_bounding_frame_1a1dc2846d8328f6937cc48987d1c3ad51"></a>
 
@@ -48,7 +48,7 @@ Construct a configured bounding decorator around a required child.
 puc::tui::BoundingFrame::BoundingFrame(const BoundingFrame &)=delete
 ```
 
-[Source](../../puc-cli/tui/bounding_frame.hpp#L68)
+[Source](../../puc-cli/tui/frames/bounding_frame.hpp#L68)
 
 <a id="symbol-classpuc_1_1tui_1_1_bounding_frame_1aa07be1e86750bf8ef988795b33564313"></a>
 
@@ -58,7 +58,7 @@ puc::tui::BoundingFrame::BoundingFrame(const BoundingFrame &)=delete
 BoundingFrame & puc::tui::BoundingFrame::operator=(const BoundingFrame &)=delete
 ```
 
-[Source](../../puc-cli/tui/bounding_frame.hpp#L69)
+[Source](../../puc-cli/tui/frames/bounding_frame.hpp#L69)
 
 <a id="symbol-classpuc_1_1tui_1_1_bounding_frame_1afc64a27eed565c4c612bd621a898dbdc"></a>
 
@@ -68,7 +68,7 @@ BoundingFrame & puc::tui::BoundingFrame::operator=(const BoundingFrame &)=delete
 puc::tui::BoundingFrame::BoundingFrame(BoundingFrame &&)=delete
 ```
 
-[Source](../../puc-cli/tui/bounding_frame.hpp#L70)
+[Source](../../puc-cli/tui/frames/bounding_frame.hpp#L70)
 
 <a id="symbol-classpuc_1_1tui_1_1_bounding_frame_1abccae61386c2f1a37b57f0730600c86d"></a>
 
@@ -78,7 +78,7 @@ puc::tui::BoundingFrame::BoundingFrame(BoundingFrame &&)=delete
 BoundingFrame & puc::tui::BoundingFrame::operator=(BoundingFrame &&)=delete
 ```
 
-[Source](../../puc-cli/tui/bounding_frame.hpp#L71)
+[Source](../../puc-cli/tui/frames/bounding_frame.hpp#L71)
 
 <a id="symbol-classpuc_1_1tui_1_1_bounding_frame_1aea4f2bb7c2cf588f1c2cbbbf8ca5d401"></a>
 
@@ -90,7 +90,7 @@ puc::tui::BoundingFrame::~BoundingFrame() override
 
 Destroy configuration state and shared child ownership.
 
-[Source](../../puc-cli/tui/bounding_frame.hpp#L74)
+[Source](../../puc-cli/tui/frames/bounding_frame.hpp#L74)
 
 <a id="symbol-classpuc_1_1tui_1_1_bounding_frame_1af1efba6e05e3e62fec224a282e58fe9f"></a>
 
@@ -102,7 +102,7 @@ void puc::tui::BoundingFrame::set_configuration(BoundingFrameConfiguration confi
 
 Atomically replace geometry, colors, and size constraints.
 
-[Source](../../puc-cli/tui/bounding_frame.hpp#L77)
+[Source](../../puc-cli/tui/frames/bounding_frame.hpp#L77)
 
 <a id="symbol-classpuc_1_1tui_1_1_bounding_frame_1a763c9981514bfc5e9ae1226e76d00019"></a>
 
@@ -114,7 +114,7 @@ BoundingFrameConfiguration puc::tui::BoundingFrame::configuration() const
 
 Return a copy of the active configuration.
 
-[Source](../../puc-cli/tui/bounding_frame.hpp#L80)
+[Source](../../puc-cli/tui/frames/bounding_frame.hpp#L80)
 
 <a id="symbol-classpuc_1_1tui_1_1_bounding_frame_1ab5966c781fc83120d01dd2478cd8ab31"></a>
 
@@ -126,7 +126,7 @@ void puc::tui::BoundingFrame::set_size_constraints(FrameSizeConstraints constrai
 
 Replace only the size constraints, preserving geometry and colors.
 
-[Source](../../puc-cli/tui/bounding_frame.hpp#L83)
+[Source](../../puc-cli/tui/frames/bounding_frame.hpp#L83)
 
 <a id="symbol-classpuc_1_1tui_1_1_bounding_frame_1a74c9f8dd0cad5ca61586d47f4e01df2d"></a>
 
@@ -138,7 +138,7 @@ std::optional< Canvas::Rect > puc::tui::BoundingFrame::box_rect(const Canvas::Re
 
 Compute the absolute bordered-box rectangle, if it can exist.
 
-[Source](../../puc-cli/tui/bounding_frame.hpp#L86)
+[Source](../../puc-cli/tui/frames/bounding_frame.hpp#L86)
 
 <a id="symbol-classpuc_1_1tui_1_1_bounding_frame_1afcb29f967bb1327235219cdf66ed4960"></a>
 
@@ -150,7 +150,7 @@ std::optional< Canvas::Rect > puc::tui::BoundingFrame::content_rect(const Canvas
 
 Compute the absolute child rectangle, if every inset can fit.
 
-[Source](../../puc-cli/tui/bounding_frame.hpp#L89)
+[Source](../../puc-cli/tui/frames/bounding_frame.hpp#L89)
 
 <a id="symbol-classpuc_1_1tui_1_1_bounding_frame_1a4f4759a6d3fcda9daf6667806b400e98"></a>
 
@@ -162,7 +162,7 @@ Status puc::tui::BoundingFrame::draw(const Theme &theme, Canvas &canvas, const C
 
 Draw the colored bounding regions and then the child.
 
-[Source](../../puc-cli/tui/bounding_frame.hpp#L92)
+[Source](../../puc-cli/tui/frames/bounding_frame.hpp#L92)
 
 <a id="symbol-classpuc_1_1tui_1_1_bounding_frame_1ae7ba1a1a910878471931777ec85555b7"></a>
 
@@ -174,7 +174,7 @@ bool puc::tui::BoundingFrame::is_selectable() const noexcept override
 
 Return the child [Frame](classpuc_1_1tui_1_1_frame.md)'s selection capability.
 
-[Source](../../puc-cli/tui/bounding_frame.hpp#L96)
+[Source](../../puc-cli/tui/frames/bounding_frame.hpp#L96)
 
 <a id="symbol-classpuc_1_1tui_1_1_bounding_frame_1a1fb886250ecdc5d27e651701acaaab6d"></a>
 
@@ -186,7 +186,7 @@ Status puc::tui::BoundingFrame::update_selection(const SelectionEvent &event) ov
 
 Translate frame-local coordinates and delegate selection.
 
-[Source](../../puc-cli/tui/bounding_frame.hpp#L99)
+[Source](../../puc-cli/tui/frames/bounding_frame.hpp#L99)
 
 <a id="symbol-classpuc_1_1tui_1_1_bounding_frame_1a8f7ed5e07ba37564a67204f3a34f1faa"></a>
 
@@ -198,7 +198,7 @@ Status puc::tui::BoundingFrame::selected_text(std::string &output) const overrid
 
 Delegate selected-text extraction to the child.
 
-[Source](../../puc-cli/tui/bounding_frame.hpp#L102)
+[Source](../../puc-cli/tui/frames/bounding_frame.hpp#L102)
 
 <a id="symbol-classpuc_1_1tui_1_1_bounding_frame_1a4c8efd45ca15dde006f41f0c57f85334"></a>
 
@@ -210,7 +210,7 @@ bool puc::tui::BoundingFrame::accepts_cursor_placement() const noexcept override
 
 Return the child [Frame](classpuc_1_1tui_1_1_frame.md)'s caret-placement capability.
 
-[Source](../../puc-cli/tui/bounding_frame.hpp#L105)
+[Source](../../puc-cli/tui/frames/bounding_frame.hpp#L105)
 
 <a id="symbol-classpuc_1_1tui_1_1_bounding_frame_1adecf66036ececae6e43b90df4ecde832"></a>
 
@@ -222,4 +222,4 @@ Status puc::tui::BoundingFrame::place_cursor(SelectionPosition position) overrid
 
 Translate a frame-local cell and delegate caret placement.
 
-[Source](../../puc-cli/tui/bounding_frame.hpp#L108)
+[Source](../../puc-cli/tui/frames/bounding_frame.hpp#L108)

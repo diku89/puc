@@ -10,7 +10,7 @@ cc_library(
     name = "config",
     srcs = ["config.cpp"],
     hdrs = ["config.hpp"],
-    visibility = ["//visibility:public"],
+    visibility = ["//properties:__pkg__"],
     deps = [
         "//third_party:tomlc17",
         "//utils/logger",

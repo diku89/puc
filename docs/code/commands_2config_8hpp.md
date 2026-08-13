@@ -2,6 +2,12 @@
 
 # File `config.hpp`
 
+Inspect and mutate application-owned properties.
+
+\\command config || View, edit, or reload the configuration. \\subcommand get <full.key.path> || Get the value of a configuration key. \\subcommand set <full.key.path>
+
+|| Set the value of a configuration key. \\subcommand list \[partial.prefix\] || List all configuration keys, optionally filtered by a prefix. \\subcommand reload || Reload all configurations from config files.
+
 [Source](../../commands/config.hpp)
 
 ## Related symbols

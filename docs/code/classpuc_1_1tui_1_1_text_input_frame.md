@@ -6,7 +6,7 @@
 
 It deliberately draws no border and no annotations. Those concerns belong to [BoundingFrame](classpuc_1_1tui_1_1_bounding_frame.md) and [AnnotatedTextFrame](classpuc_1_1tui_1_1_annotated_text_frame.md), allowing the same editor surface to be embedded in input, command, diff, or other application views.
 
-[Source](../../puc-cli/tui/text_input_frame.hpp#L40)
+[Source](../../puc-cli/tui/frames/text_input_frame.hpp#L40)
 
 ## Related symbols
 
@@ -24,7 +24,7 @@ std::unique_ptr<Impl> puc::tui::TextInputFrame::impl_
 
 Hidden synchronized editor and viewport.
 
-[Source](../../puc-cli/tui/text_input_frame.hpp#L103)
+[Source](../../puc-cli/tui/frames/text_input_frame.hpp#L103)
 
 ## Public functions
 
@@ -38,7 +38,7 @@ puc::tui::TextInputFrame::TextInputFrame(std::string name="text input", TextInpu
 
 Construct an empty styled editor.
 
-[Source](../../puc-cli/tui/text_input_frame.hpp#L43)
+[Source](../../puc-cli/tui/frames/text_input_frame.hpp#L43)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_input_frame_1a2fa6d71ce1a45c71d4b92bb32f293e1e"></a>
 
@@ -48,7 +48,7 @@ Construct an empty styled editor.
 puc::tui::TextInputFrame::TextInputFrame(const TextInputFrame &)=delete
 ```
 
-[Source](../../puc-cli/tui/text_input_frame.hpp#L47)
+[Source](../../puc-cli/tui/frames/text_input_frame.hpp#L47)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_input_frame_1adcbb07a411fe2ffadab8b6d60e2d1806"></a>
 
@@ -58,7 +58,7 @@ puc::tui::TextInputFrame::TextInputFrame(const TextInputFrame &)=delete
 TextInputFrame & puc::tui::TextInputFrame::operator=(const TextInputFrame &)=delete
 ```
 
-[Source](../../puc-cli/tui/text_input_frame.hpp#L48)
+[Source](../../puc-cli/tui/frames/text_input_frame.hpp#L48)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_input_frame_1a3787b353f8e2a5367d2151237ebcd363"></a>
 
@@ -68,7 +68,7 @@ TextInputFrame & puc::tui::TextInputFrame::operator=(const TextInputFrame &)=del
 puc::tui::TextInputFrame::TextInputFrame(TextInputFrame &&)=delete
 ```
 
-[Source](../../puc-cli/tui/text_input_frame.hpp#L49)
+[Source](../../puc-cli/tui/frames/text_input_frame.hpp#L49)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_input_frame_1ae75eef5558e2d2a7fdbd3f958e7b79e6"></a>
 
@@ -78,7 +78,7 @@ puc::tui::TextInputFrame::TextInputFrame(TextInputFrame &&)=delete
 TextInputFrame & puc::tui::TextInputFrame::operator=(TextInputFrame &&)=delete
 ```
 
-[Source](../../puc-cli/tui/text_input_frame.hpp#L50)
+[Source](../../puc-cli/tui/frames/text_input_frame.hpp#L50)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_input_frame_1a1419f303cc3563614bb216cb5a06759b"></a>
 
@@ -90,7 +90,7 @@ puc::tui::TextInputFrame::~TextInputFrame() override
 
 Destroy synchronized editor state.
 
-[Source](../../puc-cli/tui/text_input_frame.hpp#L53)
+[Source](../../puc-cli/tui/frames/text_input_frame.hpp#L53)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_input_frame_1a5eff8a756f971a9b0505faf96a468b90"></a>
 
@@ -102,7 +102,7 @@ void puc::tui::TextInputFrame::set_style(TextInputFrameStyle style)
 
 Atomically replace semantic rendering colors.
 
-[Source](../../puc-cli/tui/text_input_frame.hpp#L56)
+[Source](../../puc-cli/tui/frames/text_input_frame.hpp#L56)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_input_frame_1ac59c883906c37d82fae92ed21ee8cde9"></a>
 
@@ -114,7 +114,7 @@ TextInputFrameStyle puc::tui::TextInputFrame::style() const
 
 Return a copy of the active rendering style.
 
-[Source](../../puc-cli/tui/text_input_frame.hpp#L59)
+[Source](../../puc-cli/tui/frames/text_input_frame.hpp#L59)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_input_frame_1a5ac901bf6cc7c1281eb9e9ac8403582e"></a>
 
@@ -126,7 +126,7 @@ Status puc::tui::TextInputFrame::handle_event(const terminal::Event &event)
 
 Apply one normalized terminal event to the editor.
 
-[Source](../../puc-cli/tui/text_input_frame.hpp#L62)
+[Source](../../puc-cli/tui/frames/text_input_frame.hpp#L62)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_input_frame_1ac7665f5b84a85593779e4646c39af6b1"></a>
 
@@ -138,7 +138,7 @@ void puc::tui::TextInputFrame::clear()
 
 Clear text and all derived interaction state.
 
-[Source](../../puc-cli/tui/text_input_frame.hpp#L65)
+[Source](../../puc-cli/tui/frames/text_input_frame.hpp#L65)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_input_frame_1a29613d03853178ee135c6591e060c8cb"></a>
 
@@ -150,7 +150,7 @@ void puc::tui::TextInputFrame::set_fallback_width(std::size_t width)
 
 Change the pre-layout word-wrap width.
 
-[Source](../../puc-cli/tui/text_input_frame.hpp#L68)
+[Source](../../puc-cli/tui/frames/text_input_frame.hpp#L68)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_input_frame_1a0c838c3bbcb0e911c59ee4a7af660a35"></a>
 
@@ -162,7 +162,7 @@ TextEditorSnapshot puc::tui::TextInputFrame::snapshot() const
 
 Return a consistent copy of editor state.
 
-[Source](../../puc-cli/tui/text_input_frame.hpp#L71)
+[Source](../../puc-cli/tui/frames/text_input_frame.hpp#L71)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_input_frame_1a3506ad8661df7e0e72de42eb58d90e1e"></a>
 
@@ -174,7 +174,7 @@ std::size_t puc::tui::TextInputFrame::preferred_rows(std::size_t width) const
 
 Return the wrapped-row count at an explicit content width.
 
-[Source](../../puc-cli/tui/text_input_frame.hpp#L74)
+[Source](../../puc-cli/tui/frames/text_input_frame.hpp#L74)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_input_frame_1acfe8e20852b0a04c6b38198616484861"></a>
 
@@ -186,7 +186,7 @@ Status puc::tui::TextInputFrame::draw(const Theme &theme, Canvas &canvas, const 
 
 Draw text, selection, and caret into the exact assigned rectangle.
 
-[Source](../../puc-cli/tui/text_input_frame.hpp#L77)
+[Source](../../puc-cli/tui/frames/text_input_frame.hpp#L77)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_input_frame_1adab29d14f23dcdb930fd809488421025"></a>
 
@@ -198,7 +198,7 @@ bool puc::tui::TextInputFrame::is_selectable() const noexcept override
 
 Text input always participates in logical selection.
 
-[Source](../../puc-cli/tui/text_input_frame.hpp#L81)
+[Source](../../puc-cli/tui/frames/text_input_frame.hpp#L81)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_input_frame_1abd0c65d8e87fcab865e3f59cca1e5205"></a>
 
@@ -210,7 +210,7 @@ Status puc::tui::TextInputFrame::update_selection(const SelectionEvent &event) o
 
 Apply a drag, word, line, all-text, or reset operation.
 
-[Source](../../puc-cli/tui/text_input_frame.hpp#L84)
+[Source](../../puc-cli/tui/frames/text_input_frame.hpp#L84)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_input_frame_1a4e02ee74ba389e5dedb800689343e604"></a>
 
@@ -222,7 +222,7 @@ Status puc::tui::TextInputFrame::selected_text(std::string &output) const overri
 
 Extract selected logical UTF-8 text.
 
-[Source](../../puc-cli/tui/text_input_frame.hpp#L87)
+[Source](../../puc-cli/tui/frames/text_input_frame.hpp#L87)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_input_frame_1a92deccc0903c76a4a01a39c8004daa21"></a>
 
@@ -234,7 +234,7 @@ bool puc::tui::TextInputFrame::accepts_cursor_placement() const noexcept overrid
 
 Text input accepts stationary-click caret placement.
 
-[Source](../../puc-cli/tui/text_input_frame.hpp#L90)
+[Source](../../puc-cli/tui/frames/text_input_frame.hpp#L90)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_input_frame_1a391628b562c9a551712ff48588449bde"></a>
 
@@ -246,7 +246,7 @@ Status puc::tui::TextInputFrame::place_cursor(SelectionPosition position) overri
 
 Place the caret at one frame-local visible cell.
 
-[Source](../../puc-cli/tui/text_input_frame.hpp#L93)
+[Source](../../puc-cli/tui/frames/text_input_frame.hpp#L93)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_input_frame_1a6c22777c3bf468e37dfe006591c65ec9"></a>
 
@@ -258,7 +258,7 @@ std::size_t puc::tui::TextInputFrame::logical_line_count() const noexcept overri
 
 Return zero for pristine input, otherwise the logical line count.
 
-[Source](../../puc-cli/tui/text_input_frame.hpp#L96)
+[Source](../../puc-cli/tui/frames/text_input_frame.hpp#L96)
 
 <a id="symbol-classpuc_1_1tui_1_1_text_input_frame_1a0f9a61ced6aba4711411a9bb568f5b11"></a>
 
@@ -270,4 +270,4 @@ std::vector< AnnotatedTextRow > puc::tui::TextInputFrame::visible_text_rows() co
 
 Return rows visible during the most recent successful draw.
 
-[Source](../../puc-cli/tui/text_input_frame.hpp#L99)
+[Source](../../puc-cli/tui/frames/text_input_frame.hpp#L99)

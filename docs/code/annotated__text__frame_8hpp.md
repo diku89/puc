@@ -4,7 +4,7 @@
 
 Text-frame decorator for line numbers and per-line status markers.
 
-[Source](../../puc-cli/tui/annotated_text_frame.hpp)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.hpp)
 
 ## Related symbols
 

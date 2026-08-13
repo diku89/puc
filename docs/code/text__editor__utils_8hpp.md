@@ -4,7 +4,7 @@
 
 Reusable UTF-8 text editing, navigation, wrapping, and selection.
 
-[Source](../../puc-cli/tui/text_editor_utils.hpp)
+[Source](../../puc-cli/tui/text_input/text_editor_utils.hpp)
 
 ## Related symbols
 

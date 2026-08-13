@@ -4,7 +4,7 @@
 
 Constraint-based frame placement and ordered TUI composition.
 
-[Source](../../puc-cli/tui/layout.hpp)
+[Source](../../puc-cli/tui/rendering/layout.hpp)
 
 ## Related symbols
 

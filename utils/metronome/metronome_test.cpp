@@ -19,6 +19,7 @@
 #include "utils/ipc/directory.hpp"
 #include "utils/ipc/smem_channel.hpp"
 #include "utils/multithreading/job_queue.hpp"
+#include "utils/timer/scheduler.hpp"
 
 namespace puc::metronome {
 namespace {
@@ -44,7 +45,8 @@ TEST(StatusTest, ReportsStableHumanReadableResults) {
 TEST(MetronomeTest, RegistersAndRemovesTheCanonicalChannel) {
   multithreading::JobQueue workers(2U);
   ipc::Directory directory(workers);
-  Metronome metronome(directory, workers);
+  timer::Scheduler scheduler(workers);
+  Metronome metronome(directory, scheduler);
 
   EXPECT_EQ(directory.get_channel(kOneHertzChannel), nullptr);
   ASSERT_EQ(metronome.start(), Status::OK);
@@ -63,7 +65,8 @@ TEST(MetronomeTest, RegistersAndRemovesTheCanonicalChannel) {
 TEST(MetronomeTest, PublishesAValidNullMessageAfterOneSecond) {
   multithreading::JobQueue workers(2U);
   ipc::Directory directory(workers);
-  Metronome metronome(directory, workers);
+  timer::Scheduler scheduler(workers);
+  Metronome metronome(directory, scheduler);
   ASSERT_EQ(metronome.start(), Status::OK);
 
   std::mutex mutex;
@@ -101,12 +104,13 @@ TEST(MetronomeTest, PublishesAValidNullMessageAfterOneSecond) {
 TEST(MetronomeTest, ReportsAConflictingChannelWithoutTakingOwnership) {
   multithreading::JobQueue workers;
   ipc::Directory directory(workers);
+  timer::Scheduler scheduler(workers);
   auto existing =
       std::make_shared<ipc::SmemChannel>(std::string{kOneHertzChannel}, 1U);
   ipc::ChannelId channel_id = 0U;
   ASSERT_EQ(directory.open_channel(existing, channel_id), ipc::Status::OK);
 
-  Metronome metronome(directory, workers);
+  Metronome metronome(directory, scheduler);
   EXPECT_EQ(metronome.start(), Status::CHANNEL_SETUP_FAILED);
   EXPECT_FALSE(metronome.running());
   EXPECT_EQ(directory.get_channel(kOneHertzChannel), existing);
@@ -116,8 +120,9 @@ TEST(MetronomeTest, ReportsAConflictingChannelWithoutTakingOwnership) {
 TEST(MetronomeTest, DestructionCancelsTheJobAndRemovesTheChannel) {
   multithreading::JobQueue workers;
   ipc::Directory directory(workers);
+  timer::Scheduler scheduler(workers);
   {
-    Metronome metronome(directory, workers);
+    Metronome metronome(directory, scheduler);
     ASSERT_EQ(metronome.start(), Status::OK);
     ASSERT_NE(directory.get_channel(kOneHertzChannel), nullptr);
   }

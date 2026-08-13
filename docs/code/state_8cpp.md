@@ -4,7 +4,7 @@
 
 Dependency-aware application subsystem lifecycle implementation.
 
-[Source](../../puc-cli/state/state.cpp)
+[Source](../../state/state.cpp)
 
 ## Related symbols
 

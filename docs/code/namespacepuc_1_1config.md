@@ -2,7 +2,7 @@
 
 # Namespace `puc::config`
 
-[Source](../../puc-cli/state/configuration.hpp#L13)
+[Source](../../utils/config/config.cpp#L27)
 
 ## Related symbols
 

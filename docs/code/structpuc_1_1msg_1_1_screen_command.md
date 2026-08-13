@@ -6,7 +6,7 @@ One ordered, fire-and-forget operation sent from Screen to TerminalSession.
 
 Commands intentionally contain no request identifier: the protocol has no completion or error reply. Recoverable terminal observations converge on a later command; an unrecoverable session failure terminates the process.
 
-**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000010):**
+**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000011):**
 
 **Kind:** Message  
 **Type:** [puc::msg::ScreenCommand](#)  
@@ -14,7 +14,7 @@ Commands intentionally contain no request identifier: the protocol has no comple
 **Producers:** [Screen](classpuc_1_1tui_1_1_screen.md).  
 **Consumers:** [TerminalSession](classpuc_1_1terminal_1_1_terminal_session.md).
 
-[Source](../../msgs/screen_msgs.hpp#L120)
+[Source](../../msgs/screen_msgs.hpp#L95)
 
 ## Public types
 
@@ -28,7 +28,7 @@ using puc::msg::ScreenCommand::Data = std::variant<ScreenTakeCommand, ScreenRele
 
 Supported command alternatives.
 
-[Source](../../msgs/screen_msgs.hpp#L121)
+[Source](../../msgs/screen_msgs.hpp#L96)
 
 ## Public data members
 
@@ -42,7 +42,7 @@ Data puc::msg::ScreenCommand::data
 
 Concrete operation carried by this command.
 
-[Source](../../msgs/screen_msgs.hpp#L126)
+[Source](../../msgs/screen_msgs.hpp#L101)
 
 ## Public functions
 
@@ -56,4 +56,4 @@ bool puc::msg::ScreenCommand::operator==(const ScreenCommand &) const =default
 
 Compare command alternatives and their complete contents.
 
-[Source](../../msgs/screen_msgs.hpp#L129)
+[Source](../../msgs/screen_msgs.hpp#L104)

@@ -4,7 +4,7 @@
 
 Line-number and status-gutter decorator implementation.
 
-[Source](../../puc-cli/tui/annotated_text_frame.cpp)
+[Source](../../puc-cli/tui/frames/annotated_text_frame.cpp)
 
 ## Related symbols
 

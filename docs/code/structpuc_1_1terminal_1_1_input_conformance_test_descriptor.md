@@ -4,7 +4,7 @@
 
 Immutable metadata shared by CLI listing, rendering, and reports.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L40)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_runner.hpp#L40)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ InputConformanceTest puc::terminal::InputConformanceTestDescriptor::test
 
 Stable id.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L41)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_runner.hpp#L41)
 
 <a id="symbol-structpuc_1_1terminal_1_1_input_conformance_test_descriptor_1ad51ab7785d6202ecbd02da87b88f0289"></a>
 
@@ -30,7 +30,7 @@ std::string_view puc::terminal::InputConformanceTestDescriptor::cli_name
 
 Kebab-case `--test` argument.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L42)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_runner.hpp#L42)
 
 <a id="symbol-structpuc_1_1terminal_1_1_input_conformance_test_descriptor_1a0191c2c3225bd6454d38b4d9c362f231"></a>
 
@@ -42,7 +42,7 @@ std::string_view puc::terminal::InputConformanceTestDescriptor::name
 
 Human-readable short label.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L43)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_runner.hpp#L43)
 
 <a id="symbol-structpuc_1_1terminal_1_1_input_conformance_test_descriptor_1a5ee1999d03a78afa47443399b5cf36b7"></a>
 
@@ -54,7 +54,7 @@ std::string_view puc::terminal::InputConformanceTestDescriptor::instruction
 
 Operator action required to pass.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L44)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_runner.hpp#L44)
 
 ## Public functions
 
@@ -68,4 +68,4 @@ bool puc::terminal::InputConformanceTestDescriptor::operator==(const InputConfor
 
 Compare every metadata field.
 
-[Source](../../puc-cli/terminal/terminal_test_runner.hpp#L47)
+[Source](../../puc-cli/test_apps/terminal/terminal_test_runner.hpp#L47)
