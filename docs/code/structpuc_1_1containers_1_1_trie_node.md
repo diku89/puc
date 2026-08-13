@@ -11,7 +11,7 @@ Each child is an index into the owning trie's node array. Index zero is the sent
 - `KeyType` — Element type used to form lookup sequences.
 - `ValueType` — Value stored directly at complete sequences.
 
-[Source](../../utils/containers/trie.hpp#L52)
+[Source](../../utils/containers/trie.hpp#L54)
 
 ## Public data members
 
@@ -25,7 +25,7 @@ KeyType puc::containers::TrieNode< KeyType, ValueType >::key
 
 Key labeling the edge from the parent to this node.
 
-[Source](../../utils/containers/trie.hpp#L53)
+[Source](../../utils/containers/trie.hpp#L55)
 
 <a id="symbol-structpuc_1_1containers_1_1_trie_node_1ad70009f63f024b4affb1280120b18ef1"></a>
 
@@ -35,9 +35,9 @@ Key labeling the edge from the parent to this node.
 std::vector<std::size_t> puc::containers::TrieNode< KeyType, ValueType >::children
 ```
 
-Child indexes in the owning trie.
+Child indexes sorted by their nodes' keys.
 
-[Source](../../utils/containers/trie.hpp#L54)
+[Source](../../utils/containers/trie.hpp#L57)
 
 <a id="symbol-structpuc_1_1containers_1_1_trie_node_1a95ac2fd7f1f7b2a00fd2acf425dddc44"></a>
 
@@ -49,7 +49,7 @@ bool puc::containers::TrieNode< KeyType, ValueType >::sequence_end
 
 Whether this node is an exact match.
 
-[Source](../../utils/containers/trie.hpp#L55)
+[Source](../../utils/containers/trie.hpp#L58)
 
 <a id="symbol-structpuc_1_1containers_1_1_trie_node_1a1404b449047c37038b3f4c4f8f79fdd1"></a>
 
@@ -61,4 +61,4 @@ ValueType puc::containers::TrieNode< KeyType, ValueType >::value
 
 Value meaningful when `sequence_end` is true.
 
-[Source](../../utils/containers/trie.hpp#L56)
+[Source](../../utils/containers/trie.hpp#L59)

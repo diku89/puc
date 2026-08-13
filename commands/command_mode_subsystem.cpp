@@ -239,7 +239,9 @@ void CommandModeSubsystem::refresh_help() {
                : std::string{};
   if (!usage_.empty()) {
     input_frame_->set_command_usage(usage_rows(usage_));
-  } else if (completions_.size() > 1U) {
+  } else if (!completions_.empty() &&
+             (completions_.size() > 1U ||
+              completions_.front().command != prefix_)) {
     std::vector<tui::CmdCompletion> presented;
     presented.reserve(completions_.size());
     for (std::size_t index = 0U; index < completions_.size(); ++index) {

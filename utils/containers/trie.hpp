@@ -5,6 +5,7 @@
  * @brief Contiguous, allocation-free-lookup trie for key-sequence matching.
  */
 
+#include <algorithm>
 #include <concepts>
 #include <cstddef>
 #include <limits>
@@ -18,12 +19,13 @@ namespace containers {
  * Key type accepted by Trie.
  *
  * Trie keys must support default construction for the sentinel root, copying
- * when a new node is appended, and equality comparison during traversal.
+ * when a new node is appended, and total ordering so every child list remains
+ * sorted for lookup and deterministic traversal.
  *
  * @tparam Type Candidate key type.
  */
 template <typename Type>
-concept TrieKey = std::regular<Type>;
+concept TrieKey = std::regular<Type> && std::totally_ordered<Type>;
 
 /**
  * Value type accepted by Trie.
@@ -51,7 +53,8 @@ concept TrieValue = std::default_initializable<Type> && std::movable<Type>;
 template <TrieKey KeyType, TrieValue ValueType>
 struct TrieNode {
   KeyType key{}; /**< Key labeling the edge from the parent to this node. */
-  std::vector<std::size_t> children; /**< Child indexes in the owning trie. */
+  std::vector<std::size_t>
+      children;              /**< Child indexes sorted by their nodes' keys. */
   bool sequence_end = false; /**< Whether this node is an exact match. */
   ValueType value{}; /**< Value meaningful when `sequence_end` is true. */
 };
@@ -64,12 +67,18 @@ struct TrieNode {
  * reallocates the node vector. References and pointers returned for inspection
  * remain valid only until the next insertion.
  *
+ * Each node's child-index vector is kept in ascending key order when a missing
+ * edge is inserted. `find_child()` scans lists of at most
+ * `kLinearSearchMaximumChildren` entries and uses binary search for larger
+ * fan-outs. Completion traversal consequently produces lexicographic results
+ * without sorting during lookup.
+ *
  * The caller is responsible for synchronization when a trie is accessed from
  * multiple threads. Exact lookup methods perform no dynamic allocation or
  * mutation; completion lookup allocates only its returned key sequences. Node
  * and child-vector growth occur only during `insert()`.
  *
- * @tparam KeyType Regular sequence element supporting equality comparison.
+ * @tparam KeyType Regular, totally ordered sequence element.
  * @tparam ValueType Default-initializable, movable directly stored value.
  */
 template <TrieKey KeyType, TrieValue ValueType>
@@ -84,6 +93,8 @@ class Trie {
   static constexpr NodeIndex kRootNode = 0; /**< Sentinel root node index. */
   static constexpr NodeIndex kInvalidNode =
       std::numeric_limits<NodeIndex>::max(); /**< Missing-node result. */
+  /** Largest child list searched linearly before lookup uses binary search. */
+  static constexpr std::size_t kLinearSearchMaximumChildren = 8U;
 
   /** Construct an empty trie containing only its sentinel root. */
   Trie() { nodes_.emplace_back(); }
@@ -160,6 +171,10 @@ class Trie {
   /**
    * Find one direct child without allocating or modifying the trie.
    *
+   * Small child lists use a linear scan; lists above
+   * `kLinearSearchMaximumChildren` use binary search over their insertion-time
+   * ordering.
+   *
    * @param[in] node_index Parent node index.
    * @param[in] key Key to match against the parent's children.
    * @return Matching child index, or `kInvalidNode` when absent or invalid.
@@ -168,12 +183,25 @@ class Trie {
     if (node_index >= nodes_.size()) {
       return kInvalidNode;
     }
-    for (const NodeIndex child_index : nodes_[node_index].children) {
-      if (nodes_[child_index].key == key) {
-        return child_index;
+
+    const std::vector<NodeIndex>& children = nodes_[node_index].children;
+    if (children.size() <= kLinearSearchMaximumChildren) {
+      for (const NodeIndex child_index : children) {
+        if (nodes_[child_index].key == key) {
+          return child_index;
+        }
       }
+      return kInvalidNode;
     }
-    return kInvalidNode;
+
+    const auto candidate = std::lower_bound(
+        children.begin(), children.end(), key,
+        [this](NodeIndex child_index, const KeyType& sought_key) {
+          return nodes_[child_index].key < sought_key;
+        });
+    return candidate != children.end() && nodes_[*candidate].key == key
+               ? *candidate
+               : kInvalidNode;
   }
 
   /**
@@ -181,6 +209,7 @@ class Trie {
    *
    * Missing nodes are appended in traversal order. Existing prefix and
    * descendant indexes remain unchanged when a value is inserted or replaced.
+   * Each missing edge is placed into its parent's sorted child-index vector.
    *
    * @param[in] key_sequence Sequence to store; an empty sequence selects root.
    * @param[in] value Value moved into the sequence's terminal node.
@@ -193,8 +222,14 @@ class Trie {
       if (child == kInvalidNode) {
         child = nodes_.size();
         nodes_.emplace_back();
-        nodes_.back().key = key;
-        nodes_[current].children.push_back(child);
+        nodes_.back().key                = key;
+        std::vector<NodeIndex>& children = nodes_[current].children;
+        const auto position              = std::lower_bound(
+            children.begin(), children.end(), key,
+            [this](NodeIndex child_index, const KeyType& inserted_key) {
+              return nodes_[child_index].key < inserted_key;
+            });
+        children.insert(position, child);
       }
       current = child;
     }
@@ -240,8 +275,8 @@ class Trie {
   /**
    * Return every stored sequence beginning with a prefix.
    *
-   * Results are complete sequences from the root, ordered by the insertion
-   * order of each traversed branch. An exact prefix is included when it is a
+   * Results are complete sequences from the root in lexicographic key order,
+   * independent of insertion order. An exact prefix is included when it is a
    * stored sequence, followed by any longer descendants. An empty prefix
    * enumerates the entire trie, including the empty sequence when one was
    * inserted.
@@ -264,7 +299,7 @@ class Trie {
   }
 
  private:
-  /** Append terminal descendants of one valid node in branch order. */
+  /** Append terminal descendants of one valid node in sorted branch order. */
   void collect_completions(
       NodeIndex node_index, std::vector<KeyType>& current_sequence,
       std::vector<std::vector<KeyType>>& completions) const {

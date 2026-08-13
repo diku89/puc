@@ -528,10 +528,46 @@ TEST(CommandModeAdapterTest,
   ASSERT_EQ(command_mode->handle_event(terminal::Event{terminal::CommandEvent{
                 .command = terminal::Command::ENTER_COMMAND_MODE}}),
             tui::Status::OK);
+  CommandModeSnapshot snapshot = command_mode->snapshot();
+  std::vector<std::string> command_names;
+  command_names.reserve(snapshot.completions.size());
+  for (const CommandCompletion& completion : snapshot.completions) {
+    command_names.push_back(completion.command);
+  }
+  EXPECT_EQ(command_names,
+            (std::vector<std::string>{"config", "exit", "q", "quit", "start",
+                                      "status"}));
+
+  ASSERT_EQ(command_mode->handle_event(
+                terminal::Event{terminal::TextEvent{.utf8 = "e"}}),
+            tui::Status::OK);
+  snapshot = command_mode->snapshot();
+  ASSERT_EQ(snapshot.completions.size(), 1U);
+  EXPECT_EQ(snapshot.completions.front().command, "exit");
+  EXPECT_EQ(input->input_frame()->snapshot().command_help,
+            (std::vector<std::string>{"> exit        Quit puc."}));
+
+  ASSERT_EQ(command_mode->handle_event(terminal::Event{terminal::KeyEvent{
+                .key = terminal::KeyCode{terminal::NamedKey::BACKSPACE}}}),
+            tui::Status::OK);
+  ASSERT_EQ(command_mode->handle_event(
+                terminal::Event{terminal::TextEvent{.utf8 = "qu"}}),
+            tui::Status::OK);
+  snapshot = command_mode->snapshot();
+  ASSERT_EQ(snapshot.completions.size(), 1U);
+  EXPECT_EQ(snapshot.completions.front().command, "quit");
+  EXPECT_EQ(input->input_frame()->snapshot().command_help,
+            (std::vector<std::string>{"> quit        Quit puc."}));
+
+  for (std::size_t index = 0U; index < 2U; ++index) {
+    ASSERT_EQ(command_mode->handle_event(terminal::Event{terminal::KeyEvent{
+                  .key = terminal::KeyCode{terminal::NamedKey::BACKSPACE}}}),
+              tui::Status::OK);
+  }
   ASSERT_EQ(command_mode->handle_event(
                 terminal::Event{terminal::TextEvent{.utf8 = "st"}}),
             tui::Status::OK);
-  CommandModeSnapshot snapshot = command_mode->snapshot();
+  snapshot = command_mode->snapshot();
   ASSERT_EQ(snapshot.completions.size(), 2U);
   EXPECT_EQ(input->input_frame()->snapshot().command_help.size(), 2U);
 

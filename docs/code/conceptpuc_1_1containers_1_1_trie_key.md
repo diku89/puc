@@ -4,10 +4,10 @@
 
 Key type accepted by Trie.
 
-Trie keys must support default construction for the sentinel root, copying when a new node is appended, and equality comparison during traversal.
+Trie keys must support default construction for the sentinel root, copying when a new node is appended, and total ordering so every child list remains sorted for lookup and deterministic traversal.
 
 **Template parameters**
 
 - `Type` — Candidate key type.
 
-[Source](../../utils/containers/trie.hpp#L26)
+[Source](../../utils/containers/trie.hpp#L28)

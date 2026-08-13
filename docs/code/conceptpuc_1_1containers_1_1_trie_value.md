@@ -10,4 +10,4 @@ Values are stored directly in every node. A caller that wants indirect or shared
 
 - `Type` — Candidate value type.
 
-[Source](../../utils/containers/trie.hpp#L38)
+[Source](../../utils/containers/trie.hpp#L40)
