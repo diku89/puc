@@ -483,6 +483,7 @@
 - [`puc::tui::Canvas::Cell`](structpuc_1_1tui_1_1_canvas_1_1_cell.md)
 - [`puc::tui::Canvas::Rect`](structpuc_1_1tui_1_1_canvas_1_1_rect.md)
 - [`puc::tui::CellDimensions`](structpuc_1_1tui_1_1_cell_dimensions.md)
+- [`puc::tui::CmdCompletion`](structpuc_1_1tui_1_1_cmd_completion.md)
 - [`puc::tui::FrameMargins`](structpuc_1_1tui_1_1_frame_margins.md)
 - [`puc::tui::FrameSizeConstraints`](structpuc_1_1tui_1_1_frame_size_constraints.md)
 - [`puc::tui::InputFrameSnapshot`](structpuc_1_1tui_1_1_input_frame_snapshot.md)

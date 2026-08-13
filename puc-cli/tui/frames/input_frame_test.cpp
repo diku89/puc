@@ -436,6 +436,55 @@ TEST(InputFrameTerminalModeTest,
 }
 
 TEST(InputFrameTerminalModeTest,
+     EscapeGreaterThanFallbackAlsoTransitionsFromCommandMode) {
+  InputFrame frame;
+  const auto start = InputFrame::Clock::time_point{} + 1s;
+  command(frame, terminal::Command::ENTER_COMMAND_MODE, start);
+  type(frame, "qu", start + 1ms);
+  key(frame, terminal::NamedKey::ESCAPE, {}, start + 2ms);
+  type(frame, ">", start + 3ms);
+
+  const InputFrameSnapshot state = frame.snapshot();
+  EXPECT_EQ(state.mode, InputMode::TERMINAL);
+  EXPECT_EQ(state.command_text, "qu");
+  EXPECT_TRUE(state.terminal_session_active);
+  EXPECT_FALSE(state.escape_armed);
+}
+
+TEST(InputFrameTerminalModeTest,
+     DoubleEscapeReturnsToInputWithoutClosingThePersistentSession) {
+  InputFrame frame;
+  const auto start = InputFrame::Clock::time_point{} + 1s;
+  type(frame, "preserved", start);
+  command(frame, terminal::Command::ENTER_TERMINAL_MODE, start + 1ms);
+  const std::size_t generation = frame.snapshot().terminal_generation;
+
+  key(frame, terminal::NamedKey::ESCAPE, {}, start + 2ms);
+  EXPECT_EQ(frame.snapshot().mode, InputMode::TERMINAL);
+  EXPECT_TRUE(frame.snapshot().escape_armed);
+  key(frame, terminal::NamedKey::ESCAPE, {}, start + 3ms);
+
+  const InputFrameSnapshot state = frame.snapshot();
+  EXPECT_EQ(state.mode, InputMode::NORMAL);
+  EXPECT_EQ(state.input_text, "preserved");
+  EXPECT_TRUE(state.terminal_session_active);
+  EXPECT_EQ(state.terminal_generation, generation);
+  EXPECT_FALSE(state.escape_armed);
+  EXPECT_EQ(frame.minimum_height(), InputFrame::kMinimumHeight);
+}
+
+TEST(InputFrameTerminalModeTest,
+     DecoderNormalizedDoubleEscapeReturnsDirectlyToInput) {
+  InputFrame frame;
+  command(frame, terminal::Command::ENTER_TERMINAL_MODE);
+  key(frame, terminal::NamedKey::ESCAPE,
+      terminal::Modifiers{terminal::Modifier::ALT});
+
+  EXPECT_EQ(frame.snapshot().mode, InputMode::NORMAL);
+  EXPECT_TRUE(frame.snapshot().terminal_session_active);
+}
+
+TEST(InputFrameTerminalModeTest,
      CloseReturnsToPreservedNormalAndTheNextOpenStartsANewGeneration) {
   InputFrame frame;
   type(frame, "preserved");
@@ -763,6 +812,29 @@ TEST(InputFrameRenderingTest, CommandModeMakesBorderTextAndCursorGreen) {
   EXPECT_EQ(at(canvas, 0U, rect.y + 1U).foreground_color, 6U);
   EXPECT_EQ(at(canvas, 4U, rect.y + 2U).foreground_color, 6U);
   EXPECT_EQ(at(canvas, 5U, rect.y + 2U).background_color, 6U);
+}
+
+TEST(InputFrameRenderingTest,
+     CommandHelpExpandsPastTheNormalEditorCapAndShowsEveryAlias) {
+  const Theme theme = input_theme();
+  Canvas canvas(80U, 25U);
+  InputFrame frame;
+  command(frame, terminal::Command::ENTER_COMMAND_MODE);
+  frame.set_command_completions(
+      "",
+      {
+          CmdCompletion{.command = "q", .description = "Quit puc."},
+          CmdCompletion{.command = "quit", .description = "Quit puc."},
+          CmdCompletion{.command = "exit", .description = "Quit puc."},
+          CmdCompletion{.command     = "config",
+                        .description = "View the configuration."},
+      },
+      0U);
+
+  EXPECT_EQ(frame.preferred_height(80U, 25U), 9U);
+  const Canvas::Rect rect = draw(frame, canvas, theme, 9U);
+  EXPECT_EQ(at(canvas, 4U, rect.y + 2U).character, U'e');
+  EXPECT_EQ(frame.snapshot().command_help.size(), 4U);
 }
 
 TEST(InputFrameRenderingTest, HundredthLogicalLineExpandsTheGutter) {

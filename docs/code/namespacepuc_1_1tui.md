@@ -17,6 +17,7 @@ Terminal user-interface primitives, layout, rendering, and terminal control.
 - [puc::tui::BoundingFrameConfiguration](structpuc_1_1tui_1_1_bounding_frame_configuration.md)
 - [puc::tui::Canvas](classpuc_1_1tui_1_1_canvas.md)
 - [puc::tui::CellDimensions](structpuc_1_1tui_1_1_cell_dimensions.md)
+- [puc::tui::CmdCompletion](structpuc_1_1tui_1_1_cmd_completion.md)
 - [puc::tui::CmdFrame](classpuc_1_1tui_1_1_cmd_frame.md)
 - [puc::tui::Frame](classpuc_1_1tui_1_1_frame.md)
 - [puc::tui::FrameMargins](structpuc_1_1tui_1_1_frame_margins.md)
@@ -64,7 +65,7 @@ Surface currently occupying the inner input frame.
 - <a id="symbol-namespacepuc_1_1tui_1a934fae8d8b59ef801802451dd8a56d86a26097a57f572fe88a7cdf80543422cb1"></a>`COMMAND` — Edit the temporary green command buffer.
 - <a id="symbol-namespacepuc_1_1tui_1a934fae8d8b59ef801802451dd8a56d86a6c7748bd0ad3fbdff996e81581ad64d6"></a>`TERMINAL` — Render the persistent libtmt virtual-terminal surface.
 
-[Source](../../puc-cli/tui/frames/input_frame.hpp#L22)
+[Source](../../puc-cli/tui/frames/input_frame.hpp#L23)
 
 <a id="symbol-namespacepuc_1_1tui_1a6ec6e7ef6f90768da3386622a10eb37c"></a>
 
@@ -157,7 +158,7 @@ using puc::tui::InputCursor = TextCursor
 
 Backward-compatible name for the shared reusable editor caret type.
 
-[Source](../../puc-cli/tui/frames/input_frame.hpp#L29)
+[Source](../../puc-cli/tui/frames/input_frame.hpp#L30)
 
 ## Variables
 

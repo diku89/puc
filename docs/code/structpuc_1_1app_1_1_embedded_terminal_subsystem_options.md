@@ -16,6 +16,6 @@ Stable launch policy retained across embedded-terminal generations.
 std::string puc::app::EmbeddedTerminalSubsystemOptions::shell
 ```
 
-Interactive shell executable.
+Interactive shell executable, or empty to use the user's configured login shell with `/bin/sh` as the final portability fallback.
 
-[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.hpp#L24)
+[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.hpp#L28)

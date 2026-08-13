@@ -60,8 +60,8 @@ constexpr std::string_view kInputFrameId = "input";
 constexpr std::string_view kScreenTooSmall =
     "Input frame needs at least 40 columns (terminal mode needs 6 rows)";
 constexpr std::string_view kNotification =
-    "Enter reserved | Shift+Enter newline | Esc Esc clear | Esc+: command | "
-    "Esc+> terminal | mouse selects | Ctrl+C quits";
+    "Enter reserved | Shift+Enter newline | Esc Esc clears/returns | Esc+: "
+    "command | Esc+> terminal | mouse selects | Ctrl+C quits";
 
 Canvas::Cell cell(char32_t character, std::uint32_t foreground,
                   std::uint32_t background) {
@@ -331,7 +331,8 @@ class InputTestApplication final {
   }
 
   bool route_event(const terminal::Event& event) {
-    const tui::InputMode mode = input_frame_->snapshot().mode;
+    const tui::InputMode mode  = input_frame_->snapshot().mode;
+    bool input_already_handled = false;
     if (mode == tui::InputMode::TERMINAL) {
       const auto* command = std::get_if<terminal::CommandEvent>(&event);
       const bool frame_command =
@@ -342,6 +343,16 @@ class InputTestApplication final {
           command != nullptr &&
           (command->command == terminal::Command::COPY ||
            command->command == terminal::Command::SELECT_ALL);
+
+      const tui::Status input_status =
+          command_mode_->handle_event(event, InputFrame::Clock::now());
+      if (!tui::is_ok(input_status)) {
+        return false;
+      }
+      input_already_handled = true;
+      if (input_frame_->snapshot().mode != tui::InputMode::TERMINAL) {
+        return true;
+      }
       if (!frame_command && !selection_command &&
           !std::holds_alternative<terminal::MouseEvent>(event) &&
           !std::holds_alternative<terminal::ScrollEvent>(event)) {
@@ -372,6 +383,9 @@ class InputTestApplication final {
       }
     }
 
+    if (input_already_handled) {
+      return true;
+    }
     return tui::is_ok(
         command_mode_->handle_event(event, InputFrame::Clock::now()));
   }

@@ -6,11 +6,25 @@ Command-mode editor with its own buffer, annotations, and green visual role.
 
 [CmdFrame](#) intentionally owns a [TextInputFrame](classpuc_1_1tui_1_1_text_input_frame.md) rather than sharing the normal draft. Entering command mode can therefore clear this view without touching preserved application input.
 
-[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L25)
+[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L33)
 
 ## Related symbols
 
 - [puc::tui::CmdFrame::Impl](classpuc_1_1tui_1_1_cmd_frame_1_1_impl.md)
+
+## Public static data members
+
+<a id="symbol-classpuc_1_1tui_1_1_cmd_frame_1afa515282ecfd0be07243a38e13212461"></a>
+
+### `kDescriptionGap`
+
+```cpp
+std::size_t puc::tui::CmdFrame::kDescriptionGap
+```
+
+Blank cells between the longest command and every description.
+
+[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L36)
 
 ## Private data members
 
@@ -24,7 +38,7 @@ std::unique_ptr<Impl> puc::tui::CmdFrame::impl_
 
 Hidden composed command view.
 
-[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L77)
+[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L115)
 
 ## Public functions
 
@@ -38,7 +52,7 @@ puc::tui::CmdFrame::CmdFrame(std::string name="command")
 
 Construct an empty line-numbered command editor.
 
-[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L28)
+[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L39)
 
 <a id="symbol-classpuc_1_1tui_1_1_cmd_frame_1a07f54ab96e873a156b454948d2fcb8b0"></a>
 
@@ -48,7 +62,7 @@ Construct an empty line-numbered command editor.
 puc::tui::CmdFrame::CmdFrame(const CmdFrame &)=delete
 ```
 
-[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L30)
+[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L41)
 
 <a id="symbol-classpuc_1_1tui_1_1_cmd_frame_1af4ca9105ab9ee6fc8c6e58536946717b"></a>
 
@@ -58,7 +72,7 @@ puc::tui::CmdFrame::CmdFrame(const CmdFrame &)=delete
 CmdFrame & puc::tui::CmdFrame::operator=(const CmdFrame &)=delete
 ```
 
-[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L31)
+[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L42)
 
 <a id="symbol-classpuc_1_1tui_1_1_cmd_frame_1aafafd638f1f23bed99141950e86d9ae1"></a>
 
@@ -68,7 +82,7 @@ CmdFrame & puc::tui::CmdFrame::operator=(const CmdFrame &)=delete
 puc::tui::CmdFrame::CmdFrame(CmdFrame &&)=delete
 ```
 
-[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L32)
+[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L43)
 
 <a id="symbol-classpuc_1_1tui_1_1_cmd_frame_1ab61c3cb7cf36a99b003ad3031d902a8a"></a>
 
@@ -78,7 +92,7 @@ puc::tui::CmdFrame::CmdFrame(CmdFrame &&)=delete
 CmdFrame & puc::tui::CmdFrame::operator=(CmdFrame &&)=delete
 ```
 
-[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L33)
+[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L44)
 
 <a id="symbol-classpuc_1_1tui_1_1_cmd_frame_1a18011f6129e2b4fc4e9ff6492c2d5188"></a>
 
@@ -90,7 +104,7 @@ puc::tui::CmdFrame::~CmdFrame() override
 
 Destroy composed text and annotation frames.
 
-[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L36)
+[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L47)
 
 <a id="symbol-classpuc_1_1tui_1_1_cmd_frame_1abe0cce1ebfa1144057db1422431b00f8"></a>
 
@@ -102,7 +116,7 @@ Status puc::tui::CmdFrame::handle_event(const terminal::Event &event)
 
 Apply one normalized editor event.
 
-[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L39)
+[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L50)
 
 <a id="symbol-classpuc_1_1tui_1_1_cmd_frame_1a98cdd312bb23f54063d92021c7e1a690"></a>
 
@@ -114,7 +128,7 @@ void puc::tui::CmdFrame::clear()
 
 Clear the disposable command buffer.
 
-[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L42)
+[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L53)
 
 <a id="symbol-classpuc_1_1tui_1_1_cmd_frame_1a40c0ab41f6a8ad21a8e541cc3c7979ef"></a>
 
@@ -126,7 +140,7 @@ Status puc::tui::CmdFrame::replace_text(std::string text)
 
 Replace the complete command buffer and place the caret at its end.
 
-[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L45)
+[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L56)
 
 <a id="symbol-classpuc_1_1tui_1_1_cmd_frame_1aafefa942cc89491efe1c125332222430"></a>
 
@@ -138,7 +152,7 @@ TextEditorSnapshot puc::tui::CmdFrame::snapshot() const
 
 Return a consistent copy of command-editor state.
 
-[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L48)
+[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L59)
 
 <a id="symbol-classpuc_1_1tui_1_1_cmd_frame_1a111e2b3702c68359c28c775b366f3de8"></a>
 
@@ -150,7 +164,7 @@ std::size_t puc::tui::CmdFrame::gutter_width() const noexcept
 
 Return the current line-number gutter width.
 
-[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L51)
+[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L62)
 
 <a id="symbol-classpuc_1_1tui_1_1_cmd_frame_1a9eaa2fd15d522394785b3960c3b62a72"></a>
 
@@ -162,7 +176,81 @@ std::size_t puc::tui::CmdFrame::preferred_rows(std::size_t width) const
 
 Return wrapped content rows for a total annotated width.
 
-[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L54)
+[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L65)
+
+<a id="symbol-classpuc_1_1tui_1_1_cmd_frame_1aafbbe70a93320fd20da38a703275af1d"></a>
+
+### `set_completions`
+
+```cpp
+void puc::tui::CmdFrame::set_completions(std::string typed_prefix, std::vector< CmdCompletion > completions, std::size_t selected_completion)
+```
+
+Present command-name completions above the editor.
+
+The matched prefix uses the highlight palette, the remaining command uses the secondary text role, and descriptions share one column beginning kDescriptionGap cells after the longest supplied command.
+
+[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L74)
+
+<a id="symbol-classpuc_1_1tui_1_1_cmd_frame_1ad2b655766d52ed1e176fd9127e5b1901"></a>
+
+### `set_usage`
+
+```cpp
+void puc::tui::CmdFrame::set_usage(std::vector< std::string > usage_rows)
+```
+
+Present exact-command usage as unsegmented help rows.
+
+[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L79)
+
+<a id="symbol-classpuc_1_1tui_1_1_cmd_frame_1ad1da29b2b54d722bc9888c1a67afee82"></a>
+
+### `clear_help`
+
+```cpp
+void puc::tui::CmdFrame::clear_help()
+```
+
+Remove completion and usage presentation without changing command text.
+
+[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L82)
+
+<a id="symbol-classpuc_1_1tui_1_1_cmd_frame_1a7d9529337f082734e4604ed414674bfe"></a>
+
+### `help_rows`
+
+```cpp
+std::size_t puc::tui::CmdFrame::help_rows() const noexcept
+```
+
+Return the number of help rows currently presented above the editor.
+
+[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L85)
+
+<a id="symbol-classpuc_1_1tui_1_1_cmd_frame_1aa9115355ec18c76d1c877819ba3a75ce"></a>
+
+### `help_text`
+
+```cpp
+std::vector< std::string > puc::tui::CmdFrame::help_text() const
+```
+
+Return flattened help text for state snapshots and diagnostics.
+
+[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L88)
+
+<a id="symbol-classpuc_1_1tui_1_1_cmd_frame_1aab731e8b4b20f10ee46682a0e79b0bce"></a>
+
+### `draw_help`
+
+```cpp
+Status puc::tui::CmdFrame::draw_help(const Theme &theme, Canvas &canvas, const Canvas::Rect &rect) const
+```
+
+Draw as many prepared help rows as fit in the supplied rectangle.
+
+[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L91)
 
 <a id="symbol-classpuc_1_1tui_1_1_cmd_frame_1a4db30a3f015898aee4a9135d7e5150ac"></a>
 
@@ -174,7 +262,7 @@ Status puc::tui::CmdFrame::draw(const Theme &theme, Canvas &canvas, const Canvas
 
 Draw line annotations and the green text/caret surface.
 
-[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L57)
+[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L95)
 
 <a id="symbol-classpuc_1_1tui_1_1_cmd_frame_1ad6335f83b86c4c2fdef75201b3c758ec"></a>
 
@@ -186,7 +274,7 @@ bool puc::tui::CmdFrame::is_selectable() const noexcept override
 
 Command text is selectable.
 
-[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L61)
+[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L99)
 
 <a id="symbol-classpuc_1_1tui_1_1_cmd_frame_1add1679504813fcd8fa1575a1ddb00f61"></a>
 
@@ -198,7 +286,7 @@ Status puc::tui::CmdFrame::update_selection(const SelectionEvent &event) overrid
 
 Delegate selection through the annotation gutter.
 
-[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L64)
+[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L102)
 
 <a id="symbol-classpuc_1_1tui_1_1_cmd_frame_1a3255bf8181bbb934fe7786476da2d021"></a>
 
@@ -210,7 +298,7 @@ Status puc::tui::CmdFrame::selected_text(std::string &output) const override
 
 Extract selected command text.
 
-[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L67)
+[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L105)
 
 <a id="symbol-classpuc_1_1tui_1_1_cmd_frame_1a1843537093b1438eea72b57fb1613f2b"></a>
 
@@ -222,7 +310,7 @@ bool puc::tui::CmdFrame::accepts_cursor_placement() const noexcept override
 
 Command text accepts stationary-click caret placement.
 
-[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L70)
+[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L108)
 
 <a id="symbol-classpuc_1_1tui_1_1_cmd_frame_1a43b30dd42000029b16ccf3e2631aa21a"></a>
 
@@ -234,4 +322,4 @@ Status puc::tui::CmdFrame::place_cursor(SelectionPosition position) override
 
 Delegate caret placement through the annotation gutter.
 
-[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L73)
+[Source](../../puc-cli/tui/frames/cmd_frame.hpp#L111)

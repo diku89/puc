@@ -38,11 +38,9 @@ const puc::logger::LoggerConf kLoggerConfiguration{
 /** Terminal profile name captured once from the process environment. */
 const std::string kTerminalName = puc::terminal::environment_value("TERM");
 
-/** Interactive shell selected once for embedded-terminal test generations. */
-const std::string kEmbeddedShell = [] {
-  std::string shell = puc::terminal::environment_value("PUC_TEST_SHELL");
-  return shell.empty() ? std::string{"/bin/sh"} : shell;
-}();
+/** Optional test override; empty selects the user's configured login shell. */
+const std::string kEmbeddedShell =
+    puc::terminal::environment_value("PUC_TEST_SHELL");
 
 /** Terminal decoding and descriptor policy retained across start/stop cycles.
  */

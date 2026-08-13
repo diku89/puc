@@ -12,6 +12,7 @@
 #include <string_view>
 #include <vector>
 
+#include "puc-cli/tui/frames/cmd_frame.hpp"
 #include "puc-cli/tui/rendering/frame.hpp"
 #include "puc-cli/tui/terminal/event.hpp"
 #include "puc-cli/tui/text_input/text_editor_utils.hpp"
@@ -92,6 +93,9 @@ class InputFrame final : public Frame {
   /** Command-mode counterpart to kClearPrompt. */
   static constexpr std::string_view kExitCommandPrompt =
       "hit escape again to exit command mode";
+  /** Terminal-mode counterpart to kClearPrompt. */
+  static constexpr std::string_view kExitTerminalPrompt =
+      "hit escape again to exit terminal mode";
 
   /**
    * Construct an empty normal-mode editor.
@@ -151,8 +155,16 @@ class InputFrame final : public Frame {
   /** Replace the UTF-8 message drawn in the bottom notification row. */
   void set_notification(std::string notification);
 
-  /** Replace command completion/usage rows displayed above the command box. */
-  void set_command_help(std::vector<std::string> help);
+  /** Replace the command-name completions displayed above the command box. */
+  void set_command_completions(std::string typed_prefix,
+                               std::vector<CmdCompletion> completions,
+                               std::size_t selected_completion);
+
+  /** Replace completion rows with exact-command usage text. */
+  void set_command_usage(std::vector<std::string> usage_rows);
+
+  /** Remove completion and usage rows without changing command text. */
+  void clear_command_help();
 
   /** Replace the command buffer and place its caret after the supplied text. */
   Status replace_command_text(std::string text);

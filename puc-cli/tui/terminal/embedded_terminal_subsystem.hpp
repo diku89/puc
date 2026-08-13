@@ -21,7 +21,11 @@ namespace puc::app {
 
 /** Stable launch policy retained across embedded-terminal generations. */
 struct EmbeddedTerminalSubsystemOptions {
-  std::string shell = "/bin/sh"; /**< Interactive shell executable. */
+  /**
+   * Interactive shell executable, or empty to use the user's configured
+   * login shell with `/bin/sh` as the final portability fallback.
+   */
+  std::string shell;
 };
 
 /**

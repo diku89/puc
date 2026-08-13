@@ -7,6 +7,7 @@
 
 #include <cstddef>
 #include <string>
+#include <string_view>
 
 #include "gtest/gtest.h"
 #include "puc-cli/tui/terminal/event.hpp"
@@ -24,6 +25,9 @@ Theme command_theme() {
   colors.secondary            = 4U;
   colors.highlight_text       = 5U;
   colors.highlight_background = 6U;
+  colors.text_secondary       = 7U;
+  colors.tertiary             = 8U;
+  colors.background           = 9U;
   theme.load_colors(colors);
   return theme;
 }
@@ -93,6 +97,45 @@ TEST(CmdFrameGeometryTest, ReportsRowsAfterSubtractingItsAnnotationGutter) {
   frame.clear();
   type(frame, std::move(lines));
   EXPECT_EQ(frame.gutter_width(), 4U);
+}
+
+TEST(CmdFrameHelpTest,
+     AlignsDescriptionsAndStylesTypedSuffixAndDescriptionSegments) {
+  const Theme theme = command_theme();
+  Canvas canvas(60U, 2U);
+  CmdFrame frame;
+  frame.set_completions(
+      "co",
+      {
+          CmdCompletion{.command = "config", .description = "short"},
+          CmdCompletion{.command = "configuration", .description = "long"},
+      },
+      1U);
+
+  ASSERT_EQ(canvas.begin_frame(), Status::OK);
+  ASSERT_EQ(frame.draw_help(
+                theme, canvas,
+                Canvas::Rect{.x = 0U, .y = 0U, .width = 60U, .height = 2U}),
+            Status::OK);
+  ASSERT_EQ(canvas.end_frame(), Status::OK);
+
+  EXPECT_EQ(frame.help_rows(), 2U);
+  ASSERT_EQ(frame.help_text().size(), 2U);
+  EXPECT_EQ(at(canvas, 0U, 1U).character, U'>');
+  EXPECT_EQ(at(canvas, 0U, 1U).foreground_color, 3U);
+  EXPECT_EQ(at(canvas, 2U, 0U).character, U'c');
+  EXPECT_EQ(at(canvas, 2U, 0U).foreground_color, 5U);
+  EXPECT_EQ(at(canvas, 2U, 0U).background_color, 6U);
+  EXPECT_EQ(at(canvas, 4U, 0U).character, U'n');
+  EXPECT_EQ(at(canvas, 4U, 0U).foreground_color, 7U);
+  EXPECT_EQ(at(canvas, 4U, 0U).background_color, 9U);
+
+  constexpr std::size_t kDescriptionColumn =
+      2U + std::string_view{"configuration"}.size() + CmdFrame::kDescriptionGap;
+  EXPECT_EQ(at(canvas, kDescriptionColumn, 0U).character, U's');
+  EXPECT_EQ(at(canvas, kDescriptionColumn, 1U).character, U'l');
+  EXPECT_EQ(at(canvas, kDescriptionColumn, 0U).foreground_color, 8U);
+  EXPECT_EQ(at(canvas, kDescriptionColumn, 0U).background_color, 9U);
 }
 
 TEST(CmdFrameSelectionTest, DelegatesSelectionAndCaretThroughLineNumbers) {

@@ -6,7 +6,7 @@ Own the PTY master and exactly one child process while the app is running.
 
 [InputFrame](classpuc_1_1app_1_1_input_frame.md) retains durable virtual-terminal state. This adapter observes its requested session generation, starts/resizes the shell lazily, translates normalized input back to PTY bytes, pumps child output into libtmt, and reaps the child synchronously on stop before [InputSubsystem](classpuc_1_1app_1_1_input_subsystem.md) can be stopped.
 
-[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.hpp#L35)
+[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.hpp#L39)
 
 ## Related symbols
 
@@ -24,7 +24,7 @@ EmbeddedTerminalSubsystemOptions puc::app::EmbeddedTerminalSubsystem::options_
 
 Durable shell launch policy.
 
-[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.hpp#L72)
+[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.hpp#L76)
 
 <a id="symbol-classpuc_1_1app_1_1_embedded_terminal_subsystem_1a08992eed1163acf1b10233c7e4bb50b9"></a>
 
@@ -36,7 +36,7 @@ std::mutex puc::app::EmbeddedTerminalSubsystem::mutex_
 
 Serializes lifecycle and nonblocking I/O.
 
-[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.hpp#L73)
+[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.hpp#L77)
 
 <a id="symbol-classpuc_1_1app_1_1_embedded_terminal_subsystem_1a9386e4537dcaa8e6d8f1d5ea6638207a"></a>
 
@@ -48,7 +48,7 @@ std::shared_ptr<tui::InputFrame> puc::app::EmbeddedTerminalSubsystem::input_fram
 
 Durable frame owned by [InputSubsystem](classpuc_1_1app_1_1_input_subsystem.md).
 
-[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.hpp#L75)
+[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.hpp#L79)
 
 <a id="symbol-classpuc_1_1app_1_1_embedded_terminal_subsystem_1a05b1f2ba40459c5bb01afc45acab2e64"></a>
 
@@ -60,7 +60,7 @@ std::unique_ptr<Impl> puc::app::EmbeddedTerminalSubsystem::impl_
 
 PTY descriptor, child, and pending bytes.
 
-[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.hpp#L76)
+[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.hpp#L80)
 
 <a id="symbol-classpuc_1_1app_1_1_embedded_terminal_subsystem_1aaa615a965b8842cd4dcbf6ebc6bfef30"></a>
 
@@ -72,7 +72,7 @@ bool puc::app::EmbeddedTerminalSubsystem::active_
 
 Whether PTY work is accepted in this generation.
 
-[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.hpp#L77)
+[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.hpp#L81)
 
 ## Public functions
 
@@ -86,7 +86,7 @@ puc::app::EmbeddedTerminalSubsystem::EmbeddedTerminalSubsystem(EmbeddedTerminalS
 
 Retain the shell launch policy and declare the [InputFrame](classpuc_1_1app_1_1_input_frame.md) dependency.
 
-[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.hpp#L38)
+[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.hpp#L42)
 
 <a id="symbol-classpuc_1_1app_1_1_embedded_terminal_subsystem_1aaf4420713ea64af467662c1f32e1293a"></a>
 
@@ -98,7 +98,7 @@ puc::app::EmbeddedTerminalSubsystem::~EmbeddedTerminalSubsystem() override
 
 Destroy already-reaped process state.
 
-[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.hpp#L42)
+[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.hpp#L46)
 
 <a id="symbol-classpuc_1_1app_1_1_embedded_terminal_subsystem_1ad265d1780ce1e238c733cfe524e57600"></a>
 
@@ -110,7 +110,7 @@ Status puc::app::EmbeddedTerminalSubsystem::initialize(AppState &app) override
 
 Bind the durable [InputFrame](classpuc_1_1app_1_1_input_frame.md) and allocate inactive PTY state.
 
-[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.hpp#L45)
+[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.hpp#L49)
 
 <a id="symbol-classpuc_1_1app_1_1_embedded_terminal_subsystem_1a9953a027183efe5ca86e6b7d54a3300f"></a>
 
@@ -122,7 +122,7 @@ Status puc::app::EmbeddedTerminalSubsystem::start(AppState &app) override
 
 Enable lazy PTY generations for the running application.
 
-[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.hpp#L48)
+[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.hpp#L52)
 
 <a id="symbol-classpuc_1_1app_1_1_embedded_terminal_subsystem_1ae97db1dff0c8d594d8839bbe9138a785"></a>
 
@@ -134,7 +134,7 @@ Status puc::app::EmbeddedTerminalSubsystem::stop(AppState &app) noexcept overrid
 
 Close the PTY and synchronously terminate/reap its owned child.
 
-[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.hpp#L51)
+[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.hpp#L55)
 
 <a id="symbol-classpuc_1_1app_1_1_embedded_terminal_subsystem_1a3d770e0a39f5bed586cec7134fcc3e88"></a>
 
@@ -146,7 +146,7 @@ Status puc::app::EmbeddedTerminalSubsystem::terminate(AppState &app) noexcept ov
 
 Release durable PTY state and the [InputFrame](classpuc_1_1app_1_1_input_frame.md) binding.
 
-[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.hpp#L54)
+[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.hpp#L58)
 
 <a id="symbol-classpuc_1_1app_1_1_embedded_terminal_subsystem_1aad51c623132fcdefd4506911537b99aa"></a>
 
@@ -158,7 +158,7 @@ Status puc::app::EmbeddedTerminalSubsystem::send_event(const terminal::Event &ev
 
 Translate and queue one normalized event for the active child.
 
-[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.hpp#L57)
+[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.hpp#L61)
 
 <a id="symbol-classpuc_1_1app_1_1_embedded_terminal_subsystem_1aa1b3ad32a6eda0f92c470a911c69f47d"></a>
 
@@ -170,7 +170,7 @@ Status puc::app::EmbeddedTerminalSubsystem::synchronize(std::size_t screen_width
 
 Start, resize, pump, or reap the session requested by [InputFrame](classpuc_1_1app_1_1_input_frame.md).
 
-[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.hpp#L60)
+[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.hpp#L64)
 
 <a id="symbol-classpuc_1_1app_1_1_embedded_terminal_subsystem_1a7336603dc97755fa086914b17a1d2d01"></a>
 
@@ -182,7 +182,7 @@ bool puc::app::EmbeddedTerminalSubsystem::child_running() const noexcept
 
 Return whether this running generation currently owns a live child.
 
-[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.hpp#L63)
+[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.hpp#L67)
 
 <a id="symbol-classpuc_1_1app_1_1_embedded_terminal_subsystem_1ad9a145d4d33a22c330718b41d41b04f9"></a>
 
@@ -194,4 +194,4 @@ std::size_t puc::app::EmbeddedTerminalSubsystem::child_generation() const noexce
 
 Return the [InputFrame](classpuc_1_1app_1_1_input_frame.md) terminal-session generation served by the child.
 
-[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.hpp#L66)
+[Source](../../puc-cli/tui/terminal/embedded_terminal_subsystem.hpp#L70)

@@ -4,7 +4,7 @@
 
 Owned text surface and its line-number decorator.
 
-[Source](../../puc-cli/tui/frames/cmd_frame.cpp#L19)
+[Source](../../puc-cli/tui/frames/cmd_frame.cpp#L54)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::shared_ptr<TextInputFrame> puc::tui::CmdFrame::Impl::input
 
 Disposable command editor.
 
-[Source](../../puc-cli/tui/frames/cmd_frame.cpp#L44)
+[Source](../../puc-cli/tui/frames/cmd_frame.cpp#L79)
 
 <a id="symbol-classpuc_1_1tui_1_1_cmd_frame_1_1_impl_1af1ef8d1d5d89f9052a269993bc5d82d0"></a>
 
@@ -30,7 +30,31 @@ std::shared_ptr<AnnotatedTextFrame> puc::tui::CmdFrame::Impl::annotated
 
 Numbered command view.
 
-[Source](../../puc-cli/tui/frames/cmd_frame.cpp#L45)
+[Source](../../puc-cli/tui/frames/cmd_frame.cpp#L80)
+
+<a id="symbol-classpuc_1_1tui_1_1_cmd_frame_1_1_impl_1ad41454b4e54dd96bbfd17431caca0ad8"></a>
+
+### `help_mutex`
+
+```cpp
+std::shared_mutex puc::tui::CmdFrame::Impl::help_mutex
+```
+
+Synchronizes prepared help rows.
+
+[Source](../../puc-cli/tui/frames/cmd_frame.cpp#L81)
+
+<a id="symbol-classpuc_1_1tui_1_1_cmd_frame_1_1_impl_1ad158e19001a0a039f994323a313150e0"></a>
+
+### `help`
+
+```cpp
+std::vector<HelpRow> puc::tui::CmdFrame::Impl::help
+```
+
+Completion or usage rows.
+
+[Source](../../puc-cli/tui/frames/cmd_frame.cpp#L82)
 
 ## Public functions
 
@@ -42,4 +66,4 @@ Numbered command view.
 puc::tui::CmdFrame::Impl::Impl()
 ```
 
-[Source](../../puc-cli/tui/frames/cmd_frame.cpp#L21)
+[Source](../../puc-cli/tui/frames/cmd_frame.cpp#L56)
