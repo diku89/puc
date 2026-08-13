@@ -305,6 +305,7 @@ TEST(SmemChannelTest, BoundedDeliveryRetainsNewestPendingMessagesInFifoOrder) {
   }
   EXPECT_EQ(received, (std::vector<std::uint8_t>{1U, 4U, 5U, 6U}));
   EXPECT_EQ(channel->pending_messages(), 0U);
+  EXPECT_EQ(directory.close_channel("//screen/present_commands"), Status::OK);
 }
 
 TEST(SmemChannelTest, BoundedDeliveryRequiresDirectoryAndPositiveDepth) {

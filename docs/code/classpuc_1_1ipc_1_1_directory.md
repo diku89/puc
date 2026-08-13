@@ -24,7 +24,7 @@ std::unique_ptr<Impl> puc::ipc::Directory::impl_
 
 Registry state hidden from consumers.
 
-[Source](../../utils/ipc/directory.hpp#L104)
+[Source](../../utils/ipc/directory.hpp#L108)
 
 ## Public functions
 
@@ -123,9 +123,11 @@ Status puc::ipc::Directory::close_channel(std::string_view name)
 
 Remove a registered channel without invalidating external references.
 
+Bounded asynchronous delivery is detached before this function returns. Pending messages are discarded and any callback already in progress is allowed to finish.
+
 **Returns:** [Status::OK](namespacepuc_1_1ipc.md#symbol-namespacepuc_1_1ipc_1a2d9525a8274577936e23d73e7264f5e4ae0aa021e21dddbd6d8cecec71e9cf564), [Status::INVALID\_CHANNEL\_NAME](namespacepuc_1_1ipc.md#symbol-namespacepuc_1_1ipc_1a2d9525a8274577936e23d73e7264f5e4aaa9fb8910e8f3b5a6bfd311380a1ab62), or [Status::CHANNEL\_NOT\_FOUND](namespacepuc_1_1ipc.md#symbol-namespacepuc_1_1ipc_1a2d9525a8274577936e23d73e7264f5e4a95cd0a4586c842b746f776a1d99d941a).
 
-[Source](../../utils/ipc/directory.hpp#L64)
+[Source](../../utils/ipc/directory.hpp#L68)
 
 <a id="symbol-classpuc_1_1ipc_1_1_directory_1a091d2f0b74edc887fb44179111503673"></a>
 
@@ -137,7 +139,7 @@ std::shared_ptr< Channel > puc::ipc::Directory::get_channel(std::string_view nam
 
 Return a shared channel reference, or an empty reference when absent.
 
-[Source](../../utils/ipc/directory.hpp#L67)
+[Source](../../utils/ipc/directory.hpp#L71)
 
 <a id="symbol-classpuc_1_1ipc_1_1_directory_1a801d57098ebb99170544f6607ee55306"></a>
 
@@ -149,7 +151,7 @@ std::shared_ptr< Channel > puc::ipc::Directory::get_channel(ChannelId channel_id
 
 Return a shared channel reference by wire id, or empty when absent.
 
-[Source](../../utils/ipc/directory.hpp#L70)
+[Source](../../utils/ipc/directory.hpp#L74)
 
 <a id="symbol-classpuc_1_1ipc_1_1_directory_1a546b36eb2243cc60a3ab66cef4508cbd"></a>
 
@@ -166,7 +168,7 @@ Look up a channel's wire identifier.
 - `name` (in) — Canonical channel name.
 - `channel_id` (out) — Found identifier; reset to zero first.
 
-[Source](../../utils/ipc/directory.hpp#L78)
+[Source](../../utils/ipc/directory.hpp#L82)
 
 <a id="symbol-classpuc_1_1ipc_1_1_directory_1a1c4bd1bddf7583be590a0bbe02a93328"></a>
 
@@ -178,7 +180,7 @@ TransferResult puc::ipc::Directory::transmit(std::string_view name, Channel::Byt
 
 Send one complete message through the channel registered under `name`.
 
-[Source](../../utils/ipc/directory.hpp#L81)
+[Source](../../utils/ipc/directory.hpp#L85)
 
 <a id="symbol-classpuc_1_1ipc_1_1_directory_1a05f424218108f8883771ba3fbee1a702"></a>
 
@@ -190,7 +192,7 @@ TransferResult puc::ipc::Directory::transmit(ChannelId channel_id, Channel::Byte
 
 Send one complete message through the channel assigned `channel_id`.
 
-[Source](../../utils/ipc/directory.hpp#L85)
+[Source](../../utils/ipc/directory.hpp#L89)
 
 <a id="symbol-classpuc_1_1ipc_1_1_directory_1a0f4a9678d5bb6cffdbddd3eb8c21603e"></a>
 
@@ -202,7 +204,7 @@ Status puc::ipc::Directory::subscribe(std::string_view name, Channel::ReceiveCal
 
 Register a receive callback on the channel named by `name`.
 
-[Source](../../utils/ipc/directory.hpp#L89)
+[Source](../../utils/ipc/directory.hpp#L93)
 
 <a id="symbol-classpuc_1_1ipc_1_1_directory_1a4f30b3a83408691d48c1beee994cb146"></a>
 
@@ -214,7 +216,7 @@ Status puc::ipc::Directory::subscribe(ChannelId channel_id, Channel::ReceiveCall
 
 Register a receive callback using a nonzero wire channel identifier.
 
-[Source](../../utils/ipc/directory.hpp#L93)
+[Source](../../utils/ipc/directory.hpp#L97)
 
 <a id="symbol-classpuc_1_1ipc_1_1_directory_1adbe6bfb1f5767b919ad35cd4530a353b"></a>
 
@@ -226,7 +228,7 @@ std::size_t puc::ipc::Directory::size() const noexcept
 
 Return the number of currently registered channel names.
 
-[Source](../../utils/ipc/directory.hpp#L97)
+[Source](../../utils/ipc/directory.hpp#L101)
 
 <a id="symbol-classpuc_1_1ipc_1_1_directory_1a9ae30f1ad9d62252bc72273c60b4d3af"></a>
 
@@ -238,4 +240,4 @@ std::size_t puc::ipc::Directory::delivery_worker_count() const noexcept
 
 Return the fixed number of asynchronous delivery workers.
 
-[Source](../../utils/ipc/directory.hpp#L100)
+[Source](../../utils/ipc/directory.hpp#L104)

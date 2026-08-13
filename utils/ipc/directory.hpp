@@ -58,6 +58,10 @@ class Directory {
   /**
    * Remove a registered channel without invalidating external references.
    *
+   * Bounded asynchronous delivery is detached before this function returns.
+   * Pending messages are discarded and any callback already in progress is
+   * allowed to finish.
+   *
    * @return Status::OK, Status::INVALID_CHANNEL_NAME, or
    *         Status::CHANNEL_NOT_FOUND.
    */
