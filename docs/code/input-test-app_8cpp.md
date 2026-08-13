@@ -18,4 +18,4 @@ Primary application logic lives in InputTestRuntimeSubsystem. `main()` owns the 
 int main(int argc, char **argv)
 ```
 
-[Source](../../puc-cli/test_apps/input/input-test-app.cpp#L77)
+[Source](../../puc-cli/test_apps/input/input-test-app.cpp#L75)

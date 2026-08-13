@@ -22,7 +22,7 @@ using puc::command::CommandDispatcher::CommandTrie = containers::Trie<char, std:
 
 Name index.
 
-[Source](../../commands/command.hpp#L194)
+[Source](../../commands/command.hpp#L195)
 
 ## Private data members
 
@@ -36,7 +36,7 @@ std::shared_mutex puc::command::CommandDispatcher::mutex_
 
 Synchronizes registry state.
 
-[Source](../../commands/command.hpp#L200)
+[Source](../../commands/command.hpp#L201)
 
 <a id="symbol-classpuc_1_1command_1_1_command_dispatcher_1aa39df965371c061e980359834675807b"></a>
 
@@ -48,7 +48,7 @@ CommandTrie puc::command::CommandDispatcher::command_trie_
 
 Character-keyed spelling registry.
 
-[Source](../../commands/command.hpp#L201)
+[Source](../../commands/command.hpp#L202)
 
 ## Public functions
 
@@ -166,9 +166,9 @@ std::vector< std::string > puc::command::CommandDispatcher::list_completions(std
 
 Return every registered spelling beginning with `prefix`.
 
-Results retain the trie's stable branch-insertion order. An empty prefix lists every spelling; an invalid or absent prefix produces an empty list.
+Results use lexicographic spelling order independent of registration order. An empty prefix lists every spelling; an invalid or absent prefix produces an empty list.
 
-[Source](../../commands/command.hpp#L185)
+[Source](../../commands/command.hpp#L186)
 
 <a id="symbol-classpuc_1_1command_1_1_command_dispatcher_1aeb265fb9138fd58a77532651ea480ecb"></a>
 
@@ -180,7 +180,7 @@ std::string puc::command::CommandDispatcher::get_command_description(std::string
 
 Return completion-list text, or an empty string when name is absent.
 
-[Source](../../commands/command.hpp#L188)
+[Source](../../commands/command.hpp#L189)
 
 <a id="symbol-classpuc_1_1command_1_1_command_dispatcher_1a7ed23fe09b61087f6324f2d7d768bb6e"></a>
 
@@ -192,7 +192,7 @@ std::string puc::command::CommandDispatcher::get_command_usage(std::string_view 
 
 Return argument help, or an empty string when absent or undocumented.
 
-[Source](../../commands/command.hpp#L191)
+[Source](../../commands/command.hpp#L192)
 
 ## Private functions
 
@@ -206,4 +206,4 @@ std::shared_ptr< CommandApp > puc::command::CommandDispatcher::find_command(std:
 
 Copy a registered command reference while holding the registry lock.
 
-[Source](../../commands/command.hpp#L198)
+[Source](../../commands/command.hpp#L199)

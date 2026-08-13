@@ -6,14 +6,16 @@ Store direct values at nodes reached by arbitrary key sequences.
 
 All nodes occupy one append-only vector. Callers traverse with stable node indexes rather than pointers, and child indexes remain valid when insertion reallocates the node vector. References and pointers returned for inspection remain valid only until the next insertion.
 
+Each node's child-index vector is kept in ascending key order when a missing edge is inserted. `find_child()` scans lists of at most `kLinearSearchMaximumChildren` entries and uses binary search for larger fan-outs. Completion traversal consequently produces lexicographic results without sorting during lookup.
+
 The caller is responsible for synchronization when a trie is accessed from multiple threads. Exact lookup methods perform no dynamic allocation or mutation; completion lookup allocates only its returned key sequences. [Node](#symbol-classpuc_1_1containers_1_1_trie_1a56649effbc3e22b82261964889fe123a) and child-vector growth occur only during `insert()`.
 
 **Template parameters**
 
-- `KeyType` — Regular sequence element supporting equality comparison.
+- `KeyType` — Regular, totally ordered sequence element.
 - `ValueType` — Default-initializable, movable directly stored value.
 
-[Source](../../utils/containers/trie.hpp#L76)
+[Source](../../utils/containers/trie.hpp#L85)
 
 ## Public types
 
@@ -27,7 +29,7 @@ using puc::containers::Trie< KeyType, ValueType >::Node = TrieNode<KeyType, Valu
 
 Public node representation.
 
-[Source](../../utils/containers/trie.hpp#L79)
+[Source](../../utils/containers/trie.hpp#L88)
 
 <a id="symbol-classpuc_1_1containers_1_1_trie_1ac300dfb2e01e476d47fe10f55d2d221d"></a>
 
@@ -39,7 +41,7 @@ using puc::containers::Trie< KeyType, ValueType >::NodeIndex = std::size_t
 
 Stable index into the node vector.
 
-[Source](../../utils/containers/trie.hpp#L82)
+[Source](../../utils/containers/trie.hpp#L91)
 
 ## Public static data members
 
@@ -53,7 +55,7 @@ NodeIndex puc::containers::Trie< KeyType, ValueType >::kRootNode
 
 Sentinel root node index.
 
-[Source](../../utils/containers/trie.hpp#L84)
+[Source](../../utils/containers/trie.hpp#L93)
 
 <a id="symbol-classpuc_1_1containers_1_1_trie_1ab519ef1f748b4b95bc96c912887b4e8a"></a>
 
@@ -65,7 +67,19 @@ NodeIndex puc::containers::Trie< KeyType, ValueType >::kInvalidNode
 
 Missing-node result.
 
-[Source](../../utils/containers/trie.hpp#L85)
+[Source](../../utils/containers/trie.hpp#L94)
+
+<a id="symbol-classpuc_1_1containers_1_1_trie_1a06f00ecf992efc27d9a244773df558d8"></a>
+
+### `kLinearSearchMaximumChildren`
+
+```cpp
+std::size_t puc::containers::Trie< KeyType, ValueType >::kLinearSearchMaximumChildren
+```
+
+Largest child list searched linearly before lookup uses binary search.
+
+[Source](../../utils/containers/trie.hpp#L97)
 
 ## Private data members
 
@@ -79,7 +93,7 @@ std::vector<Node> puc::containers::Trie< KeyType, ValueType >::nodes_
 
 Append-only storage whose indexes identify every node.
 
-[Source](../../utils/containers/trie.hpp#L282)
+[Source](../../utils/containers/trie.hpp#L317)
 
 ## Public functions
 
@@ -93,7 +107,7 @@ puc::containers::Trie< KeyType, ValueType >::Trie()
 
 Construct an empty trie containing only its sentinel root.
 
-[Source](../../utils/containers/trie.hpp#L89)
+[Source](../../utils/containers/trie.hpp#L100)
 
 <a id="symbol-classpuc_1_1containers_1_1_trie_1a8f47b55eff795641fcd1fb871fde732f"></a>
 
@@ -105,7 +119,7 @@ puc::containers::Trie< KeyType, ValueType >::~Trie()=default
 
 Destroy the contiguous node array and directly stored values.
 
-[Source](../../utils/containers/trie.hpp#L92)
+[Source](../../utils/containers/trie.hpp#L103)
 
 <a id="symbol-classpuc_1_1containers_1_1_trie_1a175ef6bb0769b9a008ea5ca622380e26"></a>
 
@@ -119,7 +133,7 @@ Return the number of nodes, including the sentinel root.
 
 **Returns:** Current node count.
 
-[Source](../../utils/containers/trie.hpp#L106)
+[Source](../../utils/containers/trie.hpp#L117)
 
 <a id="symbol-classpuc_1_1containers_1_1_trie_1a7cabf1d083d653ea067dfcbc03163cd2"></a>
 
@@ -141,7 +155,7 @@ The returned reference may be invalidated by `insert()` because insertion may re
 
 **Details:** `node_index < size()`.
 
-[Source](../../utils/containers/trie.hpp#L118)
+[Source](../../utils/containers/trie.hpp#L129)
 
 <a id="symbol-classpuc_1_1containers_1_1_trie_1a5947c5b4dc715a98576fd59b10b56d54"></a>
 
@@ -161,7 +175,7 @@ The result may be prefix-only. Inspect its `sequence_end` member to test for an 
 
 **Returns:** Final node index, or `kInvalidNode` at the first missing key.
 
-[Source](../../utils/containers/trie.hpp#L131)
+[Source](../../utils/containers/trie.hpp#L142)
 
 <a id="symbol-classpuc_1_1containers_1_1_trie_1a3e3d78dcd08d67e6a26fbf4f66cbf2f1"></a>
 
@@ -181,7 +195,7 @@ The returned pointer refers into the node vector and may be invalidated by `inse
 
 **Returns:** Stored value address for an exact match, or `nullptr` otherwise.
 
-[Source](../../utils/containers/trie.hpp#L152)
+[Source](../../utils/containers/trie.hpp#L163)
 
 <a id="symbol-classpuc_1_1containers_1_1_trie_1a04a3bcac523b85d04440f333b3c41ffc"></a>
 
@@ -193,6 +207,8 @@ NodeIndex puc::containers::Trie< KeyType, ValueType >::find_child(NodeIndex node
 
 Find one direct child without allocating or modifying the trie.
 
+Small child lists use a linear scan; lists above `kLinearSearchMaximumChildren` use binary search over their insertion-time ordering.
+
 **Parameters**
 
 - `node_index` (in) — Parent node index.
@@ -200,7 +216,7 @@ Find one direct child without allocating or modifying the trie.
 
 **Returns:** Matching child index, or `kInvalidNode` when absent or invalid.
 
-[Source](../../utils/containers/trie.hpp#L167)
+[Source](../../utils/containers/trie.hpp#L182)
 
 <a id="symbol-classpuc_1_1containers_1_1_trie_1a98892f7ce9d8820276ab70a70034afea"></a>
 
@@ -212,7 +228,7 @@ NodeIndex puc::containers::Trie< KeyType, ValueType >::insert(const std::vector<
 
 Insert a sequence or replace its existing terminal value.
 
-Missing nodes are appended in traversal order. Existing prefix and descendant indexes remain unchanged when a value is inserted or replaced.
+Missing nodes are appended in traversal order. Existing prefix and descendant indexes remain unchanged when a value is inserted or replaced. Each missing edge is placed into its parent's sorted child-index vector.
 
 **Parameters**
 
@@ -221,7 +237,7 @@ Missing nodes are appended in traversal order. Existing prefix and descendant in
 
 **Returns:** Stable terminal node index.
 
-[Source](../../utils/containers/trie.hpp#L189)
+[Source](../../utils/containers/trie.hpp#L218)
 
 <a id="symbol-classpuc_1_1containers_1_1_trie_1abceefad89d37ad8d83493a36b6515a2b"></a>
 
@@ -241,7 +257,7 @@ Nodes are intentionally retained so indexes held by active cursors remain valid 
 
 **Returns:** `true` when an exact value existed and was removed.
 
-[Source](../../utils/containers/trie.hpp#L216)
+[Source](../../utils/containers/trie.hpp#L251)
 
 <a id="symbol-classpuc_1_1containers_1_1_trie_1a561168ebed405060e80b6f6c6fa2dcf1"></a>
 
@@ -261,7 +277,7 @@ This tests `sequence_end`, not the stored value. An exact sequence holding a nul
 
 **Returns:** `true` only for an inserted complete sequence.
 
-[Source](../../utils/containers/trie.hpp#L235)
+[Source](../../utils/containers/trie.hpp#L270)
 
 <a id="symbol-classpuc_1_1containers_1_1_trie_1af2d086570822773e9857740884ab9cf4"></a>
 
@@ -273,7 +289,7 @@ std::vector< std::vector< KeyType > > puc::containers::Trie< KeyType, ValueType 
 
 Return every stored sequence beginning with a prefix.
 
-Results are complete sequences from the root, ordered by the insertion order of each traversed branch. An exact prefix is included when it is a stored sequence, followed by any longer descendants. An empty prefix enumerates the entire trie, including the empty sequence when one was inserted.
+Results are complete sequences from the root in lexicographic key order, independent of insertion order. An exact prefix is included when it is a stored sequence, followed by any longer descendants. An empty prefix enumerates the entire trie, including the empty sequence when one was inserted.
 
 **Parameters**
 
@@ -281,7 +297,7 @@ Results are complete sequences from the root, ordered by the insertion order of 
 
 **Returns:** Complete stored sequences below `prefix`, or an empty vector when the prefix is absent.
 
-[Source](../../utils/containers/trie.hpp#L253)
+[Source](../../utils/containers/trie.hpp#L288)
 
 ## Public static functions
 
@@ -297,7 +313,7 @@ Return the sentinel root index used to begin traversal.
 
 **Returns:** Always `kRootNode`.
 
-[Source](../../utils/containers/trie.hpp#L99)
+[Source](../../utils/containers/trie.hpp#L110)
 
 ## Private functions
 
@@ -309,6 +325,6 @@ Return the sentinel root index used to begin traversal.
 void puc::containers::Trie< KeyType, ValueType >::collect_completions(NodeIndex node_index, std::vector< KeyType > &current_sequence, std::vector< std::vector< KeyType > > &completions) const
 ```
 
-Append terminal descendants of one valid node in branch order.
+Append terminal descendants of one valid node in sorted branch order.
 
-[Source](../../utils/containers/trie.hpp#L268)
+[Source](../../utils/containers/trie.hpp#L303)

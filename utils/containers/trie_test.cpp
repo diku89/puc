@@ -115,6 +115,50 @@ TEST(TrieTest, StoresIndependentBranchesOnSharedPrefixes) {
   EXPECT_NE(dog_node, car_node);
 }
 
+TEST(TrieTest, SortsChildrenDuringInsertionAndEnumeratesLexicographically) {
+  StringTrie trie;
+  for (const char branch : {'m', 'a', 'z', 'b', 'y', 'c', 'x', 'd', 'w', 'e'}) {
+    ASSERT_NE(trie.insert({branch}, std::string{branch}),
+              StringTrie::kInvalidNode);
+  }
+
+  std::vector<char> child_keys;
+  for (const StringTrie::NodeIndex child : trie.node(trie.root()).children) {
+    child_keys.push_back(trie.node(child).key);
+  }
+  EXPECT_EQ(child_keys, (std::vector<char>{'a', 'b', 'c', 'd', 'e', 'm', 'w',
+                                           'x', 'y', 'z'}));
+  EXPECT_EQ(trie.completions(), (std::vector<std::vector<char>>{{'a'},
+                                                                {'b'},
+                                                                {'c'},
+                                                                {'d'},
+                                                                {'e'},
+                                                                {'m'},
+                                                                {'w'},
+                                                                {'x'},
+                                                                {'y'},
+                                                                {'z'}}));
+}
+
+TEST(TrieTest, FindsChildrenAboveTheLinearSearchThreshold) {
+  StringTrie trie;
+  static_assert(StringTrie::kLinearSearchMaximumChildren == 8U);
+  for (int key_value = 16; key_value >= 0; --key_value) {
+    ASSERT_NE(trie.insert({static_cast<char>('a' + key_value)},
+                          std::to_string(key_value)),
+              StringTrie::kInvalidNode);
+  }
+
+  for (int key_value = 0; key_value <= 16; ++key_value) {
+    const char branch                 = static_cast<char>('a' + key_value);
+    const StringTrie::NodeIndex child = trie.find_child(trie.root(), branch);
+    ASSERT_NE(child, StringTrie::kInvalidNode);
+    EXPECT_EQ(trie.node(child).key, branch);
+  }
+  EXPECT_EQ(trie.find_child(trie.root(), 'A'), StringTrie::kInvalidNode);
+  EXPECT_EQ(trie.find_child(trie.root(), 'z'), StringTrie::kInvalidNode);
+}
+
 TEST(TrieTest, ReinsertionReusesIndexesAndPreservesDescendants) {
   StringTrie trie;
   const StringTrie::NodeIndex descendant =

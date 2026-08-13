@@ -2,7 +2,7 @@
 
 # Namespace `puc::containers`
 
-[Source](../../utils/containers/trie.hpp#L15)
+[Source](../../utils/containers/trie.hpp#L16)
 
 ## Related symbols
 

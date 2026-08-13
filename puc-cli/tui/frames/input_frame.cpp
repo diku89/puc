@@ -110,6 +110,17 @@ Status write_text_row(Canvas& canvas, std::size_t x, std::size_t y,
       Canvas::Rect{.x = x, .y = y, .width = count, .height = 1U}, rows);
 }
 
+/** Add command-help rows without relaxing the editor-content height cap. */
+std::size_t command_maximum_height(std::size_t screen_height,
+                                   std::size_t help_rows) noexcept {
+  const std::size_t editor_maximum = InputFrame::maximum_height(screen_height);
+  const std::size_t with_help =
+      help_rows > std::numeric_limits<std::size_t>::max() - editor_maximum
+          ? std::numeric_limits<std::size_t>::max()
+          : editor_maximum + help_rows;
+  return std::min(screen_height, with_help);
+}
+
 }  // namespace
 
 /** Synchronized mode coordinator and its independently reusable child frames.
@@ -177,6 +188,7 @@ class InputFrame::Impl {
   /** Enter a fresh disposable command editor. */
   void enter_command_mode() {
     command->clear();
+    command->clear_help();
     mode = InputMode::COMMAND;
     terminal_visible.store(false, std::memory_order_relaxed);
     escape_started.reset();
@@ -185,6 +197,7 @@ class InputFrame::Impl {
   /** Show the terminal and request a PTY owner when necessary. */
   void enter_terminal_mode() {
     terminal->activate_session();
+    command->clear_help();
     mode = InputMode::TERMINAL;
     terminal_visible.store(true, std::memory_order_relaxed);
     escape_started.reset();
@@ -211,14 +224,11 @@ class InputFrame::Impl {
 
   /** Recognize one Escape or a decoder-normalized double Escape. */
   void handle_escape(Clock::time_point now, bool decoder_double_escape) {
-    if (mode == InputMode::TERMINAL) {
-      return;
-    }
     const bool within_interval = escape_started.has_value() &&
                                  now >= *escape_started &&
                                  now - *escape_started < kDoubleEscapeInterval;
     if (decoder_double_escape || within_interval) {
-      if (mode == InputMode::COMMAND) {
+      if (mode == InputMode::COMMAND || mode == InputMode::TERMINAL) {
         mode = InputMode::NORMAL;
         terminal_visible.store(false, std::memory_order_relaxed);
       } else {
@@ -232,8 +242,10 @@ class InputFrame::Impl {
 
   /** Insert committed text while recognizing Escape mode fallbacks. */
   Status handle_committed_text(std::string_view text, Clock::time_point now) {
+    const bool chord_is_available =
+        mode == InputMode::NORMAL || mode == InputMode::COMMAND;
     const bool escape_chord =
-        mode == InputMode::NORMAL && escape_started.has_value() &&
+        chord_is_available && escape_started.has_value() &&
         now >= *escape_started &&
         now - *escape_started < kDoubleEscapeInterval && !text.empty() &&
         (text.front() == ':' || text.front() == '>');
@@ -310,8 +322,6 @@ class InputFrame::Impl {
   std::optional<Clock::time_point>
       escape_started;       /**< Time at which the first Escape arrived. */
   std::string notification; /**< UTF-8 notification-margin contents. */
-  std::vector<std::string>
-      command_help; /**< Completion/usage rows above command input. */
 };
 
 InputFrame::InputFrame(std::string name)
@@ -358,7 +368,7 @@ std::size_t InputFrame::preferred_height(std::size_t screen_width,
     content_rows = impl_->normal_input->preferred_rows(text_width);
   }
   const std::size_t help_rows =
-      impl_->mode == InputMode::COMMAND ? impl_->command_help.size() : 0U;
+      impl_->mode == InputMode::COMMAND ? impl_->command->help_rows() : 0U;
   const std::size_t fixed_rows =
       help_rows > std::numeric_limits<std::size_t>::max() - 4U
           ? std::numeric_limits<std::size_t>::max()
@@ -369,7 +379,10 @@ std::size_t InputFrame::preferred_height(std::size_t screen_width,
                   std::numeric_limits<std::size_t>::max() - fixed_rows
           ? std::numeric_limits<std::size_t>::max()
           : content_rows + fixed_rows;
-  const std::size_t maximum = maximum_height(screen_height);
+  const std::size_t maximum =
+      impl_->mode == InputMode::COMMAND
+          ? command_maximum_height(screen_height, help_rows)
+          : maximum_height(screen_height);
   if (maximum < kMinimumHeight) {
     return maximum;
   }
@@ -404,6 +417,10 @@ Status InputFrame::handle_event(const terminal::Event& event,
                ? Status::OK
                : impl_->route_editor_event(event);
   }
+  if (std::holds_alternative<terminal::MouseEvent>(event)) {
+    impl_->escape_started.reset();
+    return Status::OK;
+  }
   if (const auto* command = std::get_if<terminal::CommandEvent>(&event)) {
     if (!impl_->paste_in_progress()) {
       impl_->escape_started.reset();
@@ -430,9 +447,22 @@ void InputFrame::set_notification(std::string notification) {
   impl_->notification = std::move(notification);
 }
 
-void InputFrame::set_command_help(std::vector<std::string> help) {
+void InputFrame::set_command_completions(std::string typed_prefix,
+                                         std::vector<CmdCompletion> completions,
+                                         std::size_t selected_completion) {
   const std::unique_lock lock(impl_->mutex);
-  impl_->command_help = std::move(help);
+  impl_->command->set_completions(std::move(typed_prefix),
+                                  std::move(completions), selected_completion);
+}
+
+void InputFrame::set_command_usage(std::vector<std::string> usage_rows) {
+  const std::unique_lock lock(impl_->mutex);
+  impl_->command->set_usage(std::move(usage_rows));
+}
+
+void InputFrame::clear_command_help() {
+  const std::unique_lock lock(impl_->mutex);
+  impl_->command->clear_help();
 }
 
 Status InputFrame::replace_command_text(std::string text) {
@@ -445,7 +475,7 @@ void InputFrame::leave_command_mode() {
   if (impl_->mode == InputMode::COMMAND) {
     impl_->mode = InputMode::NORMAL;
   }
-  impl_->command_help.clear();
+  impl_->command->clear_help();
   impl_->escape_started.reset();
 }
 
@@ -505,7 +535,7 @@ InputFrameSnapshot InputFrame::snapshot() const {
       .input_text              = normal.text,
       .command_text            = command.text,
       .notification            = impl_->notification,
-      .command_help            = impl_->command_help,
+      .command_help            = impl_->command->help_text(),
       .cursor                  = active.cursor,
       .scroll_row              = active.scroll_row,
       .escape_armed            = impl_->escape_started.has_value(),
@@ -533,8 +563,13 @@ Status InputFrame::draw(const Theme& theme, Canvas& canvas,
   const bool terminal_mode = impl_->mode == InputMode::TERMINAL;
   const std::size_t minimum =
       terminal_mode ? kTerminalMinimumHeight : kMinimumHeight;
-  const std::size_t maximum = terminal_mode ? terminal_height(screen_height)
-                                            : maximum_height(screen_height);
+  const std::size_t configured_help_rows =
+      impl_->mode == InputMode::COMMAND ? impl_->command->help_rows() : 0U;
+  const std::size_t maximum =
+      terminal_mode ? terminal_height(screen_height)
+      : impl_->mode == InputMode::COMMAND
+          ? command_maximum_height(screen_height, configured_help_rows)
+          : maximum_height(screen_height);
   if (rect.height < minimum || rect.height > maximum) {
     return Status::INVALID_DIMENSIONS;
   }
@@ -544,7 +579,7 @@ Status InputFrame::draw(const Theme& theme, Canvas& canvas,
           ? rect.height - kMinimumHeight
           : 0U;
   const std::size_t help_rows =
-      std::min(available_help_rows, impl_->command_help.size());
+      std::min(available_help_rows, impl_->command->help_rows());
   if (impl_->mode == InputMode::COMMAND) {
     BoundingFrameConfiguration configuration =
         editor_bounds(Theme::ColorTypes::TEXT_SUCCESS);
@@ -563,18 +598,22 @@ Status InputFrame::draw(const Theme& theme, Canvas& canvas,
   }
 
   const Theme::Colors colors = theme.get_colors();
-  for (std::size_t row = 0U; row < help_rows; ++row) {
-    status = write_text_row(canvas, rect.x + 2U, rect.y + row,
-                            rect.width > 4U ? rect.width - 4U : 0U,
-                            text_editor::decode_utf8(impl_->command_help[row]),
-                            colors.text_muted, colors.background);
+  if (help_rows != 0U) {
+    status = impl_->command->draw_help(
+        theme, canvas,
+        Canvas::Rect{.x      = rect.x + 2U,
+                     .y      = rect.y,
+                     .width  = rect.width > 4U ? rect.width - 4U : 0U,
+                     .height = help_rows});
     if (!is_ok(status)) {
       return status;
     }
   }
   if (impl_->escape_started.has_value()) {
     const std::string_view prompt =
-        impl_->mode == InputMode::COMMAND ? kExitCommandPrompt : kClearPrompt;
+        impl_->mode == InputMode::COMMAND    ? kExitCommandPrompt
+        : impl_->mode == InputMode::TERMINAL ? kExitTerminalPrompt
+                                             : kClearPrompt;
     status = write_text_row(canvas, rect.x + 2U, rect.y + rect.height - 2U,
                             rect.width > 4U ? rect.width - 4U : 0U,
                             text_editor::decode_utf8(prompt), colors.text_muted,

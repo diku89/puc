@@ -178,7 +178,7 @@ TEST(CommandDispatcherTest, RejectsInvalidAndDuplicateSpellingsAtomically) {
             Status::INVALID_ARGUMENT);
 }
 
-TEST(CommandDispatcherTest, ListsPrefixCompletionsInStableBranchOrder) {
+TEST(CommandDispatcherTest, ListsPrefixCompletionsInLexicographicOrder) {
   CommandDispatcher dispatcher;
   auto quit = std::make_shared<RecordingCommand>("Quit puc.", "");
   auto config =
@@ -194,7 +194,7 @@ TEST(CommandDispatcherTest, ListsPrefixCompletionsInStableBranchOrder) {
   EXPECT_EQ(dispatcher.list_completions("con"),
             (std::vector<std::string>{"config"}));
   EXPECT_EQ(dispatcher.list_completions(),
-            (std::vector<std::string>{"q", "quit", "exit", "config"}));
+            (std::vector<std::string>{"config", "exit", "q", "quit"}));
   EXPECT_TRUE(dispatcher.list_completions("unknown").empty());
   EXPECT_TRUE(dispatcher.list_completions("bad prefix").empty());
 }

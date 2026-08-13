@@ -101,7 +101,7 @@ Status CommandModeSubsystem::start(AppState& app) {
   app_    = &app;
   active_ = true;
   if (waiting_for_acknowledgement_) {
-    input_frame_->set_command_help({});
+    input_frame_->clear_command_help();
   } else {
     refresh_help();
   }
@@ -125,7 +125,7 @@ Status CommandModeSubsystem::terminate(AppState& app) noexcept {
   prefix_.clear();
   selected_completion_ = 0U;
   if (input_frame_ != nullptr) {
-    input_frame_->set_command_help({});
+    input_frame_->clear_command_help();
   }
   input_frame_.reset();
   dispatcher_ = nullptr;
@@ -150,7 +150,7 @@ tui::Status CommandModeSubsystem::handle_event(
     completions_.clear();
     usage_.clear();
     prefix_.clear();
-    input_frame_->set_command_help({});
+    input_frame_->clear_command_help();
     return tui::Status::OK;
   }
 
@@ -209,7 +209,7 @@ void CommandModeSubsystem::refresh_help() {
     usage_.clear();
     prefix_.clear();
     selected_completion_ = 0U;
-    input_frame_->set_command_help({});
+    input_frame_->clear_command_help();
     return;
   }
 
@@ -237,22 +237,24 @@ void CommandModeSubsystem::refresh_help() {
   usage_ = dispatcher_->contains(prefix_)
                ? dispatcher_->get_command_usage(prefix_)
                : std::string{};
-  std::vector<std::string> help;
   if (!usage_.empty()) {
-    help = usage_rows(usage_);
-  } else if (completions_.size() > 1U) {
-    help.reserve(completions_.size());
+    input_frame_->set_command_usage(usage_rows(usage_));
+  } else if (!completions_.empty() &&
+             (completions_.size() > 1U ||
+              completions_.front().command != prefix_)) {
+    std::vector<tui::CmdCompletion> presented;
+    presented.reserve(completions_.size());
     for (std::size_t index = 0U; index < completions_.size(); ++index) {
-      std::string row = index == selected_completion_ ? "> " : "  ";
-      row.append(completions_[index].command);
-      if (!completions_[index].description.empty()) {
-        row.append("    ");
-        row.append(completions_[index].description);
-      }
-      help.push_back(std::move(row));
+      presented.push_back(tui::CmdCompletion{
+          .command     = completions_[index].command,
+          .description = completions_[index].description,
+      });
     }
+    input_frame_->set_command_completions(prefix_, std::move(presented),
+                                          selected_completion_);
+  } else {
+    input_frame_->clear_command_help();
   }
-  input_frame_->set_command_help(std::move(help));
 }
 
 tui::Status CommandModeSubsystem::autocomplete() {
@@ -296,7 +298,7 @@ tui::Status CommandModeSubsystem::dispatch() {
   waiting_for_acknowledgement_ = true;
   completions_.clear();
   usage_.clear();
-  input_frame_->set_command_help({});
+  input_frame_->clear_command_help();
   return tui::Status::OK;
 }
 

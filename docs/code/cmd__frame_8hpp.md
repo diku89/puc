@@ -8,6 +8,7 @@ Green command-entry view composed from reusable text frames.
 
 ## Related symbols
 
+- [puc::tui::CmdCompletion](structpuc_1_1tui_1_1_cmd_completion.md)
 - [puc::tui::CmdFrame](classpuc_1_1tui_1_1_cmd_frame.md)
 - [puc](namespacepuc.md)
 - [puc::tui](namespacepuc_1_1tui.md)

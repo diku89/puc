@@ -6,6 +6,7 @@
 #include "puc-cli/tui/terminal/embedded_terminal_subsystem.hpp"
 
 #include <fcntl.h>
+#include <pwd.h>
 #include <signal.h>
 #include <sys/ioctl.h>
 #include <sys/wait.h>
@@ -16,6 +17,7 @@
 #include <cerrno>
 #include <cstddef>
 #include <cstdint>
+#include <cstdlib>
 #include <limits>
 #include <memory>
 #include <mutex>
@@ -23,6 +25,7 @@
 #include <string_view>
 #include <utility>
 #include <variant>
+#include <vector>
 
 #if defined(__APPLE__) || defined(__FreeBSD__) || defined(__OpenBSD__) ||      \
     defined(__NetBSD__) || defined(__DragonFly__)
@@ -42,6 +45,30 @@ LOGGER_MODULE("Embedded Terminal");
 
 namespace puc::app {
 namespace {
+
+/** Resolve the shell selected by the user's environment or account record. */
+std::string configured_user_shell() {
+  const char* environment_shell = std::getenv("SHELL");
+  if (environment_shell != nullptr && environment_shell[0] != '\0') {
+    return environment_shell;
+  }
+
+  constexpr std::size_t kFallbackPasswordBuffer = 16U * 1024U;
+  const long configured_size = ::sysconf(_SC_GETPW_R_SIZE_MAX);
+  const std::size_t buffer_size =
+      configured_size > 0 ? static_cast<std::size_t>(configured_size)
+                          : kFallbackPasswordBuffer;
+  std::vector<char> buffer(buffer_size);
+  struct passwd account {};
+  struct passwd* result = nullptr;
+  if (::getpwuid_r(::getuid(), &account, buffer.data(), buffer.size(),
+                   &result) == 0 &&
+      result != nullptr && result->pw_shell != nullptr &&
+      result->pw_shell[0] != '\0') {
+    return result->pw_shell;
+  }
+  return "/bin/sh";
+}
 
 /** Append one Unicode scalar as UTF-8 terminal input. */
 void append_utf8(char32_t character, std::string& output) {
@@ -437,6 +464,9 @@ Status EmbeddedTerminalSubsystem::initialize(AppState& app) {
   InputSubsystem* input = app.get_subsystem<InputSubsystem>();
   if (input == nullptr || input->input_frame() == nullptr) {
     return Status::SUBSYSTEM_FAILURE;
+  }
+  if (options_.shell.empty()) {
+    options_.shell = configured_user_shell();
   }
   input_frame_ = input->input_frame();
   impl_        = std::make_unique<Impl>();

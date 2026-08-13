@@ -179,8 +179,9 @@ class CommandDispatcher {
   /**
    * Return every registered spelling beginning with `prefix`.
    *
-   * Results retain the trie's stable branch-insertion order. An empty prefix
-   * lists every spelling; an invalid or absent prefix produces an empty list.
+   * Results use lexicographic spelling order independent of registration
+   * order. An empty prefix lists every spelling; an invalid or absent prefix
+   * produces an empty list.
    */
   std::vector<std::string> list_completions(std::string_view prefix = {}) const;
 

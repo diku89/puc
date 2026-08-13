@@ -8,12 +8,20 @@
 #include <cstddef>
 #include <memory>
 #include <string>
+#include <string_view>
+#include <vector>
 
 #include "puc-cli/tui/rendering/frame.hpp"
 #include "puc-cli/tui/terminal/event.hpp"
 #include "puc-cli/tui/text_input/text_editor_utils.hpp"
 
 namespace puc::tui {
+
+/** One command spelling and its completion-list description. */
+struct CmdCompletion {
+  std::string command;     /**< Registered command spelling or alias. */
+  std::string description; /**< Short description displayed beside it. */
+};
 
 /**
  * Command-mode editor with its own buffer, annotations, and green visual role.
@@ -24,6 +32,9 @@ namespace puc::tui {
  */
 class CmdFrame final : public Frame {
  public:
+  /** Blank cells between the longest command and every description. */
+  static constexpr std::size_t kDescriptionGap = 8U;
+
   /** Construct an empty line-numbered command editor. */
   explicit CmdFrame(std::string name = "command");
 
@@ -52,6 +63,33 @@ class CmdFrame final : public Frame {
 
   /** Return wrapped content rows for a total annotated width. */
   std::size_t preferred_rows(std::size_t width) const;
+
+  /**
+   * Present command-name completions above the editor.
+   *
+   * The matched prefix uses the highlight palette, the remaining command uses
+   * the secondary text role, and descriptions share one column beginning
+   * kDescriptionGap cells after the longest supplied command.
+   */
+  void set_completions(std::string typed_prefix,
+                       std::vector<CmdCompletion> completions,
+                       std::size_t selected_completion);
+
+  /** Present exact-command usage as unsegmented help rows. */
+  void set_usage(std::vector<std::string> usage_rows);
+
+  /** Remove completion and usage presentation without changing command text. */
+  void clear_help();
+
+  /** Return the number of help rows currently presented above the editor. */
+  std::size_t help_rows() const noexcept;
+
+  /** Return flattened help text for state snapshots and diagnostics. */
+  std::vector<std::string> help_text() const;
+
+  /** Draw as many prepared help rows as fit in the supplied rectangle. */
+  Status draw_help(const Theme& theme, Canvas& canvas,
+                   const Canvas::Rect& rect) const;
 
   /** Draw line annotations and the green text/caret surface. */
   Status draw(const Theme& theme, Canvas& canvas,
