@@ -40,14 +40,18 @@ Statement::Statement(Statement&& other) noexcept
 
 Statement& Statement::operator=(Statement&& other) noexcept {
   if (this != &other) {
-    if (statement_ != nullptr) sqlite3_finalize(statement_);
+    if (statement_ != nullptr) {
+      sqlite3_finalize(statement_);
+    }
     statement_ = std::exchange(other.statement_, nullptr);
   }
   return *this;
 }
 
 Statement::~Statement() {
-  if (statement_ != nullptr) sqlite3_finalize(statement_);
+  if (statement_ != nullptr) {
+    sqlite3_finalize(statement_);
+  }
 }
 
 Status Statement::bind(std::int32_t index, std::string_view value) noexcept {
@@ -73,8 +77,12 @@ Status Statement::bind_null(std::int32_t index) noexcept {
 
 Status Statement::step() noexcept {
   const int result = sqlite3_step(statement_);
-  if (result == SQLITE_ROW) return Status::OK;
-  if (result == SQLITE_DONE) return Status::NOT_FOUND;
+  if (result == SQLITE_ROW) {
+    return Status::OK;
+  }
+  if (result == SQLITE_DONE) {
+    return Status::NOT_FOUND;
+  }
   return result == SQLITE_CONSTRAINT ? Status::ALREADY_EXISTS
                                      : Status::SQL_ERROR;
 }
@@ -121,7 +129,9 @@ Database::Database(Database&& other) noexcept {
 Database& Database::operator=(Database&& other) noexcept {
   if (this != &other) {
     const std::scoped_lock lock(operation_mutex_, other.operation_mutex_);
-    if (database_ != nullptr) sqlite3_close_v2(database_);
+    if (database_ != nullptr) {
+      sqlite3_close_v2(database_);
+    }
     database_    = std::exchange(other.database_, nullptr);
     initialized_ = std::exchange(other.initialized_, false);
     last_error_  = std::move(other.last_error_);
@@ -134,8 +144,12 @@ Database::~Database() { close(); }
 Status Database::initialize(const std::filesystem::path& path,
                             std::span<const MigrationSet> migration_sets) {
   const std::lock_guard lock(operation_mutex_);
-  if (database_ != nullptr || initialized_) return Status::INVALID_STATE;
-  if (path.empty() || migration_sets.empty()) return Status::INVALID_ARGUMENT;
+  if (database_ != nullptr || initialized_) {
+    return Status::INVALID_STATE;
+  }
+  if (path.empty() || migration_sets.empty()) {
+    return Status::INVALID_ARGUMENT;
+  }
   for (std::size_t set_index = 0U; set_index < migration_sets.size();
        ++set_index) {
     const MigrationSet& set = migration_sets[set_index];
@@ -178,19 +192,25 @@ Status Database::initialize(const std::filesystem::path& path,
 
 void Database::close() noexcept {
   const std::lock_guard lock(operation_mutex_);
-  if (database_ != nullptr) sqlite3_close_v2(database_);
+  if (database_ != nullptr) {
+    sqlite3_close_v2(database_);
+  }
   database_    = nullptr;
   initialized_ = false;
 }
 
 Status Database::execute(std::string_view sql) noexcept {
   const std::lock_guard lock(operation_mutex_);
-  if (database_ == nullptr) return Status::INVALID_STATE;
+  if (database_ == nullptr) {
+    return Status::INVALID_STATE;
+  }
   std::string owned{sql};
   char* error = nullptr;
   const int result =
       sqlite3_exec(database_, owned.c_str(), nullptr, nullptr, &error);
-  if (result == SQLITE_OK) return Status::OK;
+  if (result == SQLITE_OK) {
+    return Status::OK;
+  }
   last_error_ = error == nullptr ? sqlite3_errmsg(database_) : error;
   sqlite3_free(error);
   return Status::SQL_ERROR;
@@ -199,7 +219,9 @@ Status Database::execute(std::string_view sql) noexcept {
 Status Database::prepare(std::string_view sql, Statement& output) noexcept {
   const std::lock_guard lock(operation_mutex_);
   output = Statement{};
-  if (database_ == nullptr) return Status::INVALID_STATE;
+  if (database_ == nullptr) {
+    return Status::INVALID_STATE;
+  }
   sqlite3_stmt* statement = nullptr;
   const int result        = sqlite3_prepare_v2(
       database_, sql.data(), static_cast<int>(sql.size()), &statement, nullptr);
@@ -231,7 +253,9 @@ std::string Database::last_error() const {
 
 Status Database::apply_migrations(
     std::span<const MigrationSet> migration_sets) {
-  if (!is_ok(begin_immediate())) return Status::MIGRATION_ERROR;
+  if (!is_ok(begin_immediate())) {
+    return Status::MIGRATION_ERROR;
+  }
   if (!is_ok(execute(kCreateMigrations))) {
     rollback();
     return Status::MIGRATION_ERROR;

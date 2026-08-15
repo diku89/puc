@@ -19,7 +19,9 @@ bool load_settings(properties::Properties& properties, Settings& settings) {
   constexpr std::string_view kPath   = "ipc.toml";
   const properties::Status loaded    = properties.load_mutable_defaults(
       std::string{kSource}, std::filesystem::path{kPath});
-  if (!properties::is_ok(loaded)) return false;
+  if (!properties::is_ok(loaded)) {
+    return false;
+  }
 
   properties::Property property;
   if (!properties::is_ok(

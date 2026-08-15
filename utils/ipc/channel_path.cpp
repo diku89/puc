@@ -17,17 +17,23 @@ std::optional<RelativeChannelPath> RelativeChannelPath::parse(
   }
   std::string absolute{"//"};
   absolute.append(path);
-  if (!valid_channel_name(absolute)) return std::nullopt;
+  if (!valid_channel_name(absolute)) {
+    return std::nullopt;
+  }
   return RelativeChannelPath{std::string{path}};
 }
 
 std::optional<std::string> RelativeChannelPath::resolve(
     std::string_view root) const {
-  if (!valid_channel_name(root)) return std::nullopt;
+  if (!valid_channel_name(root)) {
+    return std::nullopt;
+  }
   std::string resolved{root};
   resolved.push_back('/');
   resolved.append(path_);
-  if (!valid_channel_name(resolved)) return std::nullopt;
+  if (!valid_channel_name(resolved)) {
+    return std::nullopt;
+  }
   return resolved;
 }
 

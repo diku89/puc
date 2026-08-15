@@ -381,19 +381,33 @@ std::string_view terminal_input_event_name(
   return std::visit(
       [](const auto& value) -> std::string_view {
         using Type = std::decay_t<decltype(value)>;
-        if constexpr (std::is_same_v<Type, TerminalKeyEvent>) return "key";
-        if constexpr (std::is_same_v<Type, TerminalTextEvent>) return "text";
-        if constexpr (std::is_same_v<Type, TerminalMouseEvent>) return "mouse";
-        if constexpr (std::is_same_v<Type, TerminalScrollEvent>)
+        if constexpr (std::is_same_v<Type, TerminalKeyEvent>) {
+          return "key";
+        }
+        if constexpr (std::is_same_v<Type, TerminalTextEvent>) {
+          return "text";
+        }
+        if constexpr (std::is_same_v<Type, TerminalMouseEvent>) {
+          return "mouse";
+        }
+        if constexpr (std::is_same_v<Type, TerminalScrollEvent>) {
           return "scroll";
-        if constexpr (std::is_same_v<Type, TerminalPasteEvent>) return "paste";
-        if constexpr (std::is_same_v<Type, TerminalFocusEvent>) return "focus";
-        if constexpr (std::is_same_v<Type, TerminalClipboardEvent>)
+        }
+        if constexpr (std::is_same_v<Type, TerminalPasteEvent>) {
+          return "paste";
+        }
+        if constexpr (std::is_same_v<Type, TerminalFocusEvent>) {
+          return "focus";
+        }
+        if constexpr (std::is_same_v<Type, TerminalClipboardEvent>) {
           return "clipboard";
-        if constexpr (std::is_same_v<Type, TerminalCommandEvent>)
+        }
+        if constexpr (std::is_same_v<Type, TerminalCommandEvent>) {
           return "command";
-        if constexpr (std::is_same_v<Type, TerminalResponseEvent>)
+        }
+        if constexpr (std::is_same_v<Type, TerminalResponseEvent>) {
           return "response";
+        }
         return "unknown";
       },
       event.data);

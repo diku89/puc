@@ -58,9 +58,13 @@ class TurnContext final {
   std::optional<Value> take(std::string_view key) {
     const std::lock_guard lock(state_mutex_);
     const auto found = state_.find(std::string{key});
-    if (found == state_.end()) return std::nullopt;
+    if (found == state_.end()) {
+      return std::nullopt;
+    }
     Value* value = std::any_cast<Value>(&found->second);
-    if (value == nullptr) return std::nullopt;
+    if (value == nullptr) {
+      return std::nullopt;
+    }
     std::optional<Value> result{std::move(*value)};
     state_.erase(found);
     return result;

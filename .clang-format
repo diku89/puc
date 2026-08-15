@@ -7,5 +7,7 @@ AlignConsecutiveAssignments: 'true'
 AlignEscapedNewlines: Right
 AlignOperands: 'true'
 AlignTrailingComments: 'true'
+AllowShortIfStatementsOnASingleLine: Never
+InsertBraces: true
 
 ...

@@ -60,7 +60,9 @@ TEST(TurnTreeTest, AllocatesRepliesPerParentAndReconstructsCounters) {
       root_statuses[index] = tree.reply_to(uuid, nullptr, roots[index]);
     });
   }
-  for (std::thread& thread : threads) thread.join();
+  for (std::thread& thread : threads) {
+    thread.join();
+  }
 
   EXPECT_TRUE(std::all_of(
       root_statuses.begin(), root_statuses.end(),
@@ -90,7 +92,9 @@ TEST(TurnTreeTest, AllocatesRepliesPerParentAndReconstructsCounters) {
               tree.reply_to(uuid, &first->id(), children[index]);
         });
   }
-  for (std::thread& thread : threads) thread.join();
+  for (std::thread& thread : threads) {
+    thread.join();
+  }
 
   EXPECT_TRUE(std::all_of(
       child_statuses.begin(), child_statuses.end(),
@@ -121,7 +125,9 @@ TEST(TurnTreeTest, AllocatesRepliesPerParentAndReconstructsCounters) {
               tree.append_part(uuid, first_child->id(), parts[index]);
         });
   }
-  for (std::thread& thread : threads) thread.join();
+  for (std::thread& thread : threads) {
+    thread.join();
+  }
 
   EXPECT_TRUE(std::all_of(
       part_statuses.begin(), part_statuses.end(),

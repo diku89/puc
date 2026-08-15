@@ -16,7 +16,7 @@ Runtime Turn state stored directly in each authoritative Trie node.
 friend class TurnTree
 ```
 
-[Source](../../canvas/turn/turn_tree.hpp#L73)
+[Source](../../canvas/turn/turn_tree.hpp#L77)
 
 ## Private data members
 
@@ -30,7 +30,7 @@ proto::Turn puc::canvas::TurnNode::turn_
 
 Durable Turn payload for an exact Trie sequence.
 
-[Source](../../canvas/turn/turn_tree.hpp#L82)
+[Source](../../canvas/turn/turn_tree.hpp#L86)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_node_1ac719d519822a253ebbc45335fe857498"></a>
 
@@ -42,7 +42,7 @@ std::atomic<std::uint32_t> puc::canvas::TurnNode::next_numeric_child_
 
 Next numeric reply, or zero after exhaustion.
 
-[Source](../../canvas/turn/turn_tree.hpp#L83)
+[Source](../../canvas/turn/turn_tree.hpp#L87)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_node_1a1b6626d26c60d8ea9f0cda5e4d876618"></a>
 
@@ -54,7 +54,7 @@ std::atomic<std::uint32_t> puc::canvas::TurnNode::next_alphabetic_child_
 
 Next alphabetic part, or zero after exhaustion.
 
-[Source](../../canvas/turn/turn_tree.hpp#L85)
+[Source](../../canvas/turn/turn_tree.hpp#L89)
 
 ## Public functions
 
@@ -116,7 +116,7 @@ puc::canvas::TurnNode::TurnNode(TurnNode &&other) noexcept
 
 Move protobuf and atomic state during contiguous Trie growth.
 
-[Source](../../canvas/turn/turn_tree.hpp#L52)
+[Source](../../canvas/turn/turn_tree.hpp#L54)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_node_1a6808fa36fa785f5e0e8a1fb07d73e9b8"></a>
 
@@ -128,7 +128,7 @@ TurnNode & puc::canvas::TurnNode::operator=(TurnNode &&other) noexcept
 
 Move protobuf and atomic state during Trie replacement.
 
-[Source](../../canvas/turn/turn_tree.hpp#L60)
+[Source](../../canvas/turn/turn_tree.hpp#L62)
 
 ## Private functions
 
@@ -142,4 +142,4 @@ std::atomic< std::uint32_t > & puc::canvas::TurnNode::allocator(AddressComponent
 
 Select the independent allocator for one child component namespace.
 
-[Source](../../canvas/turn/turn_tree.hpp#L76)
+[Source](../../canvas/turn/turn_tree.hpp#L80)

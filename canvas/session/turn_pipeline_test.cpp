@@ -94,7 +94,9 @@ proto::Turn submitted(const std::vector<std::uint8_t>& canvas_uuid,
                       std::string text, const proto::TurnId* parent = nullptr) {
   proto::Turn result;
   result.mutable_id()->set_canvas_uuid(canvas_uuid.data(), canvas_uuid.size());
-  if (parent != nullptr) *result.mutable_parent() = *parent;
+  if (parent != nullptr) {
+    *result.mutable_parent() = *parent;
+  }
   result.mutable_actor()->set_id("human");
   result.mutable_actor()->set_kind(proto::Actor::HUMAN);
   result.mutable_payload()->set_kind(proto::Payload::TEXT);
@@ -136,7 +138,9 @@ TEST(TurnPipelineTest, OverlapsRunsAndSnapshotsTopologyPerSubmission) {
   ASSERT_EQ(pipeline.attach(workers), execution_graph::Status::OK);
 
   const auto completion = [&](datastore::Status status, proto::Turn) {
-    if (!datastore::is_ok(status)) failed_runs.fetch_add(1U);
+    if (!datastore::is_ok(status)) {
+      failed_runs.fetch_add(1U);
+    }
     completed.increment();
   };
   const std::vector<std::uint8_t> canvas_uuid = uuid(1U);
@@ -234,8 +238,9 @@ TEST(TurnPipelineTest, RegisteredNodesPersistAndOrderLateReplies) {
                       presentation_uuid, pending->previous_root,
                       pending->new_root, context.turn().id(), pending->nodes);
                   context.fail(status);
-                  if (datastore::is_ok(status))
+                  if (datastore::is_ok(status)) {
                     presentation_tree.commit(*pending);
+                  }
                 },
                 {"linearize"}),
             execution_graph::Status::OK);

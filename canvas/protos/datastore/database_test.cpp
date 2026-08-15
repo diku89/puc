@@ -60,7 +60,9 @@ TEST(DatabaseTest, SerializesCompleteLogicalOperationsAcrossTransactions) {
       std::unique_lock lock(mutex);
       changed.wait(lock, [&] { return allow_commit; });
     }
-    if (is_ok(transaction_status)) transaction_status = database.commit();
+    if (is_ok(transaction_status)) {
+      transaction_status = database.commit();
+    }
   }};
   {
     std::unique_lock lock(mutex);

@@ -4,7 +4,7 @@
 
 Hidden mutable resources behind the [Canvas](classpuc_1_1app_1_1_canvas.md) lifecycle adapter.
 
-[Source](../../canvas/canvas_subsystem.cpp#L121)
+[Source](../../canvas/canvas_subsystem.cpp#L123)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ canvas::datastore::Database* puc::app::CanvasSubsystem::Impl::database
 
 Borrowed application SQLite handle.
 
-[Source](../../canvas/canvas_subsystem.cpp#L123)
+[Source](../../canvas/canvas_subsystem.cpp#L125)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1acc92e6ccf95bef38407628765c08775d"></a>
 
@@ -30,7 +30,7 @@ std::unique_ptr<canvas::datastore::CanvasDatastore> puc::app::CanvasSubsystem::I
 
 Aggregate and Merkle-root persistence.
 
-[Source](../../canvas/canvas_subsystem.cpp#L126)
+[Source](../../canvas/canvas_subsystem.cpp#L128)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1aa83204384c6d692a61ef8cf5ef619c1a"></a>
 
@@ -42,7 +42,7 @@ std::unique_ptr<canvas::datastore::TurnDatastore> puc::app::CanvasSubsystem::Imp
 
 Pre-addressed committed-Turn persistence.
 
-[Source](../../canvas/canvas_subsystem.cpp#L128)
+[Source](../../canvas/canvas_subsystem.cpp#L130)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1a4b9b8ecee65d3ff3fd8e426b10d25b5d"></a>
 
@@ -54,7 +54,7 @@ std::unique_ptr<canvas::TurnPipeline> puc::app::CanvasSubsystem::Impl::pipeline
 
 Runtime-extensible graph registration surface.
 
-[Source](../../canvas/canvas_subsystem.cpp#L130)
+[Source](../../canvas/canvas_subsystem.cpp#L132)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1adcf86ff3ae16f00ea352357be18f2bc5"></a>
 
@@ -66,7 +66,7 @@ canvas::proto::Canvas puc::app::CanvasSubsystem::Impl::canvas
 
 Materialized aggregate descriptor.
 
-[Source](../../canvas/canvas_subsystem.cpp#L131)
+[Source](../../canvas/canvas_subsystem.cpp#L133)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1af4433581455ac82b0e978c66641cce5e"></a>
 
@@ -78,7 +78,7 @@ canvas::TurnTree puc::app::CanvasSubsystem::Impl::turn_tree
 
 Materialized reply topology.
 
-[Source](../../canvas/canvas_subsystem.cpp#L132)
+[Source](../../canvas/canvas_subsystem.cpp#L134)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1a673affb32aedbe2ae1df796f66ece76a"></a>
 
@@ -90,7 +90,7 @@ std::vector<std::uint8_t> puc::app::CanvasSubsystem::Impl::uuid
 
 Current [Canvas](classpuc_1_1app_1_1_canvas.md) identity bytes.
 
-[Source](../../canvas/canvas_subsystem.cpp#L133)
+[Source](../../canvas/canvas_subsystem.cpp#L135)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1a0fee357e1faf20ab9dc57fb5089c5a39"></a>
 
@@ -102,7 +102,7 @@ std::vector<std::uint8_t> puc::app::CanvasSubsystem::Impl::turn_trie_uuid
 
 Current Canvas-owned Turn Trie identity.
 
-[Source](../../canvas/canvas_subsystem.cpp#L135)
+[Source](../../canvas/canvas_subsystem.cpp#L137)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1a061861331b4f1dc1872afd4e39aaf864"></a>
 
@@ -114,7 +114,7 @@ ipc::Directory* puc::app::CanvasSubsystem::Impl::directory
 
 Borrowed active IPC directory.
 
-[Source](../../canvas/canvas_subsystem.cpp#L136)
+[Source](../../canvas/canvas_subsystem.cpp#L138)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1a9001166fc591c11ae0ca389f419e1860"></a>
 
@@ -126,7 +126,7 @@ std::shared_ptr<ipc::Channel> puc::app::CanvasSubsystem::Impl::announcement_chan
 
 Shared [Canvas](classpuc_1_1app_1_1_canvas.md) discovery event transport.
 
-[Source](../../canvas/canvas_subsystem.cpp#L138)
+[Source](../../canvas/canvas_subsystem.cpp#L140)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1a7c915126ec3c18e0002db31db3a19ea4"></a>
 
@@ -138,7 +138,7 @@ std::shared_ptr<ipc::Channel> puc::app::CanvasSubsystem::Impl::query_channel
 
 Shared late-subscriber discovery query transport.
 
-[Source](../../canvas/canvas_subsystem.cpp#L140)
+[Source](../../canvas/canvas_subsystem.cpp#L142)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1abed5fa764a9120c311a7720e10e0dac0"></a>
 
@@ -150,7 +150,7 @@ std::shared_ptr<ipc::Channel> puc::app::CanvasSubsystem::Impl::turn_submission_c
 
 Owned committed-Turn transport.
 
-[Source](../../canvas/canvas_subsystem.cpp#L142)
+[Source](../../canvas/canvas_subsystem.cpp#L144)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1a52c102780e967d1b8806e230d0a45b34"></a>
 
@@ -162,7 +162,7 @@ std::shared_ptr<ipc::Channel> puc::app::CanvasSubsystem::Impl::committed_turn_ch
 
 Owned durable-Turn broadcast transport.
 
-[Source](../../canvas/canvas_subsystem.cpp#L144)
+[Source](../../canvas/canvas_subsystem.cpp#L146)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1a4777616182d21b628867fc21e3c8c9f1"></a>
 
@@ -174,7 +174,7 @@ std::shared_ptr<ipc::Channel> puc::app::CanvasSubsystem::Impl::committed_present
 
 Owned durable-Presentation transport.
 
-[Source](../../canvas/canvas_subsystem.cpp#L145)
+[Source](../../canvas/canvas_subsystem.cpp#L147)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1a07e5e3391f222cdb0f5c09192030dacf"></a>
 
@@ -186,7 +186,7 @@ ipc::Subscription puc::app::CanvasSubsystem::Impl::turn_subscription
 
 Active Turn-submission subscription.
 
-[Source](../../canvas/canvas_subsystem.cpp#L148)
+[Source](../../canvas/canvas_subsystem.cpp#L150)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1ad6055c6708ccb568c0a4223961f5c1a5"></a>
 
@@ -198,7 +198,7 @@ ipc::Subscription puc::app::CanvasSubsystem::Impl::query_subscription
 
 Active current-state query subscription.
 
-[Source](../../canvas/canvas_subsystem.cpp#L150)
+[Source](../../canvas/canvas_subsystem.cpp#L152)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1a983dcf089e525bbb5396414820c2b147"></a>
 
@@ -210,7 +210,7 @@ std::string puc::app::CanvasSubsystem::Impl::channel_root
 
 Stable absolute [Canvas](classpuc_1_1app_1_1_canvas.md) namespace root.
 
-[Source](../../canvas/canvas_subsystem.cpp#L151)
+[Source](../../canvas/canvas_subsystem.cpp#L153)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1a7ce596443e41a2013fd021f43decee20"></a>
 
@@ -222,7 +222,7 @@ std::string puc::app::CanvasSubsystem::Impl::turn_submission_name
 
 Pre-addressed Turn input.
 
-[Source](../../canvas/canvas_subsystem.cpp#L152)
+[Source](../../canvas/canvas_subsystem.cpp#L154)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1a0991356ab7f2cbe27c5c1d968cfa2d93"></a>
 
@@ -234,7 +234,7 @@ std::string puc::app::CanvasSubsystem::Impl::committed_turn_name
 
 Durable-Turn output route.
 
-[Source](../../canvas/canvas_subsystem.cpp#L153)
+[Source](../../canvas/canvas_subsystem.cpp#L155)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1aa33c1ffea4033e949014f257ed573c75"></a>
 
@@ -246,7 +246,7 @@ std::string puc::app::CanvasSubsystem::Impl::committed_presentation_name
 
 Durable-Presentation route.
 
-[Source](../../canvas/canvas_subsystem.cpp#L154)
+[Source](../../canvas/canvas_subsystem.cpp#L156)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1ad6ab6b334ac9c89835bd96d195a2d912"></a>
 
@@ -258,7 +258,7 @@ std::mutex puc::app::CanvasSubsystem::Impl::mutex
 
 Protects pump control state and the pending queue.
 
-[Source](../../canvas/canvas_subsystem.cpp#L155)
+[Source](../../canvas/canvas_subsystem.cpp#L157)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1a959e9da0133cd249e08d2de03eaa1794"></a>
 
@@ -270,7 +270,7 @@ std::condition_variable puc::app::CanvasSubsystem::Impl::changed
 
 Signals queued work or shutdown.
 
-[Source](../../canvas/canvas_subsystem.cpp#L156)
+[Source](../../canvas/canvas_subsystem.cpp#L158)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1a4e2eb95f00a9889993d2f167cabfa731"></a>
 
@@ -282,7 +282,7 @@ std::deque<canvas::proto::Turn> puc::app::CanvasSubsystem::Impl::pending
 
 FIFO submitted-Turn queue.
 
-[Source](../../canvas/canvas_subsystem.cpp#L157)
+[Source](../../canvas/canvas_subsystem.cpp#L159)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1a3121020cc8599784fe04c78fc30d4054"></a>
 
@@ -294,7 +294,7 @@ std::shared_mutex puc::app::CanvasSubsystem::Impl::state_mutex
 
 Protects Trie and [Canvas](classpuc_1_1app_1_1_canvas.md) materialization.
 
-[Source](../../canvas/canvas_subsystem.cpp#L159)
+[Source](../../canvas/canvas_subsystem.cpp#L161)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1a2023f5dce5fad20ba9ce9a62becd09cd"></a>
 
@@ -306,7 +306,7 @@ bool puc::app::CanvasSubsystem::Impl::accepting
 
 Whether callbacks may enqueue new Turns.
 
-[Source](../../canvas/canvas_subsystem.cpp#L160)
+[Source](../../canvas/canvas_subsystem.cpp#L162)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1aa65f9c5c20fb63d7eded00f0f8b3414a"></a>
 
@@ -318,7 +318,7 @@ bool puc::app::CanvasSubsystem::Impl::closing
 
 Whether the pump exits after draining.
 
-[Source](../../canvas/canvas_subsystem.cpp#L161)
+[Source](../../canvas/canvas_subsystem.cpp#L163)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1a082061f6076ceb13689e8c6d710b4f7f"></a>
 
@@ -330,7 +330,7 @@ bool puc::app::CanvasSubsystem::Impl::announced
 
 Whether OPENED was successfully broadcast.
 
-[Source](../../canvas/canvas_subsystem.cpp#L162)
+[Source](../../canvas/canvas_subsystem.cpp#L164)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1aa35445d12dcbfe1005869bbd83b4711d"></a>
 
@@ -342,7 +342,7 @@ std::thread puc::app::CanvasSubsystem::Impl::pump
 
 Serialized IPC-to-graph ingestion thread.
 
-[Source](../../canvas/canvas_subsystem.cpp#L163)
+[Source](../../canvas/canvas_subsystem.cpp#L165)
 
 ## Public functions
 
@@ -356,7 +356,7 @@ void puc::app::CanvasSubsystem::Impl::enqueue(ipc::Channel::Bytes bytes) noexcep
 
 Copy one submitted Turn out of the IPC callback and wake the pump.
 
-[Source](../../canvas/canvas_subsystem.cpp#L166)
+[Source](../../canvas/canvas_subsystem.cpp#L168)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1a5b647dcdf2a2f0ba342bf6b47dd41bcd"></a>
 
@@ -368,7 +368,7 @@ void puc::app::CanvasSubsystem::Impl::run() noexcept
 
 Submit queued Turns without waiting for their independent graph runs.
 
-[Source](../../canvas/canvas_subsystem.cpp#L181)
+[Source](../../canvas/canvas_subsystem.cpp#L185)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1a3a29327e395824a96f1a67898e026585"></a>
 
@@ -380,7 +380,7 @@ void puc::app::CanvasSubsystem::Impl::stop_pump() noexcept
 
 Stop accepting work and synchronously drain the IPC pump.
 
-[Source](../../canvas/canvas_subsystem.cpp#L207)
+[Source](../../canvas/canvas_subsystem.cpp#L213)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1a294ad927ede816a5f6b8ef0f88fc5288"></a>
 
@@ -392,7 +392,7 @@ bool puc::app::CanvasSubsystem::Impl::announce(canvas::proto::CanvasChannelAnnou
 
 Broadcast this [Canvas](classpuc_1_1app_1_1_canvas.md) namespace in one lifecycle state.
 
-[Source](../../canvas/canvas_subsystem.cpp#L225)
+[Source](../../canvas/canvas_subsystem.cpp#L235)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1a72200380be37c348e30e4c7a3cac147e"></a>
 
@@ -404,7 +404,7 @@ void puc::app::CanvasSubsystem::Impl::persist_turn(canvas::TurnContext &context)
 
 Persist one complete, already-addressed Turn.
 
-[Source](../../canvas/canvas_subsystem.cpp#L234)
+[Source](../../canvas/canvas_subsystem.cpp#L244)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1a78e11a8bcb90247bafe3a747b8d11e12"></a>
 
@@ -416,4 +416,4 @@ void puc::app::CanvasSubsystem::Impl::update_trie(canvas::TurnContext &context)
 
 Update and durably checkpoint the materialized Turn Trie.
 
-[Source](../../canvas/canvas_subsystem.cpp#L239)
+[Source](../../canvas/canvas_subsystem.cpp#L249)

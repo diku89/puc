@@ -8,7 +8,7 @@ Own a runtime-extensible graph of named Turn-processing callbacks.
 
 Runs are independent and may overlap. The pipeline never serializes a Turn around the entire graph. Each registered callback is responsible for synchronizing only the resource it owns, such as a database transaction, Trie, or Presentation root. Model inference, tool execution, and other potentially long-lived workflows should trigger their own execution graphs rather than extend this authoritative commit path.
 
-[Source](../../canvas/session/turn_pipeline.hpp#L99)
+[Source](../../canvas/session/turn_pipeline.hpp#L103)
 
 ## Related symbols
 
@@ -26,7 +26,7 @@ using puc::canvas::TurnPipeline::NodeId = std::string
 
 Stable name used to identify a graph node and declare dependencies.
 
-[Source](../../canvas/session/turn_pipeline.hpp#L102)
+[Source](../../canvas/session/turn_pipeline.hpp#L106)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_pipeline_1afa3bb09f5da2fb4ef1479ca226b5fa27"></a>
 
@@ -38,7 +38,7 @@ using puc::canvas::TurnPipeline::Handler = std::function<void(TurnContext&)>
 
 Callback invoked once for its node during a graph run.
 
-[Source](../../canvas/session/turn_pipeline.hpp#L105)
+[Source](../../canvas/session/turn_pipeline.hpp#L109)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_pipeline_1a09baa2bbc5dbf86a3b8fac31fbc25521"></a>
 
@@ -50,7 +50,7 @@ using puc::canvas::TurnPipeline::Completion = std::function<void(datastore::Stat
 
 Callback invoked once after one accepted Turn run finishes.
 
-[Source](../../canvas/session/turn_pipeline.hpp#L108)
+[Source](../../canvas/session/turn_pipeline.hpp#L112)
 
 ## Private data members
 
@@ -64,7 +64,7 @@ std::unique_ptr<Impl> puc::canvas::TurnPipeline::impl_
 
 Registration, plan, and run lifecycle.
 
-[Source](../../canvas/session/turn_pipeline.hpp#L168)
+[Source](../../canvas/session/turn_pipeline.hpp#L172)
 
 ## Public functions
 
@@ -78,7 +78,7 @@ puc::canvas::TurnPipeline::TurnPipeline()
 
 Construct an unattached pipeline with no registered nodes.
 
-[Source](../../canvas/session/turn_pipeline.hpp#L112)
+[Source](../../canvas/session/turn_pipeline.hpp#L116)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_pipeline_1addbe852b5caa3105666cc4a4e26f0653"></a>
 
@@ -90,7 +90,7 @@ puc::canvas::TurnPipeline::~TurnPipeline()
 
 Stop accepting work and wait for every accepted Turn run.
 
-[Source](../../canvas/session/turn_pipeline.hpp#L115)
+[Source](../../canvas/session/turn_pipeline.hpp#L119)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_pipeline_1a29b8dc9f470e935d4fc3208852fe411d"></a>
 
@@ -100,7 +100,7 @@ Stop accepting work and wait for every accepted Turn run.
 puc::canvas::TurnPipeline::TurnPipeline(const TurnPipeline &)=delete
 ```
 
-[Source](../../canvas/session/turn_pipeline.hpp#L117)
+[Source](../../canvas/session/turn_pipeline.hpp#L121)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_pipeline_1a9d62626f8f3fc8b70c54dda6f643aba1"></a>
 
@@ -110,7 +110,7 @@ puc::canvas::TurnPipeline::TurnPipeline(const TurnPipeline &)=delete
 TurnPipeline & puc::canvas::TurnPipeline::operator=(const TurnPipeline &)=delete
 ```
 
-[Source](../../canvas/session/turn_pipeline.hpp#L118)
+[Source](../../canvas/session/turn_pipeline.hpp#L122)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_pipeline_1a6697d6af22b304e102b3bf9fa768c7fa"></a>
 
@@ -122,7 +122,7 @@ execution_graph::Status puc::canvas::TurnPipeline::attach(multithreading::JobQue
 
 Attach the active worker pool used by subsequent graph runs.
 
-[Source](../../canvas/session/turn_pipeline.hpp#L121)
+[Source](../../canvas/session/turn_pipeline.hpp#L125)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_pipeline_1ae33e2481f40b73a7190a88e2bb9a451f"></a>
 
@@ -134,7 +134,7 @@ void puc::canvas::TurnPipeline::detach() noexcept
 
 Stop accepting work, drain accepted runs, and detach the worker pool.
 
-[Source](../../canvas/session/turn_pipeline.hpp#L124)
+[Source](../../canvas/session/turn_pipeline.hpp#L128)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_pipeline_1ab80533c94e6b73679c131c40203d13bb"></a>
 
@@ -148,7 +148,7 @@ Register a named callback and its already-registered prerequisites.
 
 Node names are the dependency API; no pipeline-owned enum or fixed sequence exists. Accepted Turns retain the topology they were submitted against, so registration does not wait for an in-flight run.
 
-[Source](../../canvas/session/turn_pipeline.hpp#L133)
+[Source](../../canvas/session/turn_pipeline.hpp#L137)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_pipeline_1ab02762d21251d170bf03b657cd5c3889"></a>
 
@@ -162,7 +162,7 @@ Remove a leaf node from future submissions.
 
 In-flight plans retain their copied [Handler](#symbol-classpuc_1_1canvas_1_1_turn_pipeline_1afa3bb09f5da2fb4ef1479ca226b5fa27). Resources captured by a [Handler](#symbol-classpuc_1_1canvas_1_1_turn_pipeline_1afa3bb09f5da2fb4ef1479ca226b5fa27) must therefore use shared ownership or live until [detach()](#symbol-classpuc_1_1canvas_1_1_turn_pipeline_1ae33e2481f40b73a7190a88e2bb9a451f) drains accepted runs.
 
-[Source](../../canvas/session/turn_pipeline.hpp#L143)
+[Source](../../canvas/session/turn_pipeline.hpp#L147)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_pipeline_1a2b4ce95b11aa6bb2542daa81f3b24bad"></a>
 
@@ -176,7 +176,7 @@ Submit one Turn without occupying an ingestion or worker thread waiting.
 
 Returning OK guarantees one later completion callback. The callback must not detach or destroy this pipeline from inside itself.
 
-[Source](../../canvas/session/turn_pipeline.hpp#L151)
+[Source](../../canvas/session/turn_pipeline.hpp#L155)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_pipeline_1a3861bf27188f7ec7c9a25ae9e3f4a4cc"></a>
 
@@ -190,7 +190,7 @@ Submit and synchronously collect one Turn for tests and non-worker callers.
 
 Runtime ingestion should use [submit()](#symbol-classpuc_1_1canvas_1_1_turn_pipeline_1a2b4ce95b11aa6bb2542daa81f3b24bad). Calling this from the attached worker pool is rejected to prevent pool starvation.
 
-[Source](../../canvas/session/turn_pipeline.hpp#L160)
+[Source](../../canvas/session/turn_pipeline.hpp#L164)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_pipeline_1aa38e1634c2f8d7e34b9cb916a5aaa394"></a>
 
@@ -202,4 +202,4 @@ std::size_t puc::canvas::TurnPipeline::size() const noexcept
 
 Return the number of currently registered graph nodes.
 
-[Source](../../canvas/session/turn_pipeline.hpp#L164)
+[Source](../../canvas/session/turn_pipeline.hpp#L168)

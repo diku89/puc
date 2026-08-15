@@ -34,7 +34,7 @@ Hash256 puc::hashing::sha256(std::span< const std::uint8_t > bytes) noexcept
 
 Hash an arbitrary byte span with the repository's standard provider.
 
-[Source](../../utils/hash/sha256.cpp#L58)
+[Source](../../utils/hash/sha256.cpp#L66)
 
 <a id="symbol-sha256_8cpp_1af84c2e371abaa5ac107e651bcd41854b"></a>
 
@@ -46,4 +46,4 @@ Hash256 puc::hashing::sha256(std::string_view text) noexcept
 
 Hash the exact bytes of a string view with the standard provider.
 
-[Source](../../utils/hash/sha256.cpp#L68)
+[Source](../../utils/hash/sha256.cpp#L76)

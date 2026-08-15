@@ -165,7 +165,9 @@ Status TurnDatastore::persist(std::span<const std::uint8_t> canvas_uuid,
 Status TurnDatastore::load_all(std::span<const std::uint8_t> canvas_uuid,
                                std::vector<proto::Turn>& turns) {
   turns.clear();
-  if (canvas_uuid.size() != kCanvasUuidBytes) return Status::INVALID_ARGUMENT;
+  if (canvas_uuid.size() != kCanvasUuidBytes) {
+    return Status::INVALID_ARGUMENT;
+  }
   const Database::Operation operation = database_.acquire();
   Statement select;
   if (!is_ok(database_.prepare(
@@ -175,8 +177,12 @@ Status TurnDatastore::load_all(std::span<const std::uint8_t> canvas_uuid,
   }
   while (true) {
     const Status status = select.step();
-    if (status == Status::NOT_FOUND) return Status::OK;
-    if (status != Status::OK) return Status::SQL_ERROR;
+    if (status == Status::NOT_FOUND) {
+      return Status::OK;
+    }
+    if (status != Status::OK) {
+      return Status::SQL_ERROR;
+    }
     proto::Turn turn;
     const std::string payload = select.blob(0);
     if (!turn.ParseFromString(payload)) {

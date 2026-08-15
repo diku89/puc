@@ -4,7 +4,7 @@
 
 Materialize Turns and allocate replies from authoritative Trie nodes.
 
-[Source](../../canvas/turn/turn_tree.hpp#L90)
+[Source](../../canvas/turn/turn_tree.hpp#L94)
 
 ## Public types
 
@@ -25,7 +25,7 @@ Outcomes specific to reply allocation and Turn materialization.
 - <a id="symbol-classpuc_1_1canvas_1_1_turn_tree_1ab59a49ff65a4774adbc34dbddf02ad52a08e6da8e58b2bcd070be3b5274d51eed"></a>`ALREADY_EXISTS` — The human address already identifies a Turn.
 - <a id="symbol-classpuc_1_1canvas_1_1_turn_tree_1ab59a49ff65a4774adbc34dbddf02ad52ae96592ff95c385e03782a11ddbe7a0ba"></a>`ADDRESS_EXHAUSTED` — The parent has no representable child ordinal.
 
-[Source](../../canvas/turn/turn_tree.hpp#L96)
+[Source](../../canvas/turn/turn_tree.hpp#L100)
 
 ## Private types
 
@@ -37,7 +37,7 @@ Outcomes specific to reply allocation and Turn materialization.
 using puc::canvas::TurnTree::Trie = containers::Trie<AddressComponent, TurnNode>
 ```
 
-[Source](../../canvas/turn/turn_tree.hpp#L145)
+[Source](../../canvas/turn/turn_tree.hpp#L149)
 
 ## Private data members
 
@@ -51,7 +51,7 @@ Trie puc::canvas::TurnTree::trie_
 
 Reply topology keyed by address components.
 
-[Source](../../canvas/turn/turn_tree.hpp#L158)
+[Source](../../canvas/turn/turn_tree.hpp#L162)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_tree_1a5b07a5ea9624bc5d2ddd17cf54d4af64"></a>
 
@@ -63,7 +63,7 @@ std::vector<hashing::Hash256> puc::canvas::TurnTree::hashes_
 
 Content hash parallel to each process-local Trie node.
 
-[Source](../../canvas/turn/turn_tree.hpp#L159)
+[Source](../../canvas/turn/turn_tree.hpp#L163)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_tree_1a349ae4eef98d40f29021463ecfaabbff"></a>
 
@@ -75,7 +75,7 @@ hashing::Hash256 puc::canvas::TurnTree::root_hash_
 
 Current content root, empty before Turns.
 
-[Source](../../canvas/turn/turn_tree.hpp#L161)
+[Source](../../canvas/turn/turn_tree.hpp#L165)
 
 ## Public functions
 
@@ -89,7 +89,7 @@ puc::canvas::TurnTree::TurnTree()=default
 
 Construct an empty tree with one authoritative synthetic-root counter.
 
-[Source](../../canvas/turn/turn_tree.hpp#L93)
+[Source](../../canvas/turn/turn_tree.hpp#L97)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_tree_1a6d2cd2724c3378a4605576f13ac6122f"></a>
 
@@ -103,7 +103,7 @@ Allocate one parent-derived ID and construct an uncommitted Turn shell.
 
 The synthetic root is selected when `parent` is null. Allocation is process-local and authoritative. Concurrent allocations are safe while the caller prevents [apply()](#symbol-classpuc_1_1canvas_1_1_turn_tree_1a1096219ec6f7d2ed0d57e041a1afe33a) or [rebuild()](#symbol-classpuc_1_1canvas_1_1_turn_tree_1a0a0bfca7514121c11b638acc0f98777e) from mutating the Trie.
 
-[Source](../../canvas/turn/turn_tree.hpp#L111)
+[Source](../../canvas/turn/turn_tree.hpp#L115)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_tree_1a58021a975260707d2e763148eab8f2e3"></a>
 
@@ -117,7 +117,7 @@ Allocate one alphabetic response-part ID beneath a committed Turn.
 
 Parts use an allocator independent of numeric replies. Concurrent calls are safe while the caller prevents [apply()](#symbol-classpuc_1_1canvas_1_1_turn_tree_1a1096219ec6f7d2ed0d57e041a1afe33a) or [rebuild()](#symbol-classpuc_1_1canvas_1_1_turn_tree_1a0a0bfca7514121c11b638acc0f98777e) from mutating the Trie.
 
-[Source](../../canvas/turn/turn_tree.hpp#L121)
+[Source](../../canvas/turn/turn_tree.hpp#L125)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_tree_1a1096219ec6f7d2ed0d57e041a1afe33a"></a>
 
@@ -129,7 +129,7 @@ TurnTree::Status puc::canvas::TurnTree::apply(const proto::Turn &turn)
 
 Insert one committed Turn and rehash its root-to-leaf path.
 
-[Source](../../canvas/turn/turn_tree.hpp#L125)
+[Source](../../canvas/turn/turn_tree.hpp#L129)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_tree_1a0a0bfca7514121c11b638acc0f98777e"></a>
 
@@ -143,7 +143,7 @@ Reconstruct a durable candidate and retain all live allocator watermarks.
 
 A rebuild never makes a process-local reserved ordinal available again beneath any committed parent present in both trees.
 
-[Source](../../canvas/turn/turn_tree.hpp#L133)
+[Source](../../canvas/turn/turn_tree.hpp#L137)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_tree_1a6b197828a661aca7a67d2dc74001be61"></a>
 
@@ -155,7 +155,7 @@ const proto::Turn * puc::canvas::TurnTree::find(const TurnAddress &address) cons
 
 Find the durable Turn at one parsed human-readable address.
 
-[Source](../../canvas/turn/turn_tree.hpp#L136)
+[Source](../../canvas/turn/turn_tree.hpp#L140)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_tree_1a5ac7f8b8d10bc8614204536d19fa35b6"></a>
 
@@ -167,7 +167,7 @@ std::size_t puc::canvas::TurnTree::size() const noexcept
 
 Return the number of durable Turns, excluding the internal Trie root.
 
-[Source](../../canvas/turn/turn_tree.hpp#L139)
+[Source](../../canvas/turn/turn_tree.hpp#L143)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_tree_1acacf120723408288126fb9d6a63aa784"></a>
 
@@ -179,7 +179,7 @@ const hashing::Hash256 & puc::canvas::TurnTree::root_hash() const noexcept
 
 Return the content root of the currently materialized Turn Trie.
 
-[Source](../../canvas/turn/turn_tree.hpp#L142)
+[Source](../../canvas/turn/turn_tree.hpp#L146)
 
 ## Private functions
 
@@ -193,7 +193,7 @@ TurnTree::Status puc::canvas::TurnTree::allocate_child(std::span< const std::uin
 
 Allocate one child in the selected component namespace.
 
-[Source](../../canvas/turn/turn_tree.hpp#L148)
+[Source](../../canvas/turn/turn_tree.hpp#L152)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_tree_1ab30233d589c471626bbf68bdfeccb8e1"></a>
 
@@ -205,7 +205,7 @@ void puc::canvas::TurnTree::preserve_reservations(TurnTree &rebuilt) const
 
 Merge current process-local allocator watermarks into a rebuilt tree.
 
-[Source](../../canvas/turn/turn_tree.hpp#L153)
+[Source](../../canvas/turn/turn_tree.hpp#L157)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_tree_1aadfb89999c0cd49ed445d70cbe5d92a3"></a>
 
@@ -217,4 +217,4 @@ hashing::Hash256 puc::canvas::TurnTree::hash_node(Trie::NodeIndex index) const
 
 Canonically hash one node from its Turn and ordered child hashes.
 
-[Source](../../canvas/turn/turn_tree.hpp#L156)
+[Source](../../canvas/turn/turn_tree.hpp#L160)

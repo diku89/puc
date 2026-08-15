@@ -62,7 +62,9 @@ std::shared_ptr<ipc::Channel> open_shared_channel(ipc::Directory& directory,
       std::make_shared<ipc::SmemChannel>(std::string{name}, maximum_bytes);
   ipc::ChannelId ignored   = 0U;
   const ipc::Status opened = directory.open_channel(candidate, ignored);
-  if (ipc::is_ok(opened)) return candidate;
+  if (ipc::is_ok(opened)) {
+    return candidate;
+  }
   return opened == ipc::Status::DUPLICATE_CHANNEL
              ? directory.get_channel(name)
              : std::shared_ptr<ipc::Channel>{};
@@ -170,7 +172,9 @@ class CanvasSubsystem::Impl {
         return;
       }
       const std::lock_guard lock(mutex);
-      if (!accepting) return;
+      if (!accepting) {
+        return;
+      }
       pending.push_back(std::move(turn));
       changed.notify_one();
     } catch (...) {
@@ -184,7 +188,9 @@ class CanvasSubsystem::Impl {
       {
         std::unique_lock lock(mutex);
         changed.wait(lock, [this] { return closing || !pending.empty(); });
-        if (pending.empty() && closing) return;
+        if (pending.empty() && closing) {
+          return;
+        }
         submitted = std::move(pending.front());
         pending.pop_front();
       }
@@ -212,8 +218,12 @@ class CanvasSubsystem::Impl {
       closing   = true;
       changed.notify_all();
     }
-    if (pump.joinable()) pump.join();
-    if (pipeline != nullptr) pipeline->detach();
+    if (pump.joinable()) {
+      pump.join();
+    }
+    if (pipeline != nullptr) {
+      pipeline->detach();
+    }
     {
       const std::lock_guard lock(mutex);
       pending.clear();
@@ -265,7 +275,9 @@ class CanvasSubsystem::Impl {
                         [&actor](const canvas::proto::Actor& candidate) {
                           return candidate.SerializeAsString() == actor;
                         });
-        if (!known) *canvas.add_actors() = context.turn().actor();
+        if (!known) {
+          *canvas.add_actors() = context.turn().actor();
+        }
       }
       committed = context.turn();
     }
@@ -331,14 +343,18 @@ Status CanvasSubsystem::initialize(AppState& app) {
   impl_->canvas.clear_actors();
   for (const canvas::proto::Turn& turn : turns) {
     *impl_->canvas.add_turns() = turn;
-    if (!turn.has_actor()) continue;
+    if (!turn.has_actor()) {
+      continue;
+    }
     const std::string actor = turn.actor().SerializeAsString();
     const bool known        = std::any_of(
         impl_->canvas.actors().begin(), impl_->canvas.actors().end(),
         [&actor](const canvas::proto::Actor& candidate) {
           return candidate.SerializeAsString() == actor;
         });
-    if (!known) *impl_->canvas.add_actors() = turn.actor();
+    if (!known) {
+      *impl_->canvas.add_actors() = turn.actor();
+    }
   }
   if (!turns.empty()) {
     stored = impl_->canvases->update_turn_trie_root(

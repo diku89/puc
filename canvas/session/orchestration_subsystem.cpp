@@ -134,7 +134,9 @@ class OrchestrationSubsystem::Impl {
     canvas::datastore::Status status =
         presentations->load_committed_turn_addresses(presentation_uuid,
                                                      committed_addresses);
-    if (!canvas::datastore::is_ok(status)) return status;
+    if (!canvas::datastore::is_ok(status)) {
+      return status;
+    }
     const std::unordered_set<std::string> committed{committed_addresses.begin(),
                                                     committed_addresses.end()};
 
@@ -165,11 +167,15 @@ class OrchestrationSubsystem::Impl {
       static_cast<void>(address);
       canvas::PendingPresentation recovered;
       status = presentation_tree->prepare_insert(turn_id, recovered);
-      if (!canvas::datastore::is_ok(status)) return status;
+      if (!canvas::datastore::is_ok(status)) {
+        return status;
+      }
       status =
           presentations->commit(presentation_uuid, recovered.previous_root,
                                 recovered.new_root, turn_id, recovered.nodes);
-      if (!canvas::datastore::is_ok(status)) return status;
+      if (!canvas::datastore::is_ok(status)) {
+        return status;
+      }
       presentation_tree->commit(recovered);
       last_commit = std::move(recovered);
     }

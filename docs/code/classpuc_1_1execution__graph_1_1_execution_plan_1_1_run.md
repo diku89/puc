@@ -4,7 +4,7 @@
 
 Private readiness counters and completion state for one submission.
 
-[Source](../../utils/execution_graph/execution_plan.hpp#L134)
+[Source](../../utils/execution_graph/execution_plan.hpp#L138)
 
 ## Private data members
 
@@ -18,7 +18,7 @@ multithreading::JobQueue& puc::execution_graph::ExecutionPlan< NodeType >::Run::
 
 Borrowed active executor.
 
-[Source](../../utils/execution_graph/execution_plan.hpp#L230)
+[Source](../../utils/execution_graph/execution_plan.hpp#L246)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_plan_1_1_run_1af9879057e90d7e7b8e236368471c98a8"></a>
 
@@ -30,7 +30,7 @@ std::shared_ptr<const Data> puc::execution_graph::ExecutionPlan< NodeType >::Run
 
 Retained immutable topology.
 
-[Source](../../utils/execution_graph/execution_plan.hpp#L231)
+[Source](../../utils/execution_graph/execution_plan.hpp#L247)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_plan_1_1_run_1a2571a08c0064a7aed3422e305e2f8b0d"></a>
 
@@ -42,7 +42,7 @@ std::vector<std::shared_ptr<multithreading::Job> > puc::execution_graph::Executi
 
 Run jobs.
 
-[Source](../../utils/execution_graph/execution_plan.hpp#L232)
+[Source](../../utils/execution_graph/execution_plan.hpp#L248)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_plan_1_1_run_1a158a27f9c05bd9089b5f8e74e82cbae1"></a>
 
@@ -54,7 +54,7 @@ Completion puc::execution_graph::ExecutionPlan< NodeType >::Run::completion_
 
 Run result callback moved on completion.
 
-[Source](../../utils/execution_graph/execution_plan.hpp#L233)
+[Source](../../utils/execution_graph/execution_plan.hpp#L249)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_plan_1_1_run_1a3f59adf1086163ad6d4699603026e3b6"></a>
 
@@ -66,7 +66,7 @@ std::mutex puc::execution_graph::ExecutionPlan< NodeType >::Run::mutex_
 
 Protects all readiness and result state.
 
-[Source](../../utils/execution_graph/execution_plan.hpp#L234)
+[Source](../../utils/execution_graph/execution_plan.hpp#L250)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_plan_1_1_run_1a76f24ae5c6de2842d44f9e4af0f5e7a7"></a>
 
@@ -78,7 +78,7 @@ std::vector<std::size_t> puc::execution_graph::ExecutionPlan< NodeType >::Run::r
 
 Run counters.
 
-[Source](../../utils/execution_graph/execution_plan.hpp#L235)
+[Source](../../utils/execution_graph/execution_plan.hpp#L251)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_plan_1_1_run_1a3dfa9205e8fc1a0693000a77fc7064cf"></a>
 
@@ -90,7 +90,7 @@ std::size_t puc::execution_graph::ExecutionPlan< NodeType >::Run::remaining_node
 
 Logical nodes not yet completed.
 
-[Source](../../utils/execution_graph/execution_plan.hpp#L236)
+[Source](../../utils/execution_graph/execution_plan.hpp#L252)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_plan_1_1_run_1a0b727dbeec6c31ced48b271ebf403b09"></a>
 
@@ -102,7 +102,7 @@ std::size_t puc::execution_graph::ExecutionPlan< NodeType >::Run::running_jobs_
 
 Accepted wrappers not yet exited.
 
-[Source](../../utils/execution_graph/execution_plan.hpp#L237)
+[Source](../../utils/execution_graph/execution_plan.hpp#L253)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_plan_1_1_run_1a8ea6504bea72aef1335fcab89a931f71"></a>
 
@@ -114,7 +114,7 @@ Status puc::execution_graph::ExecutionPlan< NodeType >::Run::status_
 
 First scheduling failure.
 
-[Source](../../utils/execution_graph/execution_plan.hpp#L238)
+[Source](../../utils/execution_graph/execution_plan.hpp#L254)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_plan_1_1_run_1afdfc20233fce24e494f55732fcf4de15"></a>
 
@@ -126,7 +126,7 @@ bool puc::execution_graph::ExecutionPlan< NodeType >::Run::finished_
 
 Whether callback was consumed.
 
-[Source](../../utils/execution_graph/execution_plan.hpp#L239)
+[Source](../../utils/execution_graph/execution_plan.hpp#L255)
 
 ## Public functions
 
@@ -138,7 +138,7 @@ Whether callback was consumed.
 puc::execution_graph::ExecutionPlan< NodeType >::Run::Run(multithreading::JobQueue &configured_workers, std::shared_ptr< const Data > configured_data, std::vector< std::shared_ptr< multithreading::Job > > configured_jobs, Completion configured_completion)
 ```
 
-[Source](../../utils/execution_graph/execution_plan.hpp#L136)
+[Source](../../utils/execution_graph/execution_plan.hpp#L140)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_plan_1_1_run_1a16684ccfc9216441033ca027109ca2e2"></a>
 
@@ -150,7 +150,7 @@ void puc::execution_graph::ExecutionPlan< NodeType >::Run::start() noexcept
 
 Schedule every root in this run's immutable topology.
 
-[Source](../../utils/execution_graph/execution_plan.hpp#L148)
+[Source](../../utils/execution_graph/execution_plan.hpp#L152)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_plan_1_1_run_1acaeaf44c1a5b0abbc96356d9672c3175"></a>
 
@@ -162,7 +162,7 @@ void puc::execution_graph::ExecutionPlan< NodeType >::Run::execute(std::size_t n
 
 Execute one caller job, then complete its logical graph node.
 
-[Source](../../utils/execution_graph/execution_plan.hpp#L155)
+[Source](../../utils/execution_graph/execution_plan.hpp#L161)
 
 ## Private functions
 
@@ -176,7 +176,7 @@ void puc::execution_graph::ExecutionPlan< NodeType >::Run::schedule(std::size_t 
 
 Submit one ready node or fail after every accepted wrapper exits.
 
-[Source](../../utils/execution_graph/execution_plan.hpp#L162)
+[Source](../../utils/execution_graph/execution_plan.hpp#L168)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_plan_1_1_run_1aa265d7d345558ed2603cb0e72f42e74c"></a>
 
@@ -188,7 +188,7 @@ void puc::execution_graph::ExecutionPlan< NodeType >::Run::complete(std::size_t 
 
 Complete one node and submit every successor it newly unblocks.
 
-[Source](../../utils/execution_graph/execution_plan.hpp#L184)
+[Source](../../utils/execution_graph/execution_plan.hpp#L196)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_plan_1_1_run_1aa98fea104c21f3c22862fd86acf38b8c"></a>
 
@@ -200,7 +200,7 @@ void puc::execution_graph::ExecutionPlan< NodeType >::Run::take_completion_locke
 
 Move out completion when success or failure has fully quiesced.
 
-[Source](../../utils/execution_graph/execution_plan.hpp#L211)
+[Source](../../utils/execution_graph/execution_plan.hpp#L225)
 
 ## Private static functions
 
@@ -214,4 +214,4 @@ static void puc::execution_graph::ExecutionPlan< NodeType >::Run::invoke(Complet
 
 Invoke one no-throw completion boundary outside the run lock.
 
-[Source](../../utils/execution_graph/execution_plan.hpp#L222)
+[Source](../../utils/execution_graph/execution_plan.hpp#L236)

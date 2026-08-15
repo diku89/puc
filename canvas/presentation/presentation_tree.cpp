@@ -80,7 +80,9 @@ datastore::Status PresentationTree::prepare_insert(
 }
 
 void PresentationTree::commit(const PendingPresentation& pending) noexcept {
-  if (root_ == pending.previous_root) root_ = pending.new_root;
+  if (root_ == pending.previous_root) {
+    root_ = pending.new_root;
+  }
 }
 
 datastore::Status PresentationTree::insert(
@@ -93,7 +95,9 @@ datastore::Status PresentationTree::insert(
   }
   datastore::StoredPresentationNode current;
   datastore::Status status = load(root, &pending, current);
-  if (!datastore::is_ok(status)) return status;
+  if (!datastore::is_ok(status)) {
+    return status;
+  }
   const auto current_address  = address(current);
   const auto inserted_address = address(inserted);
   if (!current_address.has_value() || !inserted_address.has_value() ||
@@ -108,7 +112,9 @@ datastore::Status PresentationTree::insert(
     hashing::Hash256 left;
     hashing::Hash256 right;
     status = split(root, *inserted_address, pending, left, right);
-    if (!datastore::is_ok(status)) return status;
+    if (!datastore::is_ok(status)) {
+      return status;
+    }
     promoted.left_hash  = left;
     promoted.right_hash = right;
     output              = retain(std::move(promoted), pending);
@@ -118,11 +124,15 @@ datastore::Status PresentationTree::insert(
   hashing::Hash256 child;
   if (*inserted_address < *current_address) {
     status = insert(current.left_hash, inserted, pending, child);
-    if (!datastore::is_ok(status)) return status;
+    if (!datastore::is_ok(status)) {
+      return status;
+    }
     current.left_hash = child;
   } else {
     status = insert(current.right_hash, inserted, pending, child);
-    if (!datastore::is_ok(status)) return status;
+    if (!datastore::is_ok(status)) {
+      return status;
+    }
     current.right_hash = child;
   }
   output = retain(std::move(current), pending);
@@ -136,22 +146,32 @@ datastore::Status PresentationTree::split(const hashing::Hash256& root,
                                           hashing::Hash256& right) {
   left  = {};
   right = {};
-  if (root.empty()) return datastore::Status::OK;
+  if (root.empty()) {
+    return datastore::Status::OK;
+  }
   datastore::StoredPresentationNode current;
   datastore::Status status = load(root, &pending, current);
-  if (!datastore::is_ok(status)) return status;
+  if (!datastore::is_ok(status)) {
+    return status;
+  }
   const auto current_address = address(current);
-  if (!current_address.has_value()) return datastore::Status::CORRUPT_DATA;
+  if (!current_address.has_value()) {
+    return datastore::Status::CORRUPT_DATA;
+  }
   if (*current_address < key) {
     hashing::Hash256 middle;
     status = split(current.right_hash, key, pending, middle, right);
-    if (!datastore::is_ok(status)) return status;
+    if (!datastore::is_ok(status)) {
+      return status;
+    }
     current.right_hash = middle;
     left               = retain(std::move(current), pending);
   } else {
     hashing::Hash256 middle;
     status = split(current.left_hash, key, pending, left, middle);
-    if (!datastore::is_ok(status)) return status;
+    if (!datastore::is_ok(status)) {
+      return status;
+    }
     current.left_hash = middle;
     right             = retain(std::move(current), pending);
   }
@@ -161,7 +181,9 @@ datastore::Status PresentationTree::split(const hashing::Hash256& root,
 datastore::Status PresentationTree::load(
     const hashing::Hash256& hash, const PendingPresentation* pending,
     datastore::StoredPresentationNode& node) {
-  if (hash.empty()) return datastore::Status::NOT_FOUND;
+  if (hash.empty()) {
+    return datastore::Status::NOT_FOUND;
+  }
   if (pending != nullptr) {
     const auto found =
         std::find_if(pending->nodes.rbegin(), pending->nodes.rend(),
@@ -191,12 +213,18 @@ datastore::Status PresentationTree::ordered_turns(
 
 datastore::Status PresentationTree::collect(const hashing::Hash256& root,
                                             std::vector<proto::TurnId>& turns) {
-  if (root.empty()) return datastore::Status::OK;
+  if (root.empty()) {
+    return datastore::Status::OK;
+  }
   datastore::StoredPresentationNode node;
   datastore::Status status = load(root, nullptr, node);
-  if (!datastore::is_ok(status)) return status;
+  if (!datastore::is_ok(status)) {
+    return status;
+  }
   status = collect(node.left_hash, turns);
-  if (!datastore::is_ok(status)) return status;
+  if (!datastore::is_ok(status)) {
+    return status;
+  }
   turns.push_back(node.turn_id);
   return collect(node.right_hash, turns);
 }

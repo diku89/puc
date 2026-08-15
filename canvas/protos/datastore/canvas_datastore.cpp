@@ -63,7 +63,9 @@ Status CanvasDatastore::create(const proto::Canvas& canvas) {
     return Status::INVALID_ARGUMENT;
   }
   const Database::Operation operation = database_.acquire();
-  if (!is_ok(database_.begin_immediate())) return Status::SQL_ERROR;
+  if (!is_ok(database_.begin_immediate())) {
+    return Status::SQL_ERROR;
+  }
 
   Statement turn_trie;
   Statement presentation;
@@ -109,7 +111,9 @@ Status CanvasDatastore::first(proto::Canvas& canvas) {
     return Status::SQL_ERROR;
   }
   const Status status = select.step();
-  if (status != Status::OK) return status;
+  if (status != Status::OK) {
+    return status;
+  }
   const std::string canvas_uuid       = select.blob(0);
   const std::string turn_trie_uuid    = select.blob(3);
   const std::string presentation_uuid = select.blob(5);
@@ -118,12 +122,20 @@ Status CanvasDatastore::first(proto::Canvas& canvas) {
     return Status::CORRUPT_DATA;
   }
   canvas.set_canvas_uuid(canvas_uuid);
-  if (!select.is_null(1)) canvas.set_title(select.text(1));
-  if (!select.is_null(2)) canvas.set_one_line_description(select.text(2));
+  if (!select.is_null(1)) {
+    canvas.set_title(select.text(1));
+  }
+  if (!select.is_null(2)) {
+    canvas.set_one_line_description(select.text(2));
+  }
   canvas.set_turn_trie_uuid(turn_trie_uuid);
-  if (!select.is_null(4)) canvas.set_turn_trie_root_hash(select.blob(4));
+  if (!select.is_null(4)) {
+    canvas.set_turn_trie_root_hash(select.blob(4));
+  }
   canvas.set_presentation_uuid(presentation_uuid);
-  if (!select.is_null(6)) canvas.set_presentation_root_hash(select.blob(6));
+  if (!select.is_null(6)) {
+    canvas.set_presentation_root_hash(select.blob(6));
+  }
   return Status::OK;
 }
 

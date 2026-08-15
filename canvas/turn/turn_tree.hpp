@@ -37,7 +37,9 @@ class TurnNode final {
 
   /** Copy protobuf and allocator state for transactional Trie replacement. */
   TurnNode& operator=(const TurnNode& other) {
-    if (this == &other) return *this;
+    if (this == &other) {
+      return *this;
+    }
     turn_ = other.turn_;
     next_numeric_child_.store(
         other.next_numeric_child_.load(std::memory_order_relaxed),
@@ -58,7 +60,9 @@ class TurnNode final {
 
   /** Move protobuf and atomic state during Trie replacement. */
   TurnNode& operator=(TurnNode&& other) noexcept {
-    if (this == &other) return *this;
+    if (this == &other) {
+      return *this;
+    }
     turn_ = std::move(other.turn_);
     next_numeric_child_.store(
         other.next_numeric_child_.load(std::memory_order_relaxed),

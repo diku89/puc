@@ -4,7 +4,7 @@
 
 Immutable dense topology retained by every accepted run.
 
-[Source](../../utils/execution_graph/execution_plan.hpp#L100)
+[Source](../../utils/execution_graph/execution_plan.hpp#L102)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::vector<NodeType> puc::execution_graph::ExecutionPlan< NodeType >::Data::nod
 
 Stable node identities.
 
-[Source](../../utils/execution_graph/execution_plan.hpp#L111)
+[Source](../../utils/execution_graph/execution_plan.hpp#L115)
 
 <a id="symbol-structpuc_1_1execution__graph_1_1_execution_plan_1_1_data_1a1f1426a6befa1e1f711b90f22582d7c6"></a>
 
@@ -30,7 +30,7 @@ std::vector<std::vector<std::size_t> > puc::execution_graph::ExecutionPlan< Node
 
 Outgoing edges.
 
-[Source](../../utils/execution_graph/execution_plan.hpp#L112)
+[Source](../../utils/execution_graph/execution_plan.hpp#L116)
 
 <a id="symbol-structpuc_1_1execution__graph_1_1_execution_plan_1_1_data_1afe86f61fca814113bdd03629c02ec481"></a>
 
@@ -42,7 +42,7 @@ std::vector<std::size_t> puc::execution_graph::ExecutionPlan< NodeType >::Data::
 
 Static incoming counts.
 
-[Source](../../utils/execution_graph/execution_plan.hpp#L113)
+[Source](../../utils/execution_graph/execution_plan.hpp#L117)
 
 <a id="symbol-structpuc_1_1execution__graph_1_1_execution_plan_1_1_data_1ada9250944c8132cd5076a73b17c8eae0"></a>
 
@@ -54,7 +54,7 @@ std::vector<std::size_t> puc::execution_graph::ExecutionPlan< NodeType >::Data::
 
 Zero-dependency nodes to publish.
 
-[Source](../../utils/execution_graph/execution_plan.hpp#L114)
+[Source](../../utils/execution_graph/execution_plan.hpp#L118)
 
 ## Public functions
 
@@ -66,4 +66,4 @@ Zero-dependency nodes to publish.
 puc::execution_graph::ExecutionPlan< NodeType >::Data::Data(DependencyGraphSnapshot< NodeType > snapshot)
 ```
 
-[Source](../../utils/execution_graph/execution_plan.hpp#L101)
+[Source](../../utils/execution_graph/execution_plan.hpp#L103)

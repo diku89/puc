@@ -16,7 +16,7 @@ Mutable data shared by the registered nodes of one Turn graph run.
 friend class TurnPipeline
 ```
 
-[Source](../../canvas/session/turn_pipeline.hpp#L70)
+[Source](../../canvas/session/turn_pipeline.hpp#L74)
 
 ## Private data members
 
@@ -30,7 +30,7 @@ proto::Turn puc::canvas::TurnContext::submitted_
 
 Immutable input copied from IPC.
 
-[Source](../../canvas/session/turn_pipeline.hpp#L75)
+[Source](../../canvas/session/turn_pipeline.hpp#L79)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_context_1a5e6fea3199dcd15fda4ffce1be3a9802"></a>
 
@@ -42,7 +42,7 @@ proto::Turn puc::canvas::TurnContext::turn_
 
 Durable output built by processing nodes.
 
-[Source](../../canvas/session/turn_pipeline.hpp#L76)
+[Source](../../canvas/session/turn_pipeline.hpp#L80)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_context_1adfd52cf454f89cf1c0fd04ab5f705b8f"></a>
 
@@ -54,7 +54,7 @@ std::atomic<datastore::Status> puc::canvas::TurnContext::status_
 
 First run failure, if any.
 
-[Source](../../canvas/session/turn_pipeline.hpp#L77)
+[Source](../../canvas/session/turn_pipeline.hpp#L81)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_context_1a75bdb146e3735bdb51f65e0ca5e6fa87"></a>
 
@@ -66,7 +66,7 @@ std::mutex puc::canvas::TurnContext::state_mutex_
 
 Protects cross-node run-local scratch state.
 
-[Source](../../canvas/session/turn_pipeline.hpp#L79)
+[Source](../../canvas/session/turn_pipeline.hpp#L83)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_context_1acc8c96d94a36153f71e564db315a1718"></a>
 
@@ -78,7 +78,7 @@ std::unordered_map<std::string, std::any> puc::canvas::TurnContext::state_
 
 Typed values retained only for this Turn run.
 
-[Source](../../canvas/session/turn_pipeline.hpp#L81)
+[Source](../../canvas/session/turn_pipeline.hpp#L85)
 
 ## Public functions
 
@@ -178,4 +178,4 @@ void puc::canvas::TurnContext::reset(const proto::Turn &submitted)
 
 Reset this context for one independent graph run.
 
-[Source](../../canvas/session/turn_pipeline.hpp#L73)
+[Source](../../canvas/session/turn_pipeline.hpp#L77)

@@ -44,7 +44,7 @@ std::shared_ptr<const Data> puc::execution_graph::ExecutionPlan< NodeType >::dat
 
 Compiled immutable topology.
 
-[Source](../../utils/execution_graph/execution_plan.hpp#L242)
+[Source](../../utils/execution_graph/execution_plan.hpp#L258)
 
 ## Public functions
 
@@ -84,7 +84,7 @@ bool puc::execution_graph::ExecutionPlan< NodeType >::valid() const noexcept
 
 Return whether this facade owns a compiled non-empty topology.
 
-[Source](../../utils/execution_graph/execution_plan.hpp#L83)
+[Source](../../utils/execution_graph/execution_plan.hpp#L85)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_plan_1aca6e26bd54318398dd158dad4b43d487"></a>
 
@@ -96,7 +96,7 @@ std::size_t puc::execution_graph::ExecutionPlan< NodeType >::size() const noexce
 
 Return the number of nodes in the immutable topology.
 
-[Source](../../utils/execution_graph/execution_plan.hpp#L88)
+[Source](../../utils/execution_graph/execution_plan.hpp#L90)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_plan_1a2344f14d0026fedeb57af793de195d93"></a>
 
@@ -108,7 +108,7 @@ const std::vector< NodeType > & puc::execution_graph::ExecutionPlan< NodeType >:
 
 Return node identities in stable topology registration order.
 
-[Source](../../utils/execution_graph/execution_plan.hpp#L93)
+[Source](../../utils/execution_graph/execution_plan.hpp#L95)
 
 ## Public static functions
 

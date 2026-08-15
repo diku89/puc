@@ -70,7 +70,9 @@ class ExecutionPlan final {
       return Status::INVALID_ARGUMENT;
     }
     for (const std::shared_ptr<multithreading::Job>& job : jobs) {
-      if (job == nullptr) return Status::INVALID_ARGUMENT;
+      if (job == nullptr) {
+        return Status::INVALID_ARGUMENT;
+      }
     }
 
     auto run = std::make_shared<Run>(workers, data_, std::move(jobs),
@@ -104,7 +106,9 @@ class ExecutionPlan final {
           dependency_counts(std::move(snapshot.dependency_counts)) {
       roots.reserve(dependency_counts.size());
       for (std::size_t index = 0U; index < dependency_counts.size(); ++index) {
-        if (dependency_counts[index] == 0U) roots.push_back(index);
+        if (dependency_counts[index] == 0U) {
+          roots.push_back(index);
+        }
       }
     }
 
@@ -148,7 +152,9 @@ class ExecutionPlan final {
     void start() noexcept {
       // The first submission publishes this Run to worker threads, so startup
       // reads only immutable compiled topology and never run-local readiness.
-      for (const std::size_t root : data_->roots) schedule(root);
+      for (const std::size_t root : data_->roots) {
+        schedule(root);
+      }
     }
 
     /** Execute one caller job, then complete its logical graph node. */
@@ -162,19 +168,25 @@ class ExecutionPlan final {
     void schedule(std::size_t node_index) noexcept {
       {
         const std::lock_guard lock(mutex_);
-        if (finished_ || !is_ok(status_)) return;
+        if (finished_ || !is_ok(status_)) {
+          return;
+        }
         ++running_jobs_;
       }
       const multithreading::Status submitted = workers_.add_urgent(
           std::make_shared<RunJob>(this->shared_from_this(), node_index));
-      if (multithreading::is_ok(submitted)) return;
+      if (multithreading::is_ok(submitted)) {
+        return;
+      }
 
       Completion completion;
       Status status = Status::OK;
       {
         const std::lock_guard lock(mutex_);
         --running_jobs_;
-        if (is_ok(status_)) status_ = Status::WORKER_SUBMISSION_FAILED;
+        if (is_ok(status_)) {
+          status_ = Status::WORKER_SUBMISSION_FAILED;
+        }
         take_completion_locked(completion, status);
       }
       invoke(std::move(completion), status);
@@ -199,7 +211,9 @@ class ExecutionPlan final {
         }
       }
 
-      for (const std::size_t dependent : ready) schedule(dependent);
+      for (const std::size_t dependent : ready) {
+        schedule(dependent);
+      }
       {
         const std::lock_guard lock(mutex_);
         take_completion_locked(completion, status);
@@ -220,7 +234,9 @@ class ExecutionPlan final {
 
     /** Invoke one no-throw completion boundary outside the run lock. */
     static void invoke(Completion completion, Status status) noexcept {
-      if (!completion) return;
+      if (!completion) {
+        return;
+      }
       try {
         completion(status);
       } catch (...) {

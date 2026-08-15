@@ -79,7 +79,9 @@ TurnTree::Status TurnTree::allocate_child(
       return Status::INVALID_TURN;
     }
     parent_address = TurnAddress::parse(parent->human_address());
-    if (!parent_address.has_value()) return Status::INVALID_TURN;
+    if (!parent_address.has_value()) {
+      return Status::INVALID_TURN;
+    }
     parent_index = trie_.find_node(parent_address->components());
     if (parent_index == Trie::kInvalidNode ||
         !trie_.node(parent_index).sequence_end) {
@@ -91,7 +93,9 @@ TurnTree::Status TurnTree::allocate_child(
       trie_.node(parent_index).value.allocator(kind);
   std::uint32_t ordinal = next.load(std::memory_order_relaxed);
   while (true) {
-    if (ordinal == 0U) return Status::ADDRESS_EXHAUSTED;
+    if (ordinal == 0U) {
+      return Status::ADDRESS_EXHAUSTED;
+    }
     const std::uint32_t replacement =
         ordinal == std::numeric_limits<std::uint32_t>::max() ? 0U
                                                              : ordinal + 1U;
@@ -108,7 +112,9 @@ TurnTree::Status TurnTree::allocate_child(
                                   : parent_address->alphabetic_child(ordinal);
   started.mutable_id()->set_canvas_uuid(canvas_uuid.data(), canvas_uuid.size());
   started.mutable_id()->set_human_address(address.string());
-  if (parent != nullptr) *started.mutable_parent() = *parent;
+  if (parent != nullptr) {
+    *started.mutable_parent() = *parent;
+  }
   return Status::OK;
 }
 
@@ -194,7 +200,9 @@ TurnTree::Status TurnTree::rebuild(std::span<const proto::Turn> turns) {
   TurnTree candidate;
   for (const proto::Turn* turn : ordered) {
     const Status status = candidate.apply(*turn);
-    if (status != Status::OK) return status;
+    if (status != Status::OK) {
+      return status;
+    }
   }
   preserve_reservations(candidate);
   *this = std::move(candidate);
@@ -236,7 +244,9 @@ hashing::Hash256 TurnTree::hash_node(Trie::NodeIndex index) const {
   encoded.push_back(node.sequence_end ? '\1' : '\0');
   if (node.sequence_end) {
     std::string payload;
-    if (!node.value.turn_.SerializeToString(&payload)) return {};
+    if (!node.value.turn_.SerializeToString(&payload)) {
+      return {};
+    }
     encoded.append(payload);
   }
   for (const auto child_index : node.children) {

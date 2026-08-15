@@ -30,7 +30,9 @@ class HandlerJob final : public multithreading::Job {
 
   /** Invoke the callback unless an earlier dependency already failed. */
   void execute() noexcept override {
-    if (!datastore::is_ok(context_->status())) return;
+    if (!datastore::is_ok(context_->status())) {
+      return;
+    }
     try {
       handler_(*context_);
     } catch (...) {
@@ -66,19 +68,25 @@ class TurnPipeline::Impl final {
       const std::vector<Registration>& registrations,
       std::shared_ptr<const CompiledPlan>& output) {
     output.reset();
-    if (registrations.empty()) return execution_graph::Status::OK;
+    if (registrations.empty()) {
+      return execution_graph::Status::OK;
+    }
 
     execution_graph::DependencyGraph<NodeId> topology;
     for (const Registration& registration : registrations) {
       const execution_graph::Status status =
           topology.add_node(registration.node);
-      if (!execution_graph::is_ok(status)) return status;
+      if (!execution_graph::is_ok(status)) {
+        return status;
+      }
     }
     for (const Registration& registration : registrations) {
       for (const NodeId& dependency : registration.dependencies) {
         const execution_graph::Status status =
             topology.add_dependency(dependency, registration.node);
-        if (!execution_graph::is_ok(status)) return status;
+        if (!execution_graph::is_ok(status)) {
+          return status;
+        }
       }
     }
 
@@ -87,7 +95,9 @@ class TurnPipeline::Impl final {
     const execution_graph::Status status =
         execution_graph::ExecutionPlan<NodeId>::compile(topology,
                                                         compiled->execution);
-    if (!execution_graph::is_ok(status)) return status;
+    if (!execution_graph::is_ok(status)) {
+      return status;
+    }
     output = std::move(compiled);
     return execution_graph::Status::OK;
   }
@@ -112,7 +122,9 @@ class TurnPipeline::Impl final {
 };
 
 void TurnContext::fail(datastore::Status status) noexcept {
-  if (datastore::is_ok(status)) return;
+  if (datastore::is_ok(status)) {
+    return;
+  }
   datastore::Status expected = datastore::Status::OK;
   static_cast<void>(status_.compare_exchange_strong(expected, status));
 }
@@ -169,7 +181,9 @@ execution_graph::Status TurnPipeline::register_node(
                          .dependencies = std::move(dependencies)});
   std::shared_ptr<const Impl::CompiledPlan> compiled;
   const execution_graph::Status status = Impl::compile(replacement, compiled);
-  if (!execution_graph::is_ok(status)) return status;
+  if (!execution_graph::is_ok(status)) {
+    return status;
+  }
 
   impl_->registrations = std::move(replacement);
   impl_->indices.emplace(impl_->registrations.back().node,
@@ -197,7 +211,9 @@ execution_graph::Status TurnPipeline::unregister_node(std::string_view node) {
                     static_cast<std::ptrdiff_t>(found->second));
   std::shared_ptr<const Impl::CompiledPlan> compiled;
   const execution_graph::Status status = Impl::compile(replacement, compiled);
-  if (!execution_graph::is_ok(status)) return status;
+  if (!execution_graph::is_ok(status)) {
+    return status;
+  }
 
   impl_->registrations = std::move(replacement);
   impl_->indices.clear();
@@ -210,7 +226,9 @@ execution_graph::Status TurnPipeline::unregister_node(std::string_view node) {
 
 execution_graph::Status TurnPipeline::submit(const proto::Turn& submitted,
                                              Completion completion) {
-  if (!completion) return execution_graph::Status::INVALID_ARGUMENT;
+  if (!completion) {
+    return execution_graph::Status::INVALID_ARGUMENT;
+  }
 
   std::shared_ptr<const Impl::CompiledPlan> plan;
   multithreading::JobQueue* workers = nullptr;
@@ -241,14 +259,18 @@ execution_graph::Status TurnPipeline::submit(const proto::Turn& submitted,
           context->fail(datastore::Status::INVALID_STATE);
         }
         proto::Turn committed;
-        if (context->turn().has_id()) committed = context->turn();
+        if (context->turn().has_id()) {
+          committed = context->turn();
+        }
         try {
           completion(context->status(), std::move(committed));
         } catch (...) {
         }
         impl_->complete_run();
       });
-  if (!execution_graph::is_ok(status)) impl_->complete_run();
+  if (!execution_graph::is_ok(status)) {
+    impl_->complete_run();
+  }
   return status;
 }
 
@@ -276,7 +298,9 @@ datastore::Status TurnPipeline::process(const proto::Turn& submitted,
         }
         changed.notify_all();
       });
-  if (!execution_graph::is_ok(submitted_status)) return result;
+  if (!execution_graph::is_ok(submitted_status)) {
+    return result;
+  }
 
   std::unique_lock lock(mutex);
   changed.wait(lock, [&complete] { return complete; });
