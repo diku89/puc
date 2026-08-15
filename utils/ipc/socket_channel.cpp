@@ -170,7 +170,7 @@ class SocketChannel::Impl {
 
   /** Bind an unused filesystem path and begin listening. */
   Status open_server() noexcept {
-    struct stat path_status {};
+    struct stat path_status{};
     if (::lstat(path_text_.c_str(), &path_status) == 0) {
       Logger<ERROR> << "Refusing to replace existing Unix socket path '"
                     << path_text_ << "'";

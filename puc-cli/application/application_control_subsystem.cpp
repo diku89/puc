@@ -78,7 +78,7 @@ Status ApplicationControlSubsystem::install_signal_handlers() {
   }
 
   auto handlers = std::make_unique<SignalHandlers>();
-  struct sigaction action {};
+  struct sigaction action{};
   action.sa_handler = &ApplicationControlSubsystem::handle_termination_signal;
   if (sigemptyset(&action.sa_mask) != 0) {
     return Status::SUBSYSTEM_FAILURE;

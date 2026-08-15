@@ -136,10 +136,10 @@ Status TextInputFrame::draw(const Theme& theme, Canvas& canvas,
     for (std::size_t column = 0U; column < column_count; ++column) {
       const TextEditorRenderCell& source = rendered.rows[row].cells[column];
       cells[row][column]                 = Canvas::Cell{
-                          .character = source.character,
-                          .foreground_color =
+          .character = source.character,
+          .foreground_color =
               source.selected ? selection_foreground : foreground,
-                          .background_color =
+          .background_color =
               source.selected ? selection_background : background,
       };
     }

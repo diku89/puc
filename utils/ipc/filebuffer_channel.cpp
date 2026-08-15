@@ -100,8 +100,8 @@ class FileBufferChannel::Impl {
                        "paths";
       return Status::INVALID_TRANSPORT_PATH;
     }
-    struct stat read_metadata {};
-    struct stat write_metadata {};
+    struct stat read_metadata{};
+    struct stat write_metadata{};
     Status result = open_fifo(read_path_, read_descriptor_, read_metadata);
     if (is_ok(result)) {
       result = open_fifo(write_path_, write_descriptor_, write_metadata);

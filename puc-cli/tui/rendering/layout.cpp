@@ -373,11 +373,11 @@ Status checked_derived_dimension(size_t source_cells, size_t source_cell_extent,
     return Status::INVALID_RATIO;
   }
 
-  const long double scaled = static_cast<long double>(source_cells) *
-                             static_cast<long double>(source_cell_extent) *
-                             static_cast<long double>(target_ratio_extent) /
-                             (static_cast<long double>(target_cell_extent) *
-                              static_cast<long double>(source_ratio_extent));
+  const long double scaled  = static_cast<long double>(source_cells) *
+                              static_cast<long double>(source_cell_extent) *
+                              static_cast<long double>(target_ratio_extent) /
+                              (static_cast<long double>(target_cell_extent) *
+                               static_cast<long double>(source_ratio_extent));
   const long double rounded = rounding == DimensionRounding::UP
                                   ? std::ceil(scaled)
                                   : std::floor(scaled);
@@ -436,8 +436,8 @@ Status apply_aspect_ratio(const ParsedConstraints& constraints, size_t& width,
   }
 
   size_t height_from_width = 0;
-  Status status            = height_for_width(width, *ratio, cell_dimensions,
-                                              DimensionRounding::DOWN, height_from_width);
+  Status status = height_for_width(width, *ratio, cell_dimensions,
+                                   DimensionRounding::DOWN, height_from_width);
   if (!is_ok(status)) {
     return status;
   }
@@ -451,8 +451,8 @@ Status apply_aspect_ratio(const ParsedConstraints& constraints, size_t& width,
   }
 
   size_t width_from_height = 0;
-  status                   = width_for_height(height, *ratio, cell_dimensions,
-                                              DimensionRounding::DOWN, width_from_height);
+  status = width_for_height(height, *ratio, cell_dimensions,
+                            DimensionRounding::DOWN, width_from_height);
   if (!is_ok(status)) {
     return status;
   }
@@ -1148,15 +1148,15 @@ Status frame_minimum_size(const ParsedConstraints& constraints,
   }
 
   size_t height_from_width = 0;
-  status                   = height_for_width(width, *ratio, cell_dimensions,
-                                              DimensionRounding::UP, height_from_width);
+  status = height_for_width(width, *ratio, cell_dimensions,
+                            DimensionRounding::UP, height_from_width);
   if (!is_ok(status)) {
     return status;
   }
   if (height >= height_from_width) {
     size_t width_from_height = 0;
-    status                   = width_for_height(height, *ratio, cell_dimensions,
-                                                DimensionRounding::UP, width_from_height);
+    status = width_for_height(height, *ratio, cell_dimensions,
+                              DimensionRounding::UP, width_from_height);
     if (!is_ok(status)) {
       return status;
     }

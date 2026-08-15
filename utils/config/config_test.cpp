@@ -26,8 +26,8 @@ class ConfigTest : public ::testing::Test {
         ::testing::UnitTest::GetInstance()->current_test_info();
     ASSERT_NE(test_info, nullptr);
 
-    test_root_ = std::filesystem::path{test_tmpdir} /
-                 (std::string{"config_test_"} + test_info->name());
+    test_root_          = std::filesystem::path{test_tmpdir} /
+                          (std::string{"config_test_"} + test_info->name());
     primary_root_       = test_root_ / "primary";
     user_override_root_ = test_root_ / "user_overrides";
 

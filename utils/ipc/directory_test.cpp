@@ -264,7 +264,7 @@ TEST(DirectoryTest, ConcurrentRegistrationAssignsUniqueIds) {
            ++channel_index) {
         const std::string name = "//concurrent/t" + std::to_string(thread) +
                                  "/c" + std::to_string(channel_index);
-        ChannelId id = 0U;
+        ChannelId id           = 0U;
         if (!is_ok(directory.open_channel(
                 std::make_shared<SmemChannel>(name, 1U), id))) {
           failed.store(true, std::memory_order_relaxed);

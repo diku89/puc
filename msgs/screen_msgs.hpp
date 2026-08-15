@@ -175,9 +175,9 @@ struct formatter<puc::msg::ScreenCommand, char> {
       return std::format_to(output, "\"}}");
     }
 
-    const auto& bytes     = std::get<ScreenPresentCommand>(command.data).bytes;
-    auto output           = std::format_to(context.out(),
-                                           "{{\"type\":\"present\",\"bytes_hex\":\"");
+    const auto& bytes = std::get<ScreenPresentCommand>(command.data).bytes;
+    auto output = std::format_to(context.out(),
+                                 "{{\"type\":\"present\",\"bytes_hex\":\"");
     constexpr char kHex[] = "0123456789abcdef";
     for (const unsigned char byte : bytes) {
       *output++ = kHex[byte >> 4U];

@@ -455,13 +455,13 @@ std::optional<DateTime> Value::as_date_time() const noexcept {
   const std::optional<config::DateTime> value = handle_->value_.as_date_time();
   return value.has_value()
              ? std::optional<DateTime>{DateTime{
-                   .date               = Date{.year  = value->date.year,
-                                              .month = value->date.month,
-                                              .day   = value->date.day},
-                   .time               = Time{.hour        = value->time.hour,
-                                              .minute      = value->time.minute,
-                                              .second      = value->time.second,
-                                              .microsecond = value->time.microsecond},
+                   .date = Date{.year  = value->date.year,
+                                .month = value->date.month,
+                                .day   = value->date.day},
+                   .time = Time{.hour        = value->time.hour,
+                                .minute      = value->time.minute,
+                                .second      = value->time.second,
+                                .microsecond = value->time.microsecond},
                    .utc_offset_minutes = value->utc_offset_minutes,
                }}
              : std::nullopt;

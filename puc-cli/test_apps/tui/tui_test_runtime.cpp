@@ -313,11 +313,11 @@ class TuiTestApplication final {
         std::make_shared<MetricsFrame>(std::string{kMetricsFrameId}, state),
         {
             Layout::make_character_constraint(Layout::ConstraintType::MIN_WIDTH,
-                                                                           24),
+                                              24),
             Layout::make_percentage_constraint(
                 Layout::ConstraintType::MAX_WIDTH, 0.40F),
             Layout::make_ratio_constraint(Layout::ConstraintType::ASPECT_RATIO,
-                                                                       4, 3),
+                                          4, 3),
             Layout::make_character_constraint(
                 Layout::ConstraintType::TOP_ANCHOR, 0),
             Layout::make_character_constraint(

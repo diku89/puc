@@ -91,10 +91,11 @@ class PseudoTerminal {
         height > std::numeric_limits<unsigned short>::max()) {
       return false;
     }
-    const struct winsize size {
-      .ws_row = static_cast<unsigned short>(height),
-      .ws_col = static_cast<unsigned short>(width), .ws_xpixel = 0,
-      .ws_ypixel = 0,
+    const struct winsize size{
+        .ws_row    = static_cast<unsigned short>(height),
+        .ws_col    = static_cast<unsigned short>(width),
+        .ws_xpixel = 0,
+        .ws_ypixel = 0,
     };
     return ::ioctl(slave_fd_, TIOCSWINSZ, &size) == 0;
   }
