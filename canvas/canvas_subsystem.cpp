@@ -537,6 +537,17 @@ canvas::datastore::Status CanvasSubsystem::reply_to(
       impl_->turn_tree.reply_to(impl_->uuid, parent, started));
 }
 
+canvas::datastore::Status CanvasSubsystem::append_part(
+    const canvas::proto::TurnId& parent, canvas::proto::Turn& started) {
+  started.Clear();
+  if (impl_->pipeline == nullptr || impl_->uuid.size() != 16U) {
+    return canvas::datastore::Status::INVALID_STATE;
+  }
+  const std::shared_lock lock(impl_->state_mutex);
+  return datastore_status(
+      impl_->turn_tree.append_part(impl_->uuid, parent, started));
+}
+
 std::string CanvasSubsystem::channel_root_name() const {
   return impl_->channel_root;
 }

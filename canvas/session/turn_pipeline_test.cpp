@@ -243,11 +243,22 @@ TEST(TurnPipelineTest, RegisteredNodesPersistAndOrderLateReplies) {
   proto::Turn one;
   proto::Turn two;
   proto::Turn late_reply;
+  proto::Turn response_part;
   const auto process_reply = [&](const proto::TurnId* parent, std::string text,
                                  proto::Turn& committed) {
     proto::Turn started;
     const TurnTree::Status reserved =
         turn_tree.reply_to(canvas_uuid, parent, started);
+    if (reserved != TurnTree::Status::OK) {
+      return datastore::Status::INVALID_STATE;
+    }
+    return pipeline.process(completed(started, std::move(text)), committed);
+  };
+  const auto process_part = [&](const proto::TurnId& parent, std::string text,
+                                proto::Turn& committed) {
+    proto::Turn started;
+    const TurnTree::Status reserved =
+        turn_tree.append_part(canvas_uuid, parent, started);
     if (reserved != TurnTree::Status::OK) {
       return datastore::Status::INVALID_STATE;
     }
@@ -267,14 +278,18 @@ TEST(TurnPipelineTest, RegisteredNodesPersistAndOrderLateReplies) {
   ASSERT_EQ(process_reply(&one.id(), "late", late_reply),
             datastore::Status::OK);
   ASSERT_EQ(late_reply.id().human_address(), "1.1");
-  EXPECT_EQ(runtime_observations, 2U);
+  ASSERT_EQ(process_part(late_reply.id(), "part", response_part),
+            datastore::Status::OK);
+  ASSERT_EQ(response_part.id().human_address(), "1.1.a");
+  EXPECT_EQ(runtime_observations, 3U);
 
   std::vector<proto::TurnId> ordered;
   ASSERT_EQ(presentation_tree.ordered_turns(ordered), datastore::Status::OK);
-  ASSERT_EQ(ordered.size(), 3U);
+  ASSERT_EQ(ordered.size(), 4U);
   EXPECT_EQ(ordered[0].human_address(), "1");
   EXPECT_EQ(ordered[1].human_address(), "1.1");
-  EXPECT_EQ(ordered[2].human_address(), "2");
+  EXPECT_EQ(ordered[2].human_address(), "1.1.a");
+  EXPECT_EQ(ordered[3].human_address(), "2");
 
   datastore::Statement root;
   ASSERT_EQ(database.prepare("SELECT length(root_hash) FROM turn_tries;", root),
@@ -282,14 +297,36 @@ TEST(TurnPipelineTest, RegisteredNodesPersistAndOrderLateReplies) {
   ASSERT_EQ(root.step(), datastore::Status::OK);
   EXPECT_EQ(root.integer(0), 32);
 
+  datastore::Statement stored_component;
+  ASSERT_EQ(
+      database.prepare("SELECT component_kind, sibling_ordinal FROM turns "
+                       "WHERE canvas_uuid = ?1 AND human_address = '1.1.a';",
+                       stored_component),
+      datastore::Status::OK);
+  ASSERT_EQ(stored_component.bind(1, canvas_uuid), datastore::Status::OK);
+  ASSERT_EQ(stored_component.step(), datastore::Status::OK);
+  EXPECT_EQ(stored_component.integer(0), 1);
+  EXPECT_EQ(stored_component.integer(1), 1);
+
   hashing::Hash256 persisted_root;
   ASSERT_EQ(presentations.load_root(presentation_uuid, persisted_root),
             datastore::Status::OK);
   PresentationTree restored{presentations, presentation_uuid, persisted_root};
   std::vector<proto::TurnId> restored_order;
   ASSERT_EQ(restored.ordered_turns(restored_order), datastore::Status::OK);
-  ASSERT_EQ(restored_order.size(), 3U);
+  ASSERT_EQ(restored_order.size(), 4U);
   EXPECT_EQ(restored_order[1].human_address(), "1.1");
+  EXPECT_EQ(restored_order[2].human_address(), "1.1.a");
+
+  std::vector<proto::Turn> stored_turns;
+  ASSERT_EQ(turns.load_all(canvas_uuid, stored_turns), datastore::Status::OK);
+  TurnTree restored_turn_tree;
+  ASSERT_EQ(restored_turn_tree.rebuild(stored_turns), TurnTree::Status::OK);
+  proto::Turn next_part;
+  ASSERT_EQ(
+      restored_turn_tree.append_part(canvas_uuid, late_reply.id(), next_part),
+      TurnTree::Status::OK);
+  EXPECT_EQ(next_part.id().human_address(), "1.1.b");
 
   EXPECT_EQ(pipeline.unregister_node("linearize"),
             execution_graph::Status::INVALID_ARGUMENT);

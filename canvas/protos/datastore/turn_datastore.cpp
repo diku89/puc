@@ -31,6 +31,14 @@ CREATE TABLE turns (
 CREATE INDEX turns_by_parent
   ON turns(canvas_uuid, parent_address, sibling_ordinal);
 )sql"},
+    Migration{.version = 2U, .sql = R"sql(
+ALTER TABLE turns
+  ADD COLUMN component_kind INTEGER NOT NULL DEFAULT 0
+  CHECK(component_kind IN (0, 1));
+DROP INDEX turns_by_parent;
+CREATE INDEX turns_by_parent
+  ON turns(canvas_uuid, parent_address, component_kind, sibling_ordinal);
+)sql"},
 };
 
 std::span<const std::uint8_t> bytes(std::string_view value) {
@@ -55,8 +63,9 @@ bool valid_address(const proto::Turn& turn, const TurnAddress& address) {
     return false;
   }
   const AddressComponent& component = address.components().back();
-  return component.kind == AddressComponent::Kind::NUMERIC &&
-         parent->numeric_child(component.ordinal) == address;
+  return (component.kind == AddressComponent::Kind::NUMERIC
+              ? parent->numeric_child(component.ordinal)
+              : parent->alphabetic_child(component.ordinal)) == address;
 }
 
 }  // namespace
@@ -122,14 +131,17 @@ Status TurnDatastore::persist(std::span<const std::uint8_t> canvas_uuid,
   Statement insert;
   if (!is_ok(database_.prepare(
           "INSERT INTO turns(canvas_uuid, human_address, parent_address, "
-          "sibling_ordinal, payload) VALUES(?1, ?2, ?3, ?4, ?5);",
+          "component_kind, sibling_ordinal, payload) "
+          "VALUES(?1, ?2, ?3, ?4, ?5, ?6);",
           insert)) ||
       !is_ok(insert.bind(1, canvas_uuid)) ||
       !is_ok(insert.bind(2, turn.id().human_address())) ||
       !is_ok(bind_parent(insert, 3, turn)) ||
-      !is_ok(insert.bind(4, static_cast<std::int64_t>(
+      !is_ok(insert.bind(
+          4, static_cast<std::int64_t>(address->components().back().kind))) ||
+      !is_ok(insert.bind(5, static_cast<std::int64_t>(
                                 address->components().back().ordinal))) ||
-      !is_ok(insert.bind(5, bytes(payload)))) {
+      !is_ok(insert.bind(6, bytes(payload)))) {
     database_.rollback();
     turn.Clear();
     return Status::SQL_ERROR;

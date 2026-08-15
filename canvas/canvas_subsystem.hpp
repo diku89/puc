@@ -126,6 +126,15 @@ class CanvasSubsystem final : public AppSubsystem {
   canvas::datastore::Status reply_to(const canvas::proto::TurnId* parent,
                                      canvas::proto::Turn& started);
 
+  /**
+   * Reserve one alphabetic response-part beneath an existing Turn.
+   *
+   * The returned shell receives addresses such as `1.1.a`, `1.1.b`, and so
+   * on from an allocator independent of the parent's numeric replies.
+   */
+  canvas::datastore::Status append_part(const canvas::proto::TurnId& parent,
+                                        canvas::proto::Turn& started);
+
   /** Return the absolute namespace root for this Canvas. */
   std::string channel_root_name() const;
 

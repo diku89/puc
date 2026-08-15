@@ -16,7 +16,7 @@ Runtime Turn state stored directly in each authoritative Trie node.
 friend class TurnTree
 ```
 
-[Source](../../canvas/turn/turn_tree.hpp#L63)
+[Source](../../canvas/turn/turn_tree.hpp#L73)
 
 ## Private data members
 
@@ -30,19 +30,31 @@ proto::Turn puc::canvas::TurnNode::turn_
 
 Durable Turn payload for an exact Trie sequence.
 
-[Source](../../canvas/turn/turn_tree.hpp#L65)
+[Source](../../canvas/turn/turn_tree.hpp#L82)
 
-<a id="symbol-classpuc_1_1canvas_1_1_turn_node_1a8541c444302e58de7d197cee97116e61"></a>
+<a id="symbol-classpuc_1_1canvas_1_1_turn_node_1ac719d519822a253ebbc45335fe857498"></a>
 
-### `next_reply_ordinal_`
+### `next_numeric_child_`
 
 ```cpp
-std::atomic<std::uint32_t> puc::canvas::TurnNode::next_reply_ordinal_
+std::atomic<std::uint32_t> puc::canvas::TurnNode::next_numeric_child_
 ```
 
-Next numeric child, or zero after exhaustion.
+Next numeric reply, or zero after exhaustion.
 
-[Source](../../canvas/turn/turn_tree.hpp#L66)
+[Source](../../canvas/turn/turn_tree.hpp#L83)
+
+<a id="symbol-classpuc_1_1canvas_1_1_turn_node_1a1b6626d26c60d8ea9f0cda5e4d876618"></a>
+
+### `next_alphabetic_child_`
+
+```cpp
+std::atomic<std::uint32_t> puc::canvas::TurnNode::next_alphabetic_child_
+```
+
+Next alphabetic part, or zero after exhaustion.
+
+[Source](../../canvas/turn/turn_tree.hpp#L85)
 
 ## Public functions
 
@@ -92,7 +104,7 @@ TurnNode & puc::canvas::TurnNode::operator=(const TurnNode &other)
 
 Copy protobuf and allocator state for transactional Trie replacement.
 
-[Source](../../canvas/turn/turn_tree.hpp#L37)
+[Source](../../canvas/turn/turn_tree.hpp#L39)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_node_1a802097f1ae6c16f8e43bfb67a4f89b36"></a>
 
@@ -104,7 +116,7 @@ puc::canvas::TurnNode::TurnNode(TurnNode &&other) noexcept
 
 Move protobuf and atomic state during contiguous Trie growth.
 
-[Source](../../canvas/turn/turn_tree.hpp#L47)
+[Source](../../canvas/turn/turn_tree.hpp#L52)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_node_1a6808fa36fa785f5e0e8a1fb07d73e9b8"></a>
 
@@ -116,4 +128,18 @@ TurnNode & puc::canvas::TurnNode::operator=(TurnNode &&other) noexcept
 
 Move protobuf and atomic state during Trie replacement.
 
-[Source](../../canvas/turn/turn_tree.hpp#L53)
+[Source](../../canvas/turn/turn_tree.hpp#L60)
+
+## Private functions
+
+<a id="symbol-classpuc_1_1canvas_1_1_turn_node_1a040bd25264b6a5c14330983860a07512"></a>
+
+### `allocator`
+
+```cpp
+std::atomic< std::uint32_t > & puc::canvas::TurnNode::allocator(AddressComponent::Kind kind) const noexcept
+```
+
+Select the independent allocator for one child component namespace.
+
+[Source](../../canvas/turn/turn_tree.hpp#L76)

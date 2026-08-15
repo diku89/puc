@@ -2,7 +2,7 @@
 
 # Class `puc::canvas::datastore::TurnDatastore`
 
-Persist committed Turns under caller-reserved human addresses.
+Persist committed Turns under caller-reserved reply or part addresses.
 
 [Source](../../canvas/protos/datastore/turn_datastore.hpp#L18)
 

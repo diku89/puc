@@ -14,7 +14,7 @@
 
 namespace puc::canvas::datastore {
 
-/** Persist committed Turns under caller-reserved human addresses. */
+/** Persist committed Turns under caller-reserved reply or part addresses. */
 class TurnDatastore final {
  public:
   /** Borrow an initialized database for the lifetime of this wrapper. */

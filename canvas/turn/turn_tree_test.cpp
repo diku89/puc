@@ -16,6 +16,7 @@ namespace {
 
 constexpr std::size_t kRootReplies  = 128U;
 constexpr std::size_t kChildReplies = 64U;
+constexpr std::size_t kParts        = 52U;
 
 std::array<std::uint8_t, 16U> canvas_uuid() {
   std::array<std::uint8_t, 16U> result{};
@@ -104,8 +105,54 @@ TEST(TurnTreeTest, AllocatesRepliesPerParentAndReconstructsCounters) {
     ASSERT_EQ(tree.apply(child), TurnTree::Status::OK);
   }
 
+  const auto first_child = std::find_if(
+      children.begin(), children.end(), [](const proto::Turn& turn) {
+        return turn.id().human_address() == "1.1";
+      });
+  ASSERT_NE(first_child, children.end());
+  std::vector<proto::Turn> parts(kParts);
+  std::vector<TurnTree::Status> part_statuses(kParts);
+  threads.clear();
+  threads.reserve(kParts);
+  for (std::size_t index = 0U; index < parts.size(); ++index) {
+    threads.emplace_back(
+        [&tree, &uuid, &first_child, &parts, &part_statuses, index] {
+          part_statuses[index] =
+              tree.append_part(uuid, first_child->id(), parts[index]);
+        });
+  }
+  for (std::thread& thread : threads) thread.join();
+
+  EXPECT_TRUE(std::all_of(
+      part_statuses.begin(), part_statuses.end(),
+      [](TurnTree::Status status) { return status == TurnTree::Status::OK; }));
+  std::vector<std::uint32_t> expected_parts(kParts);
+  for (std::size_t index = 0U; index < expected_parts.size(); ++index) {
+    expected_parts[index] = static_cast<std::uint32_t>(index + 1U);
+  }
+  EXPECT_EQ(ordinals(parts), expected_parts);
+  EXPECT_NE(std::find_if(parts.begin(), parts.end(),
+                         [](const proto::Turn& part) {
+                           return part.id().human_address() == "1.1.a";
+                         }),
+            parts.end());
+  EXPECT_NE(std::find_if(parts.begin(), parts.end(),
+                         [](const proto::Turn& part) {
+                           return part.id().human_address() == "1.1.az";
+                         }),
+            parts.end());
+  proto::Turn independent_numeric_reply;
+  ASSERT_EQ(tree.reply_to(uuid, &first_child->id(), independent_numeric_reply),
+            TurnTree::Status::OK);
+  EXPECT_EQ(independent_numeric_reply.id().human_address(), "1.1.1");
+  for (proto::Turn& part : parts) {
+    commit(part);
+    ASSERT_EQ(tree.apply(part), TurnTree::Status::OK);
+  }
+
   std::vector<proto::Turn> durable = roots;
   durable.insert(durable.end(), children.begin(), children.end());
+  durable.insert(durable.end(), parts.begin(), parts.end());
   TurnTree restored;
   ASSERT_EQ(restored.rebuild(durable), TurnTree::Status::OK);
   proto::Turn next_root;
@@ -115,6 +162,59 @@ TEST(TurnTreeTest, AllocatesRepliesPerParentAndReconstructsCounters) {
   ASSERT_EQ(restored.reply_to(uuid, &first->id(), next_child),
             TurnTree::Status::OK);
   EXPECT_EQ(next_child.id().human_address(), "1.65");
+  proto::Turn next_part;
+  ASSERT_EQ(restored.append_part(uuid, first_child->id(), next_part),
+            TurnTree::Status::OK);
+  EXPECT_EQ(next_part.id().human_address(), "1.1.ba");
+}
+
+TEST(TurnTreeTest, RebuildPreservesLiveReservationsInBothNamespaces) {
+  const auto uuid = canvas_uuid();
+  TurnTree tree;
+  proto::Turn one;
+  ASSERT_EQ(tree.reply_to(uuid, nullptr, one), TurnTree::Status::OK);
+  commit(one);
+  ASSERT_EQ(tree.apply(one), TurnTree::Status::OK);
+
+  proto::Turn uncommitted_two;
+  proto::Turn uncommitted_three;
+  ASSERT_EQ(tree.reply_to(uuid, nullptr, uncommitted_two),
+            TurnTree::Status::OK);
+  ASSERT_EQ(tree.reply_to(uuid, nullptr, uncommitted_three),
+            TurnTree::Status::OK);
+
+  proto::Turn one_one;
+  ASSERT_EQ(tree.reply_to(uuid, &one.id(), one_one), TurnTree::Status::OK);
+  commit(one_one);
+  ASSERT_EQ(tree.apply(one_one), TurnTree::Status::OK);
+
+  proto::Turn uncommitted_one_two;
+  proto::Turn uncommitted_one_three;
+  ASSERT_EQ(tree.reply_to(uuid, &one.id(), uncommitted_one_two),
+            TurnTree::Status::OK);
+  ASSERT_EQ(tree.reply_to(uuid, &one.id(), uncommitted_one_three),
+            TurnTree::Status::OK);
+
+  proto::Turn uncommitted_part_a;
+  proto::Turn uncommitted_part_b;
+  ASSERT_EQ(tree.append_part(uuid, one_one.id(), uncommitted_part_a),
+            TurnTree::Status::OK);
+  ASSERT_EQ(tree.append_part(uuid, one_one.id(), uncommitted_part_b),
+            TurnTree::Status::OK);
+
+  const std::array durable{one, one_one};
+  ASSERT_EQ(tree.rebuild(durable), TurnTree::Status::OK);
+
+  proto::Turn next_root;
+  ASSERT_EQ(tree.reply_to(uuid, nullptr, next_root), TurnTree::Status::OK);
+  EXPECT_EQ(next_root.id().human_address(), "4");
+  proto::Turn next_reply;
+  ASSERT_EQ(tree.reply_to(uuid, &one.id(), next_reply), TurnTree::Status::OK);
+  EXPECT_EQ(next_reply.id().human_address(), "1.4");
+  proto::Turn next_part;
+  ASSERT_EQ(tree.append_part(uuid, one_one.id(), next_part),
+            TurnTree::Status::OK);
+  EXPECT_EQ(next_part.id().human_address(), "1.1.c");
 }
 
 TEST(TurnTreeTest, RejectsASecondCommitForOneReservedAddress) {

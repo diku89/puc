@@ -30,15 +30,20 @@ class TurnNode final {
   /** Copy protobuf and allocator state for transactional Trie replacement. */
   TurnNode(const TurnNode& other)
       : turn_(other.turn_),
-        next_reply_ordinal_(
-            other.next_reply_ordinal_.load(std::memory_order_relaxed)) {}
+        next_numeric_child_(
+            other.next_numeric_child_.load(std::memory_order_relaxed)),
+        next_alphabetic_child_(
+            other.next_alphabetic_child_.load(std::memory_order_relaxed)) {}
 
   /** Copy protobuf and allocator state for transactional Trie replacement. */
   TurnNode& operator=(const TurnNode& other) {
     if (this == &other) return *this;
     turn_ = other.turn_;
-    next_reply_ordinal_.store(
-        other.next_reply_ordinal_.load(std::memory_order_relaxed),
+    next_numeric_child_.store(
+        other.next_numeric_child_.load(std::memory_order_relaxed),
+        std::memory_order_relaxed);
+    next_alphabetic_child_.store(
+        other.next_alphabetic_child_.load(std::memory_order_relaxed),
         std::memory_order_relaxed);
     return *this;
   }
@@ -46,15 +51,20 @@ class TurnNode final {
   /** Move protobuf and atomic state during contiguous Trie growth. */
   TurnNode(TurnNode&& other) noexcept
       : turn_(std::move(other.turn_)),
-        next_reply_ordinal_(
-            other.next_reply_ordinal_.load(std::memory_order_relaxed)) {}
+        next_numeric_child_(
+            other.next_numeric_child_.load(std::memory_order_relaxed)),
+        next_alphabetic_child_(
+            other.next_alphabetic_child_.load(std::memory_order_relaxed)) {}
 
   /** Move protobuf and atomic state during Trie replacement. */
   TurnNode& operator=(TurnNode&& other) noexcept {
     if (this == &other) return *this;
     turn_ = std::move(other.turn_);
-    next_reply_ordinal_.store(
-        other.next_reply_ordinal_.load(std::memory_order_relaxed),
+    next_numeric_child_.store(
+        other.next_numeric_child_.load(std::memory_order_relaxed),
+        std::memory_order_relaxed);
+    next_alphabetic_child_.store(
+        other.next_alphabetic_child_.load(std::memory_order_relaxed),
         std::memory_order_relaxed);
     return *this;
   }
@@ -62,9 +72,18 @@ class TurnNode final {
  private:
   friend class TurnTree;
 
+  /** Select the independent allocator for one child component namespace. */
+  std::atomic<std::uint32_t>& allocator(
+      AddressComponent::Kind kind) const noexcept {
+    return kind == AddressComponent::Kind::NUMERIC ? next_numeric_child_
+                                                   : next_alphabetic_child_;
+  }
+
   proto::Turn turn_; /**< Durable Turn payload for an exact Trie sequence. */
-  mutable std::atomic<std::uint32_t> next_reply_ordinal_{
-      1U}; /**< Next numeric child, or zero after exhaustion. */
+  mutable std::atomic<std::uint32_t> next_numeric_child_{
+      1U}; /**< Next numeric reply, or zero after exhaustion. */
+  mutable std::atomic<std::uint32_t> next_alphabetic_child_{
+      1U}; /**< Next alphabetic part, or zero after exhaustion. */
 };
 
 /** Materialize Turns and allocate replies from authoritative Trie nodes. */
@@ -92,10 +111,25 @@ class TurnTree final {
   Status reply_to(std::span<const std::uint8_t> canvas_uuid,
                   const proto::TurnId* parent, proto::Turn& started);
 
+  /**
+   * Allocate one alphabetic response-part ID beneath a committed Turn.
+   *
+   * Parts use an allocator independent of numeric replies. Concurrent calls
+   * are safe while the caller prevents apply() or rebuild() from mutating the
+   * Trie.
+   */
+  Status append_part(std::span<const std::uint8_t> canvas_uuid,
+                     const proto::TurnId& parent, proto::Turn& started);
+
   /** Insert one committed Turn and rehash its root-to-leaf path. */
   Status apply(const proto::Turn& turn);
 
-  /** Reconstruct a complete candidate Trie and replace this tree on success. */
+  /**
+   * Reconstruct a durable candidate and retain all live allocator watermarks.
+   *
+   * A rebuild never makes a process-local reserved ordinal available again
+   * beneath any committed parent present in both trees.
+   */
   Status rebuild(std::span<const proto::Turn> turns);
 
   /** Find the durable Turn at one parsed human-readable address. */
@@ -109,6 +143,14 @@ class TurnTree final {
 
  private:
   using Trie = containers::Trie<AddressComponent, TurnNode>;
+
+  /** Allocate one child in the selected component namespace. */
+  Status allocate_child(std::span<const std::uint8_t> canvas_uuid,
+                        const proto::TurnId* parent,
+                        AddressComponent::Kind kind, proto::Turn& started);
+
+  /** Merge current process-local allocator watermarks into a rebuilt tree. */
+  void preserve_reservations(TurnTree& rebuilt) const;
 
   /** Canonically hash one node from its Turn and ordered child hashes. */
   hashing::Hash256 hash_node(Trie::NodeIndex index) const;

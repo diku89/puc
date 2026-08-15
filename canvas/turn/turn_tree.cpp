@@ -18,8 +18,30 @@ bool direct_child(const TurnAddress& parent, const TurnAddress& child) {
     return false;
   }
   const AddressComponent& component = child.components().back();
-  return component.kind == AddressComponent::Kind::NUMERIC &&
-         parent.numeric_child(component.ordinal) == child;
+  return (component.kind == AddressComponent::Kind::NUMERIC
+              ? parent.numeric_child(component.ordinal)
+              : parent.alphabetic_child(component.ordinal)) == child;
+}
+
+void advance_past(std::atomic<std::uint32_t>& next, std::uint32_t ordinal) {
+  const std::uint32_t desired =
+      ordinal == std::numeric_limits<std::uint32_t>::max() ? 0U : ordinal + 1U;
+  std::uint32_t current = next.load(std::memory_order_relaxed);
+  while (current != 0U && (desired == 0U || current < desired) &&
+         !next.compare_exchange_weak(current, desired,
+                                     std::memory_order_relaxed)) {
+  }
+}
+
+void preserve_watermark(const std::atomic<std::uint32_t>& current,
+                        std::atomic<std::uint32_t>& rebuilt) {
+  const std::uint32_t current_value = current.load(std::memory_order_relaxed);
+  const std::uint32_t rebuilt_value = rebuilt.load(std::memory_order_relaxed);
+  if (current_value == 0U || rebuilt_value == 0U) {
+    rebuilt.store(0U, std::memory_order_relaxed);
+  } else if (current_value > rebuilt_value) {
+    rebuilt.store(current_value, std::memory_order_relaxed);
+  }
 }
 
 }  // namespace
@@ -27,8 +49,25 @@ bool direct_child(const TurnAddress& parent, const TurnAddress& child) {
 TurnTree::Status TurnTree::reply_to(std::span<const std::uint8_t> canvas_uuid,
                                     const proto::TurnId* parent,
                                     proto::Turn& started) {
+  return allocate_child(canvas_uuid, parent, AddressComponent::Kind::NUMERIC,
+                        started);
+}
+
+TurnTree::Status TurnTree::append_part(
+    std::span<const std::uint8_t> canvas_uuid, const proto::TurnId& parent,
+    proto::Turn& started) {
+  return allocate_child(canvas_uuid, &parent,
+                        AddressComponent::Kind::ALPHABETIC, started);
+}
+
+TurnTree::Status TurnTree::allocate_child(
+    std::span<const std::uint8_t> canvas_uuid, const proto::TurnId* parent,
+    AddressComponent::Kind kind, proto::Turn& started) {
   started.Clear();
-  if (canvas_uuid.size() != 16U) return Status::INVALID_TURN;
+  if (canvas_uuid.size() != 16U ||
+      (kind == AddressComponent::Kind::ALPHABETIC && parent == nullptr)) {
+    return Status::INVALID_TURN;
+  }
 
   Trie::NodeIndex parent_index = Trie::root();
   std::optional<TurnAddress> parent_address;
@@ -49,7 +88,7 @@ TurnTree::Status TurnTree::reply_to(std::span<const std::uint8_t> canvas_uuid,
   }
 
   std::atomic<std::uint32_t>& next =
-      trie_.node(parent_index).value.next_reply_ordinal_;
+      trie_.node(parent_index).value.allocator(kind);
   std::uint32_t ordinal = next.load(std::memory_order_relaxed);
   while (true) {
     if (ordinal == 0U) return Status::ADDRESS_EXHAUSTED;
@@ -62,9 +101,11 @@ TurnTree::Status TurnTree::reply_to(std::span<const std::uint8_t> canvas_uuid,
     }
   }
 
-  const TurnAddress address = parent_address.has_value()
+  const TurnAddress address = !parent_address.has_value()
+                                  ? TurnAddress::root(ordinal)
+                              : kind == AddressComponent::Kind::NUMERIC
                                   ? parent_address->numeric_child(ordinal)
-                                  : TurnAddress::root(ordinal);
+                                  : parent_address->alphabetic_child(ordinal);
   started.mutable_id()->set_canvas_uuid(canvas_uuid.data(), canvas_uuid.size());
   started.mutable_id()->set_human_address(address.string());
   if (parent != nullptr) *started.mutable_parent() = *parent;
@@ -112,25 +153,12 @@ TurnTree::Status TurnTree::apply(const proto::Turn& turn) {
     return Status::ALREADY_EXISTS;
   }
 
-  const std::size_t old_size = trie_.size();
   trie_.insert(address->components(), TurnNode{turn});
   hashes_.resize(trie_.size());
 
-  if (trie_.size() != old_size) {
-    const std::uint64_t ordinal = address->components().back().ordinal;
-    const auto reply_ordinal    = static_cast<std::uint32_t>(ordinal);
-    const std::uint32_t desired =
-        reply_ordinal == std::numeric_limits<std::uint32_t>::max()
-            ? 0U
-            : reply_ordinal + 1U;
-    std::atomic<std::uint32_t>& next =
-        trie_.node(parent_index).value.next_reply_ordinal_;
-    std::uint32_t current = next.load(std::memory_order_relaxed);
-    while (current != 0U && (desired == 0U || current < desired) &&
-           !next.compare_exchange_weak(current, desired,
-                                       std::memory_order_relaxed)) {
-    }
-  }
+  const AddressComponent& child = address->components().back();
+  advance_past(trie_.node(parent_index).value.allocator(child.kind),
+               static_cast<std::uint32_t>(child.ordinal));
 
   std::vector<Trie::NodeIndex> path{Trie::root()};
   Trie::NodeIndex current = Trie::root();
@@ -168,8 +196,33 @@ TurnTree::Status TurnTree::rebuild(std::span<const proto::Turn> turns) {
     const Status status = candidate.apply(*turn);
     if (status != Status::OK) return status;
   }
+  preserve_reservations(candidate);
   *this = std::move(candidate);
   return Status::OK;
+}
+
+void TurnTree::preserve_reservations(TurnTree& rebuilt) const {
+  const auto preserve_node = [](const TurnNode& current,
+                                const TurnNode& candidate) {
+    preserve_watermark(current.allocator(AddressComponent::Kind::NUMERIC),
+                       candidate.allocator(AddressComponent::Kind::NUMERIC));
+    preserve_watermark(current.allocator(AddressComponent::Kind::ALPHABETIC),
+                       candidate.allocator(AddressComponent::Kind::ALPHABETIC));
+  };
+
+  preserve_node(trie_.node(Trie::root()).value,
+                rebuilt.trie_.node(Trie::root()).value);
+  for (const std::vector<AddressComponent>& address : trie_.completions()) {
+    const Trie::NodeIndex current   = trie_.find_node(address);
+    const Trie::NodeIndex candidate = rebuilt.trie_.find_node(address);
+    if (current == Trie::kInvalidNode || candidate == Trie::kInvalidNode ||
+        !trie_.node(current).sequence_end ||
+        !rebuilt.trie_.node(candidate).sequence_end) {
+      continue;
+    }
+    preserve_node(trie_.node(current).value,
+                  rebuilt.trie_.node(candidate).value);
+  }
 }
 
 const proto::Turn* TurnTree::find(const TurnAddress& address) const {
