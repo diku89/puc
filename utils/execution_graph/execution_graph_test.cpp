@@ -15,8 +15,10 @@
 #include <string>
 #include <string_view>
 #include <utility>
+#include <vector>
 
 #include "gtest/gtest.h"
+#include "utils/execution_graph/execution_plan.hpp"
 
 namespace puc::execution_graph {
 namespace {
@@ -99,6 +101,14 @@ class Counter {
   mutable std::mutex mutex_;        /**< Protects value_. */
   std::condition_variable changed_; /**< Wakes observers. */
   std::size_t value_ = 0U;          /**< Number of observed increments. */
+};
+
+/** Shared completion state retained through an asynchronous plan callback. */
+struct PlanCompletion final {
+  std::mutex mutex;                /**< Protects complete and result. */
+  std::condition_variable changed; /**< Signals callback completion. */
+  bool complete = false;           /**< Whether the callback has run. */
+  Status result = Status::INVALID_ARGUMENT; /**< Accepted run result. */
 };
 
 static_assert(ExecutionGraphNode<std::string>);
@@ -320,6 +330,47 @@ TEST(ExecutionGraphTest, HandlesAnEmptyGraphAndStoppedWorkers) {
   EXPECT_TRUE(empty_graph.active());
   EXPECT_EQ(empty_graph.wait(), Status::OK);
   EXPECT_FALSE(empty_graph.active());
+}
+
+TEST(ExecutionPlanTest, PublishesAllReadinessBeforeFastJobsCanComplete) {
+  constexpr std::size_t kNodes = 64U;
+  constexpr std::size_t kRuns  = 32U;
+  DependencyGraph<std::size_t> topology;
+  for (std::size_t index = 0U; index < kNodes; ++index) {
+    ASSERT_EQ(topology.add_node(index), Status::OK);
+    if (index > 0U) {
+      ASSERT_EQ(topology.add_dependency(index - 1U, index), Status::OK);
+    }
+  }
+  ExecutionPlan<std::size_t> plan;
+  ASSERT_EQ(ExecutionPlan<std::size_t>::compile(topology, plan), Status::OK);
+
+  multithreading::JobQueue workers(4U);
+  std::atomic<std::size_t> count{0U};
+  for (std::size_t run = 0U; run < kRuns; ++run) {
+    std::vector<std::shared_ptr<multithreading::Job>> jobs;
+    jobs.reserve(kNodes);
+    for (std::size_t index = 0U; index < kNodes; ++index) {
+      jobs.push_back(std::make_shared<CountingJob>(count));
+    }
+
+    auto completion = std::make_shared<PlanCompletion>();
+    const Status accepted =
+        plan.submit(workers, std::move(jobs), [completion](Status status) {
+          {
+            const std::lock_guard lock(completion->mutex);
+            completion->result   = status;
+            completion->complete = true;
+          }
+          completion->changed.notify_all();
+        });
+    ASSERT_EQ(accepted, Status::OK);
+    std::unique_lock lock(completion->mutex);
+    ASSERT_TRUE(completion->changed.wait_for(
+        lock, 2s, [&completion] { return completion->complete; }));
+    EXPECT_EQ(completion->result, Status::OK);
+  }
+  EXPECT_EQ(count.load(), kNodes * kRuns);
 }
 
 }  // namespace

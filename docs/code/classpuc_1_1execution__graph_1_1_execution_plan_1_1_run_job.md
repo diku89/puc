@@ -4,7 +4,7 @@
 
 Worker wrapper retaining one independent run until node completion.
 
-[Source](../../utils/execution_graph/execution_plan.hpp#L114)
+[Source](../../utils/execution_graph/execution_plan.hpp#L120)
 
 ## Private data members
 
@@ -18,7 +18,7 @@ std::shared_ptr<Run> puc::execution_graph::ExecutionPlan< NodeType >::RunJob::ru
 
 Run retained through this invocation.
 
-[Source](../../utils/execution_graph/execution_plan.hpp#L123)
+[Source](../../utils/execution_graph/execution_plan.hpp#L129)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_plan_1_1_run_job_1a331409b50c17616bdda419624570982c"></a>
 
@@ -30,7 +30,7 @@ std::size_t puc::execution_graph::ExecutionPlan< NodeType >::RunJob::node_index_
 
 Dense job/topology index.
 
-[Source](../../utils/execution_graph/execution_plan.hpp#L124)
+[Source](../../utils/execution_graph/execution_plan.hpp#L130)
 
 ## Public functions
 
@@ -42,7 +42,7 @@ Dense job/topology index.
 puc::execution_graph::ExecutionPlan< NodeType >::RunJob::RunJob(std::shared_ptr< Run > run, std::size_t node_index)
 ```
 
-[Source](../../utils/execution_graph/execution_plan.hpp#L116)
+[Source](../../utils/execution_graph/execution_plan.hpp#L122)
 
 <a id="symbol-classpuc_1_1execution__graph_1_1_execution_plan_1_1_run_job_1a1b97ff3bc4440bc92c1522ecfc02d666"></a>
 
@@ -54,4 +54,4 @@ void puc::execution_graph::ExecutionPlan< NodeType >::RunJob::execute() noexcept
 
 Execute one run-local node and release its newly ready dependents.
 
-[Source](../../utils/execution_graph/execution_plan.hpp#L120)
+[Source](../../utils/execution_graph/execution_plan.hpp#L126)

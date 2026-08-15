@@ -44,7 +44,7 @@ std::shared_ptr<const Data> puc::execution_graph::ExecutionPlan< NodeType >::dat
 
 Compiled immutable topology.
 
-[Source](../../utils/execution_graph/execution_plan.hpp#L237)
+[Source](../../utils/execution_graph/execution_plan.hpp#L242)
 
 ## Public functions
 

@@ -101,11 +101,17 @@ class ExecutionPlan final {
     explicit Data(DependencyGraphSnapshot<NodeType> snapshot)
         : nodes(std::move(snapshot.nodes)),
           dependents(std::move(snapshot.dependents)),
-          dependency_counts(std::move(snapshot.dependency_counts)) {}
+          dependency_counts(std::move(snapshot.dependency_counts)) {
+      roots.reserve(dependency_counts.size());
+      for (std::size_t index = 0U; index < dependency_counts.size(); ++index) {
+        if (dependency_counts[index] == 0U) roots.push_back(index);
+      }
+    }
 
     std::vector<NodeType> nodes; /**< Stable node identities. */
     std::vector<std::vector<std::size_t>> dependents; /**< Outgoing edges. */
     std::vector<std::size_t> dependency_counts; /**< Static incoming counts. */
+    std::vector<std::size_t> roots; /**< Zero-dependency nodes to publish. */
   };
 
   class Run;
@@ -140,10 +146,9 @@ class ExecutionPlan final {
 
     /** Schedule every root in this run's immutable topology. */
     void start() noexcept {
-      for (std::size_t index = 0U; index < remaining_dependencies_.size();
-           ++index) {
-        if (remaining_dependencies_[index] == 0U) schedule(index);
-      }
+      // The first submission publishes this Run to worker threads, so startup
+      // reads only immutable compiled topology and never run-local readiness.
+      for (const std::size_t root : data_->roots) schedule(root);
     }
 
     /** Execute one caller job, then complete its logical graph node. */

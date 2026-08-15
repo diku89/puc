@@ -18,7 +18,7 @@ std::vector<NodeType> puc::execution_graph::ExecutionPlan< NodeType >::Data::nod
 
 Stable node identities.
 
-[Source](../../utils/execution_graph/execution_plan.hpp#L106)
+[Source](../../utils/execution_graph/execution_plan.hpp#L111)
 
 <a id="symbol-structpuc_1_1execution__graph_1_1_execution_plan_1_1_data_1a1f1426a6befa1e1f711b90f22582d7c6"></a>
 
@@ -30,7 +30,7 @@ std::vector<std::vector<std::size_t> > puc::execution_graph::ExecutionPlan< Node
 
 Outgoing edges.
 
-[Source](../../utils/execution_graph/execution_plan.hpp#L107)
+[Source](../../utils/execution_graph/execution_plan.hpp#L112)
 
 <a id="symbol-structpuc_1_1execution__graph_1_1_execution_plan_1_1_data_1afe86f61fca814113bdd03629c02ec481"></a>
 
@@ -42,7 +42,19 @@ std::vector<std::size_t> puc::execution_graph::ExecutionPlan< NodeType >::Data::
 
 Static incoming counts.
 
-[Source](../../utils/execution_graph/execution_plan.hpp#L108)
+[Source](../../utils/execution_graph/execution_plan.hpp#L113)
+
+<a id="symbol-structpuc_1_1execution__graph_1_1_execution_plan_1_1_data_1ada9250944c8132cd5076a73b17c8eae0"></a>
+
+### `roots`
+
+```cpp
+std::vector<std::size_t> puc::execution_graph::ExecutionPlan< NodeType >::Data::roots
+```
+
+Zero-dependency nodes to publish.
+
+[Source](../../utils/execution_graph/execution_plan.hpp#L114)
 
 ## Public functions
 
