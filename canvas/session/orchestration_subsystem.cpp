@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <cstdint>
 #include <memory>
+#include <mutex>
 #include <optional>
 #include <string>
 #include <unordered_set>
@@ -30,6 +31,12 @@ LOGGER_MODULE("Orchestration");
 /** @endcond */
 
 namespace puc::app {
+namespace {
+
+constexpr std::string_view kPendingPresentationState =
+    "orchestration.pending_presentation";
+
+}  // namespace
 
 /** Hidden state shared by the two registered orchestration callbacks. */
 class OrchestrationSubsystem::Impl {
@@ -39,41 +46,80 @@ class OrchestrationSubsystem::Impl {
       presentations; /**< Durable nodes and commits. */
   std::unique_ptr<canvas::PresentationTree>
       presentation_tree; /**< Current materialized presentation order. */
-  canvas::PendingPresentation
-      pending; /**< State shared by owned graph nodes. */
+  std::mutex presentation_mutex; /**< Serializes one root advancement. */
   std::vector<std::uint8_t>
       presentation_uuid;   /**< Current Canvas-owned tree identity. */
   bool registered = false; /**< Whether both owned nodes are in the pipeline. */
 
   /** Derive the next immutable presentation root for the committed Turn. */
   void linearize(canvas::TurnContext& context) {
-    const canvas::datastore::Status status =
-        presentation_tree->prepare_insert(context.turn().id(), pending);
-    if (!canvas::datastore::is_ok(status)) context.fail(status);
+    canvas::PendingPresentation pending;
+    {
+      const std::lock_guard lock(presentation_mutex);
+      const canvas::datastore::Status status =
+          presentation_tree->prepare_insert(context.turn().id(), pending);
+      if (!canvas::datastore::is_ok(status)) {
+        context.fail(status);
+        return;
+      }
+    }
+    context.store(std::string{kPendingPresentationState}, std::move(pending));
   }
 
   /** Persist, materialize, and broadcast a prepared Presentation commit. */
   void commit(canvas::TurnContext& context) {
-    canvas::datastore::Status status = presentations->commit(
-        presentation_uuid, pending.previous_root, pending.new_root,
-        context.turn().id(), pending.nodes);
-    if (!canvas::datastore::is_ok(status)) {
-      context.fail(status);
+    std::optional<canvas::PendingPresentation> pending =
+        context.take<canvas::PendingPresentation>(kPendingPresentationState);
+    if (!pending.has_value()) {
+      context.fail(canvas::datastore::Status::INVALID_STATE);
       return;
     }
-    presentation_tree->commit(pending);
 
     canvas::proto::Presentation update;
-    update.set_presentation_uuid(presentation_uuid.data(),
-                                 presentation_uuid.size());
-    update.set_canvas_uuid(canvas->canvas().canvas_uuid());
-    if (!pending.previous_root.empty()) {
-      update.set_previous_root_hash(pending.previous_root.bytes.data(),
-                                    pending.previous_root.bytes.size());
+    {
+      const std::lock_guard lock(presentation_mutex);
+      if (pending->previous_root != presentation_tree->root()) {
+        const canvas::datastore::Status prepared =
+            presentation_tree->prepare_insert(context.turn().id(), *pending);
+        if (!canvas::datastore::is_ok(prepared)) {
+          context.fail(prepared);
+          return;
+        }
+      }
+      canvas::datastore::Status status = presentations->commit(
+          presentation_uuid, pending->previous_root, pending->new_root,
+          context.turn().id(), pending->nodes);
+      if (status == canvas::datastore::Status::INVALID_STATE) {
+        hashing::Hash256 durable_root;
+        status = presentations->load_root(presentation_uuid, durable_root);
+        if (canvas::datastore::is_ok(status)) {
+          presentation_tree->reset(durable_root);
+          status =
+              presentation_tree->prepare_insert(context.turn().id(), *pending);
+        }
+        if (canvas::datastore::is_ok(status)) {
+          status = presentations->commit(
+              presentation_uuid, pending->previous_root, pending->new_root,
+              context.turn().id(), pending->nodes);
+        }
+      }
+      if (!canvas::datastore::is_ok(status)) {
+        context.fail(status);
+        return;
+      }
+      presentation_tree->commit(*pending);
+
+      update.set_presentation_uuid(presentation_uuid.data(),
+                                   presentation_uuid.size());
+      update.set_canvas_uuid(canvas->canvas().canvas_uuid());
+      if (!pending->previous_root.empty()) {
+        update.set_previous_root_hash(pending->previous_root.bytes.data(),
+                                      pending->previous_root.bytes.size());
+      }
+      update.set_root_hash(pending->new_root.bytes.data(),
+                           pending->new_root.bytes.size());
+      *update.mutable_committed_turn_id() = context.turn().id();
     }
-    update.set_root_hash(pending.new_root.bytes.data(),
-                         pending.new_root.bytes.size());
-    *update.mutable_committed_turn_id() = context.turn().id();
     canvas->materialize_presentation(update);
     if (!canvas->publish_committed_presentation(update)) {
       Logger<WARN> << "Could not broadcast Presentation commit for Turn '"
@@ -83,6 +129,7 @@ class OrchestrationSubsystem::Impl {
 
   /** Commit every durable Turn absent from the Presentation recovery ledger. */
   canvas::datastore::Status reconcile() {
+    const std::lock_guard lock(presentation_mutex);
     std::vector<std::string> committed_addresses;
     canvas::datastore::Status status =
         presentations->load_committed_turn_addresses(presentation_uuid,
@@ -92,9 +139,10 @@ class OrchestrationSubsystem::Impl {
                                                     committed_addresses.end()};
 
     std::vector<std::pair<canvas::TurnAddress, canvas::proto::TurnId>> missing;
-    for (const canvas::proto::Turn& turn : canvas->canvas().turns()) {
+    const canvas::proto::Canvas snapshot = canvas->canvas();
+    for (const canvas::proto::Turn& turn : snapshot.turns()) {
       if (!turn.has_id() || !turn.id().has_canvas_uuid() ||
-          turn.id().canvas_uuid() != canvas->canvas().canvas_uuid() ||
+          turn.id().canvas_uuid() != snapshot.canvas_uuid() ||
           !turn.id().has_human_address()) {
         return canvas::datastore::Status::CORRUPT_DATA;
       }
@@ -129,7 +177,7 @@ class OrchestrationSubsystem::Impl {
     canvas::proto::Presentation restored;
     restored.set_presentation_uuid(presentation_uuid.data(),
                                    presentation_uuid.size());
-    restored.set_canvas_uuid(canvas->canvas().canvas_uuid());
+    restored.set_canvas_uuid(snapshot.canvas_uuid());
     if (!presentation_tree->root().empty()) {
       restored.set_root_hash(presentation_tree->root().bytes.data(),
                              presentation_tree->root().bytes.size());
@@ -158,16 +206,18 @@ OrchestrationSubsystem::~OrchestrationSubsystem() = default;
 Status OrchestrationSubsystem::initialize(AppState& app) {
   impl_->canvas                 = app.get_subsystem<CanvasSubsystem>();
   DatastoreSubsystem* datastore = app.get_subsystem<DatastoreSubsystem>();
+  const canvas::proto::Canvas snapshot = impl_->canvas == nullptr
+                                             ? canvas::proto::Canvas{}
+                                             : impl_->canvas->canvas();
   if (impl_->canvas == nullptr || datastore == nullptr ||
       datastore->database() == nullptr ||
       impl_->canvas->pipeline() == nullptr ||
-      !impl_->canvas->canvas().has_presentation_uuid() ||
-      impl_->canvas->canvas().presentation_uuid().size() != 16U) {
+      !snapshot.has_presentation_uuid() ||
+      snapshot.presentation_uuid().size() != 16U) {
     return Status::SUBSYSTEM_FAILURE;
   }
-  impl_->presentation_uuid.assign(
-      impl_->canvas->canvas().presentation_uuid().begin(),
-      impl_->canvas->canvas().presentation_uuid().end());
+  impl_->presentation_uuid.assign(snapshot.presentation_uuid().begin(),
+                                  snapshot.presentation_uuid().end());
   impl_->presentations =
       std::make_unique<canvas::datastore::PresentationDatastore>(
           *datastore->database());
@@ -244,7 +294,6 @@ Status OrchestrationSubsystem::terminate(AppState& app) noexcept {
     }
   }
   impl_->registered = false;
-  impl_->pending    = {};
   impl_->presentation_tree.reset();
   impl_->presentations.reset();
   impl_->presentation_uuid.clear();

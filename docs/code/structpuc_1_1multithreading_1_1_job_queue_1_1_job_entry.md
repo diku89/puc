@@ -4,7 +4,7 @@
 
 Scheduled job and deterministic tie-breaking sequence.
 
-[Source](../../utils/multithreading/job_queue.hpp#L162)
+[Source](../../utils/multithreading/job_queue.hpp#L165)
 
 ## Public data members
 
@@ -16,7 +16,7 @@ Scheduled job and deterministic tie-breaking sequence.
 Clock::time_point puc::multithreading::JobQueue::JobEntry::next_run
 ```
 
-[Source](../../utils/multithreading/job_queue.hpp#L163)
+[Source](../../utils/multithreading/job_queue.hpp#L166)
 
 <a id="symbol-structpuc_1_1multithreading_1_1_job_queue_1_1_job_entry_1a07a0869d5a503e129fcff3cc3cee76bd"></a>
 
@@ -26,7 +26,7 @@ Clock::time_point puc::multithreading::JobQueue::JobEntry::next_run
 std::chrono::milliseconds puc::multithreading::JobQueue::JobEntry::period
 ```
 
-[Source](../../utils/multithreading/job_queue.hpp#L164)
+[Source](../../utils/multithreading/job_queue.hpp#L167)
 
 <a id="symbol-structpuc_1_1multithreading_1_1_job_queue_1_1_job_entry_1ae188445477c1774818b7077189d1774e"></a>
 
@@ -36,7 +36,7 @@ std::chrono::milliseconds puc::multithreading::JobQueue::JobEntry::period
 std::uint64_t puc::multithreading::JobQueue::JobEntry::sequence
 ```
 
-[Source](../../utils/multithreading/job_queue.hpp#L165)
+[Source](../../utils/multithreading/job_queue.hpp#L168)
 
 <a id="symbol-structpuc_1_1multithreading_1_1_job_queue_1_1_job_entry_1a800b11b264157cd7a89f4002aeba9a87"></a>
 
@@ -46,7 +46,7 @@ std::uint64_t puc::multithreading::JobQueue::JobEntry::sequence
 std::shared_ptr<Job> puc::multithreading::JobQueue::JobEntry::job
 ```
 
-[Source](../../utils/multithreading/job_queue.hpp#L166)
+[Source](../../utils/multithreading/job_queue.hpp#L169)
 
 <a id="symbol-structpuc_1_1multithreading_1_1_job_queue_1_1_job_entry_1afb72f45ba4c820aa1a195a59f2127e6f"></a>
 
@@ -58,7 +58,7 @@ std::shared_ptr<detail::PeriodicJobState> puc::multithreading::JobQueue::JobEntr
 
 Present only for cancellable periodic work.
 
-[Source](../../utils/multithreading/job_queue.hpp#L168)
+[Source](../../utils/multithreading/job_queue.hpp#L171)
 
 ## Public functions
 
@@ -72,4 +72,4 @@ bool puc::multithreading::JobQueue::JobEntry::operator>(const JobEntry &other) c
 
 Order the earliest deadline and oldest sequence at the queue top.
 
-[Source](../../utils/multithreading/job_queue.hpp#L171)
+[Source](../../utils/multithreading/job_queue.hpp#L174)

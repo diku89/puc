@@ -284,6 +284,54 @@ FIFO submitted-Turn queue.
 
 [Source](../../canvas/canvas_subsystem.cpp#L139)
 
+<a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1a5fdd8db080e45692f75e19dc12c14f84"></a>
+
+### `numbering_mutex`
+
+```cpp
+std::mutex puc::app::CanvasSubsystem::Impl::numbering_mutex
+```
+
+Serializes address allocation and insert.
+
+[Source](../../canvas/canvas_subsystem.cpp#L140)
+
+<a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1a304d942fc60d246885412ec2a2d23b2e"></a>
+
+### `numbering_changed`
+
+```cpp
+std::condition_variable puc::app::CanvasSubsystem::Impl::numbering_changed
+```
+
+Advances FIFO numbering.
+
+[Source](../../canvas/canvas_subsystem.cpp#L141)
+
+<a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1a3bd01b0d8e7b78043e0aae4ab23681ae"></a>
+
+### `next_numbering_ticket`
+
+```cpp
+std::uint64_t puc::app::CanvasSubsystem::Impl::next_numbering_ticket
+```
+
+Next accepted FIFO ticket.
+
+[Source](../../canvas/canvas_subsystem.cpp#L142)
+
+<a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1a501f7cf9393c8392796a5f173822ae7f"></a>
+
+### `state_mutex`
+
+```cpp
+std::mutex puc::app::CanvasSubsystem::Impl::state_mutex
+```
+
+Protects Trie and [Canvas](classpuc_1_1app_1_1_canvas.md) materialization.
+
+[Source](../../canvas/canvas_subsystem.cpp#L144)
+
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1a2023f5dce5fad20ba9ce9a62becd09cd"></a>
 
 ### `accepting`
@@ -294,7 +342,7 @@ bool puc::app::CanvasSubsystem::Impl::accepting
 
 Whether callbacks may enqueue new Turns.
 
-[Source](../../canvas/canvas_subsystem.cpp#L140)
+[Source](../../canvas/canvas_subsystem.cpp#L145)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1aa65f9c5c20fb63d7eded00f0f8b3414a"></a>
 
@@ -306,7 +354,7 @@ bool puc::app::CanvasSubsystem::Impl::closing
 
 Whether the pump exits after draining.
 
-[Source](../../canvas/canvas_subsystem.cpp#L141)
+[Source](../../canvas/canvas_subsystem.cpp#L146)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1a082061f6076ceb13689e8c6d710b4f7f"></a>
 
@@ -318,7 +366,7 @@ bool puc::app::CanvasSubsystem::Impl::announced
 
 Whether OPENED was successfully broadcast.
 
-[Source](../../canvas/canvas_subsystem.cpp#L142)
+[Source](../../canvas/canvas_subsystem.cpp#L147)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1aa35445d12dcbfe1005869bbd83b4711d"></a>
 
@@ -330,7 +378,7 @@ std::thread puc::app::CanvasSubsystem::Impl::pump
 
 Serialized IPC-to-graph ingestion thread.
 
-[Source](../../canvas/canvas_subsystem.cpp#L143)
+[Source](../../canvas/canvas_subsystem.cpp#L148)
 
 ## Public functions
 
@@ -344,7 +392,7 @@ void puc::app::CanvasSubsystem::Impl::enqueue(ipc::Channel::Bytes bytes) noexcep
 
 Copy one submitted Turn out of the IPC callback and wake the pump.
 
-[Source](../../canvas/canvas_subsystem.cpp#L146)
+[Source](../../canvas/canvas_subsystem.cpp#L151)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1a5b647dcdf2a2f0ba342bf6b47dd41bcd"></a>
 
@@ -354,9 +402,9 @@ Copy one submitted Turn out of the IPC callback and wake the pump.
 void puc::app::CanvasSubsystem::Impl::run() noexcept
 ```
 
-Serialize graph runs while allowing each run's ready nodes to fan out.
+Submit queued Turns without waiting for their independent graph runs.
 
-[Source](../../canvas/canvas_subsystem.cpp#L161)
+[Source](../../canvas/canvas_subsystem.cpp#L166)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1a3a29327e395824a96f1a67898e026585"></a>
 
@@ -368,7 +416,7 @@ void puc::app::CanvasSubsystem::Impl::stop_pump() noexcept
 
 Stop accepting work and synchronously drain the IPC pump.
 
-[Source](../../canvas/canvas_subsystem.cpp#L182)
+[Source](../../canvas/canvas_subsystem.cpp#L192)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1a294ad927ede816a5f6b8ef0f88fc5288"></a>
 
@@ -380,7 +428,7 @@ bool puc::app::CanvasSubsystem::Impl::announce(canvas::proto::CanvasChannelAnnou
 
 Broadcast this [Canvas](classpuc_1_1app_1_1_canvas.md) namespace in one lifecycle state.
 
-[Source](../../canvas/canvas_subsystem.cpp#L200)
+[Source](../../canvas/canvas_subsystem.cpp#L210)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1afc6f27818d175c3ba48e217c8cae63e5"></a>
 
@@ -392,7 +440,7 @@ void puc::app::CanvasSubsystem::Impl::number_and_persist(canvas::TurnContext &co
 
 Atomically number and persist the submitted Turn.
 
-[Source](../../canvas/canvas_subsystem.cpp#L209)
+[Source](../../canvas/canvas_subsystem.cpp#L219)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1_1_impl_1a78e11a8bcb90247bafe3a747b8d11e12"></a>
 
@@ -404,4 +452,4 @@ void puc::app::CanvasSubsystem::Impl::update_trie(canvas::TurnContext &context)
 
 Update and durably checkpoint the materialized Turn Trie.
 
-[Source](../../canvas/canvas_subsystem.cpp#L216)
+[Source](../../canvas/canvas_subsystem.cpp#L237)

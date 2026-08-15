@@ -24,7 +24,7 @@ Immediate jobs are FIFO. One-shot delayed jobs execute no earlier than their del
 using puc::multithreading::JobQueue::Clock = std::chrono::steady_clock
 ```
 
-[Source](../../utils/multithreading/job_queue.hpp#L159)
+[Source](../../utils/multithreading/job_queue.hpp#L162)
 
 ## Private static data members
 
@@ -38,7 +38,7 @@ const JobQueue * puc::multithreading::JobQueue::current_queue_
 
 Queue currently executing on this thread, if any.
 
-[Source](../../utils/multithreading/job_queue.hpp#L196)
+[Source](../../utils/multithreading/job_queue.hpp#L199)
 
 ## Private data members
 
@@ -52,7 +52,7 @@ std::priority_queue<JobEntry, std::vector<JobEntry>, std::greater<JobEntry> > pu
 
 Delayed and periodic work ordered by deadline.
 
-[Source](../../utils/multithreading/job_queue.hpp#L199)
+[Source](../../utils/multithreading/job_queue.hpp#L202)
 
 <a id="symbol-classpuc_1_1multithreading_1_1_job_queue_1ac91adca87da5f227649a0b827ed21758"></a>
 
@@ -64,7 +64,7 @@ std::deque<JobEntry> puc::multithreading::JobQueue::urgent_jobs_
 
 Immediate FIFO work.
 
-[Source](../../utils/multithreading/job_queue.hpp#L200)
+[Source](../../utils/multithreading/job_queue.hpp#L203)
 
 <a id="symbol-classpuc_1_1multithreading_1_1_job_queue_1a99af2e11dc679a5c03eea0196b659a88"></a>
 
@@ -76,7 +76,7 @@ std::vector<std::thread> puc::multithreading::JobQueue::workers_
 
 Fixed worker set.
 
-[Source](../../utils/multithreading/job_queue.hpp#L201)
+[Source](../../utils/multithreading/job_queue.hpp#L204)
 
 <a id="symbol-classpuc_1_1multithreading_1_1_job_queue_1a736a524bcdd9c87dfcc4c7a15d0b2878"></a>
 
@@ -88,7 +88,7 @@ std::mutex puc::multithreading::JobQueue::jobs_mutex_
 
 Protects queues, active\_, sequence\_.
 
-[Source](../../utils/multithreading/job_queue.hpp#L202)
+[Source](../../utils/multithreading/job_queue.hpp#L205)
 
 <a id="symbol-classpuc_1_1multithreading_1_1_job_queue_1a82e341666183824cfe1d69ed92d24cfe"></a>
 
@@ -100,7 +100,7 @@ std::mutex puc::multithreading::JobQueue::wait_mutex_
 
 Ensures workers are joined only once at a time.
 
-[Source](../../utils/multithreading/job_queue.hpp#L204)
+[Source](../../utils/multithreading/job_queue.hpp#L207)
 
 <a id="symbol-classpuc_1_1multithreading_1_1_job_queue_1aa8d2eca359344722c15ee211fe0b7800"></a>
 
@@ -112,7 +112,7 @@ std::condition_variable puc::multithreading::JobQueue::signal_
 
 Wakes workers for jobs or shutdown.
 
-[Source](../../utils/multithreading/job_queue.hpp#L205)
+[Source](../../utils/multithreading/job_queue.hpp#L208)
 
 <a id="symbol-classpuc_1_1multithreading_1_1_job_queue_1a7a58a355f7ddc6975d4c478277189924"></a>
 
@@ -124,7 +124,7 @@ bool puc::multithreading::JobQueue::active_
 
 Whether new work is accepted.
 
-[Source](../../utils/multithreading/job_queue.hpp#L206)
+[Source](../../utils/multithreading/job_queue.hpp#L209)
 
 <a id="symbol-classpuc_1_1multithreading_1_1_job_queue_1aede05ffb62d20d043bc24d233bc826d2"></a>
 
@@ -136,7 +136,7 @@ std::uint64_t puc::multithreading::JobQueue::next_sequence_
 
 Next deterministic enqueue order.
 
-[Source](../../utils/multithreading/job_queue.hpp#L207)
+[Source](../../utils/multithreading/job_queue.hpp#L210)
 
 ## Public functions
 
@@ -302,6 +302,18 @@ Return the fixed number of worker threads owned by this queue.
 
 [Source](../../utils/multithreading/job_queue.hpp#L156)
 
+<a id="symbol-classpuc_1_1multithreading_1_1_job_queue_1a5925dc6ba956abcbd4eac0e579ced6fc"></a>
+
+### `owns_current_thread`
+
+```cpp
+bool puc::multithreading::JobQueue::owns_current_thread() const noexcept
+```
+
+Return whether the caller is currently executing on this queue.
+
+[Source](../../utils/multithreading/job_queue.hpp#L159)
+
 ## Private functions
 
 <a id="symbol-classpuc_1_1multithreading_1_1_job_queue_1aaac17f79d78baf25be812d4a3bd97938"></a>
@@ -314,7 +326,7 @@ Status puc::multithreading::JobQueue::add_delayed_job(std::uint64_t delay_ms, st
 
 Type-erased implementation of [add\_delayed()](#symbol-classpuc_1_1multithreading_1_1_job_queue_1acbc7613498b4b10857896f73a7be9566).
 
-[Source](../../utils/multithreading/job_queue.hpp#L180)
+[Source](../../utils/multithreading/job_queue.hpp#L183)
 
 <a id="symbol-classpuc_1_1multithreading_1_1_job_queue_1a15d3868ee915b730131ae38362ce732a"></a>
 
@@ -326,7 +338,7 @@ Status puc::multithreading::JobQueue::add_periodic_job(std::uint64_t period_ms, 
 
 Type-erased implementation of [add\_periodic()](#symbol-classpuc_1_1multithreading_1_1_job_queue_1a69119d7550cd6302c665f00a38b05c9c).
 
-[Source](../../utils/multithreading/job_queue.hpp#L183)
+[Source](../../utils/multithreading/job_queue.hpp#L186)
 
 <a id="symbol-classpuc_1_1multithreading_1_1_job_queue_1a569010eb5686ae7ba798ed73da26e893"></a>
 
@@ -338,7 +350,7 @@ Status puc::multithreading::JobQueue::add_urgent_job(std::shared_ptr< Job > job)
 
 Type-erased implementation of [add\_urgent()](#symbol-classpuc_1_1multithreading_1_1_job_queue_1a5fb17d70540fdf5341c98f3010b14e5c).
 
-[Source](../../utils/multithreading/job_queue.hpp#L187)
+[Source](../../utils/multithreading/job_queue.hpp#L190)
 
 <a id="symbol-classpuc_1_1multithreading_1_1_job_queue_1a27759a2b6b7960f67b43b3956b556974"></a>
 
@@ -350,7 +362,7 @@ void puc::multithreading::JobQueue::worker() noexcept
 
 Take ready work, execute it, and reschedule periodic invocations.
 
-[Source](../../utils/multithreading/job_queue.hpp#L190)
+[Source](../../utils/multithreading/job_queue.hpp#L193)
 
 <a id="symbol-classpuc_1_1multithreading_1_1_job_queue_1ae75c591b76daa688e0b0be48d090f575"></a>
 
@@ -362,4 +374,4 @@ bool puc::multithreading::JobQueue::is_worker_thread() const noexcept
 
 Return whether the calling thread is one of this queue's workers.
 
-[Source](../../utils/multithreading/job_queue.hpp#L193)
+[Source](../../utils/multithreading/job_queue.hpp#L196)

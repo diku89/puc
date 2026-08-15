@@ -160,7 +160,7 @@ std::unique_ptr<Impl> puc::app::CanvasSubsystem::impl_
 
 Hidden lifecycle and persistence state.
 
-[Source](../../canvas/canvas_subsystem.hpp#L146)
+[Source](../../canvas/canvas_subsystem.hpp#L147)
 
 ## Public functions
 
@@ -236,17 +236,17 @@ Release the graph and every Canvas-owned datastore wrapper.
 
 [Source](../../canvas/canvas_subsystem.hpp#L113)
 
-<a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1a4b2fdff9b855ac6be0794210197a3c5c"></a>
+<a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1a1c4f7d6fd79333ed98a790e993caca04"></a>
 
 ### `canvas`
 
 ```cpp
-const canvas::proto::Canvas & puc::app::CanvasSubsystem::canvas() const noexcept
+canvas::proto::Canvas puc::app::CanvasSubsystem::canvas() const
 ```
 
-Return the restored aggregate descriptor and its owned tree identities.
+Return a synchronized snapshot of the aggregate and its tree identities.
 
-[Source](../../canvas/canvas_subsystem.hpp#L116)
+[Source](../../canvas/canvas_subsystem.hpp#L117)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1a1b34d6ebf0d4182cd0522b41d9a9b4be"></a>
 
@@ -258,7 +258,7 @@ const std::vector< std::uint8_t > & puc::app::CanvasSubsystem::canvas_uuid() con
 
 Return the current [Canvas](classpuc_1_1app_1_1_canvas.md) UUID bytes.
 
-[Source](../../canvas/canvas_subsystem.hpp#L119)
+[Source](../../canvas/canvas_subsystem.hpp#L120)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1aa5c99035466d0a26d15ebeabbd9a3d8f"></a>
 
@@ -270,7 +270,7 @@ std::string puc::app::CanvasSubsystem::channel_root_name() const
 
 Return the absolute namespace root for this [Canvas](classpuc_1_1app_1_1_canvas.md).
 
-[Source](../../canvas/canvas_subsystem.hpp#L122)
+[Source](../../canvas/canvas_subsystem.hpp#L123)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1a12f209d33a20306125b17e7547cf3978"></a>
 
@@ -282,7 +282,7 @@ std::string puc::app::CanvasSubsystem::turn_submission_channel_name() const
 
 Return the unnumbered-Turn submission channel name.
 
-[Source](../../canvas/canvas_subsystem.hpp#L125)
+[Source](../../canvas/canvas_subsystem.hpp#L126)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1a48c0bed629f1965be957ad97f2719214"></a>
 
@@ -294,7 +294,7 @@ std::string puc::app::CanvasSubsystem::committed_turn_channel_name() const
 
 Return the durable committed-Turn channel name.
 
-[Source](../../canvas/canvas_subsystem.hpp#L128)
+[Source](../../canvas/canvas_subsystem.hpp#L129)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1a3356923f92c9a4e8b21032c39fc6a791"></a>
 
@@ -306,7 +306,7 @@ std::string puc::app::CanvasSubsystem::committed_presentation_channel_name() con
 
 Return the committed-Presentation IPC channel name.
 
-[Source](../../canvas/canvas_subsystem.hpp#L131)
+[Source](../../canvas/canvas_subsystem.hpp#L132)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1a03daf320b6093ca85e55aa8ce6c0de83"></a>
 
@@ -318,7 +318,7 @@ canvas::TurnPipeline * puc::app::CanvasSubsystem::pipeline() noexcept
 
 Return the extensible Turn graph owned by this [Canvas](classpuc_1_1app_1_1_canvas.md).
 
-[Source](../../canvas/canvas_subsystem.hpp#L134)
+[Source](../../canvas/canvas_subsystem.hpp#L135)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1a80db85a8df1ad3e20baa1d88ef517244"></a>
 
@@ -330,7 +330,7 @@ void puc::app::CanvasSubsystem::materialize_presentation(const canvas::proto::Pr
 
 Update the in-memory aggregate from one durable Presentation commit.
 
-[Source](../../canvas/canvas_subsystem.hpp#L137)
+[Source](../../canvas/canvas_subsystem.hpp#L138)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1a9ec7c43edd7173f3ed3eb2c20eb108f3"></a>
 
@@ -342,4 +342,4 @@ bool puc::app::CanvasSubsystem::publish_committed_presentation(const canvas::pro
 
 Broadcast one already-persisted Presentation to current IPC observers.
 
-[Source](../../canvas/canvas_subsystem.hpp#L141)
+[Source](../../canvas/canvas_subsystem.hpp#L142)

@@ -155,6 +155,9 @@ class JobQueue {
   /** Return the fixed number of worker threads owned by this queue. */
   std::size_t worker_count() const noexcept { return workers_.size(); }
 
+  /** Return whether the caller is currently executing on this queue. */
+  bool owns_current_thread() const noexcept { return current_queue_ == this; }
+
  private:
   using Clock = std::chrono::steady_clock;
 

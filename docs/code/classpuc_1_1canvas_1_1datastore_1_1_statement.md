@@ -4,7 +4,7 @@
 
 Move-only prepared-statement owner tied to its originating [Database](classpuc_1_1canvas_1_1datastore_1_1_database.md).
 
-[Source](../../canvas/protos/datastore/database.hpp#L35)
+[Source](../../canvas/protos/datastore/database.hpp#L36)
 
 ## Friends
 
@@ -16,7 +16,7 @@ Move-only prepared-statement owner tied to its originating [Database](classpuc_1
 friend class Database
 ```
 
-[Source](../../canvas/protos/datastore/database.hpp#L72)
+[Source](../../canvas/protos/datastore/database.hpp#L73)
 
 ## Private data members
 
@@ -30,7 +30,7 @@ sqlite3_stmt* puc::canvas::datastore::Statement::statement_
 
 Exclusively owned native handle.
 
-[Source](../../canvas/protos/datastore/database.hpp#L75)
+[Source](../../canvas/protos/datastore/database.hpp#L76)
 
 ## Public functions
 
@@ -44,7 +44,7 @@ puc::canvas::datastore::Statement::Statement() noexcept=default
 
 Construct an empty statement suitable as a prepare() output.
 
-[Source](../../canvas/protos/datastore/database.hpp#L38)
+[Source](../../canvas/protos/datastore/database.hpp#L39)
 
 <a id="symbol-classpuc_1_1canvas_1_1datastore_1_1_statement_1aded95a0a6641f5a55280933668bb1ec0"></a>
 
@@ -54,7 +54,7 @@ Construct an empty statement suitable as a prepare() output.
 puc::canvas::datastore::Statement::Statement(const Statement &)=delete
 ```
 
-[Source](../../canvas/protos/datastore/database.hpp#L39)
+[Source](../../canvas/protos/datastore/database.hpp#L40)
 
 <a id="symbol-classpuc_1_1canvas_1_1datastore_1_1_statement_1afa146e71f565ffc8e0215664e6e67a92"></a>
 
@@ -64,7 +64,7 @@ puc::canvas::datastore::Statement::Statement(const Statement &)=delete
 Statement & puc::canvas::datastore::Statement::operator=(const Statement &)=delete
 ```
 
-[Source](../../canvas/protos/datastore/database.hpp#L40)
+[Source](../../canvas/protos/datastore/database.hpp#L41)
 
 <a id="symbol-classpuc_1_1canvas_1_1datastore_1_1_statement_1a00a961fa017c98c4beb2716f54d30171"></a>
 
@@ -76,7 +76,7 @@ puc::canvas::datastore::Statement::Statement(Statement &&other) noexcept
 
 Move ownership from another statement.
 
-[Source](../../canvas/protos/datastore/database.hpp#L42)
+[Source](../../canvas/protos/datastore/database.hpp#L43)
 
 <a id="symbol-classpuc_1_1canvas_1_1datastore_1_1_statement_1a5a9483547802c8205d138b1011177bfe"></a>
 
@@ -88,7 +88,7 @@ Statement & puc::canvas::datastore::Statement::operator=(Statement &&other) noex
 
 Finalize current state and move ownership from another statement.
 
-[Source](../../canvas/protos/datastore/database.hpp#L44)
+[Source](../../canvas/protos/datastore/database.hpp#L45)
 
 <a id="symbol-classpuc_1_1canvas_1_1datastore_1_1_statement_1a280669ecd6917c2cf3e9f74cc4952b92"></a>
 
@@ -100,7 +100,7 @@ puc::canvas::datastore::Statement::~Statement()
 
 Finalize the owned SQLite statement, if any.
 
-[Source](../../canvas/protos/datastore/database.hpp#L46)
+[Source](../../canvas/protos/datastore/database.hpp#L47)
 
 <a id="symbol-classpuc_1_1canvas_1_1datastore_1_1_statement_1a0ff11f5c6e6d643193d9033dd2f142f4"></a>
 
@@ -112,7 +112,7 @@ Status puc::canvas::datastore::Statement::bind(std::int32_t index, std::string_v
 
 Bind UTF-8 text at a one-based SQLite parameter index.
 
-[Source](../../canvas/protos/datastore/database.hpp#L49)
+[Source](../../canvas/protos/datastore/database.hpp#L50)
 
 <a id="symbol-classpuc_1_1canvas_1_1datastore_1_1_statement_1a38fb4f17783516cc9417a8102a9cafdf"></a>
 
@@ -124,7 +124,7 @@ Status puc::canvas::datastore::Statement::bind(std::int32_t index, std::span< co
 
 Bind arbitrary bytes at a one-based SQLite parameter index.
 
-[Source](../../canvas/protos/datastore/database.hpp#L51)
+[Source](../../canvas/protos/datastore/database.hpp#L52)
 
 <a id="symbol-classpuc_1_1canvas_1_1datastore_1_1_statement_1abf5c53ea0931b88938fffe2bf759f4b8"></a>
 
@@ -136,7 +136,7 @@ Status puc::canvas::datastore::Statement::bind(std::int32_t index, std::int64_t 
 
 Bind one signed integer at a one-based SQLite parameter index.
 
-[Source](../../canvas/protos/datastore/database.hpp#L53)
+[Source](../../canvas/protos/datastore/database.hpp#L54)
 
 <a id="symbol-classpuc_1_1canvas_1_1datastore_1_1_statement_1ab6935917a12102839612dc3e05a8b815"></a>
 
@@ -148,7 +148,7 @@ Status puc::canvas::datastore::Statement::bind_null(std::int32_t index) noexcept
 
 Bind SQL NULL at a one-based SQLite parameter index.
 
-[Source](../../canvas/protos/datastore/database.hpp#L55)
+[Source](../../canvas/protos/datastore/database.hpp#L56)
 
 <a id="symbol-classpuc_1_1canvas_1_1datastore_1_1_statement_1a0b105717e222d89101d1c3406820862e"></a>
 
@@ -160,7 +160,7 @@ Status puc::canvas::datastore::Statement::step() noexcept
 
 Return OK for a row, NOT\_FOUND for completion, or SQL\_ERROR.
 
-[Source](../../canvas/protos/datastore/database.hpp#L58)
+[Source](../../canvas/protos/datastore/database.hpp#L59)
 
 <a id="symbol-classpuc_1_1canvas_1_1datastore_1_1_statement_1afd069f76ac7427844e3e479936a04fc6"></a>
 
@@ -172,7 +172,7 @@ Status puc::canvas::datastore::Statement::reset() noexcept
 
 Reset execution and clear every bound parameter.
 
-[Source](../../canvas/protos/datastore/database.hpp#L60)
+[Source](../../canvas/protos/datastore/database.hpp#L61)
 
 <a id="symbol-classpuc_1_1canvas_1_1datastore_1_1_statement_1a2ff52a5045f9e0f0ceb1eb120be7ea28"></a>
 
@@ -184,7 +184,7 @@ std::int64_t puc::canvas::datastore::Statement::integer(std::int32_t column) con
 
 Read one integer column from the current row.
 
-[Source](../../canvas/protos/datastore/database.hpp#L63)
+[Source](../../canvas/protos/datastore/database.hpp#L64)
 
 <a id="symbol-classpuc_1_1canvas_1_1datastore_1_1_statement_1adf1ffe114bbdcd9a0e78222b1322a838"></a>
 
@@ -196,7 +196,7 @@ std::string puc::canvas::datastore::Statement::text(std::int32_t column) const
 
 Copy one text column from the current row.
 
-[Source](../../canvas/protos/datastore/database.hpp#L65)
+[Source](../../canvas/protos/datastore/database.hpp#L66)
 
 <a id="symbol-classpuc_1_1canvas_1_1datastore_1_1_statement_1ac6b35d5868ee9ec38ba4867aa6fb7d4d"></a>
 
@@ -208,7 +208,7 @@ std::string puc::canvas::datastore::Statement::blob(std::int32_t column) const
 
 Copy one blob column from the current row.
 
-[Source](../../canvas/protos/datastore/database.hpp#L67)
+[Source](../../canvas/protos/datastore/database.hpp#L68)
 
 <a id="symbol-classpuc_1_1canvas_1_1datastore_1_1_statement_1adea4892af2b84bef1b70bf24402b956e"></a>
 
@@ -220,7 +220,7 @@ bool puc::canvas::datastore::Statement::is_null(std::int32_t column) const noexc
 
 Return whether one column in the current row is SQL NULL.
 
-[Source](../../canvas/protos/datastore/database.hpp#L69)
+[Source](../../canvas/protos/datastore/database.hpp#L70)
 
 ## Private functions
 
@@ -232,4 +232,4 @@ Return whether one column in the current row is SQL NULL.
 puc::canvas::datastore::Statement::Statement(sqlite3_stmt *statement) noexcept
 ```
 
-[Source](../../canvas/protos/datastore/database.hpp#L73)
+[Source](../../canvas/protos/datastore/database.hpp#L74)

@@ -62,6 +62,7 @@ Status CanvasDatastore::create(const proto::Canvas& canvas) {
       !valid_uuid(canvas.presentation_uuid())) {
     return Status::INVALID_ARGUMENT;
   }
+  const Database::Operation operation = database_.acquire();
   if (!is_ok(database_.begin_immediate())) return Status::SQL_ERROR;
 
   Statement turn_trie;
@@ -95,6 +96,7 @@ Status CanvasDatastore::create(const proto::Canvas& canvas) {
 
 Status CanvasDatastore::first(proto::Canvas& canvas) {
   canvas.Clear();
+  const Database::Operation operation = database_.acquire();
   Statement select;
   if (!is_ok(database_.prepare(
           "SELECT c.canvas_uuid, c.title, c.one_line_description, "
@@ -131,6 +133,7 @@ Status CanvasDatastore::update_turn_trie_root(
   if (turn_trie_uuid.size() != kUuidBytes || root.empty()) {
     return Status::INVALID_ARGUMENT;
   }
+  const Database::Operation operation = database_.acquire();
   Statement update;
   if (!is_ok(database_.prepare(
           "UPDATE turn_tries SET root_hash = ?1 WHERE turn_trie_uuid = ?2;",

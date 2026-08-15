@@ -137,6 +137,11 @@ class CanvasSubsystem::Impl {
   std::mutex mutex; /**< Protects pump control state and the pending queue. */
   std::condition_variable changed; /**< Signals queued work or shutdown. */
   std::deque<canvas::proto::Turn> pending; /**< FIFO submitted-Turn queue. */
+  std::mutex numbering_mutex; /**< Serializes address allocation and insert. */
+  std::condition_variable numbering_changed; /**< Advances FIFO numbering. */
+  std::uint64_t next_numbering_ticket = 0U;  /**< Next accepted FIFO ticket. */
+  mutable std::mutex
+      state_mutex;        /**< Protects Trie and Canvas materialization. */
   bool accepting = false; /**< Whether callbacks may enqueue new Turns. */
   bool closing   = false; /**< Whether the pump exits after draining. */
   bool announced = false; /**< Whether OPENED was successfully broadcast. */
@@ -157,7 +162,7 @@ class CanvasSubsystem::Impl {
     }
   }
 
-  /** Serialize graph runs while allowing each run's ready nodes to fan out. */
+  /** Submit queued Turns without waiting for their independent graph runs. */
   void run() noexcept {
     while (true) {
       canvas::proto::Turn submitted;
@@ -168,12 +173,17 @@ class CanvasSubsystem::Impl {
         submitted = std::move(pending.front());
         pending.pop_front();
       }
-      canvas::proto::Turn committed;
-      const canvas::datastore::Status status =
-          pipeline->process(submitted, committed);
-      if (!canvas::datastore::is_ok(status)) {
-        Logger<ERROR> << "Turn graph failed: "
-                      << canvas::datastore::status_message(status);
+      const execution_graph::Status status =
+          pipeline->submit(submitted, [](canvas::datastore::Status run_status,
+                                         canvas::proto::Turn) noexcept {
+            if (!canvas::datastore::is_ok(run_status)) {
+              Logger<ERROR> << "Turn graph failed: "
+                            << canvas::datastore::status_message(run_status);
+            }
+          });
+      if (!execution_graph::is_ok(status)) {
+        Logger<ERROR> << "Could not submit Turn graph: "
+                      << execution_graph::status_message(status);
       }
     }
   }
@@ -207,48 +217,64 @@ class CanvasSubsystem::Impl {
 
   /** Atomically number and persist the submitted Turn. */
   void number_and_persist(canvas::TurnContext& context) {
-    const canvas::datastore::Status status =
-        turns->number_and_persist(uuid, context.submitted(), context.turn());
-    if (!canvas::datastore::is_ok(status)) context.fail(status);
+    std::unique_lock lock(numbering_mutex);
+    numbering_changed.wait(lock, [this, &context] {
+      return context.ingress_ticket() == next_numbering_ticket;
+    });
+    try {
+      const canvas::datastore::Status status =
+          turns->number_and_persist(uuid, context.submitted(), context.turn());
+      if (!canvas::datastore::is_ok(status)) context.fail(status);
+    } catch (...) {
+      context.fail(canvas::datastore::Status::INVALID_STATE);
+    }
+    ++next_numbering_ticket;
+    lock.unlock();
+    numbering_changed.notify_all();
   }
 
   /** Update and durably checkpoint the materialized Turn Trie. */
   void update_trie(canvas::TurnContext& context) {
-    if (turn_tree.insert(context.turn()) != canvas::TurnTree::Status::OK) {
-      std::vector<canvas::proto::Turn> stored;
-      const canvas::datastore::Status loaded = turns->load_all(uuid, stored);
-      if (!canvas::datastore::is_ok(loaded) ||
-          turn_tree.rebuild(stored) != canvas::TurnTree::Status::OK) {
-        context.fail(canvas::datastore::Status::CORRUPT_DATA);
+    canvas::proto::Turn committed;
+    {
+      const std::lock_guard lock(state_mutex);
+      if (turn_tree.insert(context.turn()) != canvas::TurnTree::Status::OK) {
+        std::vector<canvas::proto::Turn> stored;
+        const canvas::datastore::Status loaded = turns->load_all(uuid, stored);
+        if (!canvas::datastore::is_ok(loaded) ||
+            turn_tree.rebuild(stored) != canvas::TurnTree::Status::OK) {
+          context.fail(canvas::datastore::Status::CORRUPT_DATA);
+          return;
+        }
+      }
+      const canvas::datastore::Status updated = canvases->update_turn_trie_root(
+          turn_trie_uuid, turn_tree.root_hash());
+      if (!canvas::datastore::is_ok(updated)) {
+        context.fail(updated);
         return;
       }
-    }
-    const canvas::datastore::Status updated =
-        canvases->update_turn_trie_root(turn_trie_uuid, turn_tree.root_hash());
-    if (!canvas::datastore::is_ok(updated)) {
-      context.fail(updated);
-      return;
-    }
-    canvas.set_turn_trie_root_hash(turn_tree.root_hash().bytes.data(),
-                                   turn_tree.root_hash().bytes.size());
-    *canvas.add_turns() = context.turn();
-    if (context.turn().has_actor()) {
-      const std::string actor = context.turn().actor().SerializeAsString();
-      const bool known =
-          std::any_of(canvas.actors().begin(), canvas.actors().end(),
-                      [&actor](const canvas::proto::Actor& candidate) {
-                        return candidate.SerializeAsString() == actor;
-                      });
-      if (!known) *canvas.add_actors() = context.turn().actor();
+      canvas.set_turn_trie_root_hash(turn_tree.root_hash().bytes.data(),
+                                     turn_tree.root_hash().bytes.size());
+      *canvas.add_turns() = context.turn();
+      if (context.turn().has_actor()) {
+        const std::string actor = context.turn().actor().SerializeAsString();
+        const bool known =
+            std::any_of(canvas.actors().begin(), canvas.actors().end(),
+                        [&actor](const canvas::proto::Actor& candidate) {
+                          return candidate.SerializeAsString() == actor;
+                        });
+        if (!known) *canvas.add_actors() = context.turn().actor();
+      }
+      committed = context.turn();
     }
 
     // This announces a state transition that has already completed. Channel
     // delivery is deliberately not part of the authoritative Turn graph: a
     // missing observer must not prevent later durable graph nodes from
     // running.
-    if (!publish_proto(committed_turn_channel, context.turn())) {
+    if (!publish_proto(committed_turn_channel, committed)) {
       Logger<WARN> << "Could not broadcast committed Turn '"
-                   << context.turn().id().human_address() << "'";
+                   << committed.id().human_address() << "'";
     }
   }
 };
@@ -481,7 +507,8 @@ Status CanvasSubsystem::terminate(AppState& app) noexcept {
   impl_->canvas.Clear();
   impl_->uuid.clear();
   impl_->turn_trie_uuid.clear();
-  impl_->turn_tree = {};
+  impl_->turn_tree             = {};
+  impl_->next_numbering_ticket = 0U;
   impl_->channel_root.clear();
   impl_->turn_submission_name.clear();
   impl_->committed_turn_name.clear();
@@ -489,7 +516,8 @@ Status CanvasSubsystem::terminate(AppState& app) noexcept {
   return Status::OK;
 }
 
-const canvas::proto::Canvas& CanvasSubsystem::canvas() const noexcept {
+canvas::proto::Canvas CanvasSubsystem::canvas() const {
+  const std::lock_guard lock(impl_->state_mutex);
   return impl_->canvas;
 }
 
@@ -520,6 +548,7 @@ canvas::TurnPipeline* CanvasSubsystem::pipeline() noexcept {
 void CanvasSubsystem::materialize_presentation(
     const canvas::proto::Presentation& presentation) noexcept {
   try {
+    const std::lock_guard lock(impl_->state_mutex);
     *impl_->canvas.mutable_presentation() = presentation;
     if (presentation.has_root_hash()) {
       impl_->canvas.set_presentation_root_hash(presentation.root_hash());

@@ -2,11 +2,14 @@
 
 # File `turn_pipeline.cpp`
 
-Runtime-extensible Turn-processing execution graph implementation.
+Concurrent runtime-extensible Turn execution-plan implementation.
 
 [Source](../../canvas/session/turn_pipeline.cpp)
 
 ## Related symbols
 
+- [puc::canvas::TurnPipeline::Impl](classpuc_1_1canvas_1_1_turn_pipeline_1_1_impl.md)
+- [puc::canvas::TurnPipeline::Impl::Registration](structpuc_1_1canvas_1_1_turn_pipeline_1_1_impl_1_1_registration.md)
+- [puc::canvas::TurnPipeline::Impl::CompiledPlan](structpuc_1_1canvas_1_1_turn_pipeline_1_1_impl_1_1_compiled_plan.md)
 - [puc](namespacepuc.md)
 - [puc::canvas](namespacepuc_1_1canvas.md)

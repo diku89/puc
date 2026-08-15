@@ -12,6 +12,7 @@ SQLite ownership and one-time migrations.
 - [puc::canvas::datastore::MigrationSet](structpuc_1_1canvas_1_1datastore_1_1_migration_set.md)
 - [puc::canvas::datastore::Statement](classpuc_1_1canvas_1_1datastore_1_1_statement.md)
 - [puc::canvas::datastore::Database](classpuc_1_1canvas_1_1datastore_1_1_database.md)
+- [puc::canvas::datastore::Database::Operation](classpuc_1_1canvas_1_1datastore_1_1_database_1_1_operation.md)
 - [puc](namespacepuc.md)
 - [puc::canvas](namespacepuc_1_1canvas.md)
 - [puc::canvas::datastore](namespacepuc_1_1canvas_1_1datastore.md)

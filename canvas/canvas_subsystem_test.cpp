@@ -132,6 +132,7 @@ TEST(CanvasSubsystemTest, ReceivesTurnAndPublishesPresentationCommit) {
   canvas::proto::Turn observed_turn;
   canvas::proto::Presentation observed;
   std::vector<std::string> commit_order;
+  std::vector<std::string> presented_addresses;
   ipc::Subscription turn_subscription;
   ipc::Subscription presentation_subscription;
   ASSERT_EQ(directory->directory()->subscribe(
@@ -152,8 +153,8 @@ TEST(CanvasSubsystemTest, ReceivesTurnAndPublishesPresentationCommit) {
             ipc::Status::OK);
   ASSERT_EQ(directory->directory()->subscribe(
                 canvas_subsystem->committed_presentation_channel_name(),
-                [&mutex, &changed, &observed,
-                 &commit_order](ipc::Channel::Bytes bytes) noexcept {
+                [&mutex, &changed, &observed, &commit_order,
+                 &presented_addresses](ipc::Channel::Bytes bytes) noexcept {
                   canvas::proto::Presentation update;
                   if (!update.ParseFromArray(bytes.data(),
                                              static_cast<int>(bytes.size()))) {
@@ -162,6 +163,8 @@ TEST(CanvasSubsystemTest, ReceivesTurnAndPublishesPresentationCommit) {
                   const std::lock_guard lock(mutex);
                   observed = std::move(update);
                   commit_order.emplace_back("presentation");
+                  presented_addresses.push_back(
+                      observed.committed_turn_id().human_address());
                   changed.notify_all();
                 },
                 presentation_subscription),
@@ -230,6 +233,48 @@ TEST(CanvasSubsystemTest, ReceivesTurnAndPublishesPresentationCommit) {
   {
     const std::lock_guard lock(mutex);
     EXPECT_EQ(commit_order, (std::vector<std::string>{"presentation"}));
+  }
+
+  // Burst several independent runs through the real IPC ingress. Numbering,
+  // Trie mutation, and Presentation advancement serialize only their owned
+  // resources while the Turns overlap between those boundaries.
+  for (std::size_t index = 3U; index <= 10U; ++index) {
+    const canvas::proto::Turn burst =
+        human_turn(*canvas_subsystem, "burst " + std::to_string(index));
+    std::string burst_payload;
+    ASSERT_TRUE(burst.SerializeToString(&burst_payload));
+    const auto burst_bytes = std::span<const std::uint8_t>{
+        reinterpret_cast<const std::uint8_t*>(burst_payload.data()),
+        burst_payload.size()};
+    ASSERT_EQ(directory->directory()
+                  ->transmit(canvas_subsystem->turn_submission_channel_name(),
+                             burst_bytes)
+                  .status,
+              ipc::Status::OK);
+  }
+  {
+    std::unique_lock lock(mutex);
+    ASSERT_TRUE(changed.wait_for(
+        lock, std::chrono::seconds{5},
+        [&presented_addresses] { return presented_addresses.size() == 10U; }));
+  }
+  const canvas::proto::Canvas burst_snapshot = canvas_subsystem->canvas();
+  EXPECT_EQ(burst_snapshot.turns_size(), 10);
+  for (const canvas::proto::Turn& turn : burst_snapshot.turns()) {
+    if (turn.payload().content().starts_with("burst ")) {
+      EXPECT_EQ(turn.id().human_address(), turn.payload().content().substr(6U));
+    }
+  }
+  OrchestrationSubsystem* orchestration =
+      app.get_subsystem<OrchestrationSubsystem>();
+  ASSERT_NE(orchestration, nullptr);
+  ASSERT_NE(orchestration->presentation_tree(), nullptr);
+  std::vector<canvas::proto::TurnId> presented;
+  ASSERT_EQ(orchestration->presentation_tree()->ordered_turns(presented),
+            canvas::datastore::Status::OK);
+  ASSERT_EQ(presented.size(), 10U);
+  for (std::size_t index = 0U; index < presented.size(); ++index) {
+    EXPECT_EQ(presented[index].human_address(), std::to_string(index + 1U));
   }
 
   std::vector<canvas::proto::CanvasChannelAnnouncement::State>

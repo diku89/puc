@@ -8,6 +8,7 @@
 #include <cstdint>
 #include <cstring>
 #include <filesystem>
+#include <mutex>
 #include <span>
 #include <string>
 #include <string_view>
@@ -110,14 +111,17 @@ bool Statement::is_null(std::int32_t column) const noexcept {
   return sqlite3_column_type(statement_, column) == SQLITE_NULL;
 }
 
-Database::Database(Database&& other) noexcept
-    : database_(std::exchange(other.database_, nullptr)),
-      initialized_(std::exchange(other.initialized_, false)),
-      last_error_(std::move(other.last_error_)) {}
+Database::Database(Database&& other) noexcept {
+  const std::lock_guard lock(other.operation_mutex_);
+  database_    = std::exchange(other.database_, nullptr);
+  initialized_ = std::exchange(other.initialized_, false);
+  last_error_  = std::move(other.last_error_);
+}
 
 Database& Database::operator=(Database&& other) noexcept {
   if (this != &other) {
-    close();
+    const std::scoped_lock lock(operation_mutex_, other.operation_mutex_);
+    if (database_ != nullptr) sqlite3_close_v2(database_);
     database_    = std::exchange(other.database_, nullptr);
     initialized_ = std::exchange(other.initialized_, false);
     last_error_  = std::move(other.last_error_);
@@ -129,6 +133,7 @@ Database::~Database() { close(); }
 
 Status Database::initialize(const std::filesystem::path& path,
                             std::span<const MigrationSet> migration_sets) {
+  const std::lock_guard lock(operation_mutex_);
   if (database_ != nullptr || initialized_) return Status::INVALID_STATE;
   if (path.empty() || migration_sets.empty()) return Status::INVALID_ARGUMENT;
   for (std::size_t set_index = 0U; set_index < migration_sets.size();
@@ -172,12 +177,14 @@ Status Database::initialize(const std::filesystem::path& path,
 }
 
 void Database::close() noexcept {
+  const std::lock_guard lock(operation_mutex_);
   if (database_ != nullptr) sqlite3_close_v2(database_);
   database_    = nullptr;
   initialized_ = false;
 }
 
 Status Database::execute(std::string_view sql) noexcept {
+  const std::lock_guard lock(operation_mutex_);
   if (database_ == nullptr) return Status::INVALID_STATE;
   std::string owned{sql};
   char* error = nullptr;
@@ -190,6 +197,7 @@ Status Database::execute(std::string_view sql) noexcept {
 }
 
 Status Database::prepare(std::string_view sql, Statement& output) noexcept {
+  const std::lock_guard lock(operation_mutex_);
   output = Statement{};
   if (database_ == nullptr) return Status::INVALID_STATE;
   sqlite3_stmt* statement = nullptr;
@@ -210,6 +218,16 @@ Status Database::begin_immediate() noexcept {
 Status Database::commit() noexcept { return execute("COMMIT;"); }
 
 void Database::rollback() noexcept { static_cast<void>(execute("ROLLBACK;")); }
+
+bool Database::ready() const noexcept {
+  const std::lock_guard lock(operation_mutex_);
+  return database_ != nullptr && initialized_;
+}
+
+std::string Database::last_error() const {
+  const std::lock_guard lock(operation_mutex_);
+  return last_error_;
+}
 
 Status Database::apply_migrations(
     std::span<const MigrationSet> migration_sets) {

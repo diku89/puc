@@ -69,6 +69,7 @@ Status TurnDatastore::number_and_persist(
         !TurnAddress::parse(submitted.parent().human_address()).has_value()))) {
     return Status::INVALID_ARGUMENT;
   }
+  const Database::Operation operation = database_.acquire();
   if (!is_ok(database_.begin_immediate())) return Status::SQL_ERROR;
 
   if (submitted.has_parent()) {
@@ -155,6 +156,7 @@ Status TurnDatastore::load_all(std::span<const std::uint8_t> canvas_uuid,
                                std::vector<proto::Turn>& turns) {
   turns.clear();
   if (canvas_uuid.size() != kCanvasUuidBytes) return Status::INVALID_ARGUMENT;
+  const Database::Operation operation = database_.acquire();
   Statement select;
   if (!is_ok(database_.prepare(
           "SELECT payload FROM turns WHERE canvas_uuid = ?1;", select)) ||

@@ -68,6 +68,7 @@ Status PresentationDatastore::load_root(
     std::span<const std::uint8_t> presentation_uuid, hashing::Hash256& root) {
   root = {};
   if (presentation_uuid.size() != 16U) return Status::INVALID_ARGUMENT;
+  const Database::Operation operation = database_.acquire();
   Statement select;
   if (!is_ok(database_.prepare("SELECT root_hash FROM presentations "
                                "WHERE presentation_uuid = ?1;",
@@ -91,6 +92,7 @@ Status PresentationDatastore::load_node(
   if (presentation_uuid.size() != 16U || hash.empty()) {
     return Status::INVALID_ARGUMENT;
   }
+  const Database::Operation operation = database_.acquire();
   Statement select;
   if (!is_ok(database_.prepare(
           "SELECT turn_canvas_uuid, turn_human_address, left_hash, right_hash "
@@ -128,6 +130,7 @@ Status PresentationDatastore::load_committed_turn_addresses(
     std::vector<std::string>& human_addresses) {
   human_addresses.clear();
   if (presentation_uuid.size() != 16U) return Status::INVALID_ARGUMENT;
+  const Database::Operation operation = database_.acquire();
   Statement select;
   if (!is_ok(database_.prepare(
           "SELECT inserted_human_address FROM presentation_commits "
@@ -155,6 +158,7 @@ Status PresentationDatastore::commit(
   if (presentation_uuid.size() != 16U || new_root.empty() || nodes.empty()) {
     return Status::INVALID_ARGUMENT;
   }
+  const Database::Operation operation = database_.acquire();
   if (!is_ok(database_.begin_immediate())) return Status::SQL_ERROR;
 
   hashing::Hash256 stored_root;

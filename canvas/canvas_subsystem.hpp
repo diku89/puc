@@ -112,8 +112,9 @@ class CanvasSubsystem final : public AppSubsystem {
   /** Release the graph and every Canvas-owned datastore wrapper. */
   Status terminate(AppState& app) noexcept override;
 
-  /** Return the restored aggregate descriptor and its owned tree identities. */
-  const canvas::proto::Canvas& canvas() const noexcept;
+  /** Return a synchronized snapshot of the aggregate and its tree identities.
+   */
+  canvas::proto::Canvas canvas() const;
 
   /** Return the current Canvas UUID bytes. */
   const std::vector<std::uint8_t>& canvas_uuid() const noexcept;

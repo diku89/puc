@@ -10,7 +10,6 @@ Runtime-extensible Turn-processing execution graph.
 
 - [puc::canvas::TurnContext](classpuc_1_1canvas_1_1_turn_context.md)
 - [puc::canvas::TurnPipeline](classpuc_1_1canvas_1_1_turn_pipeline.md)
-- [puc::canvas::TurnPipeline::Registration](structpuc_1_1canvas_1_1_turn_pipeline_1_1_registration.md)
 - [puc](namespacepuc.md)
 - [puc::multithreading](namespacepuc_1_1multithreading.md)
 - [puc::canvas](namespacepuc_1_1canvas.md)

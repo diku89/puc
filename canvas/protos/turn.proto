@@ -4,7 +4,9 @@ package puc.canvas.proto;
 
 import "canvas/protos/actor.proto";
 
-// Stable composite identity assigned when a Turn is committed.
+// Stable composite identity assigned when a Turn is committed. The human
+// address is a permanent parent-derived identity, never a rebalanced display
+// position: committed addresses are neither renumbered nor reused.
 message TurnId {
   optional bytes canvas_uuid = 1;
   optional string human_address = 2;
