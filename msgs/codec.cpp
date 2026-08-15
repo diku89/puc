@@ -24,7 +24,9 @@ LOGGER_MODULE("Message Codec");
 
 namespace puc::msg {
 
-MessageCodecCollection::MessageCodecCollection() {
+MessageCodecCollection::MessageCodecCollection(
+    std::size_t maximum_payload_bytes)
+    : maximum_payload_bytes_(maximum_payload_bytes) {
   codecs_.emplace(MessageId::NULL_MESSAGE,
                   std::make_unique<NullMessageCodec>());
 }
@@ -76,9 +78,9 @@ Status MessageCodecCollection::decode_to_json(
     std::span<const std::uint8_t>& data, std::string& output) const {
   output.clear();
   ipc::DecodedMessage message;
-  std::size_t consumed_bytes = 0U;
-  const ipc::Status wire_status =
-      ipc::deserialize_message(data, message, consumed_bytes);
+  std::size_t consumed_bytes    = 0U;
+  const ipc::Status wire_status = ipc::deserialize_message(
+      data, maximum_payload_bytes_, message, consumed_bytes);
   if (!ipc::is_ok(wire_status)) {
     if (wire_status == ipc::Status::TRUNCATED_MESSAGE) {
       Logger<DEBUG> << "IPC envelope needs more input bytes";

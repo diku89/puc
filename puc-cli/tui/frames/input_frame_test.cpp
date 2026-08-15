@@ -28,6 +28,9 @@ namespace {
 
 using namespace std::chrono_literals;
 
+/** Deliberate local-channel limit used by standalone Screen tests. */
+constexpr std::size_t kTestMaximumMessageBytes = 1024U * 1024U;
+
 /** Return a palette whose values expose every InputFrame color role. */
 Theme input_theme() {
   Theme theme;
@@ -627,7 +630,7 @@ TEST(InputFrameSelectionTest, ExtractsAndReplacesLogicalMouseSelection) {
 TEST(InputFrameSelectionTest,
      ScreenSelectAllUsesTheLogicalSelectionAndTargetsOnlyActiveInput) {
   multithreading::JobQueue workers;
-  Screen screen(-1, -1, workers);
+  Screen screen(-1, -1, workers, kTestMaximumMessageBytes);
   auto frame = std::make_shared<InputFrame>();
   type(*frame, "normal text");
   command(*frame, terminal::Command::ENTER_COMMAND_MODE);
@@ -647,7 +650,7 @@ TEST(InputFrameSelectionTest,
 
 TEST(InputFrameSelectionTest, ScreenSelectAllRejectsAnEmptyInput) {
   multithreading::JobQueue workers;
-  Screen screen(-1, -1, workers);
+  Screen screen(-1, -1, workers, kTestMaximumMessageBytes);
   auto frame = std::make_shared<InputFrame>();
 
   EXPECT_EQ(screen.select_all("input", frame), Status::NO_SELECTION);
@@ -662,7 +665,7 @@ TEST(InputFrameSelectionTest, ScreenRoutesStationaryClickToCaretPlacement) {
   const Canvas::Rect rect = draw(*frame, canvas, theme);
 
   multithreading::JobQueue workers;
-  Screen screen(-1, -1, workers);
+  Screen screen(-1, -1, workers, kTestMaximumMessageBytes);
   ZBuffer z_buffer;
   ASSERT_EQ(z_buffer.add("input", frame), Status::OK);
   const std::map<std::string, Canvas::Rect> layouts{{"input", rect}};

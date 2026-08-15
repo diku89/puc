@@ -6,7 +6,7 @@ Portable move-only callback whose invocation cannot throw.
 
 C++23's `std::move_only_function` is not yet present in every supported standard library. This narrow wrapper provides the one signature IPC needs while retaining compile-time `noexcept` enforcement.
 
-[Source](../../utils/ipc/channel.hpp#L139)
+[Source](../../utils/ipc/channel.hpp#L136)
 
 ## Related symbols
 
@@ -25,7 +25,7 @@ std::unique_ptr<Interface> puc::ipc::Channel::ReceiveCallback::implementation_
 
 Owned type erasure.
 
-[Source](../../utils/ipc/channel.hpp#L219)
+[Source](../../utils/ipc/channel.hpp#L216)
 
 ## Public functions
 
@@ -39,7 +39,7 @@ puc::ipc::Channel::ReceiveCallback::ReceiveCallback() noexcept=default
 
 Construct an empty callback.
 
-[Source](../../utils/ipc/channel.hpp#L142)
+[Source](../../utils/ipc/channel.hpp#L139)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1_1_receive_callback_1a7904c6f124fa0c429c4e25b757adb28c"></a>
 
@@ -59,7 +59,7 @@ Type-erase one no-throw callable.
 
 - `callback` (in) — Callable to own.
 
-[Source](../../utils/ipc/channel.hpp#L155)
+[Source](../../utils/ipc/channel.hpp#L152)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1_1_receive_callback_1a065c7d8cceefcc9a803bf1120713a3de"></a>
 
@@ -69,7 +69,7 @@ Type-erase one no-throw callable.
 puc::ipc::Channel::ReceiveCallback::ReceiveCallback(const ReceiveCallback &)=delete
 ```
 
-[Source](../../utils/ipc/channel.hpp#L166)
+[Source](../../utils/ipc/channel.hpp#L163)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1_1_receive_callback_1a662d22e05c071c30da600683c1bfc7e7"></a>
 
@@ -79,7 +79,7 @@ puc::ipc::Channel::ReceiveCallback::ReceiveCallback(const ReceiveCallback &)=del
 ReceiveCallback & puc::ipc::Channel::ReceiveCallback::operator=(const ReceiveCallback &)=delete
 ```
 
-[Source](../../utils/ipc/channel.hpp#L167)
+[Source](../../utils/ipc/channel.hpp#L164)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1_1_receive_callback_1a422b53e43758846d8d998e7512a70030"></a>
 
@@ -91,7 +91,7 @@ puc::ipc::Channel::ReceiveCallback::ReceiveCallback(ReceiveCallback &&) noexcept
 
 Transfer ownership of a callback.
 
-[Source](../../utils/ipc/channel.hpp#L170)
+[Source](../../utils/ipc/channel.hpp#L167)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1_1_receive_callback_1aae58b914370bbe19f21e45ad557f3f83"></a>
 
@@ -103,7 +103,7 @@ ReceiveCallback & puc::ipc::Channel::ReceiveCallback::operator=(ReceiveCallback 
 
 Replace this callback by moving another callback into it.
 
-[Source](../../utils/ipc/channel.hpp#L173)
+[Source](../../utils/ipc/channel.hpp#L170)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1_1_receive_callback_1ab89b39150cbaebad1aa30190dc27bbaf"></a>
 
@@ -115,7 +115,7 @@ puc::ipc::Channel::ReceiveCallback::~ReceiveCallback()=default
 
 Destroy the owned callable.
 
-[Source](../../utils/ipc/channel.hpp#L176)
+[Source](../../utils/ipc/channel.hpp#L173)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1_1_receive_callback_1a8362877a8b380baef4785ef85e3ffd96"></a>
 
@@ -127,7 +127,7 @@ puc::ipc::Channel::ReceiveCallback::operator bool() const noexcept
 
 Return whether this object owns a callable.
 
-[Source](../../utils/ipc/channel.hpp#L179)
+[Source](../../utils/ipc/channel.hpp#L176)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1_1_receive_callback_1a6a092e7aa0fc78e55b15a824083100ad"></a>
 
@@ -139,4 +139,4 @@ void puc::ipc::Channel::ReceiveCallback::operator()(Bytes bytes) noexcept
 
 Invoke the callable when present.
 
-[Source](../../utils/ipc/channel.hpp#L184)
+[Source](../../utils/ipc/channel.hpp#L181)

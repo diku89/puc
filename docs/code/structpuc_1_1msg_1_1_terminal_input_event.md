@@ -4,7 +4,7 @@
 
 One normalized event published after terminal decoding and Trie lookup.
 
-**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000014):**
+**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000019):**
 
 **Kind:** Message  
 **Type:** [puc::msg::TerminalInputEvent](#)  

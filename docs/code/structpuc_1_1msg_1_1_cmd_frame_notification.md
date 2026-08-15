@@ -6,7 +6,7 @@ UTF-8 text displayed beneath the active or completed command.
 
 Empty text is valid and lets a producer clear an earlier notification. The transport retains the complete owned string without terminal styling; the consumer chooses presentation and wrapping.
 
-**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000002):**
+**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000007):**
 
 **Kind:** Message  
 **Type:** [puc::msg::CmdFrameNotification](#)  

@@ -68,9 +68,15 @@ Status ScreenChannelSubsystem::start(AppState& app) {
     return Status::SUBSYSTEM_FAILURE;
   }
   directory_ = directory_subsystem->directory();
+  const std::size_t maximum_message_bytes =
+      directory_subsystem->maximum_message_bytes();
+  if (maximum_message_bytes == 0U) {
+    directory_ = nullptr;
+    return Status::SUBSYSTEM_FAILURE;
+  }
 
   auto command = std::make_shared<ipc::SmemChannel>(
-      std::string{msg::kScreenCommandChannel}, ipc::kDefaultMaximumMessageBytes,
+      std::string{msg::kScreenCommandChannel}, maximum_message_bytes,
       ipc::ChannelOptions{.channel_max_depth = kScreenCommandDepth});
   ipc::Status ipc_status = directory_->open_channel(command, command_id_);
   if (!ipc::is_ok(ipc_status)) {
@@ -141,10 +147,15 @@ Status TerminalInputChannelSubsystem::start(AppState& app) {
       directory_subsystem->directory() == nullptr) {
     return Status::SUBSYSTEM_FAILURE;
   }
-  directory_   = directory_subsystem->directory();
+  directory_ = directory_subsystem->directory();
+  const std::size_t maximum_message_bytes =
+      directory_subsystem->maximum_message_bytes();
+  if (maximum_message_bytes == 0U) {
+    directory_ = nullptr;
+    return Status::SUBSYSTEM_FAILURE;
+  }
   auto channel = std::make_shared<ipc::SmemChannel>(
-      std::string{msg::kTerminalInputEventChannel},
-      ipc::kDefaultMaximumMessageBytes);
+      std::string{msg::kTerminalInputEventChannel}, maximum_message_bytes);
   const ipc::Status status = directory_->open_channel(channel, channel_id_);
   if (!ipc::is_ok(status)) {
     directory_  = nullptr;
@@ -194,10 +205,15 @@ Status CommandNotificationChannelSubsystem::start(AppState& app) {
       directory_subsystem->directory() == nullptr) {
     return Status::SUBSYSTEM_FAILURE;
   }
-  directory_   = directory_subsystem->directory();
+  directory_ = directory_subsystem->directory();
+  const std::size_t maximum_message_bytes =
+      directory_subsystem->maximum_message_bytes();
+  if (maximum_message_bytes == 0U) {
+    directory_ = nullptr;
+    return Status::SUBSYSTEM_FAILURE;
+  }
   auto channel = std::make_shared<ipc::SmemChannel>(
-      std::string{msg::kCmdFrameNotifyChannel},
-      ipc::kDefaultMaximumMessageBytes,
+      std::string{msg::kCmdFrameNotifyChannel}, maximum_message_bytes,
       ipc::ChannelOptions{.channel_max_depth = kCommandNotificationDepth});
   const ipc::Status status = directory_->open_channel(channel, channel_id_);
   if (!ipc::is_ok(status)) {

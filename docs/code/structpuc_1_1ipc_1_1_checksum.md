@@ -4,7 +4,7 @@
 
 SHA-256 digest attached to a checksummed message.
 
-[Source](../../utils/ipc/msg.hpp#L101)
+[Source](../../utils/ipc/msg.hpp#L98)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::array<std::uint8_t, kChecksumBytes> puc::ipc::Checksum::data
 
 Digest bytes.
 
-[Source](../../utils/ipc/msg.hpp#L102)
+[Source](../../utils/ipc/msg.hpp#L99)
 
 ## Public functions
 
@@ -32,4 +32,4 @@ bool puc::ipc::Checksum::operator==(const Checksum &) const noexcept=default
 
 Compare checksum bytes.
 
-[Source](../../utils/ipc/msg.hpp#L105)
+[Source](../../utils/ipc/msg.hpp#L102)

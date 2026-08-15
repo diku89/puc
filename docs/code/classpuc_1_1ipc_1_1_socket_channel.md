@@ -26,16 +26,16 @@ std::unique_ptr<Impl> puc::ipc::SocketChannel::impl_
 
 Descriptors, synchronization, and reader.
 
-[Source](../../utils/ipc/socket_channel.hpp#L70)
+[Source](../../utils/ipc/socket_channel.hpp#L69)
 
 ## Public functions
 
-<a id="symbol-classpuc_1_1ipc_1_1_socket_channel_1a8a4c49b4a91e27e6dffb4e7d50eaef81"></a>
+<a id="symbol-classpuc_1_1ipc_1_1_socket_channel_1aba73a2109665a718bfa7144d9e11999d"></a>
 
 ### `SocketChannel`
 
 ```cpp
-puc::ipc::SocketChannel::SocketChannel(std::string name, std::filesystem::path socket_path, SocketRole role, std::size_t maximum_message_bytes=kDefaultMaximumMessageBytes, ChannelOptions options={})
+puc::ipc::SocketChannel::SocketChannel(std::string name, std::filesystem::path socket_path, SocketRole role, std::size_t maximum_message_bytes, ChannelOptions options={})
 ```
 
 Construct and start one Unix-domain socket endpoint.
@@ -54,7 +54,7 @@ puc::ipc::SocketChannel::~SocketChannel() override
 
 Stop the reader, close descriptors, and remove an owned server socket.
 
-[Source](../../utils/ipc/socket_channel.hpp#L51)
+[Source](../../utils/ipc/socket_channel.hpp#L50)
 
 <a id="symbol-classpuc_1_1ipc_1_1_socket_channel_1ad4e982ce876fdddcdaba183c52bee739"></a>
 
@@ -66,7 +66,7 @@ TransferResult puc::ipc::SocketChannel::transmit(Bytes data) noexcept override
 
 Send one complete length-prefixed frame to the connected peer.
 
-[Source](../../utils/ipc/socket_channel.hpp#L54)
+[Source](../../utils/ipc/socket_channel.hpp#L53)
 
 <a id="symbol-classpuc_1_1ipc_1_1_socket_channel_1a8f2cc06b5da99c756e78ab1d97a86af7"></a>
 
@@ -78,7 +78,7 @@ bool puc::ipc::SocketChannel::connected() const noexcept
 
 Return whether this endpoint currently has an accepted/connected peer.
 
-[Source](../../utils/ipc/socket_channel.hpp#L57)
+[Source](../../utils/ipc/socket_channel.hpp#L56)
 
 <a id="symbol-classpuc_1_1ipc_1_1_socket_channel_1a3e5f877ba66b63704cca57f48321ca06"></a>
 
@@ -90,7 +90,7 @@ SocketRole puc::ipc::SocketChannel::role() const noexcept
 
 Return whether this endpoint connects or accepts.
 
-[Source](../../utils/ipc/socket_channel.hpp#L60)
+[Source](../../utils/ipc/socket_channel.hpp#L59)
 
 <a id="symbol-classpuc_1_1ipc_1_1_socket_channel_1a9e7777605d7e416ad92d550b178b1587"></a>
 
@@ -102,7 +102,7 @@ const std::filesystem::path & puc::ipc::SocketChannel::socket_path() const noexc
 
 Return the absolute Unix-domain socket path used by the endpoint.
 
-[Source](../../utils/ipc/socket_channel.hpp#L63)
+[Source](../../utils/ipc/socket_channel.hpp#L62)
 
 <a id="symbol-classpuc_1_1ipc_1_1_socket_channel_1a2140e1151402ed9b72eb52ed20c80e2c"></a>
 
@@ -114,4 +114,4 @@ std::size_t puc::ipc::SocketChannel::maximum_message_bytes() const noexcept
 
 Return the largest payload accepted by this endpoint.
 
-[Source](../../utils/ipc/socket_channel.hpp#L66)
+[Source](../../utils/ipc/socket_channel.hpp#L65)

@@ -4,7 +4,7 @@
 
 Completed click retained only for double/triple-click recognition.
 
-[Source](../../puc-cli/tui/rendering/screen.hpp#L243)
+[Source](../../puc-cli/tui/rendering/screen.hpp#L244)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::string puc::tui::Screen::ClickHistory::frame_id
 
 Target id of the preceding click.
 
-[Source](../../puc-cli/tui/rendering/screen.hpp#L244)
+[Source](../../puc-cli/tui/rendering/screen.hpp#L245)
 
 <a id="symbol-structpuc_1_1app_1_1_screen_1_1_click_history_1abdca8594099928c2621b34a0a422e012"></a>
 
@@ -30,7 +30,7 @@ std::shared_ptr<Frame> puc::tui::Screen::ClickHistory::frame
 
 Target object of the preceding click.
 
-[Source](../../puc-cli/tui/rendering/screen.hpp#L245)
+[Source](../../puc-cli/tui/rendering/screen.hpp#L246)
 
 <a id="symbol-structpuc_1_1app_1_1_screen_1_1_click_history_1ae8acd7c943b8cf3a45211678eca9a85d"></a>
 
@@ -42,7 +42,7 @@ terminal::CellPosition puc::tui::Screen::ClickHistory::position
 
 Absolute click cell.
 
-[Source](../../puc-cli/tui/rendering/screen.hpp#L246)
+[Source](../../puc-cli/tui/rendering/screen.hpp#L247)
 
 <a id="symbol-structpuc_1_1app_1_1_screen_1_1_click_history_1a3abb30ef975bcfebdc3da9a4441746ba"></a>
 
@@ -54,7 +54,7 @@ terminal::Modifiers puc::tui::Screen::ClickHistory::modifiers
 
 Modifiers held for that click.
 
-[Source](../../puc-cli/tui/rendering/screen.hpp#L247)
+[Source](../../puc-cli/tui/rendering/screen.hpp#L248)
 
 <a id="symbol-structpuc_1_1app_1_1_screen_1_1_click_history_1a8081c160fff22bfff1aeb2ccdf22de60"></a>
 
@@ -66,4 +66,4 @@ std::size_t puc::tui::Screen::ClickHistory::count
 
 Consecutive clicks, at most two.
 
-[Source](../../puc-cli/tui/rendering/screen.hpp#L248)
+[Source](../../puc-cli/tui/rendering/screen.hpp#L249)

@@ -148,12 +148,12 @@ TEST(SocketChannelTest, ServerAcceptsAReplacementClient) {
 }
 
 TEST(SocketChannelTest, RejectsBadPathsLimitsAndPreexistingEntries) {
-  SocketChannel empty_path{"//socket/events", {}, SocketRole::SERVER};
+  SocketChannel empty_path{"//socket/events", {}, SocketRole::SERVER, 8U};
   EXPECT_EQ(empty_path.status(), Status::INVALID_TRANSPORT_PATH);
 
   SocketChannel long_path{
       "//socket/events", std::filesystem::path{"/tmp"} / std::string(256U, 'x'),
-      SocketRole::SERVER};
+      SocketRole::SERVER, 8U};
   EXPECT_EQ(long_path.status(), Status::INVALID_TRANSPORT_PATH);
 
   SocketChannel zero_limit{"//socket/events", socket_path(), SocketRole::SERVER,

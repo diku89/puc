@@ -64,11 +64,12 @@ inline constexpr CellDimensions kDefaultCellDimensions{};
  */
 class Screen {
  public:
-  /** Construct a Screen over standard streams using a caller-owned pool. */
-  explicit Screen(multithreading::JobQueue& workers);
+  /** Construct over standard streams with an explicit IPC payload limit. */
+  Screen(multithreading::JobQueue& workers, std::size_t maximum_message_bytes);
 
-  /** Construct a Screen over descriptors using a caller-owned worker pool. */
-  Screen(int input_fd, int output_fd, multithreading::JobQueue& workers);
+  /** Construct over descriptors with a caller-owned pool and payload limit. */
+  Screen(int input_fd, int output_fd, multithreading::JobQueue& workers,
+         std::size_t maximum_message_bytes);
 
   /**
    * Construct over lifecycle-owned protocol and terminal mechanisms.
@@ -320,6 +321,8 @@ class Screen {
   ipc::Directory* directory_ = nullptr;
   /** Whether this Screen registered and must close its protocol channels. */
   bool owns_channels_ = false;
+  /** Explicit limit used only when constructing local channels. */
+  std::size_t maximum_message_bytes_ = 0U;
 };
 
 }  // namespace puc::tui

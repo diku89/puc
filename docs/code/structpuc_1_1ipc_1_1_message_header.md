@@ -4,7 +4,7 @@
 
 Routing metadata common to every message.
 
-[Source](../../utils/ipc/msg.hpp#L91)
+[Source](../../utils/ipc/msg.hpp#L88)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ ChannelId puc::ipc::MessageHeader::channel_id
 
 Nonzero [Directory](classpuc_1_1ipc_1_1_directory.md) channel id.
 
-[Source](../../utils/ipc/msg.hpp#L92)
+[Source](../../utils/ipc/msg.hpp#L89)
 
 <a id="symbol-structpuc_1_1ipc_1_1_message_header_1a595902816b0d43b0e7e152d767cc8943"></a>
 
@@ -30,7 +30,7 @@ std::uint32_t puc::ipc::MessageHeader::message_id
 
 Sender-selected channel-local id.
 
-[Source](../../utils/ipc/msg.hpp#L93)
+[Source](../../utils/ipc/msg.hpp#L90)
 
 <a id="symbol-structpuc_1_1ipc_1_1_message_header_1af20c5d989d8a5d62bb178acdccac2ba6"></a>
 
@@ -42,7 +42,7 @@ std::uint64_t puc::ipc::MessageHeader::payload_length
 
 Payload bytes encoded on the wire.
 
-[Source](../../utils/ipc/msg.hpp#L94)
+[Source](../../utils/ipc/msg.hpp#L91)
 
 ## Public functions
 
@@ -56,4 +56,4 @@ bool puc::ipc::MessageHeader::operator==(const MessageHeader &) const noexcept=d
 
 Compare routing metadata.
 
-[Source](../../utils/ipc/msg.hpp#L97)
+[Source](../../utils/ipc/msg.hpp#L94)

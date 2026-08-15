@@ -4,7 +4,7 @@
 
 Terminal geometry observed independently of any individual command.
 
-**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000012):**
+**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000017):**
 
 **Kind:** Message  
 **Type:** [puc::msg::ScreenResizeEvent](#)  

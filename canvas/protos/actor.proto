@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package puc.canvas.proto;
+
+// One durable participant observed through one particular login/connection.
+message Actor {
+  enum Kind {
+    UNSPECIFIED = 0;
+    HUMAN = 1;
+    MODEL = 2;
+    TOOL = 3;
+    PUC = 4;
+  }
+
+  optional string id = 1;
+  optional Kind kind = 2;
+  optional string display_name = 3;
+  optional bytes session_uuid = 4;
+}

@@ -6,6 +6,7 @@
 #include "commands/config.hpp"
 
 #include <chrono>
+#include <cstddef>
 #include <filesystem>
 #include <fstream>
 #include <string>
@@ -21,6 +22,8 @@
 
 namespace puc::command {
 namespace {
+
+constexpr std::size_t kTestMaximumMessageBytes = 1024U;
 
 class ConfigCommandTest : public ::testing::Test {
  protected:
@@ -47,8 +50,7 @@ class ConfigCommandTest : public ::testing::Test {
     workers_   = std::make_unique<multithreading::JobQueue>(1U);
     directory_ = std::make_unique<ipc::Directory>(*workers_);
     channel_   = std::make_shared<ipc::SmemChannel>(
-        std::string{msg::kCmdFrameNotifyChannel},
-        ipc::kDefaultMaximumMessageBytes);
+        std::string{msg::kCmdFrameNotifyChannel}, kTestMaximumMessageBytes);
     ipc::ChannelId channel_id = 0U;
     ASSERT_EQ(directory_->open_channel(channel_, channel_id), ipc::Status::OK);
     ASSERT_EQ(

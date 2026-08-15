@@ -4,7 +4,7 @@
 
 Opaque, variable-length session identifier.
 
-[Source](../../utils/ipc/msg.hpp#L53)
+[Source](../../utils/ipc/msg.hpp#L50)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::uint8_t puc::ipc::SessionId::length
 
 Number of meaningful bytes in `data`.
 
-[Source](../../utils/ipc/msg.hpp#L54)
+[Source](../../utils/ipc/msg.hpp#L51)
 
 <a id="symbol-structpuc_1_1ipc_1_1_session_id_1a6e24cdace13fc4eb699dbbee84fe39f0"></a>
 
@@ -30,7 +30,7 @@ std::array<std::uint8_t, kMaximumSessionIdBytes> puc::ipc::SessionId::data
 
 Id bytes.
 
-[Source](../../utils/ipc/msg.hpp#L55)
+[Source](../../utils/ipc/msg.hpp#L52)
 
 ## Public functions
 
@@ -44,4 +44,4 @@ bool puc::ipc::SessionId::operator==(const SessionId &other) const noexcept
 
 Compare only the declared identifier bytes, ignoring unused storage.
 
-[Source](../../utils/ipc/msg.hpp#L58)
+[Source](../../utils/ipc/msg.hpp#L55)

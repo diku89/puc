@@ -32,9 +32,6 @@ inline constexpr std::size_t kMaximumSessionIdBytes = 16U;
 /** Number of bytes in the SHA-256 integrity checksum. */
 inline constexpr std::size_t kChecksumBytes = 32U;
 
-/** Maximum payload accepted by the version-zero message codec. */
-inline constexpr std::size_t kMaximumPayloadBytes = kDefaultMaximumMessageBytes;
-
 /** Decoded fixed preamble fields and optional-section presence flags. */
 struct WireHeader {
   std::uint8_t version       = kWireVersion; /**< Wire-format version. */
@@ -147,10 +144,14 @@ struct DecodedMessage {
  * Multibyte integers are encoded in network byte order; no C++ object layout
  * is copied into the wire representation.
  *
+ * @param message Semantic message and non-owning payload view.
+ * @param maximum_payload_bytes Configured upper bound for payload bytes.
+ * @param output Destination replaced with one complete encoded message.
  * @return Status::OK, Status::INVALID_ARGUMENT for inconsistent metadata, or
  *         Status::MESSAGE_TOO_LARGE when a configured wire limit is exceeded.
  */
 Status serialize_message(const Message& message,
+                         std::size_t maximum_payload_bytes,
                          std::vector<std::uint8_t>& output);
 
 /**
@@ -161,9 +162,14 @@ Status serialize_message(const Message& message,
  * Output and consumed_bytes are reset before parsing and remain reset on any
  * failure.
  *
+ * @param data Input which may contain one message followed by more bytes.
+ * @param maximum_payload_bytes Configured upper bound for payload bytes.
+ * @param output Decoded non-owning views into `data` on success.
+ * @param consumed_bytes Number of bytes consumed on success; zero on failure.
  * @return Status::OK or a precise non-throwing wire error status.
  */
 Status deserialize_message(std::span<const std::uint8_t> data,
+                           std::size_t maximum_payload_bytes,
                            DecodedMessage& output,
                            std::size_t& consumed_bytes) noexcept;
 

@@ -27,4 +27,4 @@ Run a selected terminal conformance plan and print its restored-screen report.
 
 **Returns:** Zero for help/listing or a completely passing run; two for invalid options; otherwise one.
 
-[Source](../../puc-cli/test_apps/terminal/terminal_test.cpp#L86)
+[Source](../../puc-cli/test_apps/terminal/terminal_test.cpp#L87)

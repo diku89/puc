@@ -26,16 +26,16 @@ std::unique_ptr<Impl> puc::ipc::FileBufferChannel::impl_
 
 FIFO descriptors and reader state.
 
-[Source](../../utils/ipc/filebuffer_channel.hpp#L63)
+[Source](../../utils/ipc/filebuffer_channel.hpp#L62)
 
 ## Public functions
 
-<a id="symbol-classpuc_1_1ipc_1_1_file_buffer_channel_1a351013f7233a887992bf4755bf85513e"></a>
+<a id="symbol-classpuc_1_1ipc_1_1_file_buffer_channel_1afbb11ce2c4d29660c02f06d8fdb19d64"></a>
 
 ### `FileBufferChannel`
 
 ```cpp
-puc::ipc::FileBufferChannel::FileBufferChannel(std::string name, std::filesystem::path read_path, std::filesystem::path write_path, std::size_t maximum_message_bytes=kDefaultMaximumMessageBytes, ChannelOptions options={})
+puc::ipc::FileBufferChannel::FileBufferChannel(std::string name, std::filesystem::path read_path, std::filesystem::path write_path, std::size_t maximum_message_bytes, ChannelOptions options={})
 ```
 
 Open an endpoint over two existing, distinct POSIX FIFO paths.
@@ -54,7 +54,7 @@ puc::ipc::FileBufferChannel::~FileBufferChannel() override
 
 Stop the reader and close descriptors without removing either FIFO.
 
-[Source](../../utils/ipc/filebuffer_channel.hpp#L47)
+[Source](../../utils/ipc/filebuffer_channel.hpp#L46)
 
 <a id="symbol-classpuc_1_1ipc_1_1_file_buffer_channel_1af1f2b0112b80a3874ecd7955f9177fb1"></a>
 
@@ -66,7 +66,7 @@ TransferResult puc::ipc::FileBufferChannel::transmit(Bytes data) noexcept overri
 
 Write one complete length-prefixed frame to the outgoing FIFO.
 
-[Source](../../utils/ipc/filebuffer_channel.hpp#L50)
+[Source](../../utils/ipc/filebuffer_channel.hpp#L49)
 
 <a id="symbol-classpuc_1_1ipc_1_1_file_buffer_channel_1a2f86e0d8cd1aa622f35aacbd84e1cb3c"></a>
 
@@ -78,7 +78,7 @@ const std::filesystem::path & puc::ipc::FileBufferChannel::read_path() const noe
 
 Return the FIFO from which incoming messages are read.
 
-[Source](../../utils/ipc/filebuffer_channel.hpp#L53)
+[Source](../../utils/ipc/filebuffer_channel.hpp#L52)
 
 <a id="symbol-classpuc_1_1ipc_1_1_file_buffer_channel_1a6993640be32906f126a54b7062e6a484"></a>
 
@@ -90,7 +90,7 @@ const std::filesystem::path & puc::ipc::FileBufferChannel::write_path() const no
 
 Return the FIFO to which outgoing messages are written.
 
-[Source](../../utils/ipc/filebuffer_channel.hpp#L56)
+[Source](../../utils/ipc/filebuffer_channel.hpp#L55)
 
 <a id="symbol-classpuc_1_1ipc_1_1_file_buffer_channel_1a8625dd4ef97c28c9578b5fd9200eef86"></a>
 
@@ -102,4 +102,4 @@ std::size_t puc::ipc::FileBufferChannel::maximum_message_bytes() const noexcept
 
 Return the largest payload accepted by this endpoint.
 
-[Source](../../utils/ipc/filebuffer_channel.hpp#L59)
+[Source](../../utils/ipc/filebuffer_channel.hpp#L58)

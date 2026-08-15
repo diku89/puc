@@ -6,7 +6,7 @@ Move-only ownership of one active channel subscription.
 
 Destroying or resetting this object atomically disables its callback. A concurrent delivery that already observed the callback as enabled may still invoke or finish it; later activation checks will skip it.
 
-[Source](../../utils/ipc/channel.hpp#L72)
+[Source](../../utils/ipc/channel.hpp#L69)
 
 ## Friends
 
@@ -18,7 +18,7 @@ Destroying or resetting this object atomically disables its callback. A concurre
 friend class Channel
 ```
 
-[Source](../../utils/ipc/channel.hpp#L99)
+[Source](../../utils/ipc/channel.hpp#L96)
 
 ## Private data members
 
@@ -32,7 +32,7 @@ std::shared_ptr<detail::SubscriptionState> puc::ipc::Subscription::state_
 
 Shared callback activation state.
 
-[Source](../../utils/ipc/channel.hpp#L106)
+[Source](../../utils/ipc/channel.hpp#L103)
 
 ## Public functions
 
@@ -46,7 +46,7 @@ puc::ipc::Subscription::Subscription() noexcept=default
 
 Construct an inactive subscription.
 
-[Source](../../utils/ipc/channel.hpp#L75)
+[Source](../../utils/ipc/channel.hpp#L72)
 
 <a id="symbol-classpuc_1_1ipc_1_1_subscription_1aacfa41bd2f782c95af70f6be7e0404e0"></a>
 
@@ -56,7 +56,7 @@ Construct an inactive subscription.
 puc::ipc::Subscription::Subscription(const Subscription &)=delete
 ```
 
-[Source](../../utils/ipc/channel.hpp#L77)
+[Source](../../utils/ipc/channel.hpp#L74)
 
 <a id="symbol-classpuc_1_1ipc_1_1_subscription_1a5eabb5d830297161aa4e73d556c71912"></a>
 
@@ -66,7 +66,7 @@ puc::ipc::Subscription::Subscription(const Subscription &)=delete
 Subscription & puc::ipc::Subscription::operator=(const Subscription &)=delete
 ```
 
-[Source](../../utils/ipc/channel.hpp#L78)
+[Source](../../utils/ipc/channel.hpp#L75)
 
 <a id="symbol-classpuc_1_1ipc_1_1_subscription_1a35a58480a318f0ca9d1388fa010e828a"></a>
 
@@ -78,7 +78,7 @@ puc::ipc::Subscription::Subscription(Subscription &&other) noexcept
 
 Transfer ownership without changing whether the callback is active.
 
-[Source](../../utils/ipc/channel.hpp#L81)
+[Source](../../utils/ipc/channel.hpp#L78)
 
 <a id="symbol-classpuc_1_1ipc_1_1_subscription_1a0edb00515d979346209b990fd9863019"></a>
 
@@ -90,7 +90,7 @@ Subscription & puc::ipc::Subscription::operator=(Subscription &&other) noexcept
 
 Disable any current callback, then take ownership from `other`.
 
-[Source](../../utils/ipc/channel.hpp#L84)
+[Source](../../utils/ipc/channel.hpp#L81)
 
 <a id="symbol-classpuc_1_1ipc_1_1_subscription_1ab94319c0318b01cc3048ea48a75d24d9"></a>
 
@@ -102,7 +102,7 @@ puc::ipc::Subscription::~Subscription()
 
 Disable the callback if this subscription remains active.
 
-[Source](../../utils/ipc/channel.hpp#L87)
+[Source](../../utils/ipc/channel.hpp#L84)
 
 <a id="symbol-classpuc_1_1ipc_1_1_subscription_1ac5baded414b1e5d5c9eb8da343e94f6b"></a>
 
@@ -114,7 +114,7 @@ void puc::ipc::Subscription::reset() noexcept
 
 Disable the callback and make this object inactive.
 
-[Source](../../utils/ipc/channel.hpp#L90)
+[Source](../../utils/ipc/channel.hpp#L87)
 
 <a id="symbol-classpuc_1_1ipc_1_1_subscription_1aad9d51d35b4b79bfebe72fb5cff2c2b0"></a>
 
@@ -126,7 +126,7 @@ bool puc::ipc::Subscription::active() const noexcept
 
 Return whether this object currently owns an enabled callback.
 
-[Source](../../utils/ipc/channel.hpp#L93)
+[Source](../../utils/ipc/channel.hpp#L90)
 
 <a id="symbol-classpuc_1_1ipc_1_1_subscription_1ae8d05322c51f05b699609837145a9d98"></a>
 
@@ -138,7 +138,7 @@ std::uint64_t puc::ipc::Subscription::id() const noexcept
 
 Return the channel-local subscription identifier, or zero when idle.
 
-[Source](../../utils/ipc/channel.hpp#L96)
+[Source](../../utils/ipc/channel.hpp#L93)
 
 ## Private functions
 
@@ -152,4 +152,4 @@ puc::ipc::Subscription::Subscription(std::shared_ptr< detail::SubscriptionState 
 
 Adopt one newly registered callback state.
 
-[Source](../../utils/ipc/channel.hpp#L102)
+[Source](../../utils/ipc/channel.hpp#L99)

@@ -1,0 +1,2 @@
+[database]
+path = "$HOME/.puc/data/sessions.db"

@@ -27,4 +27,4 @@ Run the smoke test until application control requests termination.
 
 **Returns:** Zero when setup, drawing, and lifecycle teardown succeed; otherwise one.
 
-[Source](../../puc-cli/test_apps/tui/test-app.cpp#L80)
+[Source](../../puc-cli/test_apps/tui/test-app.cpp#L81)

@@ -4,7 +4,7 @@
 
 Nanoseconds since 1970-01-01 00:00:00 UTC.
 
-[Source](../../utils/ipc/msg.hpp#L74)
+[Source](../../utils/ipc/msg.hpp#L71)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::uint64_t puc::ipc::Timestamp::unix_time_ns
 
 Unsigned Unix timestamp.
 
-[Source](../../utils/ipc/msg.hpp#L75)
+[Source](../../utils/ipc/msg.hpp#L72)
 
 ## Public functions
 
@@ -32,4 +32,4 @@ bool puc::ipc::Timestamp::operator==(const Timestamp &) const noexcept=default
 
 Compare timestamps.
 
-[Source](../../utils/ipc/msg.hpp#L78)
+[Source](../../utils/ipc/msg.hpp#L75)

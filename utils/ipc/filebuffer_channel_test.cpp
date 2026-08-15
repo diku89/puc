@@ -128,22 +128,23 @@ TEST_F(FileBufferChannelTest, EnforcesConfiguredMessageLimit) {
 }
 
 TEST_F(FileBufferChannelTest, RejectsMissingOrdinaryAndIdenticalPaths) {
-  FileBufferChannel missing{"//fifo/missing", root_ / "missing", second_fifo_};
+  FileBufferChannel missing{"//fifo/missing", root_ / "missing", second_fifo_,
+                            8U};
   EXPECT_EQ(missing.status(), Status::INVALID_TRANSPORT_PATH);
 
   const std::filesystem::path regular = root_ / "regular";
   write_regular_file(regular, "not a fifo");
-  FileBufferChannel ordinary{"//fifo/regular", regular, second_fifo_};
+  FileBufferChannel ordinary{"//fifo/regular", regular, second_fifo_, 8U};
   EXPECT_EQ(ordinary.status(), Status::INVALID_TRANSPORT_PATH);
 
-  FileBufferChannel identical{"//fifo/same", first_fifo_, first_fifo_};
+  FileBufferChannel identical{"//fifo/same", first_fifo_, first_fifo_, 8U};
   EXPECT_EQ(identical.status(), Status::INVALID_TRANSPORT_PATH);
 
   const std::filesystem::path alias = root_ / "first_alias.fifo";
   std::error_code symlink_error;
   std::filesystem::create_symlink(first_fifo_, alias, symlink_error);
   if (!symlink_error) {
-    FileBufferChannel aliased{"//fifo/alias", first_fifo_, alias};
+    FileBufferChannel aliased{"//fifo/alias", first_fifo_, alias, 8U};
     EXPECT_EQ(aliased.status(), Status::INVALID_TRANSPORT_PATH);
   }
 

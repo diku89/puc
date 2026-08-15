@@ -8,6 +8,9 @@
 #include <memory>
 #include <utility>
 
+#include "canvas/canvas_subsystem.hpp"
+#include "canvas/datastore_subsystem.hpp"
+#include "canvas/session/orchestration_subsystem.hpp"
 #include "commands/builtin_command_subsystem.hpp"
 #include "commands/command_mode_subsystem.hpp"
 #include "commands/command_subsystem.hpp"
@@ -66,6 +69,12 @@ Status register_application_subsystems(AppState& app,
   if (!is_ok(status)) {
     return status;
   }
+  if (selection.canvas) {
+    status = app.register_subsystem(std::make_unique<DatastoreSubsystem>());
+    if (!is_ok(status)) {
+      return status;
+    }
+  }
   status = app.register_subsystem(std::move(workers));
   if (!is_ok(status)) {
     return status;
@@ -97,6 +106,16 @@ Status register_application_subsystems(AppState& app,
   status = app.register_subsystem(std::move(screen));
   if (!is_ok(status)) {
     return status;
+  }
+  if (selection.canvas) {
+    status = app.register_subsystem(std::make_unique<CanvasSubsystem>());
+    if (!is_ok(status)) {
+      return status;
+    }
+    status = app.register_subsystem(std::make_unique<OrchestrationSubsystem>());
+    if (!is_ok(status)) {
+      return status;
+    }
   }
   if (selection.commands || selection.input) {
     status = app.register_subsystem(

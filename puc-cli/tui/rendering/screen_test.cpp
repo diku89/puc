@@ -48,6 +48,9 @@ namespace {
 
 using namespace std::chrono_literals;
 
+/** Deliberate local-channel limit used by standalone Screen tests. */
+constexpr std::size_t kTestMaximumMessageBytes = 1024U * 1024U;
+
 static_assert(kDefaultCellDimensions ==
               CellDimensions{.width = 1U, .height = 2U});
 
@@ -215,7 +218,7 @@ bool terminal_state_restored(int descriptor, const termios& original) {
 
 TEST(ScreenTest, ConfiguresBoundedDirectionSpecificChannels) {
   multithreading::JobQueue workers;
-  Screen screen(-1, -1, workers);
+  Screen screen(-1, -1, workers, kTestMaximumMessageBytes);
   const std::shared_ptr<ipc::Channel> commands =
       screen.ipc_directory().get_channel(msg::kScreenCommandChannel);
   const std::shared_ptr<ipc::Channel> resize =
@@ -235,7 +238,7 @@ TEST(ScreenTest, ConfiguresBoundedDirectionSpecificChannels) {
 
 TEST(ScreenTest, ConsumesAndRetainsNormalizedTerminalEventsInOrder) {
   multithreading::JobQueue workers;
-  Screen screen(-1, -1, workers);
+  Screen screen(-1, -1, workers, kTestMaximumMessageBytes);
   msg::TerminalInputEventCodec codec;
 
   const auto publish_text = [&](std::string text) {
@@ -266,7 +269,7 @@ TEST(ScreenTest, ConsumesAndRetainsNormalizedTerminalEventsInOrder) {
 
 TEST(ScreenTest, ReportsMalformedTerminalInputAtTheDrainBoundary) {
   multithreading::JobQueue workers;
-  Screen screen(-1, -1, workers);
+  Screen screen(-1, -1, workers, kTestMaximumMessageBytes);
   const std::vector<std::uint8_t> malformed{0xffU};
   const ipc::TransferResult result = screen.ipc_directory().transmit(
       msg::kTerminalInputEventChannel, malformed);
@@ -281,7 +284,7 @@ TEST(ScreenTest, ReportsMalformedTerminalInputAtTheDrainBoundary) {
 TEST(ScreenTest, BorrowsOneSharedApplicationWorkerBudget) {
   multithreading::JobQueue workers(4U);
   {
-    Screen screen(-1, -1, workers);
+    Screen screen(-1, -1, workers, kTestMaximumMessageBytes);
     EXPECT_EQ(screen.ipc_directory().delivery_worker_count(), 4U);
   }
   EXPECT_TRUE(workers.active());
@@ -289,7 +292,7 @@ TEST(ScreenTest, BorrowsOneSharedApplicationWorkerBudget) {
 
 TEST(ScreenTest, GeometryIsUnavailableUntilAnObservedResizeEvent) {
   multithreading::JobQueue workers;
-  Screen screen(-1, -1, workers);
+  Screen screen(-1, -1, workers, kTestMaximumMessageBytes);
   std::size_t width  = 1U;
   std::size_t height = 1U;
   CellDimensions dimensions{.width = 9U, .height = 9U};
@@ -303,7 +306,7 @@ TEST(ScreenTest, GeometryIsUnavailableUntilAnObservedResizeEvent) {
 
 TEST(ScreenTest, CanvasAttachmentRejectsNullAndInvalidCanvases) {
   multithreading::JobQueue workers;
-  Screen screen(-1, -1, workers);
+  Screen screen(-1, -1, workers, kTestMaximumMessageBytes);
   EXPECT_EQ(screen.set_canvas(nullptr), Status::CANVAS_NOT_SET);
   const auto invalid =
       std::make_shared<Canvas>(std::numeric_limits<std::size_t>::max(), 2U);
@@ -319,7 +322,8 @@ TEST(ScreenTest, TakeAndReleaseAreAsynchronousAndRestoreTerminalState) {
   termios before{};
   ASSERT_EQ(::tcgetattr(terminal.slave_fd(), &before), 0);
 
-  Screen screen(terminal.slave_fd(), terminal.slave_fd(), workers);
+  Screen screen(terminal.slave_fd(), terminal.slave_fd(), workers,
+                kTestMaximumMessageBytes);
   ASSERT_EQ(screen.take(), Status::OK);
   EXPECT_TRUE(screen.is_taken());
   ASSERT_TRUE(wait_until(
@@ -348,7 +352,8 @@ TEST(ScreenTest, DefaultTakeRequestsTheCompleteInteractiveContract) {
   ASSERT_TRUE(terminal.valid());
   ASSERT_TRUE(terminal.set_dimensions(80U, 24U));
 
-  Screen screen(terminal.slave_fd(), terminal.slave_fd(), workers);
+  Screen screen(terminal.slave_fd(), terminal.slave_fd(), workers,
+                kTestMaximumMessageBytes);
   ASSERT_EQ(screen.take(), Status::OK);
 
   std::string entered;
@@ -386,7 +391,8 @@ TEST(ScreenTest, ReadInputUsesTheOwnedTerminalSessionAndCallerDecoder) {
   ASSERT_EQ(decoder.setup(properties, "xterm-256color"),
             puc::terminal::Status::OK);
 
-  Screen screen(terminal.slave_fd(), terminal.slave_fd(), workers);
+  Screen screen(terminal.slave_fd(), terminal.slave_fd(), workers,
+                kTestMaximumMessageBytes);
   ASSERT_EQ(screen.take(), Status::OK);
   std::size_t width  = 0U;
   std::size_t height = 0U;
@@ -419,7 +425,8 @@ TEST(ScreenTest, DestructionSynchronouslyBackstopsQueuedRelease) {
   ASSERT_EQ(::tcgetattr(terminal.slave_fd(), &before), 0);
 
   {
-    Screen screen(terminal.slave_fd(), terminal.slave_fd(), workers);
+    Screen screen(terminal.slave_fd(), terminal.slave_fd(), workers,
+                  kTestMaximumMessageBytes);
     ASSERT_EQ(screen.take(), Status::OK);
     ASSERT_TRUE(wait_until(
         [&] { return raw_mode_enabled(terminal.slave_fd(), before); }));
@@ -433,7 +440,8 @@ TEST(ScreenTest, ReportsRelativeCharacterCellDimensionsFromResizeState) {
   PseudoTerminal terminal;
   ASSERT_TRUE(terminal.valid());
   ASSERT_TRUE(terminal.set_dimensions(80U, 24U, 960U, 480U));
-  Screen screen(terminal.slave_fd(), terminal.slave_fd(), workers);
+  Screen screen(terminal.slave_fd(), terminal.slave_fd(), workers,
+                kTestMaximumMessageBytes);
   ASSERT_EQ(screen.take(), Status::OK);
 
   std::size_t width  = 0U;
@@ -461,7 +469,8 @@ TEST(ScreenTest, DrawRequiresAnAttachedCanvas) {
   PseudoTerminal terminal;
   ASSERT_TRUE(terminal.valid());
   ASSERT_TRUE(terminal.set_dimensions(10U, 5U));
-  Screen screen(terminal.slave_fd(), terminal.slave_fd(), workers);
+  Screen screen(terminal.slave_fd(), terminal.slave_fd(), workers,
+                kTestMaximumMessageBytes);
   ASSERT_EQ(screen.take(), Status::OK);
   EXPECT_EQ(screen.draw(), Status::CANVAS_NOT_SET);
   EXPECT_EQ(screen.release(), Status::OK);
@@ -472,7 +481,8 @@ TEST(ScreenTest, DrawAsynchronouslyEmitsTrueColorAndUtf8Cells) {
   PseudoTerminal terminal;
   ASSERT_TRUE(terminal.valid());
   ASSERT_TRUE(terminal.set_dimensions(2U, 1U));
-  Screen screen(terminal.slave_fd(), terminal.slave_fd(), workers);
+  Screen screen(terminal.slave_fd(), terminal.slave_fd(), workers,
+                kTestMaximumMessageBytes);
   ASSERT_EQ(screen.take(), Status::OK);
   std::size_t width  = 0U;
   std::size_t height = 0U;
@@ -512,7 +522,8 @@ TEST(ScreenTest, SelectionDoesNotTouchClipboardUntilExplicitCopyCommand) {
   PseudoTerminal terminal;
   ASSERT_TRUE(terminal.valid());
   ASSERT_TRUE(terminal.set_dimensions(20U, 5U));
-  Screen screen(terminal.slave_fd(), terminal.slave_fd(), workers);
+  Screen screen(terminal.slave_fd(), terminal.slave_fd(), workers,
+                kTestMaximumMessageBytes);
   ASSERT_EQ(screen.take(), Status::OK);
   std::size_t width  = 0U;
   std::size_t height = 0U;
@@ -559,7 +570,8 @@ TEST(ScreenTest, PublishesInitialAndChangedGeometryAsStateEvents) {
   PseudoTerminal terminal;
   ASSERT_TRUE(terminal.valid());
   ASSERT_TRUE(terminal.set_dimensions(80U, 24U));
-  Screen screen(terminal.slave_fd(), terminal.slave_fd(), workers);
+  Screen screen(terminal.slave_fd(), terminal.slave_fd(), workers,
+                kTestMaximumMessageBytes);
 
   msg::ScreenResizeEventCodec codec;
   std::mutex events_mutex;

@@ -18,6 +18,7 @@ namespace puc::app {
 
 /** Optional leaf subsystems selected for one executable's application graph. */
 struct ApplicationSubsystemSelection {
+  bool canvas       = true; /**< Register durable Canvas and orchestration. */
   bool metronome    = true; /**< Register the production heartbeat. */
   bool presentation = true; /**< Register parallel frame scheduling. */
   bool commands     = true; /**< Register command dispatch and its route. */
@@ -28,15 +29,17 @@ struct ApplicationSubsystemSelection {
 };
 
 /** Number of concrete adapters in the complete default production graph. */
-inline constexpr std::size_t kApplicationSubsystemCount = 19U;
+inline constexpr std::size_t kApplicationSubsystemCount = 22U;
 
 /** Return the number of adapters selected by one executable profile. */
 constexpr std::size_t application_subsystem_count(
     const ApplicationSubsystemSelection& selection) noexcept {
   constexpr std::size_t base_subsystems = 11U;
+  const std::size_t canvas_subsystems   = selection.canvas ? 3U : 0U;
   const bool command_notification       = selection.commands || selection.input;
   const std::size_t command_subsystems  = selection.commands ? 2U : 0U;
-  return base_subsystems + static_cast<std::size_t>(command_notification) +
+  return base_subsystems + canvas_subsystems +
+         static_cast<std::size_t>(command_notification) +
          static_cast<std::size_t>(selection.metronome) +
          static_cast<std::size_t>(selection.presentation) + command_subsystems +
          static_cast<std::size_t>(selection.input) +
