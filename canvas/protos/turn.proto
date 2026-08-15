@@ -4,7 +4,7 @@ package puc.canvas.proto;
 
 import "canvas/protos/actor.proto";
 
-// Stable composite identity assigned when a Turn is committed. The human
+// Stable composite identity reserved when a reply Turn begins. The human
 // address is a permanent parent-derived identity, never a rebalanced display
 // position: committed addresses are neither renumbered nor reused.
 message TurnId {
@@ -46,7 +46,7 @@ message Payload {
   optional Actor owner = 5;
 }
 
-// One submitted or committed event in the Canvas reply tree.
+// One committed event in the Canvas reply tree.
 message Turn {
   enum DisplayLevel {
     DISPLAY_LEVEL_UNSPECIFIED = 0;

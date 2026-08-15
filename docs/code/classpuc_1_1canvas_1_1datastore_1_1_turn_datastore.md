@@ -2,7 +2,7 @@
 
 # Class `puc::canvas::datastore::TurnDatastore`
 
-Persist committed Turns under transactionally allocated human addresses.
+Persist committed Turns under caller-reserved human addresses.
 
 [Source](../../canvas/protos/datastore/turn_datastore.hpp#L18)
 
@@ -18,7 +18,7 @@ Database& puc::canvas::datastore::TurnDatastore::database_
 
 Borrowed initialized SQLite owner.
 
-[Source](../../canvas/protos/datastore/turn_datastore.hpp#L41)
+[Source](../../canvas/protos/datastore/turn_datastore.hpp#L35)
 
 ## Public functions
 
@@ -34,19 +34,17 @@ Borrow an initialized database for the lifetime of this wrapper.
 
 [Source](../../canvas/protos/datastore/turn_datastore.hpp#L21)
 
-<a id="symbol-classpuc_1_1canvas_1_1datastore_1_1_turn_datastore_1a80c6fcd932157e8c5f41e676ec1eb584"></a>
+<a id="symbol-classpuc_1_1canvas_1_1datastore_1_1_turn_datastore_1ab8a60f8faff4f39f2768ffe8640004ce"></a>
 
-### `number_and_persist`
+### `persist`
 
 ```cpp
-Status puc::canvas::datastore::TurnDatastore::number_and_persist(std::span< const std::uint8_t > canvas_uuid, const proto::Turn &submitted, proto::Turn &turn)
+Status puc::canvas::datastore::TurnDatastore::persist(std::span< const std::uint8_t > canvas_uuid, const proto::Turn &submitted, proto::Turn &turn)
 ```
 
-Assign the next sibling address and persist the Turn atomically.
+Persist one complete, pre-addressed Turn exactly once.
 
-The submitted Turn may omit its ID entirely. If it supplies a Canvas UUID, it must match `canvas_uuid`; any supplied human address is replaced by the stable address assigned inside the same SQLite write transaction.
-
-[Source](../../canvas/protos/datastore/turn_datastore.hpp#L33)
+[Source](../../canvas/protos/datastore/turn_datastore.hpp#L27)
 
 <a id="symbol-classpuc_1_1canvas_1_1datastore_1_1_turn_datastore_1a83726cb01542dcf202c4c917554422c7"></a>
 
@@ -56,9 +54,9 @@ The submitted Turn may omit its ID entirely. If it supplies a Canvas UUID, it mu
 Status puc::canvas::datastore::TurnDatastore::load_all(std::span< const std::uint8_t > canvas_uuid, std::vector< proto::Turn > &turns)
 ```
 
-Load every committed Turn belonging to one Canvas.
+Load the latest durable state of every Turn belonging to one Canvas.
 
-[Source](../../canvas/protos/datastore/turn_datastore.hpp#L37)
+[Source](../../canvas/protos/datastore/turn_datastore.hpp#L31)
 
 ## Public static functions
 

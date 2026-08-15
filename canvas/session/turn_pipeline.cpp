@@ -106,7 +106,6 @@ class TurnPipeline::Impl final {
   multithreading::JobQueue* workers = nullptr; /**< Borrowed active executor. */
   bool accepting = false; /**< Whether submit() may accept another Turn. */
   std::size_t active_runs = 0U; /**< Accepted runs including completion. */
-  std::uint64_t next_ingress_ticket = 0U;  /**< Next transient FIFO ticket. */
   std::vector<Registration> registrations; /**< Current registration order. */
   std::unordered_map<NodeId, std::size_t> indices; /**< Name lookup index. */
   std::shared_ptr<const CompiledPlan> plan; /**< Current immutable plan. */
@@ -118,10 +117,8 @@ void TurnContext::fail(datastore::Status status) noexcept {
   static_cast<void>(status_.compare_exchange_strong(expected, status));
 }
 
-void TurnContext::reset(const proto::Turn& submitted,
-                        std::uint64_t ingress_ticket) {
-  submitted_      = submitted;
-  ingress_ticket_ = ingress_ticket;
+void TurnContext::reset(const proto::Turn& submitted) {
+  submitted_ = submitted;
   turn_.Clear();
   status_.store(datastore::Status::OK);
   const std::lock_guard lock(state_mutex_);
@@ -217,21 +214,19 @@ execution_graph::Status TurnPipeline::submit(const proto::Turn& submitted,
 
   std::shared_ptr<const Impl::CompiledPlan> plan;
   multithreading::JobQueue* workers = nullptr;
-  std::uint64_t ingress_ticket      = 0U;
   {
     const std::lock_guard lock(impl_->mutex);
     if (!impl_->accepting || impl_->workers == nullptr ||
         impl_->plan == nullptr || !impl_->plan->execution.valid()) {
       return execution_graph::Status::INVALID_ARGUMENT;
     }
-    plan           = impl_->plan;
-    workers        = impl_->workers;
-    ingress_ticket = impl_->next_ingress_ticket++;
+    plan    = impl_->plan;
+    workers = impl_->workers;
     ++impl_->active_runs;
   }
 
   auto context = std::make_shared<TurnContext>();
-  context->reset(submitted, ingress_ticket);
+  context->reset(submitted);
   std::vector<std::shared_ptr<multithreading::Job>> jobs;
   jobs.reserve(plan->registrations.size());
   for (const Impl::Registration& registration : plan->registrations) {

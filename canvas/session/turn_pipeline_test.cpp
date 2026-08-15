@@ -10,6 +10,7 @@
 #include <cstdint>
 #include <filesystem>
 #include <mutex>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -102,6 +103,15 @@ proto::Turn submitted(const std::vector<std::uint8_t>& canvas_uuid,
   return result;
 }
 
+proto::Turn completed(proto::Turn started, std::string text) {
+  started.mutable_actor()->set_id("human");
+  started.mutable_actor()->set_kind(proto::Actor::HUMAN);
+  started.mutable_payload()->set_kind(proto::Payload::TEXT);
+  started.mutable_payload()->set_content(std::move(text));
+  started.set_display_level(proto::Turn::ALWAYS_SHOW);
+  return started;
+}
+
 }  // namespace
 
 TEST(TurnPipelineTest, OverlapsRunsAndSnapshotsTopologyPerSubmission) {
@@ -180,46 +190,52 @@ TEST(TurnPipelineTest, RegisteredNodesPersistAndOrderLateReplies) {
   multithreading::JobQueue workers{2U};
   TurnTree turn_tree;
   PresentationTree presentation_tree{presentations, presentation_uuid, {}};
-  PendingPresentation pending;
   TurnPipeline pipeline;
   ASSERT_EQ(pipeline.attach(workers), execution_graph::Status::OK);
-  ASSERT_EQ(pipeline.register_node("number_and_persist",
+  ASSERT_EQ(pipeline.register_node("persist",
                                    [&](TurnContext& context) {
-                                     context.fail(turns.number_and_persist(
+                                     context.fail(turns.persist(
                                          canvas_uuid, context.submitted(),
                                          context.turn()));
                                    }),
             execution_graph::Status::OK);
-  ASSERT_EQ(
-      pipeline.register_node("update_trie",
-                             [&](TurnContext& context) {
-                               if (turn_tree.insert(context.turn()) !=
-                                   TurnTree::Status::OK) {
-                                 context.fail(datastore::Status::CORRUPT_DATA);
-                                 return;
-                               }
-                               context.fail(canvases.update_turn_trie_root(
-                                   turn_trie_uuid, turn_tree.root_hash()));
-                             },
-                             {"number_and_persist"}),
-      execution_graph::Status::OK);
+  ASSERT_EQ(pipeline.register_node(
+                "update_trie",
+                [&](TurnContext& context) {
+                  if (turn_tree.apply(context.turn()) != TurnTree::Status::OK) {
+                    context.fail(datastore::Status::CORRUPT_DATA);
+                    return;
+                  }
+                  context.fail(canvases.update_turn_trie_root(
+                      turn_trie_uuid, turn_tree.root_hash()));
+                },
+                {"persist"}),
+            execution_graph::Status::OK);
   ASSERT_EQ(
       pipeline.register_node("linearize",
                              [&](TurnContext& context) {
+                               PendingPresentation pending;
                                context.fail(presentation_tree.prepare_insert(
                                    context.turn().id(), pending));
+                               context.store("pending", std::move(pending));
                              },
                              {"update_trie"}),
       execution_graph::Status::OK);
   ASSERT_EQ(pipeline.register_node(
                 "commit_presentation",
                 [&](TurnContext& context) {
+                  std::optional<PendingPresentation> pending =
+                      context.take<PendingPresentation>("pending");
+                  if (!pending.has_value()) {
+                    context.fail(datastore::Status::INVALID_STATE);
+                    return;
+                  }
                   const datastore::Status status = presentations.commit(
-                      presentation_uuid, pending.previous_root,
-                      pending.new_root, context.turn().id(), pending.nodes);
+                      presentation_uuid, pending->previous_root,
+                      pending->new_root, context.turn().id(), pending->nodes);
                   context.fail(status);
                   if (datastore::is_ok(status))
-                    presentation_tree.commit(pending);
+                    presentation_tree.commit(*pending);
                 },
                 {"linearize"}),
             execution_graph::Status::OK);
@@ -227,8 +243,17 @@ TEST(TurnPipelineTest, RegisteredNodesPersistAndOrderLateReplies) {
   proto::Turn one;
   proto::Turn two;
   proto::Turn late_reply;
-  ASSERT_EQ(pipeline.process(submitted(canvas_uuid, "one"), one),
-            datastore::Status::OK);
+  const auto process_reply = [&](const proto::TurnId* parent, std::string text,
+                                 proto::Turn& committed) {
+    proto::Turn started;
+    const TurnTree::Status reserved =
+        turn_tree.reply_to(canvas_uuid, parent, started);
+    if (reserved != TurnTree::Status::OK) {
+      return datastore::Status::INVALID_STATE;
+    }
+    return pipeline.process(completed(started, std::move(text)), committed);
+  };
+  ASSERT_EQ(process_reply(nullptr, "one", one), datastore::Status::OK);
   ASSERT_EQ(one.id().human_address(), "1");
   std::size_t runtime_observations = 0U;
   ASSERT_EQ(pipeline.register_node("runtime_observer",
@@ -237,12 +262,10 @@ TEST(TurnPipelineTest, RegisteredNodesPersistAndOrderLateReplies) {
                                    },
                                    {"commit_presentation"}),
             execution_graph::Status::OK);
-  ASSERT_EQ(pipeline.process(submitted(canvas_uuid, "two"), two),
-            datastore::Status::OK);
+  ASSERT_EQ(process_reply(nullptr, "two", two), datastore::Status::OK);
   ASSERT_EQ(two.id().human_address(), "2");
-  ASSERT_EQ(
-      pipeline.process(submitted(canvas_uuid, "late", &one.id()), late_reply),
-      datastore::Status::OK);
+  ASSERT_EQ(process_reply(&one.id(), "late", late_reply),
+            datastore::Status::OK);
   ASSERT_EQ(late_reply.id().human_address(), "1.1");
   EXPECT_EQ(runtime_observations, 2U);
 

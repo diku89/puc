@@ -2,9 +2,9 @@
 
 # Class `puc::canvas::TurnTree`
 
-Materialize committed Turns and incrementally hash their reply topology.
+Materialize Turns and allocate replies from authoritative Trie nodes.
 
-[Source](../../canvas/turn/turn_tree.hpp#L19)
+[Source](../../canvas/turn/turn_tree.hpp#L71)
 
 ## Public types
 
@@ -16,29 +16,42 @@ Materialize committed Turns and incrementally hash their reply topology.
 Status
 ```
 
-Outcomes specific to validating and inserting committed Turns.
+Outcomes specific to reply allocation and Turn materialization.
 
 #### Values
 - <a id="symbol-classpuc_1_1canvas_1_1_turn_tree_1ab59a49ff65a4774adbc34dbddf02ad52ae0aa021e21dddbd6d8cecec71e9cf564"></a>`OK` — The tree operation completed successfully.
 - <a id="symbol-classpuc_1_1canvas_1_1_turn_tree_1ab59a49ff65a4774adbc34dbddf02ad52a10e87c02d262dcd9fe0a4a765569e8fe"></a>`INVALID_TURN` — Required identity or topology fields are invalid.
 - <a id="symbol-classpuc_1_1canvas_1_1_turn_tree_1ab59a49ff65a4774adbc34dbddf02ad52a2898209b592540075517959601118d10"></a>`PARENT_NOT_FOUND` — The committed parent is absent from this Trie.
 - <a id="symbol-classpuc_1_1canvas_1_1_turn_tree_1ab59a49ff65a4774adbc34dbddf02ad52a08e6da8e58b2bcd070be3b5274d51eed"></a>`ALREADY_EXISTS` — The human address already identifies a Turn.
+- <a id="symbol-classpuc_1_1canvas_1_1_turn_tree_1ab59a49ff65a4774adbc34dbddf02ad52ae96592ff95c385e03782a11ddbe7a0ba"></a>`ADDRESS_EXHAUSTED` — The parent has no representable child ordinal.
 
-[Source](../../canvas/turn/turn_tree.hpp#L22)
+[Source](../../canvas/turn/turn_tree.hpp#L77)
+
+## Private types
+
+<a id="symbol-classpuc_1_1canvas_1_1_turn_tree_1a470403d4531d44d1c2d3b798a64cae81"></a>
+
+### `Trie`
+
+```cpp
+using puc::canvas::TurnTree::Trie = containers::Trie<AddressComponent, TurnNode>
+```
+
+[Source](../../canvas/turn/turn_tree.hpp#L111)
 
 ## Private data members
 
-<a id="symbol-classpuc_1_1canvas_1_1_turn_tree_1a186c6094b76dc1e0b3c9d6c7fe1b2693"></a>
+<a id="symbol-classpuc_1_1canvas_1_1_turn_tree_1a91b15d6add331cb6e5a6b5405d6a0ac6"></a>
 
 ### `trie_`
 
 ```cpp
-containers::Trie<AddressComponent, proto::Turn> puc::canvas::TurnTree::trie_
+Trie puc::canvas::TurnTree::trie_
 ```
 
 Reply topology keyed by address components.
 
-[Source](../../canvas/turn/turn_tree.hpp#L50)
+[Source](../../canvas/turn/turn_tree.hpp#L116)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_tree_1a5b07a5ea9624bc5d2ddd17cf54d4af64"></a>
 
@@ -50,7 +63,7 @@ std::vector<hashing::Hash256> puc::canvas::TurnTree::hashes_
 
 Content hash parallel to each process-local Trie node.
 
-[Source](../../canvas/turn/turn_tree.hpp#L51)
+[Source](../../canvas/turn/turn_tree.hpp#L117)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_tree_1a349ae4eef98d40f29021463ecfaabbff"></a>
 
@@ -62,21 +75,47 @@ hashing::Hash256 puc::canvas::TurnTree::root_hash_
 
 Current content root, empty before Turns.
 
-[Source](../../canvas/turn/turn_tree.hpp#L53)
+[Source](../../canvas/turn/turn_tree.hpp#L119)
 
 ## Public functions
 
-<a id="symbol-classpuc_1_1canvas_1_1_turn_tree_1a0d690635b3dae4d606004c6dc1114fa2"></a>
+<a id="symbol-classpuc_1_1canvas_1_1_turn_tree_1af9b7089e5b92f51011c8da29f25dd62a"></a>
 
-### `insert`
+### `TurnTree`
 
 ```cpp
-TurnTree::Status puc::canvas::TurnTree::insert(const proto::Turn &turn)
+puc::canvas::TurnTree::TurnTree()=default
 ```
 
-Insert one committed Turn and rehash only its root-to-leaf path.
+Construct an empty tree with one authoritative synthetic-root counter.
 
-[Source](../../canvas/turn/turn_tree.hpp#L30)
+[Source](../../canvas/turn/turn_tree.hpp#L74)
+
+<a id="symbol-classpuc_1_1canvas_1_1_turn_tree_1a6d2cd2724c3378a4605576f13ac6122f"></a>
+
+### `reply_to`
+
+```cpp
+TurnTree::Status puc::canvas::TurnTree::reply_to(std::span< const std::uint8_t > canvas_uuid, const proto::TurnId *parent, proto::Turn &started)
+```
+
+Allocate one parent-derived ID and construct an uncommitted Turn shell.
+
+The synthetic root is selected when `parent` is null. Allocation is process-local and authoritative. Concurrent allocations are safe while the caller prevents [apply()](#symbol-classpuc_1_1canvas_1_1_turn_tree_1a1096219ec6f7d2ed0d57e041a1afe33a) or [rebuild()](#symbol-classpuc_1_1canvas_1_1_turn_tree_1a0a0bfca7514121c11b638acc0f98777e) from mutating the Trie.
+
+[Source](../../canvas/turn/turn_tree.hpp#L92)
+
+<a id="symbol-classpuc_1_1canvas_1_1_turn_tree_1a1096219ec6f7d2ed0d57e041a1afe33a"></a>
+
+### `apply`
+
+```cpp
+TurnTree::Status puc::canvas::TurnTree::apply(const proto::Turn &turn)
+```
+
+Insert one committed Turn and rehash its root-to-leaf path.
+
+[Source](../../canvas/turn/turn_tree.hpp#L96)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_tree_1a0a0bfca7514121c11b638acc0f98777e"></a>
 
@@ -88,7 +127,7 @@ TurnTree::Status puc::canvas::TurnTree::rebuild(std::span< const proto::Turn > t
 
 Reconstruct a complete candidate Trie and replace this tree on success.
 
-[Source](../../canvas/turn/turn_tree.hpp#L33)
+[Source](../../canvas/turn/turn_tree.hpp#L99)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_tree_1a6b197828a661aca7a67d2dc74001be61"></a>
 
@@ -98,9 +137,9 @@ Reconstruct a complete candidate Trie and replace this tree on success.
 const proto::Turn * puc::canvas::TurnTree::find(const TurnAddress &address) const
 ```
 
-Find the committed Turn at one parsed human-readable address.
+Find the durable Turn at one parsed human-readable address.
 
-[Source](../../canvas/turn/turn_tree.hpp#L36)
+[Source](../../canvas/turn/turn_tree.hpp#L102)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_tree_1a5ac7f8b8d10bc8614204536d19fa35b6"></a>
 
@@ -110,9 +149,9 @@ Find the committed Turn at one parsed human-readable address.
 std::size_t puc::canvas::TurnTree::size() const noexcept
 ```
 
-Return the number of committed Turns, excluding the internal Trie root.
+Return the number of durable Turns, excluding the internal Trie root.
 
-[Source](../../canvas/turn/turn_tree.hpp#L39)
+[Source](../../canvas/turn/turn_tree.hpp#L105)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_tree_1acacf120723408288126fb9d6a63aa784"></a>
 
@@ -124,18 +163,18 @@ const hashing::Hash256 & puc::canvas::TurnTree::root_hash() const noexcept
 
 Return the content root of the currently materialized Turn Trie.
 
-[Source](../../canvas/turn/turn_tree.hpp#L42)
+[Source](../../canvas/turn/turn_tree.hpp#L108)
 
 ## Private functions
 
-<a id="symbol-classpuc_1_1canvas_1_1_turn_tree_1a462039fb219145c12ddd64400eb9edff"></a>
+<a id="symbol-classpuc_1_1canvas_1_1_turn_tree_1aadfb89999c0cd49ed445d70cbe5d92a3"></a>
 
 ### `hash_node`
 
 ```cpp
-hashing::Hash256 puc::canvas::TurnTree::hash_node(containers::Trie< AddressComponent, proto::Turn >::NodeIndex index) const
+hashing::Hash256 puc::canvas::TurnTree::hash_node(Trie::NodeIndex index) const
 ```
 
 Canonically hash one node from its Turn and ordered child hashes.
 
-[Source](../../canvas/turn/turn_tree.hpp#L46)
+[Source](../../canvas/turn/turn_tree.hpp#L114)

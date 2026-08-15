@@ -2,7 +2,7 @@
 
 /**
  * @file turn_datastore.hpp
- * @brief Atomic human-readable Turn numbering and persistence.
+ * @brief Persistence for pre-addressed committed Turns.
  */
 
 #include <cstdint>
@@ -14,7 +14,7 @@
 
 namespace puc::canvas::datastore {
 
-/** Persist committed Turns under transactionally allocated human addresses. */
+/** Persist committed Turns under caller-reserved human addresses. */
 class TurnDatastore final {
  public:
   /** Borrow an initialized database for the lifetime of this wrapper. */
@@ -23,17 +23,11 @@ class TurnDatastore final {
   /** Return the ordered migration catalog owned by this datastore. */
   static MigrationSet migrations() noexcept;
 
-  /**
-   * Assign the next sibling address and persist the Turn atomically.
-   *
-   * The submitted Turn may omit its ID entirely. If it supplies a Canvas UUID,
-   * it must match `canvas_uuid`; any supplied human address is replaced by the
-   * stable address assigned inside the same SQLite write transaction.
-   */
-  Status number_and_persist(std::span<const std::uint8_t> canvas_uuid,
-                            const proto::Turn& submitted, proto::Turn& turn);
+  /** Persist one complete, pre-addressed Turn exactly once. */
+  Status persist(std::span<const std::uint8_t> canvas_uuid,
+                 const proto::Turn& submitted, proto::Turn& turn);
 
-  /** Load every committed Turn belonging to one Canvas. */
+  /** Load the latest durable state of every Turn belonging to one Canvas. */
   Status load_all(std::span<const std::uint8_t> canvas_uuid,
                   std::vector<proto::Turn>& turns);
 

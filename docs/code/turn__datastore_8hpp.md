@@ -2,7 +2,7 @@
 
 # File `turn_datastore.hpp`
 
-Atomic human-readable Turn numbering and persistence.
+Persistence for pre-addressed committed Turns.
 
 [Source](../../canvas/protos/datastore/turn_datastore.hpp)
 

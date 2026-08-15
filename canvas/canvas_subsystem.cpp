@@ -12,6 +12,7 @@
 #include <memory>
 #include <mutex>
 #include <optional>
+#include <shared_mutex>
 #include <span>
 #include <string>
 #include <string_view>
@@ -97,6 +98,23 @@ bool publish_announcement(
   return publish_proto(channel, announcement);
 }
 
+/** Translate one in-memory Turn-tree result at the subsystem boundary. */
+canvas::datastore::Status datastore_status(canvas::TurnTree::Status status) {
+  switch (status) {
+    case canvas::TurnTree::Status::OK:
+      return canvas::datastore::Status::OK;
+    case canvas::TurnTree::Status::INVALID_TURN:
+      return canvas::datastore::Status::INVALID_ARGUMENT;
+    case canvas::TurnTree::Status::PARENT_NOT_FOUND:
+      return canvas::datastore::Status::NOT_FOUND;
+    case canvas::TurnTree::Status::ALREADY_EXISTS:
+      return canvas::datastore::Status::ALREADY_EXISTS;
+    case canvas::TurnTree::Status::ADDRESS_EXHAUSTED:
+      return canvas::datastore::Status::INVALID_STATE;
+  }
+  return canvas::datastore::Status::INVALID_STATE;
+}
+
 }  // namespace
 
 /** Hidden mutable resources behind the Canvas lifecycle adapter. */
@@ -107,7 +125,7 @@ class CanvasSubsystem::Impl {
   std::unique_ptr<canvas::datastore::CanvasDatastore>
       canvases; /**< Aggregate and Merkle-root persistence. */
   std::unique_ptr<canvas::datastore::TurnDatastore>
-      turns; /**< Atomic numbering and Turn persistence. */
+      turns; /**< Pre-addressed committed-Turn persistence. */
   std::unique_ptr<canvas::TurnPipeline>
       pipeline; /**< Runtime-extensible graph registration surface. */
   canvas::proto::Canvas canvas;   /**< Materialized aggregate descriptor. */
@@ -121,7 +139,7 @@ class CanvasSubsystem::Impl {
   std::shared_ptr<ipc::Channel>
       query_channel; /**< Shared late-subscriber discovery query transport. */
   std::shared_ptr<ipc::Channel>
-      turn_submission_channel; /**< Owned unnumbered-Turn transport. */
+      turn_submission_channel; /**< Owned committed-Turn transport. */
   std::shared_ptr<ipc::Channel>
       committed_turn_channel; /**< Owned durable-Turn broadcast transport. */
   std::shared_ptr<ipc::Channel> committed_presentation_channel; /**< Owned
@@ -131,16 +149,13 @@ class CanvasSubsystem::Impl {
   ipc::Subscription
       query_subscription;   /**< Active current-state query subscription. */
   std::string channel_root; /**< Stable absolute Canvas namespace root. */
-  std::string turn_submission_name;        /**< Unnumbered-Turn input route. */
+  std::string turn_submission_name;        /**< Pre-addressed Turn input. */
   std::string committed_turn_name;         /**< Durable-Turn output route. */
   std::string committed_presentation_name; /**< Durable-Presentation route. */
   std::mutex mutex; /**< Protects pump control state and the pending queue. */
   std::condition_variable changed; /**< Signals queued work or shutdown. */
   std::deque<canvas::proto::Turn> pending; /**< FIFO submitted-Turn queue. */
-  std::mutex numbering_mutex; /**< Serializes address allocation and insert. */
-  std::condition_variable numbering_changed; /**< Advances FIFO numbering. */
-  std::uint64_t next_numbering_ticket = 0U;  /**< Next accepted FIFO ticket. */
-  mutable std::mutex
+  mutable std::shared_mutex
       state_mutex;        /**< Protects Trie and Canvas materialization. */
   bool accepting = false; /**< Whether callbacks may enqueue new Turns. */
   bool closing   = false; /**< Whether the pump exits after draining. */
@@ -215,30 +230,17 @@ class CanvasSubsystem::Impl {
                                 state);
   }
 
-  /** Atomically number and persist the submitted Turn. */
-  void number_and_persist(canvas::TurnContext& context) {
-    std::unique_lock lock(numbering_mutex);
-    numbering_changed.wait(lock, [this, &context] {
-      return context.ingress_ticket() == next_numbering_ticket;
-    });
-    try {
-      const canvas::datastore::Status status =
-          turns->number_and_persist(uuid, context.submitted(), context.turn());
-      if (!canvas::datastore::is_ok(status)) context.fail(status);
-    } catch (...) {
-      context.fail(canvas::datastore::Status::INVALID_STATE);
-    }
-    ++next_numbering_ticket;
-    lock.unlock();
-    numbering_changed.notify_all();
+  /** Persist one complete, already-addressed Turn. */
+  void persist_turn(canvas::TurnContext& context) {
+    context.fail(turns->persist(uuid, context.submitted(), context.turn()));
   }
 
   /** Update and durably checkpoint the materialized Turn Trie. */
   void update_trie(canvas::TurnContext& context) {
     canvas::proto::Turn committed;
     {
-      const std::lock_guard lock(state_mutex);
-      if (turn_tree.insert(context.turn()) != canvas::TurnTree::Status::OK) {
+      const std::unique_lock lock(state_mutex);
+      if (turn_tree.apply(context.turn()) != canvas::TurnTree::Status::OK) {
         std::vector<canvas::proto::Turn> stored;
         const canvas::datastore::Status loaded = turns->load_all(uuid, stored);
         if (!canvas::datastore::is_ok(loaded) ||
@@ -349,16 +351,16 @@ Status CanvasSubsystem::initialize(AppState& app) {
 
   impl_->pipeline = std::make_unique<canvas::TurnPipeline>();
   if (!execution_graph::is_ok(impl_->pipeline->register_node(
-          std::string{kNumberAndPersistNode},
+          std::string{kPersistTurnNode},
           [implementation = impl_.get()](canvas::TurnContext& context) {
-            implementation->number_and_persist(context);
+            implementation->persist_turn(context);
           })) ||
       !execution_graph::is_ok(impl_->pipeline->register_node(
           std::string{kUpdateTrieNode},
           [implementation = impl_.get()](canvas::TurnContext& context) {
             implementation->update_trie(context);
           },
-          {std::string{kNumberAndPersistNode}}))) {
+          {std::string{kPersistTurnNode}}))) {
     static_cast<void>(terminate(app));
     return Status::SUBSYSTEM_FAILURE;
   }
@@ -507,8 +509,7 @@ Status CanvasSubsystem::terminate(AppState& app) noexcept {
   impl_->canvas.Clear();
   impl_->uuid.clear();
   impl_->turn_trie_uuid.clear();
-  impl_->turn_tree             = {};
-  impl_->next_numbering_ticket = 0U;
+  impl_->turn_tree = {};
   impl_->channel_root.clear();
   impl_->turn_submission_name.clear();
   impl_->committed_turn_name.clear();
@@ -517,12 +518,23 @@ Status CanvasSubsystem::terminate(AppState& app) noexcept {
 }
 
 canvas::proto::Canvas CanvasSubsystem::canvas() const {
-  const std::lock_guard lock(impl_->state_mutex);
+  const std::shared_lock lock(impl_->state_mutex);
   return impl_->canvas;
 }
 
 const std::vector<std::uint8_t>& CanvasSubsystem::canvas_uuid() const noexcept {
   return impl_->uuid;
+}
+
+canvas::datastore::Status CanvasSubsystem::reply_to(
+    const canvas::proto::TurnId* parent, canvas::proto::Turn& started) {
+  started.Clear();
+  if (impl_->pipeline == nullptr || impl_->uuid.size() != 16U) {
+    return canvas::datastore::Status::INVALID_STATE;
+  }
+  const std::shared_lock lock(impl_->state_mutex);
+  return datastore_status(
+      impl_->turn_tree.reply_to(impl_->uuid, parent, started));
 }
 
 std::string CanvasSubsystem::channel_root_name() const {
@@ -548,7 +560,7 @@ canvas::TurnPipeline* CanvasSubsystem::pipeline() noexcept {
 void CanvasSubsystem::materialize_presentation(
     const canvas::proto::Presentation& presentation) noexcept {
   try {
-    const std::lock_guard lock(impl_->state_mutex);
+    const std::unique_lock lock(impl_->state_mutex);
     *impl_->canvas.mutable_presentation() = presentation;
     if (presentation.has_root_hash()) {
       impl_->canvas.set_presentation_root_hash(presentation.root_hash());

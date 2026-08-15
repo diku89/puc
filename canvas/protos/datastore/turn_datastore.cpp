@@ -1,9 +1,10 @@
-/** @file turn_datastore.cpp @brief Transactional Turn numbering and storage. */
+/** @file turn_datastore.cpp @brief Pre-addressed committed-Turn storage. */
 
 #include "canvas/protos/datastore/turn_datastore.hpp"
 
 #include <array>
 #include <cstdint>
+#include <limits>
 #include <span>
 #include <string>
 #include <string_view>
@@ -43,84 +44,79 @@ Status bind_parent(Statement& statement, std::int32_t index,
              : statement.bind_null(index);
 }
 
+bool valid_address(const proto::Turn& turn, const TurnAddress& address) {
+  if (!turn.has_parent()) {
+    return address.components().size() == 1U &&
+           address.components().front().kind == AddressComponent::Kind::NUMERIC;
+  }
+  const auto parent = TurnAddress::parse(turn.parent().human_address());
+  if (!parent.has_value() ||
+      address.components().size() != parent->components().size() + 1U) {
+    return false;
+  }
+  const AddressComponent& component = address.components().back();
+  return component.kind == AddressComponent::Kind::NUMERIC &&
+         parent->numeric_child(component.ordinal) == address;
+}
+
 }  // namespace
 
 MigrationSet TurnDatastore::migrations() noexcept {
   return MigrationSet{.datastore = "canvas.turns", .migrations = kMigrations};
 }
 
-Status TurnDatastore::number_and_persist(
-    std::span<const std::uint8_t> canvas_uuid, const proto::Turn& submitted,
-    proto::Turn& turn) {
+Status TurnDatastore::persist(std::span<const std::uint8_t> canvas_uuid,
+                              const proto::Turn& submitted, proto::Turn& turn) {
   turn.Clear();
   const std::string_view canvas_bytes{
       reinterpret_cast<const char*>(canvas_uuid.data()), canvas_uuid.size()};
-  if (canvas_uuid.size() != kCanvasUuidBytes ||
-      (submitted.has_id() && submitted.id().has_canvas_uuid() &&
-       submitted.id().canvas_uuid() != canvas_bytes) ||
-      !submitted.has_actor() || !submitted.actor().has_kind() ||
+  if (canvas_uuid.size() != kCanvasUuidBytes || !submitted.has_id() ||
+      !submitted.id().has_canvas_uuid() ||
+      submitted.id().canvas_uuid() != canvas_bytes ||
+      !submitted.id().has_human_address() || !submitted.has_actor() ||
+      !submitted.actor().has_kind() ||
       submitted.actor().kind() == proto::Actor::UNSPECIFIED ||
       !submitted.has_payload() || !submitted.payload().has_kind() ||
       submitted.payload().kind() == proto::Payload::KIND_UNSPECIFIED ||
       (submitted.has_parent() &&
-       ((submitted.parent().has_canvas_uuid() &&
-         submitted.parent().canvas_uuid() != canvas_bytes) ||
-        !submitted.parent().has_human_address() ||
-        !TurnAddress::parse(submitted.parent().human_address()).has_value()))) {
+       (!submitted.parent().has_canvas_uuid() ||
+        submitted.parent().canvas_uuid() != canvas_bytes ||
+        !submitted.parent().has_human_address()))) {
     return Status::INVALID_ARGUMENT;
   }
-  const Database::Operation operation = database_.acquire();
-  if (!is_ok(database_.begin_immediate())) return Status::SQL_ERROR;
+  const auto address = TurnAddress::parse(submitted.id().human_address());
+  if (!address.has_value() || !valid_address(submitted, *address) ||
+      address->components().back().ordinal >
+          std::numeric_limits<std::uint32_t>::max()) {
+    return Status::INVALID_ARGUMENT;
+  }
 
-  if (submitted.has_parent()) {
+  turn = submitted;
+  std::string payload;
+  if (!turn.SerializeToString(&payload)) {
+    turn.Clear();
+    return Status::SERIALIZATION_ERROR;
+  }
+
+  const Database::Operation operation = database_.acquire();
+  if (!is_ok(database_.begin_immediate())) {
+    turn.Clear();
+    return Status::SQL_ERROR;
+  }
+
+  if (turn.has_parent()) {
     Statement parent;
     if (!is_ok(
             database_.prepare("SELECT 1 FROM turns WHERE canvas_uuid = ?1 AND "
                               "human_address = ?2;",
                               parent)) ||
         !is_ok(parent.bind(1, canvas_uuid)) ||
-        !is_ok(parent.bind(2, submitted.parent().human_address())) ||
+        !is_ok(parent.bind(2, turn.parent().human_address())) ||
         parent.step() != Status::OK) {
       database_.rollback();
+      turn.Clear();
       return Status::NOT_FOUND;
     }
-  }
-
-  Statement next;
-  if (!is_ok(database_.prepare(
-          "SELECT COALESCE(MAX(sibling_ordinal), 0) + 1 FROM turns "
-          "WHERE canvas_uuid = ?1 AND parent_address IS ?2;",
-          next)) ||
-      !is_ok(next.bind(1, canvas_uuid)) ||
-      !is_ok(bind_parent(next, 2, submitted)) || next.step() != Status::OK) {
-    database_.rollback();
-    return Status::SQL_ERROR;
-  }
-  const std::int64_t next_ordinal = next.integer(0);
-  if (next_ordinal <= 0) {
-    database_.rollback();
-    return Status::CORRUPT_DATA;
-  }
-
-  const TurnAddress address =
-      submitted.has_parent()
-          ? TurnAddress::parse(submitted.parent().human_address())
-                ->numeric_child(static_cast<std::uint64_t>(next_ordinal))
-          : TurnAddress::root(static_cast<std::uint64_t>(next_ordinal));
-
-  turn = submitted;
-  turn.mutable_id()->set_canvas_uuid(canvas_uuid.data(), canvas_uuid.size());
-  turn.mutable_id()->set_human_address(address.string());
-  if (turn.has_parent() && !turn.parent().has_canvas_uuid()) {
-    turn.mutable_parent()->set_canvas_uuid(canvas_uuid.data(),
-                                           canvas_uuid.size());
-  }
-
-  std::string payload;
-  if (!turn.SerializeToString(&payload)) {
-    database_.rollback();
-    turn.Clear();
-    return Status::SERIALIZATION_ERROR;
   }
 
   Statement insert;
@@ -129,9 +125,10 @@ Status TurnDatastore::number_and_persist(
           "sibling_ordinal, payload) VALUES(?1, ?2, ?3, ?4, ?5);",
           insert)) ||
       !is_ok(insert.bind(1, canvas_uuid)) ||
-      !is_ok(insert.bind(2, address.string())) ||
-      !is_ok(bind_parent(insert, 3, submitted)) ||
-      !is_ok(insert.bind(4, next_ordinal)) ||
+      !is_ok(insert.bind(2, turn.id().human_address())) ||
+      !is_ok(bind_parent(insert, 3, turn)) ||
+      !is_ok(insert.bind(4, static_cast<std::int64_t>(
+                                address->components().back().ordinal))) ||
       !is_ok(insert.bind(5, bytes(payload)))) {
     database_.rollback();
     turn.Clear();
@@ -144,6 +141,7 @@ Status TurnDatastore::number_and_persist(
     return inserted == Status::ALREADY_EXISTS ? Status::ALREADY_EXISTS
                                               : Status::SQL_ERROR;
   }
+
   if (!is_ok(database_.commit())) {
     database_.rollback();
     turn.Clear();

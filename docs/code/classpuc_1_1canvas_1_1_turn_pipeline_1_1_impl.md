@@ -73,18 +73,6 @@ Accepted runs including completion.
 
 [Source](../../canvas/session/turn_pipeline.cpp#L108)
 
-<a id="symbol-classpuc_1_1canvas_1_1_turn_pipeline_1_1_impl_1aee4d77d5939906a7d8f09e065b78a629"></a>
-
-### `next_ingress_ticket`
-
-```cpp
-std::uint64_t puc::canvas::TurnPipeline::Impl::next_ingress_ticket
-```
-
-Next transient FIFO ticket.
-
-[Source](../../canvas/session/turn_pipeline.cpp#L109)
-
 <a id="symbol-classpuc_1_1canvas_1_1_turn_pipeline_1_1_impl_1a7e7bb37a8b36b7a428433ffecd9cdd12"></a>
 
 ### `registrations`
@@ -95,7 +83,7 @@ std::vector<Registration> puc::canvas::TurnPipeline::Impl::registrations
 
 Current registration order.
 
-[Source](../../canvas/session/turn_pipeline.cpp#L110)
+[Source](../../canvas/session/turn_pipeline.cpp#L109)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_pipeline_1_1_impl_1a16eca2a311b929c42c5163a4d5c6f204"></a>
 
@@ -107,7 +95,7 @@ std::unordered_map<NodeId, std::size_t> puc::canvas::TurnPipeline::Impl::indices
 
 Name lookup index.
 
-[Source](../../canvas/session/turn_pipeline.cpp#L111)
+[Source](../../canvas/session/turn_pipeline.cpp#L110)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_pipeline_1_1_impl_1a287025e8c342960b6aefc5b56ca73d5e"></a>
 
@@ -119,7 +107,7 @@ std::shared_ptr<const CompiledPlan> puc::canvas::TurnPipeline::Impl::plan
 
 Current immutable plan.
 
-[Source](../../canvas/session/turn_pipeline.cpp#L112)
+[Source](../../canvas/session/turn_pipeline.cpp#L111)
 
 ## Public static functions
 

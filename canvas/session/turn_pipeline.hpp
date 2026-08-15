@@ -7,7 +7,6 @@
 
 #include <any>
 #include <atomic>
-#include <cstdint>
 #include <functional>
 #include <memory>
 #include <mutex>
@@ -31,7 +30,7 @@ namespace puc::canvas {
 /** Mutable data shared by the registered nodes of one Turn graph run. */
 class TurnContext final {
  public:
-  /** Return the uncommitted Turn received by the pipeline. */
+  /** Return the immutable committed Turn received by the pipeline. */
   const proto::Turn& submitted() const noexcept { return submitted_; }
 
   /** Return the Turn being constructed by registered processing nodes. */
@@ -45,15 +44,6 @@ class TurnContext final {
 
   /** Return the first failure, or OK while processing may continue. */
   datastore::Status status() const noexcept { return status_.load(); }
-
-  /**
-   * Return the process-local FIFO ticket assigned at pipeline submission.
-   *
-   * This transient scheduling value is neither persisted nor part of Turn
-   * identity. Resource owners may use it to make an otherwise-unfair mutex
-   * honor ingress order.
-   */
-  std::uint64_t ingress_ticket() const noexcept { return ingress_ticket_; }
 
   /** Retain run-local state for a later node without sharing it across Turns.
    */
@@ -80,11 +70,10 @@ class TurnContext final {
   friend class TurnPipeline;
 
   /** Reset this context for one independent graph run. */
-  void reset(const proto::Turn& submitted, std::uint64_t ingress_ticket);
+  void reset(const proto::Turn& submitted);
 
   proto::Turn submitted_; /**< Immutable input copied from IPC. */
-  proto::Turn turn_;      /**< Incrementally constructed committed Turn. */
-  std::uint64_t ingress_ticket_ = 0U; /**< Transient FIFO submission order. */
+  proto::Turn turn_;      /**< Durable output built by processing nodes. */
   std::atomic<datastore::Status> status_{
       datastore::Status::OK}; /**< First run failure, if any. */
   std::mutex state_mutex_; /**< Protects cross-node run-local scratch state. */
@@ -102,8 +91,8 @@ class TurnContext final {
  *
  * Runs are independent and may overlap. The pipeline never serializes a Turn
  * around the entire graph. Each registered callback is responsible for
- * synchronizing only the resource it owns, such as a numbering allocator,
- * database transaction, Trie, or Presentation root. Model inference, tool
+ * synchronizing only the resource it owns, such as a database transaction,
+ * Trie, or Presentation root. Model inference, tool
  * execution, and other potentially long-lived workflows should trigger their
  * own execution graphs rather than extend this authoritative commit path.
  */

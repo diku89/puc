@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "canvas/protos/canvas.pb.h"
+#include "canvas/protos/datastore/status.hpp"
 #include "canvas/protos/presentation.pb.h"
 #include "canvas/protos/turn.pb.h"
 #include "state/state.hpp"
@@ -52,23 +53,21 @@ class CanvasSubsystem final : public AppSubsystem {
   static constexpr std::uint32_t kChannelProtocolVersion = 1U;
 
   /**
-   * Relative route accepting unnumbered Turn submissions.
+   * Relative route accepting complete, pre-addressed Turns.
    *
    * \channel{//canvas/CANVAS_UUID/turns/submit||Carries serialized Turn
-   * protobufs that have not yet received their stable human address;
-   * CANVAS_UUID is the owning Canvas UUID rendered as 32 hexadecimal digits.||
-   * Human, model, and tool input adapters.||
-   * \ref puc::app::CanvasSubsystem "CanvasSubsystem", which atomically
-   * numbers and persists each accepted Turn.}
+   * protobufs whose stable ID was first reserved with reply_to(); CANVAS_UUID
+   * is the owning Canvas UUID rendered as 32 hexadecimal digits.||Human,
+   * model, and tool input adapters.||\ref puc::app::CanvasSubsystem
+   * "CanvasSubsystem", which persists and materializes each accepted Turn.}
    */
   static constexpr std::string_view kTurnSubmissionPath = "turns/submit";
 
   /**
-   * Relative route broadcasting durable, numbered Turns.
+   * Relative route broadcasting durable committed Turns.
    *
-   * \channel{//canvas/CANVAS_UUID/turns/committed||Broadcasts a Turn only
-   * after its immutable human address is assigned, its payload is persisted,
-   * and the materialized Turn Trie is updated.||
+   * \channel{//canvas/CANVAS_UUID/turns/committed||Broadcasts each Turn after
+   * it is persisted and the materialized Turn Trie is updated.||
    * \ref puc::app::CanvasSubsystem "CanvasSubsystem".||Turn Trie replicas,
    * reverse indexes, search builders, and other committed-Turn observers.}
    */
@@ -86,12 +85,10 @@ class CanvasSubsystem final : public AppSubsystem {
   static constexpr std::string_view kCommittedPresentationPath =
       "presentation/committed";
 
-  /** Stable graph node that atomically assigns an address and inserts a Turn.
-   */
-  static constexpr std::string_view kNumberAndPersistNode =
-      "canvas.number_and_persist";
+  /** Stable graph node that persists a complete, pre-addressed Turn. */
+  static constexpr std::string_view kPersistTurnNode = "canvas.persist_turn";
 
-  /** Stable graph node that materializes the committed Turn in the Trie. */
+  /** Stable graph node that materializes a durable Turn in the Trie. */
   static constexpr std::string_view kUpdateTrieNode = "canvas.update_trie";
 
   /** Construct an uninitialized Canvas lifecycle adapter. */
@@ -119,10 +116,20 @@ class CanvasSubsystem final : public AppSubsystem {
   /** Return the current Canvas UUID bytes. */
   const std::vector<std::uint8_t>& canvas_uuid() const noexcept;
 
+  /**
+   * Reserve one reply address and return an uncommitted Turn shell.
+   *
+   * Passing null selects the Canvas root. A non-null parent must identify an
+   * existing Turn in this Canvas. The caller fills the remaining fields and
+   * submits the returned parent-derived identity exactly once for commit.
+   */
+  canvas::datastore::Status reply_to(const canvas::proto::TurnId* parent,
+                                     canvas::proto::Turn& started);
+
   /** Return the absolute namespace root for this Canvas. */
   std::string channel_root_name() const;
 
-  /** Return the unnumbered-Turn submission channel name. */
+  /** Return the pre-addressed Turn submission channel name. */
   std::string turn_submission_channel_name() const;
 
   /** Return the durable committed-Turn channel name. */

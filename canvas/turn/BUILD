@@ -34,3 +34,14 @@ cc_test(
         "@googletest//:gtest_main",
     ],
 )
+
+cc_test(
+    name = "turn_tree_test",
+    size = "small",
+    srcs = ["turn_tree_test.cpp"],
+    deps = [
+        ":turn_tree",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+    ],
+)

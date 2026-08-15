@@ -4,7 +4,7 @@
 
 Fixed worker pools and asynchronous job scheduling.
 
-[Source](../../canvas/session/turn_pipeline.hpp#L25)
+[Source](../../canvas/session/turn_pipeline.hpp#L24)
 
 ## Related symbols
 

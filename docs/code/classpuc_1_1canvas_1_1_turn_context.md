@@ -4,7 +4,7 @@
 
 Mutable data shared by the registered nodes of one Turn graph run.
 
-[Source](../../canvas/session/turn_pipeline.hpp#L32)
+[Source](../../canvas/session/turn_pipeline.hpp#L31)
 
 ## Friends
 
@@ -16,7 +16,7 @@ Mutable data shared by the registered nodes of one Turn graph run.
 friend class TurnPipeline
 ```
 
-[Source](../../canvas/session/turn_pipeline.hpp#L80)
+[Source](../../canvas/session/turn_pipeline.hpp#L70)
 
 ## Private data members
 
@@ -30,7 +30,7 @@ proto::Turn puc::canvas::TurnContext::submitted_
 
 Immutable input copied from IPC.
 
-[Source](../../canvas/session/turn_pipeline.hpp#L85)
+[Source](../../canvas/session/turn_pipeline.hpp#L75)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_context_1a5e6fea3199dcd15fda4ffce1be3a9802"></a>
 
@@ -40,21 +40,9 @@ Immutable input copied from IPC.
 proto::Turn puc::canvas::TurnContext::turn_
 ```
 
-Incrementally constructed committed Turn.
+Durable output built by processing nodes.
 
-[Source](../../canvas/session/turn_pipeline.hpp#L86)
-
-<a id="symbol-classpuc_1_1canvas_1_1_turn_context_1a711768f8b4ad50a00d249691baa5e40e"></a>
-
-### `ingress_ticket_`
-
-```cpp
-std::uint64_t puc::canvas::TurnContext::ingress_ticket_
-```
-
-Transient FIFO submission order.
-
-[Source](../../canvas/session/turn_pipeline.hpp#L87)
+[Source](../../canvas/session/turn_pipeline.hpp#L76)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_context_1adfd52cf454f89cf1c0fd04ab5f705b8f"></a>
 
@@ -66,7 +54,7 @@ std::atomic<datastore::Status> puc::canvas::TurnContext::status_
 
 First run failure, if any.
 
-[Source](../../canvas/session/turn_pipeline.hpp#L88)
+[Source](../../canvas/session/turn_pipeline.hpp#L77)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_context_1a75bdb146e3735bdb51f65e0ca5e6fa87"></a>
 
@@ -78,7 +66,7 @@ std::mutex puc::canvas::TurnContext::state_mutex_
 
 Protects cross-node run-local scratch state.
 
-[Source](../../canvas/session/turn_pipeline.hpp#L90)
+[Source](../../canvas/session/turn_pipeline.hpp#L79)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_context_1acc8c96d94a36153f71e564db315a1718"></a>
 
@@ -90,7 +78,7 @@ std::unordered_map<std::string, std::any> puc::canvas::TurnContext::state_
 
 Typed values retained only for this Turn run.
 
-[Source](../../canvas/session/turn_pipeline.hpp#L92)
+[Source](../../canvas/session/turn_pipeline.hpp#L81)
 
 ## Public functions
 
@@ -102,9 +90,9 @@ Typed values retained only for this Turn run.
 const proto::Turn & puc::canvas::TurnContext::submitted() const noexcept
 ```
 
-Return the uncommitted Turn received by the pipeline.
+Return the immutable committed Turn received by the pipeline.
 
-[Source](../../canvas/session/turn_pipeline.hpp#L35)
+[Source](../../canvas/session/turn_pipeline.hpp#L34)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_context_1acb9c86efce92d06e89181b24dfa3410f"></a>
 
@@ -116,7 +104,7 @@ proto::Turn & puc::canvas::TurnContext::turn() noexcept
 
 Return the Turn being constructed by registered processing nodes.
 
-[Source](../../canvas/session/turn_pipeline.hpp#L38)
+[Source](../../canvas/session/turn_pipeline.hpp#L37)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_context_1a435fa9a47d46adf9fe1e6e2522675968"></a>
 
@@ -128,7 +116,7 @@ const proto::Turn & puc::canvas::TurnContext::turn() const noexcept
 
 Return the Turn being constructed by registered processing nodes.
 
-[Source](../../canvas/session/turn_pipeline.hpp#L41)
+[Source](../../canvas/session/turn_pipeline.hpp#L40)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_context_1a917e84e6da0778ab14a191a2c3e4bed4"></a>
 
@@ -140,7 +128,7 @@ void puc::canvas::TurnContext::fail(datastore::Status status) noexcept
 
 Record the first processing failure while preserving earlier failures.
 
-[Source](../../canvas/session/turn_pipeline.hpp#L44)
+[Source](../../canvas/session/turn_pipeline.hpp#L43)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_context_1a74cde7ba05af9dcfb9bbc5bd06a97ca3"></a>
 
@@ -152,21 +140,7 @@ datastore::Status puc::canvas::TurnContext::status() const noexcept
 
 Return the first failure, or OK while processing may continue.
 
-[Source](../../canvas/session/turn_pipeline.hpp#L47)
-
-<a id="symbol-classpuc_1_1canvas_1_1_turn_context_1a3b98478b286ff1149cd7a46c5ee822a5"></a>
-
-### `ingress_ticket`
-
-```cpp
-std::uint64_t puc::canvas::TurnContext::ingress_ticket() const noexcept
-```
-
-Return the process-local FIFO ticket assigned at pipeline submission.
-
-This transient scheduling value is neither persisted nor part of Turn identity. Resource owners may use it to make an otherwise-unfair mutex honor ingress order.
-
-[Source](../../canvas/session/turn_pipeline.hpp#L56)
+[Source](../../canvas/session/turn_pipeline.hpp#L46)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_context_1a9c899b6d87cba6c22d26db2c1835407e"></a>
 
@@ -178,7 +152,7 @@ void puc::canvas::TurnContext::store(std::string key, Value value)
 
 Retain run-local state for a later node without sharing it across Turns.
 
-[Source](../../canvas/session/turn_pipeline.hpp#L61)
+[Source](../../canvas/session/turn_pipeline.hpp#L51)
 
 <a id="symbol-classpuc_1_1canvas_1_1_turn_context_1abc4544de5195ee7e7f5b1ba7482bbb20"></a>
 
@@ -190,18 +164,18 @@ std::optional< Value > puc::canvas::TurnContext::take(std::string_view key)
 
 Move and remove typed run-local state retained by an earlier node.
 
-[Source](../../canvas/session/turn_pipeline.hpp#L68)
+[Source](../../canvas/session/turn_pipeline.hpp#L58)
 
 ## Private functions
 
-<a id="symbol-classpuc_1_1canvas_1_1_turn_context_1a067e4312fb4fa844ce29c9738bd9e57a"></a>
+<a id="symbol-classpuc_1_1canvas_1_1_turn_context_1a1967a8a7b88134b516390784302cc49a"></a>
 
 ### `reset`
 
 ```cpp
-void puc::canvas::TurnContext::reset(const proto::Turn &submitted, std::uint64_t ingress_ticket)
+void puc::canvas::TurnContext::reset(const proto::Turn &submitted)
 ```
 
 Reset this context for one independent graph run.
 
-[Source](../../canvas/session/turn_pipeline.hpp#L83)
+[Source](../../canvas/session/turn_pipeline.hpp#L73)
