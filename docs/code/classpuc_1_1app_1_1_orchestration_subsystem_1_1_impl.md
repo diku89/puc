@@ -4,7 +4,7 @@
 
 Hidden state shared by the two registered orchestration callbacks.
 
-[Source](../../canvas/session/orchestration_subsystem.cpp#L35)
+[Source](../../canvas/session/orchestration_subsystem.cpp#L42)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ CanvasSubsystem* puc::app::OrchestrationSubsystem::Impl::canvas
 
 Borrowed owning [Canvas](classpuc_1_1app_1_1_canvas.md) adapter.
 
-[Source](../../canvas/session/orchestration_subsystem.cpp#L37)
+[Source](../../canvas/session/orchestration_subsystem.cpp#L44)
 
 <a id="symbol-classpuc_1_1app_1_1_orchestration_subsystem_1_1_impl_1a77814932781516323f32b1201bafc556"></a>
 
@@ -30,7 +30,7 @@ std::unique_ptr<canvas::datastore::PresentationDatastore> puc::app::Orchestratio
 
 Durable nodes and commits.
 
-[Source](../../canvas/session/orchestration_subsystem.cpp#L39)
+[Source](../../canvas/session/orchestration_subsystem.cpp#L46)
 
 <a id="symbol-classpuc_1_1app_1_1_orchestration_subsystem_1_1_impl_1ada94fb908e4f242fc6e6b1459658c339"></a>
 
@@ -42,19 +42,19 @@ std::unique_ptr<canvas::PresentationTree> puc::app::OrchestrationSubsystem::Impl
 
 Current materialized presentation order.
 
-[Source](../../canvas/session/orchestration_subsystem.cpp#L41)
+[Source](../../canvas/session/orchestration_subsystem.cpp#L48)
 
-<a id="symbol-classpuc_1_1app_1_1_orchestration_subsystem_1_1_impl_1aaaba07c5323293616df648a8cbac5592"></a>
+<a id="symbol-classpuc_1_1app_1_1_orchestration_subsystem_1_1_impl_1a0a91b504c0db7705fe59cf4cf1815a2c"></a>
 
-### `pending`
+### `presentation_mutex`
 
 ```cpp
-canvas::PendingPresentation puc::app::OrchestrationSubsystem::Impl::pending
+std::mutex puc::app::OrchestrationSubsystem::Impl::presentation_mutex
 ```
 
-State shared by owned graph nodes.
+Serializes one root advancement.
 
-[Source](../../canvas/session/orchestration_subsystem.cpp#L43)
+[Source](../../canvas/session/orchestration_subsystem.cpp#L49)
 
 <a id="symbol-classpuc_1_1app_1_1_orchestration_subsystem_1_1_impl_1a375097412d934c4ff1029b2b5afec857"></a>
 
@@ -66,7 +66,7 @@ std::vector<std::uint8_t> puc::app::OrchestrationSubsystem::Impl::presentation_u
 
 Current Canvas-owned tree identity.
 
-[Source](../../canvas/session/orchestration_subsystem.cpp#L45)
+[Source](../../canvas/session/orchestration_subsystem.cpp#L51)
 
 <a id="symbol-classpuc_1_1app_1_1_orchestration_subsystem_1_1_impl_1a5f01395cce4c426e1da0dd43a8aaa06d"></a>
 
@@ -78,7 +78,7 @@ bool puc::app::OrchestrationSubsystem::Impl::registered
 
 Whether both owned nodes are in the pipeline.
 
-[Source](../../canvas/session/orchestration_subsystem.cpp#L46)
+[Source](../../canvas/session/orchestration_subsystem.cpp#L52)
 
 ## Public functions
 
@@ -92,7 +92,7 @@ void puc::app::OrchestrationSubsystem::Impl::linearize(canvas::TurnContext &cont
 
 Derive the next immutable presentation root for the committed Turn.
 
-[Source](../../canvas/session/orchestration_subsystem.cpp#L49)
+[Source](../../canvas/session/orchestration_subsystem.cpp#L55)
 
 <a id="symbol-classpuc_1_1app_1_1_orchestration_subsystem_1_1_impl_1a633e501d37fc03178eba0b4f7f051c86"></a>
 
@@ -104,7 +104,7 @@ void puc::app::OrchestrationSubsystem::Impl::commit(canvas::TurnContext &context
 
 Persist, materialize, and broadcast a prepared Presentation commit.
 
-[Source](../../canvas/session/orchestration_subsystem.cpp#L56)
+[Source](../../canvas/session/orchestration_subsystem.cpp#L70)
 
 <a id="symbol-classpuc_1_1app_1_1_orchestration_subsystem_1_1_impl_1a21cdeae93817337d98af606625435297"></a>
 
@@ -116,4 +116,4 @@ canvas::datastore::Status puc::app::OrchestrationSubsystem::Impl::reconcile()
 
 Commit every durable Turn absent from the Presentation recovery ledger.
 
-[Source](../../canvas/session/orchestration_subsystem.cpp#L85)
+[Source](../../canvas/session/orchestration_subsystem.cpp#L131)

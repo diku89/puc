@@ -2,7 +2,7 @@
 
 # File `turn_datastore.cpp`
 
-Transactional Turn numbering and storage.
+Pre-addressed committed-Turn storage.
 
 [Source](../../canvas/protos/datastore/turn_datastore.cpp)
 

@@ -19,8 +19,8 @@ namespace puc::canvas {
 struct AddressComponent {
   /** Select numeric sibling numbering or alphabetic response-part numbering. */
   enum class Kind : std::uint8_t {
-    NUMERIC,    /**< Positive decimal component such as `2`. */
-    ALPHABETIC, /**< Positive base-26 component such as `b`. */
+    NUMERIC    = 0U, /**< Positive decimal component such as `2`. */
+    ALPHABETIC = 1U, /**< Positive base-26 component such as `b`. */
   };
 
   Kind kind = Kind::NUMERIC;  /**< Component namespace used for rendering. */

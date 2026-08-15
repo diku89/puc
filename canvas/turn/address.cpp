@@ -17,9 +17,13 @@ namespace puc::canvas {
 namespace {
 
 std::optional<AddressComponent> parse_component(std::string_view text) {
-  if (text.empty()) return std::nullopt;
+  if (text.empty()) {
+    return std::nullopt;
+  }
   if (text.front() >= '0' && text.front() <= '9') {
-    if (text.front() == '0') return std::nullopt;
+    if (text.front() == '0') {
+      return std::nullopt;
+    }
     std::uint64_t value = 0U;
     const auto result =
         std::from_chars(text.data(), text.data() + text.size(), value);
@@ -33,7 +37,9 @@ std::optional<AddressComponent> parse_component(std::string_view text) {
 
   std::uint64_t value = 0U;
   for (const char character : text) {
-    if (character < 'a' || character > 'z') return std::nullopt;
+    if (character < 'a' || character > 'z') {
+      return std::nullopt;
+    }
     const std::uint64_t digit =
         static_cast<std::uint64_t>(character - 'a') + 1U;
     if (value > (std::numeric_limits<std::uint64_t>::max() - digit) / 26U) {
@@ -59,7 +65,9 @@ std::string alphabetic(std::uint64_t ordinal) {
 }  // namespace
 
 std::optional<TurnAddress> TurnAddress::parse(std::string_view text) {
-  if (text.empty()) return std::nullopt;
+  if (text.empty()) {
+    return std::nullopt;
+  }
   std::vector<AddressComponent> components;
   std::size_t begin = 0U;
   while (begin < text.size()) {
@@ -67,9 +75,13 @@ std::optional<TurnAddress> TurnAddress::parse(std::string_view text) {
     const std::size_t end =
         separator == std::string_view::npos ? text.size() : separator;
     const auto component = parse_component(text.substr(begin, end - begin));
-    if (!component.has_value()) return std::nullopt;
+    if (!component.has_value()) {
+      return std::nullopt;
+    }
     components.push_back(*component);
-    if (separator == std::string_view::npos) break;
+    if (separator == std::string_view::npos) {
+      break;
+    }
     begin = separator + 1U;
   }
   return TurnAddress{std::move(components)};
@@ -97,7 +109,9 @@ TurnAddress TurnAddress::alphabetic_child(std::uint64_t ordinal) const {
 std::string TurnAddress::string() const {
   std::string result;
   for (const AddressComponent& component : components_) {
-    if (!result.empty()) result.push_back('.');
+    if (!result.empty()) {
+      result.push_back('.');
+    }
     result.append(component.kind == AddressComponent::Kind::NUMERIC
                       ? std::to_string(component.ordinal)
                       : alphabetic(component.ordinal));

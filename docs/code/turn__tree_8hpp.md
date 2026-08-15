@@ -8,6 +8,7 @@ In-memory reply topology over the reusable Trie.
 
 ## Related symbols
 
+- [puc::canvas::TurnNode](classpuc_1_1canvas_1_1_turn_node.md)
 - [puc::canvas::TurnTree](classpuc_1_1canvas_1_1_turn_tree.md)
 - [puc](namespacepuc.md)
 - [puc::canvas](namespacepuc_1_1canvas.md)

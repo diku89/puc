@@ -67,7 +67,10 @@ MigrationSet PresentationDatastore::migrations() noexcept {
 Status PresentationDatastore::load_root(
     std::span<const std::uint8_t> presentation_uuid, hashing::Hash256& root) {
   root = {};
-  if (presentation_uuid.size() != 16U) return Status::INVALID_ARGUMENT;
+  if (presentation_uuid.size() != 16U) {
+    return Status::INVALID_ARGUMENT;
+  }
+  const Database::Operation operation = database_.acquire();
   Statement select;
   if (!is_ok(database_.prepare("SELECT root_hash FROM presentations "
                                "WHERE presentation_uuid = ?1;",
@@ -76,10 +79,16 @@ Status PresentationDatastore::load_root(
     return Status::SQL_ERROR;
   }
   const Status status = select.step();
-  if (status != Status::OK) return status;
-  if (select.is_null(0)) return Status::OK;
+  if (status != Status::OK) {
+    return status;
+  }
+  if (select.is_null(0)) {
+    return Status::OK;
+  }
   const std::string stored = select.blob(0);
-  if (stored.size() != root.bytes.size()) return Status::CORRUPT_DATA;
+  if (stored.size() != root.bytes.size()) {
+    return Status::CORRUPT_DATA;
+  }
   root = hash_from_blob(stored);
   return Status::OK;
 }
@@ -91,6 +100,7 @@ Status PresentationDatastore::load_node(
   if (presentation_uuid.size() != 16U || hash.empty()) {
     return Status::INVALID_ARGUMENT;
   }
+  const Database::Operation operation = database_.acquire();
   Statement select;
   if (!is_ok(database_.prepare(
           "SELECT turn_canvas_uuid, turn_human_address, left_hash, right_hash "
@@ -101,9 +111,13 @@ Status PresentationDatastore::load_node(
     return Status::SQL_ERROR;
   }
   const Status status = select.step();
-  if (status != Status::OK) return status;
+  if (status != Status::OK) {
+    return status;
+  }
   const std::string canvas_uuid = select.blob(0);
-  if (canvas_uuid.size() != 16U) return Status::CORRUPT_DATA;
+  if (canvas_uuid.size() != 16U) {
+    return Status::CORRUPT_DATA;
+  }
   node.turn_id.set_canvas_uuid(canvas_uuid);
   node.turn_id.set_human_address(select.text(1));
   if (!select.is_null(2)) {
@@ -127,7 +141,10 @@ Status PresentationDatastore::load_committed_turn_addresses(
     std::span<const std::uint8_t> presentation_uuid,
     std::vector<std::string>& human_addresses) {
   human_addresses.clear();
-  if (presentation_uuid.size() != 16U) return Status::INVALID_ARGUMENT;
+  if (presentation_uuid.size() != 16U) {
+    return Status::INVALID_ARGUMENT;
+  }
+  const Database::Operation operation = database_.acquire();
   Statement select;
   if (!is_ok(database_.prepare(
           "SELECT inserted_human_address FROM presentation_commits "
@@ -138,7 +155,9 @@ Status PresentationDatastore::load_committed_turn_addresses(
   }
   while (true) {
     const Status status = select.step();
-    if (status == Status::NOT_FOUND) return Status::OK;
+    if (status == Status::NOT_FOUND) {
+      return Status::OK;
+    }
     if (status != Status::OK) {
       human_addresses.clear();
       return Status::SQL_ERROR;
@@ -155,7 +174,10 @@ Status PresentationDatastore::commit(
   if (presentation_uuid.size() != 16U || new_root.empty() || nodes.empty()) {
     return Status::INVALID_ARGUMENT;
   }
-  if (!is_ok(database_.begin_immediate())) return Status::SQL_ERROR;
+  const Database::Operation operation = database_.acquire();
+  if (!is_ok(database_.begin_immediate())) {
+    return Status::SQL_ERROR;
+  }
 
   hashing::Hash256 stored_root;
   Statement current;

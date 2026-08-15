@@ -4,7 +4,7 @@
 
 Own the durable [Canvas](classpuc_1_1app_1_1_canvas.md) aggregate and its ingress-side graph nodes.
 
-[Source](../../canvas/canvas_subsystem.hpp#L26)
+[Source](../../canvas/canvas_subsystem.hpp#L27)
 
 ## Related symbols
 
@@ -30,7 +30,7 @@ Global lifecycle event channel used to discover [Canvas](classpuc_1_1app_1_1_can
 **Producers:** [CanvasSubsystem](#) instances.  
 **Consumers:** [Canvas](classpuc_1_1app_1_1_canvas.md) discovery clients that subscribe before querying current state.
 
-[Source](../../canvas/canvas_subsystem.hpp#L37)
+[Source](../../canvas/canvas_subsystem.hpp#L38)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1acd361ac545c6c73e513a5b3143ce34fd"></a>
 
@@ -50,7 +50,7 @@ Global query channel used by subscribers that missed an announcement.
 **Producers:** Late [Canvas](classpuc_1_1app_1_1_canvas.md) discovery clients after subscribing to //canvas/channels\_announce.  
 **Consumers:** Running [CanvasSubsystem](#) instances.
 
-[Source](../../canvas/canvas_subsystem.hpp#L48)
+[Source](../../canvas/canvas_subsystem.hpp#L49)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1ae2d19f119b311b926f746899c1ec97be"></a>
 
@@ -62,7 +62,7 @@ std::uint32_t puc::app::CanvasSubsystem::kChannelProtocolVersion
 
 Protocol version carried by [Canvas](classpuc_1_1app_1_1_canvas.md) namespace announcements.
 
-[Source](../../canvas/canvas_subsystem.hpp#L52)
+[Source](../../canvas/canvas_subsystem.hpp#L53)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1a3b94e2be405fd2c7eda4088dc4d2aea7"></a>
 
@@ -72,15 +72,15 @@ Protocol version carried by [Canvas](classpuc_1_1app_1_1_canvas.md) namespace an
 std::string_view puc::app::CanvasSubsystem::kTurnSubmissionPath
 ```
 
-Relative route accepting unnumbered Turn submissions.
+Relative route accepting complete, pre-addressed Turns.
 
 **[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000003):**
 
 **Kind:** Channel  
 **Name:** `//canvas/CANVAS_UUID/turns/submit`  
-**Purpose:** Carries serialized Turn protobufs that have not yet received their stable human address; CANVAS\_UUID is the owning [Canvas](classpuc_1_1app_1_1_canvas.md) UUID rendered as 32 hexadecimal digits.  
+**Purpose:** Carries serialized Turn protobufs whose stable ID was first reserved with [reply\_to()](#symbol-classpuc_1_1app_1_1_canvas_subsystem_1a8c428b1142044e3b59f6d5c51557ec71); CANVAS\_UUID is the owning [Canvas](classpuc_1_1app_1_1_canvas.md) UUID rendered as 32 hexadecimal digits.  
 **Producers:** Human, model, and tool input adapters.  
-**Consumers:** [CanvasSubsystem](#), which atomically numbers and persists each accepted Turn.
+**Consumers:** [CanvasSubsystem](#), which persists and materializes each accepted Turn.
 
 [Source](../../canvas/canvas_subsystem.hpp#L64)
 
@@ -92,17 +92,17 @@ Relative route accepting unnumbered Turn submissions.
 std::string_view puc::app::CanvasSubsystem::kCommittedTurnPath
 ```
 
-Relative route broadcasting durable, numbered Turns.
+Relative route broadcasting durable committed Turns.
 
 **[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000004):**
 
 **Kind:** Channel  
 **Name:** `//canvas/CANVAS_UUID/turns/committed`  
-**Purpose:** Broadcasts a Turn only after its immutable human address is assigned, its payload is persisted, and the materialized Turn Trie is updated.  
+**Purpose:** Broadcasts each Turn after it is persisted and the materialized Turn Trie is updated.  
 **Producers:** [CanvasSubsystem](#).  
 **Consumers:** Turn Trie replicas, reverse indexes, search builders, and other committed-Turn observers.
 
-[Source](../../canvas/canvas_subsystem.hpp#L75)
+[Source](../../canvas/canvas_subsystem.hpp#L74)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1a9b35ed0f8181bf9dd80c31df3296e6ec"></a>
 
@@ -122,19 +122,19 @@ Relative route broadcasting durable Presentation commits.
 **Producers:** [OrchestrationSubsystem](classpuc_1_1app_1_1_orchestration_subsystem.md).  
 **Consumers:** TUI presentation consumers and Presentation-tree replicas.
 
-[Source](../../canvas/canvas_subsystem.hpp#L86)
+[Source](../../canvas/canvas_subsystem.hpp#L85)
 
-<a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1aa53c1e07567dc2abdbe008670cb9f5bd"></a>
+<a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1aa2e1ea9a948dc0fd05bad7e9fd73d0ae"></a>
 
-### `kNumberAndPersistNode`
+### `kPersistTurnNode`
 
 ```cpp
-std::string_view puc::app::CanvasSubsystem::kNumberAndPersistNode
+std::string_view puc::app::CanvasSubsystem::kPersistTurnNode
 ```
 
-Stable graph node that atomically assigns an address and inserts a Turn.
+Stable graph node that persists a complete, pre-addressed Turn.
 
-[Source](../../canvas/canvas_subsystem.hpp#L91)
+[Source](../../canvas/canvas_subsystem.hpp#L89)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1a9d151f55be20fd003f31baa5ac8a08ce"></a>
 
@@ -144,9 +144,9 @@ Stable graph node that atomically assigns an address and inserts a Turn.
 std::string_view puc::app::CanvasSubsystem::kUpdateTrieNode
 ```
 
-Stable graph node that materializes the committed Turn in the Trie.
+Stable graph node that materializes a durable Turn in the Trie.
 
-[Source](../../canvas/canvas_subsystem.hpp#L95)
+[Source](../../canvas/canvas_subsystem.hpp#L92)
 
 ## Private data members
 
@@ -160,7 +160,7 @@ std::unique_ptr<Impl> puc::app::CanvasSubsystem::impl_
 
 Hidden lifecycle and persistence state.
 
-[Source](../../canvas/canvas_subsystem.hpp#L146)
+[Source](../../canvas/canvas_subsystem.hpp#L163)
 
 ## Public functions
 
@@ -174,7 +174,7 @@ puc::app::CanvasSubsystem::CanvasSubsystem()
 
 Construct an uninitialized [Canvas](classpuc_1_1app_1_1_canvas.md) lifecycle adapter.
 
-[Source](../../canvas/canvas_subsystem.hpp#L98)
+[Source](../../canvas/canvas_subsystem.hpp#L95)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1a5ff077c1f71e05871977f033e0e3c8ef"></a>
 
@@ -186,7 +186,7 @@ puc::app::CanvasSubsystem::~CanvasSubsystem() override
 
 Destroy resources released by [terminate()](#symbol-classpuc_1_1app_1_1_canvas_subsystem_1ab5cfad307e41706d34d5cd5fe97f55c3).
 
-[Source](../../canvas/canvas_subsystem.hpp#L101)
+[Source](../../canvas/canvas_subsystem.hpp#L98)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1a2add4c76a3f23ebc1362f2c7e5bc4f57"></a>
 
@@ -198,7 +198,7 @@ Status puc::app::CanvasSubsystem::initialize(AppState &app) override
 
 Restore a [Canvas](classpuc_1_1app_1_1_canvas.md) from initialized storage and register ingestion nodes.
 
-[Source](../../canvas/canvas_subsystem.hpp#L104)
+[Source](../../canvas/canvas_subsystem.hpp#L101)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1ad19bc653f8446fdb9112333bd62044ae"></a>
 
@@ -210,7 +210,7 @@ Status puc::app::CanvasSubsystem::start(AppState &app) override
 
 Attach workers and begin receiving submitted Turns over IPC.
 
-[Source](../../canvas/canvas_subsystem.hpp#L107)
+[Source](../../canvas/canvas_subsystem.hpp#L104)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1a9ebaa0b5a50f7754331090bb4f6ed13d"></a>
 
@@ -222,7 +222,7 @@ Status puc::app::CanvasSubsystem::stop(AppState &app) noexcept override
 
 Stop IPC ingestion and detach the active worker generation.
 
-[Source](../../canvas/canvas_subsystem.hpp#L110)
+[Source](../../canvas/canvas_subsystem.hpp#L107)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1ab5cfad307e41706d34d5cd5fe97f55c3"></a>
 
@@ -234,19 +234,19 @@ Status puc::app::CanvasSubsystem::terminate(AppState &app) noexcept override
 
 Release the graph and every Canvas-owned datastore wrapper.
 
-[Source](../../canvas/canvas_subsystem.hpp#L113)
+[Source](../../canvas/canvas_subsystem.hpp#L110)
 
-<a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1a4b2fdff9b855ac6be0794210197a3c5c"></a>
+<a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1a1c4f7d6fd79333ed98a790e993caca04"></a>
 
 ### `canvas`
 
 ```cpp
-const canvas::proto::Canvas & puc::app::CanvasSubsystem::canvas() const noexcept
+canvas::proto::Canvas puc::app::CanvasSubsystem::canvas() const
 ```
 
-Return the restored aggregate descriptor and its owned tree identities.
+Return a synchronized snapshot of the aggregate and its tree identities.
 
-[Source](../../canvas/canvas_subsystem.hpp#L116)
+[Source](../../canvas/canvas_subsystem.hpp#L114)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1a1b34d6ebf0d4182cd0522b41d9a9b4be"></a>
 
@@ -258,7 +258,35 @@ const std::vector< std::uint8_t > & puc::app::CanvasSubsystem::canvas_uuid() con
 
 Return the current [Canvas](classpuc_1_1app_1_1_canvas.md) UUID bytes.
 
-[Source](../../canvas/canvas_subsystem.hpp#L119)
+[Source](../../canvas/canvas_subsystem.hpp#L117)
+
+<a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1a8c428b1142044e3b59f6d5c51557ec71"></a>
+
+### `reply_to`
+
+```cpp
+canvas::datastore::Status puc::app::CanvasSubsystem::reply_to(const canvas::proto::TurnId *parent, canvas::proto::Turn &started)
+```
+
+Reserve one reply address and return an uncommitted Turn shell.
+
+Passing null selects the [Canvas](classpuc_1_1app_1_1_canvas.md) root. A non-null parent must identify an existing Turn in this [Canvas](classpuc_1_1app_1_1_canvas.md). The caller fills the remaining fields and submits the returned parent-derived identity exactly once for commit.
+
+[Source](../../canvas/canvas_subsystem.hpp#L126)
+
+<a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1ac162a443e57e276e5caea226050bd787"></a>
+
+### `append_part`
+
+```cpp
+canvas::datastore::Status puc::app::CanvasSubsystem::append_part(const canvas::proto::TurnId &parent, canvas::proto::Turn &started)
+```
+
+Reserve one alphabetic response-part beneath an existing Turn.
+
+The returned shell receives addresses such as `1.1.a`, `1.1.b`, and so on from an allocator independent of the parent's numeric replies.
+
+[Source](../../canvas/canvas_subsystem.hpp#L135)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1aa5c99035466d0a26d15ebeabbd9a3d8f"></a>
 
@@ -270,7 +298,7 @@ std::string puc::app::CanvasSubsystem::channel_root_name() const
 
 Return the absolute namespace root for this [Canvas](classpuc_1_1app_1_1_canvas.md).
 
-[Source](../../canvas/canvas_subsystem.hpp#L122)
+[Source](../../canvas/canvas_subsystem.hpp#L139)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1a12f209d33a20306125b17e7547cf3978"></a>
 
@@ -280,9 +308,9 @@ Return the absolute namespace root for this [Canvas](classpuc_1_1app_1_1_canvas.
 std::string puc::app::CanvasSubsystem::turn_submission_channel_name() const
 ```
 
-Return the unnumbered-Turn submission channel name.
+Return the pre-addressed Turn submission channel name.
 
-[Source](../../canvas/canvas_subsystem.hpp#L125)
+[Source](../../canvas/canvas_subsystem.hpp#L142)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1a48c0bed629f1965be957ad97f2719214"></a>
 
@@ -294,7 +322,7 @@ std::string puc::app::CanvasSubsystem::committed_turn_channel_name() const
 
 Return the durable committed-Turn channel name.
 
-[Source](../../canvas/canvas_subsystem.hpp#L128)
+[Source](../../canvas/canvas_subsystem.hpp#L145)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1a3356923f92c9a4e8b21032c39fc6a791"></a>
 
@@ -306,7 +334,7 @@ std::string puc::app::CanvasSubsystem::committed_presentation_channel_name() con
 
 Return the committed-Presentation IPC channel name.
 
-[Source](../../canvas/canvas_subsystem.hpp#L131)
+[Source](../../canvas/canvas_subsystem.hpp#L148)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1a03daf320b6093ca85e55aa8ce6c0de83"></a>
 
@@ -318,7 +346,7 @@ canvas::TurnPipeline * puc::app::CanvasSubsystem::pipeline() noexcept
 
 Return the extensible Turn graph owned by this [Canvas](classpuc_1_1app_1_1_canvas.md).
 
-[Source](../../canvas/canvas_subsystem.hpp#L134)
+[Source](../../canvas/canvas_subsystem.hpp#L151)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1a80db85a8df1ad3e20baa1d88ef517244"></a>
 
@@ -330,7 +358,7 @@ void puc::app::CanvasSubsystem::materialize_presentation(const canvas::proto::Pr
 
 Update the in-memory aggregate from one durable Presentation commit.
 
-[Source](../../canvas/canvas_subsystem.hpp#L137)
+[Source](../../canvas/canvas_subsystem.hpp#L154)
 
 <a id="symbol-classpuc_1_1app_1_1_canvas_subsystem_1a9ec7c43edd7173f3ed3eb2c20eb108f3"></a>
 
@@ -342,4 +370,4 @@ bool puc::app::CanvasSubsystem::publish_committed_presentation(const canvas::pro
 
 Broadcast one already-persisted Presentation to current IPC observers.
 
-[Source](../../canvas/canvas_subsystem.hpp#L141)
+[Source](../../canvas/canvas_subsystem.hpp#L158)

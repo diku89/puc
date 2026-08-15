@@ -30,7 +30,7 @@
 
 <a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000004"></a> **Kind:** Channel  
 **Name:** `//canvas/CANVAS_UUID/turns/committed`  
-**Purpose:** Broadcasts a Turn only after its immutable human address is assigned, its payload is persisted, and the materialized Turn Trie is updated.  
+**Purpose:** Broadcasts each Turn after it is persisted and the materialized Turn Trie is updated.  
 **Producers:** [CanvasSubsystem](classpuc_1_1app_1_1_canvas_subsystem.md).  
 **Consumers:** Turn Trie replicas, reverse indexes, search builders, and other committed-Turn observers.
 
@@ -38,9 +38,9 @@
 
 <a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000003"></a> **Kind:** Channel  
 **Name:** `//canvas/CANVAS_UUID/turns/submit`  
-**Purpose:** Carries serialized Turn protobufs that have not yet received their stable human address; CANVAS\_UUID is the owning [Canvas](classpuc_1_1app_1_1_canvas.md) UUID rendered as 32 hexadecimal digits.  
+**Purpose:** Carries serialized Turn protobufs whose stable ID was first reserved with [reply\_to()](classpuc_1_1app_1_1_canvas_subsystem.md#symbol-classpuc_1_1app_1_1_canvas_subsystem_1a8c428b1142044e3b59f6d5c51557ec71); CANVAS\_UUID is the owning [Canvas](classpuc_1_1app_1_1_canvas.md) UUID rendered as 32 hexadecimal digits.  
 **Producers:** Human, model, and tool input adapters.  
-**Consumers:** [CanvasSubsystem](classpuc_1_1app_1_1_canvas_subsystem.md), which atomically numbers and persists each accepted Turn.
+**Consumers:** [CanvasSubsystem](classpuc_1_1app_1_1_canvas_subsystem.md), which persists and materializes each accepted Turn.
 
 ## Member [puc::metronome::kOneHertzChannel](namespacepuc_1_1metronome.md#symbol-metronome_8hpp_1ad712d1722112c3e9598cb3e96ee87db6)
 

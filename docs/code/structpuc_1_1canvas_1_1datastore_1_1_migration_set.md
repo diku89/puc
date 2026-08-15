@@ -4,7 +4,7 @@
 
 Complete ordered migration catalog declared by one datastore.
 
-[Source](../../canvas/protos/datastore/database.hpp#L29)
+[Source](../../canvas/protos/datastore/database.hpp#L30)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::string_view puc::canvas::datastore::MigrationSet::datastore
 
 Stable migration-table namespace.
 
-[Source](../../canvas/protos/datastore/database.hpp#L30)
+[Source](../../canvas/protos/datastore/database.hpp#L31)
 
 <a id="symbol-structpuc_1_1canvas_1_1datastore_1_1_migration_set_1a8e2f8d88c094d729ccbc256f3c7dfa14"></a>
 
@@ -30,4 +30,4 @@ std::span<const Migration> puc::canvas::datastore::MigrationSet::migrations
 
 Contiguous immutable entries.
 
-[Source](../../canvas/protos/datastore/database.hpp#L31)
+[Source](../../canvas/protos/datastore/database.hpp#L32)

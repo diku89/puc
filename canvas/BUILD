@@ -82,6 +82,7 @@ cc_test(
         "//canvas/protos/datastore:turn_datastore",
         "//canvas/session:orchestration_subsystem",
         "//canvas/session:turn_pipeline",
+        "//canvas/turn:turn_tree",
         "//properties:properties_subsystem",
         "//state",
         "//utils/ipc",

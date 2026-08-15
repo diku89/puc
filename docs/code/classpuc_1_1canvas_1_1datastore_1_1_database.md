@@ -4,7 +4,11 @@
 
 Own one SQLite connection and enforce one-time initialization migrations.
 
-[Source](../../canvas/protos/datastore/database.hpp#L79)
+[Source](../../canvas/protos/datastore/database.hpp#L80)
+
+## Related symbols
+
+- [puc::canvas::datastore::Database::Operation](classpuc_1_1canvas_1_1datastore_1_1_database_1_1_operation.md)
 
 ## Private data members
 
@@ -18,7 +22,7 @@ sqlite3* puc::canvas::datastore::Database::database_
 
 Exclusively owned native connection.
 
-[Source](../../canvas/protos/datastore/database.hpp#L121)
+[Source](../../canvas/protos/datastore/database.hpp#L147)
 
 <a id="symbol-classpuc_1_1canvas_1_1datastore_1_1_database_1ae29ace737e5309a3a2e6b84023a611a2"></a>
 
@@ -30,7 +34,7 @@ bool puc::canvas::datastore::Database::initialized_
 
 Whether migrations completed successfully.
 
-[Source](../../canvas/protos/datastore/database.hpp#L122)
+[Source](../../canvas/protos/datastore/database.hpp#L148)
 
 <a id="symbol-classpuc_1_1canvas_1_1datastore_1_1_database_1af631a4fcae42f1ee042344c2eec0096f"></a>
 
@@ -42,7 +46,19 @@ std::string puc::canvas::datastore::Database::last_error_
 
 Most recently captured native diagnostic.
 
-[Source](../../canvas/protos/datastore/database.hpp#L123)
+[Source](../../canvas/protos/datastore/database.hpp#L149)
+
+<a id="symbol-classpuc_1_1canvas_1_1datastore_1_1_database_1adc51a1235d51be587ef614ed4993761d"></a>
+
+### `operation_mutex_`
+
+```cpp
+std::recursive_mutex puc::canvas::datastore::Database::operation_mutex_
+```
+
+Serializes connection-level logical operations.
+
+[Source](../../canvas/protos/datastore/database.hpp#L151)
 
 ## Public functions
 
@@ -56,7 +72,7 @@ puc::canvas::datastore::Database::Database() noexcept=default
 
 Construct a closed database wrapper.
 
-[Source](../../canvas/protos/datastore/database.hpp#L82)
+[Source](../../canvas/protos/datastore/database.hpp#L99)
 
 <a id="symbol-classpuc_1_1canvas_1_1datastore_1_1_database_1aabea0f852035b9ebd0aedf4c97d7c596"></a>
 
@@ -66,7 +82,7 @@ Construct a closed database wrapper.
 puc::canvas::datastore::Database::Database(const Database &)=delete
 ```
 
-[Source](../../canvas/protos/datastore/database.hpp#L83)
+[Source](../../canvas/protos/datastore/database.hpp#L100)
 
 <a id="symbol-classpuc_1_1canvas_1_1datastore_1_1_database_1a00aa5520860a169471c1f9f5f376d5e9"></a>
 
@@ -76,7 +92,7 @@ puc::canvas::datastore::Database::Database(const Database &)=delete
 Database & puc::canvas::datastore::Database::operator=(const Database &)=delete
 ```
 
-[Source](../../canvas/protos/datastore/database.hpp#L84)
+[Source](../../canvas/protos/datastore/database.hpp#L101)
 
 <a id="symbol-classpuc_1_1canvas_1_1datastore_1_1_database_1afa7eefce3cb5cba985c1e21b6550e660"></a>
 
@@ -88,7 +104,7 @@ puc::canvas::datastore::Database::Database(Database &&other) noexcept
 
 Move an open or closed connection from another wrapper.
 
-[Source](../../canvas/protos/datastore/database.hpp#L86)
+[Source](../../canvas/protos/datastore/database.hpp#L103)
 
 <a id="symbol-classpuc_1_1canvas_1_1datastore_1_1_database_1a2efe8d7850b22a33aa9a9001777604e4"></a>
 
@@ -100,7 +116,7 @@ Database & puc::canvas::datastore::Database::operator=(Database &&other) noexcep
 
 Close current state and move a connection from another wrapper.
 
-[Source](../../canvas/protos/datastore/database.hpp#L88)
+[Source](../../canvas/protos/datastore/database.hpp#L105)
 
 <a id="symbol-classpuc_1_1canvas_1_1datastore_1_1_database_1ad868ffe712210bcbe6dac3a6b9989316"></a>
 
@@ -112,7 +128,7 @@ puc::canvas::datastore::Database::~Database()
 
 Close the owned SQLite connection.
 
-[Source](../../canvas/protos/datastore/database.hpp#L90)
+[Source](../../canvas/protos/datastore/database.hpp#L107)
 
 <a id="symbol-classpuc_1_1canvas_1_1datastore_1_1_database_1a5a210907b8d659d7c6c92133aa7549fa"></a>
 
@@ -124,7 +140,7 @@ Status puc::canvas::datastore::Database::initialize(const std::filesystem::path 
 
 Open once and apply every migration before becoming ready.
 
-[Source](../../canvas/protos/datastore/database.hpp#L93)
+[Source](../../canvas/protos/datastore/database.hpp#L110)
 
 <a id="symbol-classpuc_1_1canvas_1_1datastore_1_1_database_1aa3fe4168c918616b2d38bd647077e979"></a>
 
@@ -136,7 +152,7 @@ void puc::canvas::datastore::Database::close() noexcept
 
 Close the connection and clear its initialized state.
 
-[Source](../../canvas/protos/datastore/database.hpp#L97)
+[Source](../../canvas/protos/datastore/database.hpp#L114)
 
 <a id="symbol-classpuc_1_1canvas_1_1datastore_1_1_database_1ac3861da119e25e19fa3f28226d455421"></a>
 
@@ -148,7 +164,21 @@ bool puc::canvas::datastore::Database::ready() const noexcept
 
 Return whether [initialize()](#symbol-classpuc_1_1canvas_1_1datastore_1_1_database_1a5a210907b8d659d7c6c92133aa7549fa) completed and the connection remains open.
 
-[Source](../../canvas/protos/datastore/database.hpp#L99)
+[Source](../../canvas/protos/datastore/database.hpp#L116)
+
+<a id="symbol-classpuc_1_1canvas_1_1datastore_1_1_database_1a0ae9672bba32934e31e697b1113e533e"></a>
+
+### `acquire`
+
+```cpp
+Operation puc::canvas::datastore::Database::acquire() const
+```
+
+Serialize one complete datastore method or explicit transaction.
+
+Datastore wrappers retain this guard from their first SQLite call through statement destruction and commit or rollback. Individual [Database](#) methods lock recursively so nested calls remain safe.
+
+[Source](../../canvas/protos/datastore/database.hpp#L125)
 
 <a id="symbol-classpuc_1_1canvas_1_1datastore_1_1_database_1a1812d4b68232c10f8be5bf48700696f4"></a>
 
@@ -160,7 +190,7 @@ Status puc::canvas::datastore::Database::execute(std::string_view sql) noexcept
 
 Execute one or more SQL statements without result rows.
 
-[Source](../../canvas/protos/datastore/database.hpp#L102)
+[Source](../../canvas/protos/datastore/database.hpp#L128)
 
 <a id="symbol-classpuc_1_1canvas_1_1datastore_1_1_database_1ae51d0be065305b0d7d5617d4f03b8200"></a>
 
@@ -172,7 +202,7 @@ Status puc::canvas::datastore::Database::prepare(std::string_view sql, Statement
 
 Compile SQL into a move-only output statement.
 
-[Source](../../canvas/protos/datastore/database.hpp#L104)
+[Source](../../canvas/protos/datastore/database.hpp#L130)
 
 <a id="symbol-classpuc_1_1canvas_1_1datastore_1_1_database_1ae72b4b9d3bca1dafd92d5532eaef2ecb"></a>
 
@@ -184,7 +214,7 @@ Status puc::canvas::datastore::Database::begin_immediate() noexcept
 
 Begin a serialized SQLite write transaction.
 
-[Source](../../canvas/protos/datastore/database.hpp#L106)
+[Source](../../canvas/protos/datastore/database.hpp#L132)
 
 <a id="symbol-classpuc_1_1canvas_1_1datastore_1_1_database_1a4b3b5a941211a643005ed4cfae60cfb6"></a>
 
@@ -196,7 +226,7 @@ Status puc::canvas::datastore::Database::commit() noexcept
 
 Commit the active transaction.
 
-[Source](../../canvas/protos/datastore/database.hpp#L108)
+[Source](../../canvas/protos/datastore/database.hpp#L134)
 
 <a id="symbol-classpuc_1_1canvas_1_1datastore_1_1_database_1a2eb9300dfa110b28cae853d77cea5ded"></a>
 
@@ -208,19 +238,19 @@ void puc::canvas::datastore::Database::rollback() noexcept
 
 Best-effort rollback of the active transaction.
 
-[Source](../../canvas/protos/datastore/database.hpp#L110)
+[Source](../../canvas/protos/datastore/database.hpp#L136)
 
-<a id="symbol-classpuc_1_1canvas_1_1datastore_1_1_database_1a31b571957d2c1ff04d0b1e5dcda2b0d3"></a>
+<a id="symbol-classpuc_1_1canvas_1_1datastore_1_1_database_1af883df556bdb55f0ea6d8329b5ca9120"></a>
 
 ### `last_error`
 
 ```cpp
-std::string_view puc::canvas::datastore::Database::last_error() const noexcept
+std::string puc::canvas::datastore::Database::last_error() const
 ```
 
-Return the most recently captured SQLite diagnostic.
+Return a copy of the most recently captured SQLite diagnostic.
 
-[Source](../../canvas/protos/datastore/database.hpp#L113)
+[Source](../../canvas/protos/datastore/database.hpp#L139)
 
 ## Private functions
 
@@ -234,7 +264,7 @@ Status puc::canvas::datastore::Database::apply_migrations(std::span< const Migra
 
 Apply and record every missing migration in one write transaction.
 
-[Source](../../canvas/protos/datastore/database.hpp#L117)
+[Source](../../canvas/protos/datastore/database.hpp#L143)
 
 <a id="symbol-classpuc_1_1canvas_1_1datastore_1_1_database_1a5b6dc5576eea20a799ecaaa93b83044d"></a>
 
@@ -246,4 +276,4 @@ void puc::canvas::datastore::Database::record_error(std::string_view prefix) noe
 
 Capture SQLite's current error with an operation prefix.
 
-[Source](../../canvas/protos/datastore/database.hpp#L119)
+[Source](../../canvas/protos/datastore/database.hpp#L145)

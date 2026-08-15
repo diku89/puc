@@ -4,7 +4,7 @@
 
 One immutable, checksummed SQL migration in a datastore-owned sequence.
 
-[Source](../../canvas/protos/datastore/database.hpp#L23)
+[Source](../../canvas/protos/datastore/database.hpp#L24)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::uint32_t puc::canvas::datastore::Migration::version
 
 Contiguous one-based datastore version.
 
-[Source](../../canvas/protos/datastore/database.hpp#L24)
+[Source](../../canvas/protos/datastore/database.hpp#L25)
 
 <a id="symbol-structpuc_1_1canvas_1_1datastore_1_1_migration_1a6539f80ebcc9fbe4cf08924eb0b8007d"></a>
 
@@ -30,4 +30,4 @@ std::string_view puc::canvas::datastore::Migration::sql
 
 SQL executed atomically at most once.
 
-[Source](../../canvas/protos/datastore/database.hpp#L25)
+[Source](../../canvas/protos/datastore/database.hpp#L26)

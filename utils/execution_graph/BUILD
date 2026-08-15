@@ -18,7 +18,10 @@ cc_library(
 cc_library(
     name = "execution_graph",
     srcs = ["execution_graph.cpp"],
-    hdrs = ["execution_graph.hpp"],
+    hdrs = [
+        "execution_graph.hpp",
+        "execution_plan.hpp",
+    ],
     visibility = ["//visibility:public"],
     deps = [
         ":dependency_graph",

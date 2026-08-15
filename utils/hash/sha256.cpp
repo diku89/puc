@@ -18,9 +18,15 @@ namespace {
 constexpr char kHexDigits[] = "0123456789abcdef";
 
 int hex_value(char value) noexcept {
-  if (value >= '0' && value <= '9') return value - '0';
-  if (value >= 'a' && value <= 'f') return value - 'a' + 10;
-  if (value >= 'A' && value <= 'F') return value - 'A' + 10;
+  if (value >= '0' && value <= '9') {
+    return value - '0';
+  }
+  if (value >= 'a' && value <= 'f') {
+    return value - 'a' + 10;
+  }
+  if (value >= 'A' && value <= 'F') {
+    return value - 'A' + 10;
+  }
   return -1;
 }
 
@@ -42,7 +48,9 @@ std::string Hash256::hex() const {
 
 bool Hash256::from_hex(std::string_view text, Hash256& output) noexcept {
   output = {};
-  if (text.size() != output.bytes.size() * 2U) return false;
+  if (text.size() != output.bytes.size() * 2U) {
+    return false;
+  }
   for (std::size_t index = 0U; index < output.bytes.size(); ++index) {
     const int high = hex_value(text[index * 2U]);
     const int low  = hex_value(text[index * 2U + 1U]);

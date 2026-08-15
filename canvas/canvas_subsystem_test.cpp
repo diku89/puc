@@ -28,6 +28,7 @@
 #include "canvas/protos/turn.pb.h"
 #include "canvas/session/orchestration_subsystem.hpp"
 #include "canvas/session/turn_pipeline.hpp"
+#include "canvas/turn/turn_tree.hpp"
 #include "properties/properties_subsystem.hpp"
 #include "state/state.hpp"
 #include "utils/ipc/directory.hpp"
@@ -64,11 +65,7 @@ class TemporaryConfiguration final {
   std::filesystem::path database;
 };
 
-canvas::proto::Turn human_turn(const CanvasSubsystem& subsystem,
-                               std::string text) {
-  canvas::proto::Turn turn;
-  turn.mutable_id()->set_canvas_uuid(subsystem.canvas_uuid().data(),
-                                     subsystem.canvas_uuid().size());
+canvas::proto::Turn human_turn(canvas::proto::Turn turn, std::string text) {
   turn.mutable_actor()->set_id("human");
   turn.mutable_actor()->set_kind(canvas::proto::Actor::HUMAN);
   turn.mutable_actor()->set_display_name("Human");
@@ -132,6 +129,7 @@ TEST(CanvasSubsystemTest, ReceivesTurnAndPublishesPresentationCommit) {
   canvas::proto::Turn observed_turn;
   canvas::proto::Presentation observed;
   std::vector<std::string> commit_order;
+  std::vector<std::string> presented_addresses;
   ipc::Subscription turn_subscription;
   ipc::Subscription presentation_subscription;
   ASSERT_EQ(directory->directory()->subscribe(
@@ -152,8 +150,8 @@ TEST(CanvasSubsystemTest, ReceivesTurnAndPublishesPresentationCommit) {
             ipc::Status::OK);
   ASSERT_EQ(directory->directory()->subscribe(
                 canvas_subsystem->committed_presentation_channel_name(),
-                [&mutex, &changed, &observed,
-                 &commit_order](ipc::Channel::Bytes bytes) noexcept {
+                [&mutex, &changed, &observed, &commit_order,
+                 &presented_addresses](ipc::Channel::Bytes bytes) noexcept {
                   canvas::proto::Presentation update;
                   if (!update.ParseFromArray(bytes.data(),
                                              static_cast<int>(bytes.size()))) {
@@ -162,6 +160,8 @@ TEST(CanvasSubsystemTest, ReceivesTurnAndPublishesPresentationCommit) {
                   const std::lock_guard lock(mutex);
                   observed = std::move(update);
                   commit_order.emplace_back("presentation");
+                  presented_addresses.push_back(
+                      observed.committed_turn_id().human_address());
                   changed.notify_all();
                 },
                 presentation_subscription),
@@ -174,8 +174,10 @@ TEST(CanvasSubsystemTest, ReceivesTurnAndPublishesPresentationCommit) {
   EXPECT_EQ(canvas_subsystem->committed_presentation_channel_name(),
             canvas_subsystem->channel_root_name() + "/presentation/committed");
 
-  const canvas::proto::Turn submitted =
-      human_turn(*canvas_subsystem, "hello canvas");
+  canvas::proto::Turn started;
+  ASSERT_EQ(canvas_subsystem->reply_to(nullptr, started),
+            canvas::datastore::Status::OK);
+  const canvas::proto::Turn submitted = human_turn(started, "hello canvas");
   std::string payload;
   ASSERT_TRUE(submitted.SerializeToString(&payload));
   const auto bytes = std::span<const std::uint8_t>{
@@ -215,8 +217,11 @@ TEST(CanvasSubsystemTest, ReceivesTurnAndPublishesPresentationCommit) {
     const std::lock_guard lock(mutex);
     commit_order.clear();
   }
+  canvas::proto::Turn oversized_started;
+  ASSERT_EQ(canvas_subsystem->reply_to(nullptr, oversized_started),
+            canvas::datastore::Status::OK);
   canvas::proto::Turn oversized =
-      human_turn(*canvas_subsystem, std::string(kTestMaximumMessageBytes, 'x'));
+      human_turn(oversized_started, std::string(kTestMaximumMessageBytes, 'x'));
   canvas::proto::Turn oversized_committed;
   EXPECT_EQ(
       canvas_subsystem->pipeline()->process(oversized, oversized_committed),
@@ -230,6 +235,51 @@ TEST(CanvasSubsystemTest, ReceivesTurnAndPublishesPresentationCommit) {
   {
     const std::lock_guard lock(mutex);
     EXPECT_EQ(commit_order, (std::vector<std::string>{"presentation"}));
+  }
+
+  // Burst several independent runs through the real IPC ingress. Numbering,
+  // Trie mutation, and Presentation advancement serialize only their owned
+  // resources while the Turns overlap between those boundaries.
+  for (std::size_t index = 3U; index <= 10U; ++index) {
+    canvas::proto::Turn burst_started;
+    ASSERT_EQ(canvas_subsystem->reply_to(nullptr, burst_started),
+              canvas::datastore::Status::OK);
+    const canvas::proto::Turn burst =
+        human_turn(burst_started, "burst " + std::to_string(index));
+    std::string burst_payload;
+    ASSERT_TRUE(burst.SerializeToString(&burst_payload));
+    const auto burst_bytes = std::span<const std::uint8_t>{
+        reinterpret_cast<const std::uint8_t*>(burst_payload.data()),
+        burst_payload.size()};
+    ASSERT_EQ(directory->directory()
+                  ->transmit(canvas_subsystem->turn_submission_channel_name(),
+                             burst_bytes)
+                  .status,
+              ipc::Status::OK);
+  }
+  {
+    std::unique_lock lock(mutex);
+    ASSERT_TRUE(changed.wait_for(
+        lock, std::chrono::seconds{5},
+        [&presented_addresses] { return presented_addresses.size() == 10U; }));
+  }
+  const canvas::proto::Canvas burst_snapshot = canvas_subsystem->canvas();
+  EXPECT_EQ(burst_snapshot.turns_size(), 10);
+  for (const canvas::proto::Turn& turn : burst_snapshot.turns()) {
+    if (turn.payload().content().starts_with("burst ")) {
+      EXPECT_EQ(turn.id().human_address(), turn.payload().content().substr(6U));
+    }
+  }
+  OrchestrationSubsystem* orchestration =
+      app.get_subsystem<OrchestrationSubsystem>();
+  ASSERT_NE(orchestration, nullptr);
+  ASSERT_NE(orchestration->presentation_tree(), nullptr);
+  std::vector<canvas::proto::TurnId> presented;
+  ASSERT_EQ(orchestration->presentation_tree()->ordered_turns(presented),
+            canvas::datastore::Status::OK);
+  ASSERT_EQ(presented.size(), 10U);
+  for (std::size_t index = 0U; index < presented.size(); ++index) {
+    EXPECT_EQ(presented[index].human_address(), std::to_string(index + 1U));
   }
 
   std::vector<canvas::proto::CanvasChannelAnnouncement::State>
@@ -335,26 +385,28 @@ TEST(CanvasSubsystemTest,
                                         presentation_uuid.size());
     ASSERT_EQ(canvases.create(stored_canvas), canvas::datastore::Status::OK);
 
-    canvas::proto::Turn submitted;
-    submitted.mutable_id()->set_canvas_uuid(canvas_uuid.data(),
-                                            canvas_uuid.size());
-    submitted.mutable_actor()->set_id("human");
-    submitted.mutable_actor()->set_kind(canvas::proto::Actor::HUMAN);
-    submitted.mutable_payload()->set_kind(canvas::proto::Payload::TEXT);
-    submitted.mutable_payload()->set_content("persisted before crash");
-    submitted.set_display_level(canvas::proto::Turn::ALWAYS_SHOW);
+    canvas::TurnTree turn_tree;
+    const auto persist_reply = [&](const canvas::proto::TurnId* parent,
+                                   std::string text,
+                                   canvas::proto::Turn& committed) {
+      canvas::proto::Turn started;
+      EXPECT_EQ(turn_tree.reply_to(canvas_uuid, parent, started),
+                canvas::TurnTree::Status::OK);
+      canvas::proto::Turn durable;
+      committed = human_turn(started, std::move(text));
+      EXPECT_EQ(turns.persist(canvas_uuid, committed, durable),
+                canvas::datastore::Status::OK);
+      EXPECT_EQ(turn_tree.apply(durable), canvas::TurnTree::Status::OK);
+    };
+
     canvas::proto::Turn first;
-    ASSERT_EQ(turns.number_and_persist(canvas_uuid, submitted, first),
-              canvas::datastore::Status::OK);
+    persist_reply(nullptr, "persisted before crash", first);
     ASSERT_EQ(first.id().human_address(), "1");
     canvas::proto::Turn second;
-    ASSERT_EQ(turns.number_and_persist(canvas_uuid, submitted, second),
-              canvas::datastore::Status::OK);
+    persist_reply(nullptr, "second before crash", second);
     ASSERT_EQ(second.id().human_address(), "2");
-    *submitted.mutable_parent() = first.id();
     canvas::proto::Turn late_reply;
-    ASSERT_EQ(turns.number_and_persist(canvas_uuid, submitted, late_reply),
-              canvas::datastore::Status::OK);
+    persist_reply(&first.id(), "late reply", late_reply);
     ASSERT_EQ(late_reply.id().human_address(), "1.1");
   }
 

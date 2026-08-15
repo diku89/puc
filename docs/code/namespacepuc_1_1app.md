@@ -2,7 +2,7 @@
 
 # Namespace `puc::app`
 
-[Source](../../canvas/canvas_subsystem.cpp#L42)
+[Source](../../canvas/canvas_subsystem.cpp#L43)
 
 ## Related symbols
 

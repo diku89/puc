@@ -154,7 +154,9 @@ Status deserialize_message(std::span<const std::uint8_t> data,
   output = {};
   DecodedMessage decoded;
   consumed_bytes = 0U;
-  if (maximum_payload_bytes == 0U) return Status::INVALID_ARGUMENT;
+  if (maximum_payload_bytes == 0U) {
+    return Status::INVALID_ARGUMENT;
+  }
   if (data.size() < kBaseHeaderBytes) {
     return Status::TRUNCATED_MESSAGE;
   }
