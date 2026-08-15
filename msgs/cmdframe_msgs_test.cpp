@@ -16,6 +16,9 @@
 namespace puc::msg {
 namespace {
 
+/** Deliberate IPC envelope limit used by registration tests. */
+constexpr std::size_t kTestMaximumPayloadBytes = 1024U;
+
 TEST(CmdFrameMessagesTest, ExposesCanonicalNotificationChannelAndMessageId) {
   EXPECT_EQ(kCmdFrameNotifyChannel, "//cmdframe/notify");
   EXPECT_EQ(to_wire_id(MessageId::CMD_FRAME_NOTIFICATION), 3U);
@@ -66,7 +69,7 @@ TEST(CmdFrameNotificationCodecTest, RejectsMalformedUtf8) {
 }
 
 TEST(CmdFrameMessagesTest, RegistersNotificationCodec) {
-  MessageCodecCollection codecs;
+  MessageCodecCollection codecs{kTestMaximumPayloadBytes};
   EXPECT_EQ(register_cmdframe_codecs(codecs), Status::OK);
   EXPECT_EQ(codecs.size(), 2U);
   EXPECT_EQ(register_cmdframe_codecs(codecs), Status::DUPLICATE_MESSAGE_ID);

@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package puc.canvas.proto;
+
+// Lifecycle event for one discoverable Canvas channel namespace.
+message CanvasChannelAnnouncement {
+  enum State {
+    STATE_UNSPECIFIED = 0;
+    OPENED = 1;
+    CLOSING = 2;
+  }
+
+  optional bytes canvas_uuid = 1;
+  optional string channel_root = 2;
+  optional State state = 3;
+  optional uint32 protocol_version = 4;
+}
+
+// Request current Canvas announcements after subscribing to the event channel.
+message CanvasChannelsQuery {
+  // When absent, every running Canvas should announce itself.
+  optional bytes canvas_uuid = 1;
+}

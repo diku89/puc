@@ -43,9 +43,8 @@ class SocketChannel final : public Channel {
    * its `transmit()` reports Status::NOT_CONNECTED until then.
    */
   SocketChannel(std::string name, std::filesystem::path socket_path,
-                SocketRole role,
-                std::size_t maximum_message_bytes = kDefaultMaximumMessageBytes,
-                ChannelOptions options            = {});
+                SocketRole role, std::size_t maximum_message_bytes,
+                ChannelOptions options = {});
 
   /** Stop the reader, close descriptors, and remove an owned server socket. */
   ~SocketChannel() override;

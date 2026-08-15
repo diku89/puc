@@ -19,6 +19,7 @@
 #include <vector>
 
 #include "gtest/gtest.h"
+#include "utils/ipc/channel_path.hpp"
 #include "utils/ipc/directory.hpp"
 #include "utils/ipc/smem_channel.hpp"
 #include "utils/multithreading/job_queue.hpp"
@@ -52,6 +53,26 @@ TEST(ChannelNameTest, RejectsAmbiguousOrNonCanonicalNames) {
     EXPECT_FALSE(valid_channel_name(name)) << name;
   }
   EXPECT_FALSE(valid_channel_name("//" + std::string(256U, 'a')));
+}
+
+TEST(ChannelPathTest, ResolvesValidatedRelativePathsBelowAnAbsoluteRoot) {
+  const auto path = RelativeChannelPath::parse("turns/committed");
+  ASSERT_TRUE(path.has_value());
+  EXPECT_EQ(path->string(), "turns/committed");
+  EXPECT_EQ(path->resolve("//canvas/0123456789abcdef"),
+            "//canvas/0123456789abcdef/turns/committed");
+}
+
+TEST(ChannelPathTest, RejectsAmbiguousPathsAndInvalidResolutionRoots) {
+  EXPECT_FALSE(RelativeChannelPath::parse("").has_value());
+  EXPECT_FALSE(RelativeChannelPath::parse("/turns").has_value());
+  EXPECT_FALSE(RelativeChannelPath::parse("turns/").has_value());
+  EXPECT_FALSE(RelativeChannelPath::parse("turns//committed").has_value());
+  EXPECT_FALSE(RelativeChannelPath::parse("turns/../committed").has_value());
+  const auto path = RelativeChannelPath::parse("turns/committed");
+  ASSERT_TRUE(path.has_value());
+  EXPECT_FALSE(path->resolve("canvas/root").has_value());
+  EXPECT_FALSE(path->resolve("//" + std::string(240U, 'a')).has_value());
 }
 
 TEST(SmemChannelTest, DeliversCompleteBorrowedMessagesToEverySubscriber) {

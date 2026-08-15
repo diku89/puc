@@ -5,6 +5,7 @@
  * @brief Application lifecycle adapter for the IPC channel directory.
  */
 
+#include <cstddef>
 #include <memory>
 
 #include "state/state.hpp"
@@ -24,13 +25,13 @@ namespace puc::app {
  */
 class DirectorySubsystem final : public AppSubsystem {
  public:
-  /** Declare the worker-pool dependency used for channel delivery. */
+  /** Declare configuration and worker-pool lifecycle dependencies. */
   DirectorySubsystem();
 
   /** Destroy a released channel directory. */
   ~DirectorySubsystem() override;
 
-  /** Validate that the registered WorkerSubsystem can be resolved. */
+  /** Load the configured message limit and validate dependencies. */
   Status initialize(AppState& app) override;
 
   /** Construct a Directory over the currently running worker pool. */
@@ -48,9 +49,16 @@ class DirectorySubsystem final : public AppSubsystem {
   /** Return the live Directory, or nullptr outside the running phase. */
   const ipc::Directory* directory() const noexcept { return directory_.get(); }
 
+  /** Return the initialized general IPC payload limit. */
+  std::size_t maximum_message_bytes() const noexcept {
+    return maximum_message_bytes_;
+  }
+
  private:
   std::unique_ptr<ipc::Directory>
       directory_; /**< Registry present only while this adapter is started. */
+  std::size_t maximum_message_bytes_ =
+      0U; /**< Property-backed limit retained across stop/start cycles. */
 };
 
 }  // namespace puc::app

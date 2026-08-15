@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+package puc.canvas.proto;
+
+import "canvas/protos/actor.proto";
+
+// Stable composite identity assigned when a Turn is committed.
+message TurnId {
+  optional bytes canvas_uuid = 1;
+  optional string human_address = 2;
+}
+
+// Inline data carried by a Turn.
+message Payload {
+  enum Kind {
+    KIND_UNSPECIFIED = 0;
+    TEXT = 1;
+    // Future kinds include AUDIO, IMAGE, VIDEO, INPUT_BYTE_STREAM,
+    // OUTPUT_BYTE_STREAM, FILE, and URL.
+  }
+
+  // The boundary after which puc may discard a resource it owns.
+  enum Lifespan {
+    LIFESPAN_UNSPECIFIED = 0;
+    TRANSIENT = 1;
+    ACTOR_SESSION = 2;
+    CANVAS = 3;
+    PERSISTENT = 4;
+    EXTERNAL_LIFESPAN = 5;
+  }
+
+  // The party responsible for retaining and releasing the resource.
+  enum Ownership {
+    OWNERSHIP_UNSPECIFIED = 0;
+    PUC = 1;
+    ACTOR = 2;
+    EXTERNAL_OWNER = 3;
+  }
+
+  optional Kind kind = 1;
+  optional bytes content = 2;
+  optional Lifespan lifespan = 3;
+  optional Ownership ownership = 4;
+  optional Actor owner = 5;
+}
+
+// One submitted or committed event in the Canvas reply tree.
+message Turn {
+  enum DisplayLevel {
+    DISPLAY_LEVEL_UNSPECIFIED = 0;
+    ALWAYS_SHOW = 1;
+    SUMMARY = 2;
+    COUNT = 3;
+    HIDDEN = 4;
+    SECRET = 5;
+  }
+
+  optional TurnId id = 1;
+  optional TurnId parent = 2;
+  optional Actor actor = 3;
+  optional uint64 observed_unix_time_ns = 4;
+  optional Payload payload = 5;
+  optional DisplayLevel display_level = 6;
+  optional string one_line_summary = 7;
+  repeated TurnId refs = 8;
+}

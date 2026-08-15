@@ -4,7 +4,7 @@
 
 Message carrying no typed data and no payload bytes.
 
-**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000008):**
+**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000013):**
 
 **Kind:** Message  
 **Type:** [puc::msg::NullMessage](#)  

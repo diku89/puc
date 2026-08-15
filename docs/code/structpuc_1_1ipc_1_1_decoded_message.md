@@ -6,7 +6,7 @@ Zero-copy view returned by `deserialize_message()`.
 
 The payload and extension spans borrow the input buffer and remain valid only while that buffer's storage remains unchanged and alive.
 
-[Source](../../utils/ipc/msg.hpp#L132)
+[Source](../../utils/ipc/msg.hpp#L129)
 
 ## Public data members
 
@@ -20,7 +20,7 @@ WireHeader puc::ipc::DecodedMessage::wire_header
 
 Parsed preamble flags and size.
 
-[Source](../../utils/ipc/msg.hpp#L133)
+[Source](../../utils/ipc/msg.hpp#L130)
 
 <a id="symbol-structpuc_1_1ipc_1_1_decoded_message_1acc0bbe5e82dd96109aa378b060aa6545"></a>
 
@@ -32,7 +32,7 @@ MessageHeader puc::ipc::DecodedMessage::header
 
 Parsed routing fields and payload length.
 
-[Source](../../utils/ipc/msg.hpp#L134)
+[Source](../../utils/ipc/msg.hpp#L131)
 
 <a id="symbol-structpuc_1_1ipc_1_1_decoded_message_1a8c4dab1f657f00fd2d0b2c67a5ded3ce"></a>
 
@@ -44,7 +44,7 @@ std::optional<SessionId> puc::ipc::DecodedMessage::session_id
 
 Parsed session metadata.
 
-[Source](../../utils/ipc/msg.hpp#L135)
+[Source](../../utils/ipc/msg.hpp#L132)
 
 <a id="symbol-structpuc_1_1ipc_1_1_decoded_message_1a8770f48e804a85fe16eb761c0b8b3292"></a>
 
@@ -56,7 +56,7 @@ std::optional<Timestamp> puc::ipc::DecodedMessage::timestamp
 
 Parsed timestamp metadata.
 
-[Source](../../utils/ipc/msg.hpp#L136)
+[Source](../../utils/ipc/msg.hpp#L133)
 
 <a id="symbol-structpuc_1_1ipc_1_1_decoded_message_1a3b8a391e1ffb7b30430e633edc054a3d"></a>
 
@@ -68,7 +68,7 @@ std::optional<MultipartHeader> puc::ipc::DecodedMessage::multipart
 
 Parsed part metadata.
 
-[Source](../../utils/ipc/msg.hpp#L137)
+[Source](../../utils/ipc/msg.hpp#L134)
 
 <a id="symbol-structpuc_1_1ipc_1_1_decoded_message_1a685134f691423353872573987d4e71b0"></a>
 
@@ -80,7 +80,7 @@ std::span<const std::uint8_t> puc::ipc::DecodedMessage::extension
 
 Borrowed extension bytes.
 
-[Source](../../utils/ipc/msg.hpp#L138)
+[Source](../../utils/ipc/msg.hpp#L135)
 
 <a id="symbol-structpuc_1_1ipc_1_1_decoded_message_1a9669ed24cf09a137f7e1d43cad47339f"></a>
 
@@ -92,7 +92,7 @@ std::span<const std::uint8_t> puc::ipc::DecodedMessage::payload
 
 Borrowed payload bytes.
 
-[Source](../../utils/ipc/msg.hpp#L139)
+[Source](../../utils/ipc/msg.hpp#L136)
 
 <a id="symbol-structpuc_1_1ipc_1_1_decoded_message_1a4480a1a19c44f92c4aefd54e7cfc66ee"></a>
 
@@ -104,4 +104,4 @@ std::optional<Checksum> puc::ipc::DecodedMessage::checksum
 
 Verified checksum when present.
 
-[Source](../../utils/ipc/msg.hpp#L140)
+[Source](../../utils/ipc/msg.hpp#L137)

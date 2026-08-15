@@ -216,16 +216,19 @@ Status render_canvas(const Canvas& canvas, std::string& output) {
 
 }  // namespace
 
-Screen::Screen(multithreading::JobQueue& workers)
-    : Screen(STDIN_FILENO, STDOUT_FILENO, workers) {}
+Screen::Screen(multithreading::JobQueue& workers,
+               std::size_t maximum_message_bytes)
+    : Screen(STDIN_FILENO, STDOUT_FILENO, workers, maximum_message_bytes) {}
 
-Screen::Screen(int input_fd, int output_fd, multithreading::JobQueue& workers)
+Screen::Screen(int input_fd, int output_fd, multithreading::JobQueue& workers,
+               std::size_t maximum_message_bytes)
     : owned_terminal_session_(
           std::make_unique<terminal::TerminalSession>(input_fd, output_fd)),
       terminal_session_(owned_terminal_session_.get()),
       owned_directory_(std::make_unique<ipc::Directory>(workers)),
       directory_(owned_directory_.get()),
-      owns_channels_(true) {
+      owns_channels_(true),
+      maximum_message_bytes_(maximum_message_bytes) {
   setup_status_ = setup_channels(true);
 }
 
@@ -290,8 +293,7 @@ Status Screen::setup_channels(bool create_channels) {
   ipc::Status ipc_status    = ipc::Status::OK;
   if (create_channels) {
     command_channel_ = std::make_shared<ipc::SmemChannel>(
-        std::string{msg::kScreenCommandChannel},
-        ipc::kDefaultMaximumMessageBytes,
+        std::string{msg::kScreenCommandChannel}, maximum_message_bytes_,
         ipc::ChannelOptions{.channel_max_depth = kScreenCommandDepth});
     ipc_status = directory_->open_channel(command_channel_, command_id);
     if (!ipc::is_ok(ipc_status)) {
@@ -311,8 +313,7 @@ Status Screen::setup_channels(bool create_channels) {
     }
 
     input_channel_ = std::make_shared<ipc::SmemChannel>(
-        std::string{msg::kTerminalInputEventChannel},
-        ipc::kDefaultMaximumMessageBytes);
+        std::string{msg::kTerminalInputEventChannel}, maximum_message_bytes_);
     ipc_status = directory_->open_channel(input_channel_, input_id);
     if (!ipc::is_ok(ipc_status)) {
       Logger<ERROR> << "Could not open Screen input channel: "

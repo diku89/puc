@@ -8,6 +8,18 @@ Optional leaf subsystems selected for one executable's application graph.
 
 ## Public data members
 
+<a id="symbol-structpuc_1_1app_1_1_application_subsystem_selection_1a265b52370379016f9a2fd73bf41163f4"></a>
+
+### `canvas`
+
+```cpp
+bool puc::app::ApplicationSubsystemSelection::canvas
+```
+
+Register durable [Canvas](classpuc_1_1app_1_1_canvas.md) and orchestration.
+
+[Source](../../puc-cli/application/bootstrap.hpp#L21)
+
 <a id="symbol-structpuc_1_1app_1_1_application_subsystem_selection_1a2a6ed3eca453a81250de18df69d45b5d"></a>
 
 ### `metronome`
@@ -18,7 +30,7 @@ bool puc::app::ApplicationSubsystemSelection::metronome
 
 Register the production heartbeat.
 
-[Source](../../puc-cli/application/bootstrap.hpp#L21)
+[Source](../../puc-cli/application/bootstrap.hpp#L22)
 
 <a id="symbol-structpuc_1_1app_1_1_application_subsystem_selection_1a9ed596da701fd6cf82c959b60ea19b08"></a>
 
@@ -30,7 +42,7 @@ bool puc::app::ApplicationSubsystemSelection::presentation
 
 Register parallel frame scheduling.
 
-[Source](../../puc-cli/application/bootstrap.hpp#L22)
+[Source](../../puc-cli/application/bootstrap.hpp#L23)
 
 <a id="symbol-structpuc_1_1app_1_1_application_subsystem_selection_1abb7d4958fe9e09c17162df97ed8d90fb"></a>
 
@@ -42,7 +54,7 @@ bool puc::app::ApplicationSubsystemSelection::commands
 
 Register command dispatch and its route.
 
-[Source](../../puc-cli/application/bootstrap.hpp#L23)
+[Source](../../puc-cli/application/bootstrap.hpp#L24)
 
 <a id="symbol-structpuc_1_1app_1_1_application_subsystem_selection_1adecc6b488d9cfbc7439b96e03d7cfc1a"></a>
 
@@ -54,7 +66,7 @@ bool puc::app::ApplicationSubsystemSelection::input
 
 Register the composite application input.
 
-[Source](../../puc-cli/application/bootstrap.hpp#L24)
+[Source](../../puc-cli/application/bootstrap.hpp#L25)
 
 <a id="symbol-structpuc_1_1app_1_1_application_subsystem_selection_1ae5768391b54ddea71f51bdca1db01e64"></a>
 
@@ -66,7 +78,7 @@ bool puc::app::ApplicationSubsystemSelection::command_mode
 
 Bind command input to dispatch.
 
-[Source](../../puc-cli/application/bootstrap.hpp#L25)
+[Source](../../puc-cli/application/bootstrap.hpp#L26)
 
 <a id="symbol-structpuc_1_1app_1_1_application_subsystem_selection_1af9af11993365ba8b6267594be054fce2"></a>
 
@@ -78,4 +90,4 @@ bool puc::app::ApplicationSubsystemSelection::embedded_terminal
 
 Register integrated-terminal PTY ownership.
 
-[Source](../../puc-cli/application/bootstrap.hpp#L26)
+[Source](../../puc-cli/application/bootstrap.hpp#L27)

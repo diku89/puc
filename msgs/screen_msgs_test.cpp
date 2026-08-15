@@ -18,6 +18,9 @@
 namespace puc::msg {
 namespace {
 
+/** Deliberate IPC envelope limit used by registration tests. */
+constexpr std::size_t kTestMaximumPayloadBytes = 1024U;
+
 TEST(ScreenMessagesTest, ExposesCanonicalDirectionSpecificChannels) {
   EXPECT_EQ(kScreenCommandChannel, "//screen/commands");
   EXPECT_EQ(kScreenResizeEventChannel, "//screen/resize_events");
@@ -167,7 +170,7 @@ TEST(ScreenResizeEventCodecTest, RejectsZeroAndMalformedDimensions) {
 }
 
 TEST(ScreenMessagesTest, RegistersBothCodecsWithoutImplicitReplies) {
-  MessageCodecCollection codecs;
+  MessageCodecCollection codecs{kTestMaximumPayloadBytes};
   ASSERT_EQ(register_screen_codecs(codecs), Status::OK);
   EXPECT_EQ(codecs.size(), 3U);
   EXPECT_EQ(register_screen_codecs(codecs), Status::DUPLICATE_MESSAGE_ID);

@@ -811,7 +811,7 @@ std::string puc::terminal::environment_value(const char *name)
 
 Copy one environment variable, or return an empty string when absent.
 
-[Source](../../puc-cli/tui/terminal/configuration_paths.cpp#L38)
+[Source](../../puc-cli/tui/terminal/configuration_paths.cpp#L39)
 
 <a id="symbol-configuration__paths_8cpp_1a0f924ba756808755ee1c08750835cf81"></a>
 
@@ -825,7 +825,7 @@ Locate packaged terminal/theme configuration and its user overlay.
 
 `PUC_CONFIG_ROOT` takes precedence. Otherwise the current directory and common Bazel runfiles roots derived from `RUNFILES_DIR` and the executable path are searched. `PUC_USER_CONFIG_ROOT` selects the overlay; without it a deliberately absent path below the primary root disables overrides.
 
-[Source](../../puc-cli/tui/terminal/configuration_paths.cpp#L43)
+[Source](../../puc-cli/tui/terminal/configuration_paths.cpp#L44)
 
 <a id="symbol-event_8hpp_1a81a3232deb4c1a6e197bfb61aaf78eac"></a>
 

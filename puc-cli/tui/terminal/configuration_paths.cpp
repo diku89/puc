@@ -27,6 +27,7 @@ bool contains_packaged_configuration(const std::filesystem::path& root) {
   const std::string_view operating_system_defaults =
       operating_system_defaults_path(current_operating_system());
   return regular_file(root / "input_keys.toml") &&
+         regular_file(root / "ipc.toml") &&
          !operating_system_defaults.empty() &&
          regular_file(root / operating_system_defaults) &&
          regular_file(root / kTimeoutConfigurationPath) &&

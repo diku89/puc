@@ -24,9 +24,16 @@ cc_library(
     name = "bootstrap",
     srcs = ["bootstrap.cpp"],
     hdrs = ["bootstrap.hpp"],
+    data = [
+        "//canvas:canvas_config",
+        "//utils/ipc:ipc_config",
+    ],
     visibility = ["//visibility:public"],
     deps = [
         ":control",
+        "//canvas:canvas_subsystem",
+        "//canvas:datastore_subsystem",
+        "//canvas/session:orchestration_subsystem",
         "//commands:command_subsystems",
         "//properties:properties_subsystem",
         "//puc-cli/tui:input_subsystem",

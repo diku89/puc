@@ -57,6 +57,7 @@ const puc::app::ApplicationSubsystemOptions kApplicationProfile{
     .terminal     = kTerminalOptions,
     .selection =
         puc::app::ApplicationSubsystemSelection{
+            .canvas            = false,
             .metronome         = false,
             .presentation      = true,
             .commands          = false,

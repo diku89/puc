@@ -33,9 +33,6 @@ struct SubscriptionState;
 /** Maximum byte length accepted for one ASCII canonical channel name. */
 inline constexpr std::size_t kMaximumChannelNameBytes = 255U;
 
-/** Default payload limit used by IPC channels and the wire codec. */
-inline constexpr std::size_t kDefaultMaximumMessageBytes = 16U * 1024U * 1024U;
-
 /** Optional delivery policy shared by every concrete Channel. */
 struct ChannelOptions {
   /**

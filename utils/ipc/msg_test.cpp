@@ -19,6 +19,9 @@ namespace {
 constexpr std::array kPayload = {std::uint8_t{1}, std::uint8_t{2},
                                  std::uint8_t{3}};
 
+/** Deliberate wire limit used by codec unit tests. */
+constexpr std::size_t kTestMaximumPayloadBytes = 1024U;
+
 Message basic_message(bool checksum = false) {
   return Message{
       .header  = MessageHeader{.channel_id = 1U, .message_id = 0x01020304U},
@@ -29,7 +32,9 @@ Message basic_message(bool checksum = false) {
 
 TEST(MessageCodecTest, EmitsDocumentedNetworkByteOrderLayout) {
   std::vector<std::uint8_t> encoded;
-  ASSERT_EQ(serialize_message(basic_message(), encoded), Status::OK);
+  ASSERT_EQ(
+      serialize_message(basic_message(), kTestMaximumPayloadBytes, encoded),
+      Status::OK);
   constexpr std::array<std::uint8_t, 27U> expected = {
       std::uint8_t{'P'},
       std::uint8_t{'U'},
@@ -82,11 +87,14 @@ TEST(MessageCodecTest, RoundTripsEveryOptionalHeaderWithoutCopyingViews) {
       .include_checksum = true,
   };
   std::vector<std::uint8_t> encoded;
-  ASSERT_EQ(serialize_message(message, encoded), Status::OK);
+  ASSERT_EQ(serialize_message(message, kTestMaximumPayloadBytes, encoded),
+            Status::OK);
 
   DecodedMessage decoded;
   std::size_t consumed = 0U;
-  ASSERT_EQ(deserialize_message(encoded, decoded, consumed), Status::OK);
+  ASSERT_EQ(
+      deserialize_message(encoded, kTestMaximumPayloadBytes, decoded, consumed),
+      Status::OK);
   EXPECT_EQ(consumed, encoded.size());
   EXPECT_EQ(decoded.wire_header.version, kWireVersion);
   EXPECT_TRUE(decoded.wire_header.has_session_id);
@@ -114,7 +122,9 @@ TEST(MessageCodecTest, RoundTripsEveryOptionalHeaderWithoutCopyingViews) {
 
 TEST(MessageCodecTest, ProducesStandardSha256ChecksumBytes) {
   std::vector<std::uint8_t> encoded;
-  ASSERT_EQ(serialize_message(basic_message(true), encoded), Status::OK);
+  ASSERT_EQ(
+      serialize_message(basic_message(true), kTestMaximumPayloadBytes, encoded),
+      Status::OK);
   constexpr std::array<std::uint8_t, kChecksumBytes> expected_digest = {
       0x9dU, 0x57U, 0x1aU, 0x49U, 0x63U, 0xc7U, 0x8dU, 0x2aU,
       0x53U, 0xaeU, 0xa6U, 0x98U, 0x28U, 0x1aU, 0x20U, 0xadU,
@@ -131,13 +141,16 @@ TEST(MessageCodecTest, AllowsEmptyPayloadsAndTrailingWireData) {
   Message message = basic_message();
   message.payload = {};
   std::vector<std::uint8_t> encoded;
-  ASSERT_EQ(serialize_message(message, encoded), Status::OK);
+  ASSERT_EQ(serialize_message(message, kTestMaximumPayloadBytes, encoded),
+            Status::OK);
   const std::size_t message_size = encoded.size();
   encoded.insert(encoded.end(), {0xaaU, 0xbbU, 0xccU});
 
   DecodedMessage decoded;
   std::size_t consumed = 0U;
-  ASSERT_EQ(deserialize_message(encoded, decoded, consumed), Status::OK);
+  ASSERT_EQ(
+      deserialize_message(encoded, kTestMaximumPayloadBytes, decoded, consumed),
+      Status::OK);
   EXPECT_EQ(consumed, message_size);
   EXPECT_TRUE(decoded.payload.empty());
 }
@@ -146,23 +159,28 @@ TEST(MessageCodecTest, RejectsInvalidSemanticMessagesBeforeAllocatingOutput) {
   std::vector<std::uint8_t> output = {9U, 9U};
   Message message                  = basic_message();
   message.header.channel_id        = 0U;
-  EXPECT_EQ(serialize_message(message, output), Status::INVALID_ARGUMENT);
+  EXPECT_EQ(serialize_message(message, kTestMaximumPayloadBytes, output),
+            Status::INVALID_ARGUMENT);
   EXPECT_TRUE(output.empty());
 
   message            = basic_message();
   message.session_id = SessionId{};
-  EXPECT_EQ(serialize_message(message, output), Status::INVALID_ARGUMENT);
+  EXPECT_EQ(serialize_message(message, kTestMaximumPayloadBytes, output),
+            Status::INVALID_ARGUMENT);
 
   SessionId too_long{
       .length = static_cast<std::uint8_t>(kMaximumSessionIdBytes + 1U)};
   message.session_id = too_long;
-  EXPECT_EQ(serialize_message(message, output), Status::INVALID_ARGUMENT);
+  EXPECT_EQ(serialize_message(message, kTestMaximumPayloadBytes, output),
+            Status::INVALID_ARGUMENT);
 
   message           = basic_message();
   message.multipart = MultipartHeader{.total_parts = 0U, .part_index = 0U};
-  EXPECT_EQ(serialize_message(message, output), Status::INVALID_ARGUMENT);
+  EXPECT_EQ(serialize_message(message, kTestMaximumPayloadBytes, output),
+            Status::INVALID_ARGUMENT);
   message.multipart = MultipartHeader{.total_parts = 2U, .part_index = 2U};
-  EXPECT_EQ(serialize_message(message, output), Status::INVALID_ARGUMENT);
+  EXPECT_EQ(serialize_message(message, kTestMaximumPayloadBytes, output),
+            Status::INVALID_ARGUMENT);
 }
 
 TEST(MessageCodecTest, ReportsEveryTruncatedPrefixOfAValidMessage) {
@@ -177,13 +195,14 @@ TEST(MessageCodecTest, ReportsEveryTruncatedPrefixOfAValidMessage) {
       .include_checksum = true,
   };
   std::vector<std::uint8_t> encoded;
-  ASSERT_EQ(serialize_message(message, encoded), Status::OK);
+  ASSERT_EQ(serialize_message(message, kTestMaximumPayloadBytes, encoded),
+            Status::OK);
   for (std::size_t length = 0U; length < encoded.size(); ++length) {
     DecodedMessage decoded;
     std::size_t consumed = 99U;
     EXPECT_EQ(deserialize_message(
-                  std::span<const std::uint8_t>{encoded}.first(length), decoded,
-                  consumed),
+                  std::span<const std::uint8_t>{encoded}.first(length),
+                  kTestMaximumPayloadBytes, decoded, consumed),
               Status::TRUNCATED_MESSAGE)
         << "prefix length " << length;
     EXPECT_EQ(consumed, 0U);
@@ -192,84 +211,101 @@ TEST(MessageCodecTest, ReportsEveryTruncatedPrefixOfAValidMessage) {
 
 TEST(MessageCodecTest, DistinguishesMalformedUnsupportedAndOversizedInput) {
   std::vector<std::uint8_t> encoded;
-  ASSERT_EQ(serialize_message(basic_message(), encoded), Status::OK);
+  ASSERT_EQ(
+      serialize_message(basic_message(), kTestMaximumPayloadBytes, encoded),
+      Status::OK);
   DecodedMessage decoded;
   std::size_t consumed = 0U;
 
   auto changed = encoded;
   changed[0]   = 'X';
-  EXPECT_EQ(deserialize_message(changed, decoded, consumed),
-            Status::MALFORMED_MESSAGE);
+  EXPECT_EQ(
+      deserialize_message(changed, kTestMaximumPayloadBytes, decoded, consumed),
+      Status::MALFORMED_MESSAGE);
   changed    = encoded;
   changed[4] = 1U;
-  EXPECT_EQ(deserialize_message(changed, decoded, consumed),
-            Status::UNSUPPORTED_VERSION);
+  EXPECT_EQ(
+      deserialize_message(changed, kTestMaximumPayloadBytes, decoded, consumed),
+      Status::UNSUPPORTED_VERSION);
   changed    = encoded;
   changed[5] = 0x80U;
-  EXPECT_EQ(deserialize_message(changed, decoded, consumed),
-            Status::MALFORMED_MESSAGE);
+  EXPECT_EQ(
+      deserialize_message(changed, kTestMaximumPayloadBytes, decoded, consumed),
+      Status::MALFORMED_MESSAGE);
   changed    = encoded;
   changed[6] = 0U;
   changed[7] = 23U;
-  EXPECT_EQ(deserialize_message(changed, decoded, consumed),
-            Status::MALFORMED_MESSAGE);
+  EXPECT_EQ(
+      deserialize_message(changed, kTestMaximumPayloadBytes, decoded, consumed),
+      Status::MALFORMED_MESSAGE);
   changed     = encoded;
   changed[8]  = 0U;
   changed[9]  = 0U;
   changed[10] = 0U;
   changed[11] = 0U;
-  EXPECT_EQ(deserialize_message(changed, decoded, consumed),
-            Status::MALFORMED_MESSAGE);
+  EXPECT_EQ(
+      deserialize_message(changed, kTestMaximumPayloadBytes, decoded, consumed),
+      Status::MALFORMED_MESSAGE);
   changed     = encoded;
   changed[20] = 1U;
   changed[21] = 0U;
   changed[22] = 0U;
   changed[23] = 1U;
-  EXPECT_EQ(deserialize_message(changed, decoded, consumed),
-            Status::MESSAGE_TOO_LARGE);
+  EXPECT_EQ(
+      deserialize_message(changed, kTestMaximumPayloadBytes, decoded, consumed),
+      Status::MESSAGE_TOO_LARGE);
 }
 
 TEST(MessageCodecTest, RejectsContradictoryOptionalHeaderFlagsAndSizes) {
   std::vector<std::uint8_t> encoded;
-  ASSERT_EQ(serialize_message(basic_message(), encoded), Status::OK);
+  ASSERT_EQ(
+      serialize_message(basic_message(), kTestMaximumPayloadBytes, encoded),
+      Status::OK);
   DecodedMessage decoded;
   std::size_t consumed = 0U;
 
   auto changed = encoded;
   changed[5]   = 0x01U;
-  EXPECT_EQ(deserialize_message(changed, decoded, consumed),
-            Status::MALFORMED_MESSAGE);
+  EXPECT_EQ(
+      deserialize_message(changed, kTestMaximumPayloadBytes, decoded, consumed),
+      Status::MALFORMED_MESSAGE);
   changed    = encoded;
   changed[5] = 0x10U;
-  EXPECT_EQ(deserialize_message(changed, decoded, consumed),
-            Status::MALFORMED_MESSAGE);
+  EXPECT_EQ(
+      deserialize_message(changed, kTestMaximumPayloadBytes, decoded, consumed),
+      Status::MALFORMED_MESSAGE);
 
   changed = encoded;
   changed.insert(changed.begin() + 24, 0U);
   changed[6] = 0U;
   changed[7] = 25U;
-  EXPECT_EQ(deserialize_message(changed, decoded, consumed),
-            Status::MALFORMED_MESSAGE);
+  EXPECT_EQ(
+      deserialize_message(changed, kTestMaximumPayloadBytes, decoded, consumed),
+      Status::MALFORMED_MESSAGE);
 
   changed = encoded;
   changed.insert(changed.begin() + 24, 8U, 0U);
   changed[5] = 0x04U;
   changed[6] = 0U;
   changed[7] = 32U;
-  EXPECT_EQ(deserialize_message(changed, decoded, consumed),
-            Status::MALFORMED_MESSAGE);
+  EXPECT_EQ(
+      deserialize_message(changed, kTestMaximumPayloadBytes, decoded, consumed),
+      Status::MALFORMED_MESSAGE);
 }
 
 TEST(MessageCodecTest, DetectsPayloadAndChecksumCorruptionAndResetsOutput) {
   std::vector<std::uint8_t> encoded;
-  ASSERT_EQ(serialize_message(basic_message(true), encoded), Status::OK);
+  ASSERT_EQ(
+      serialize_message(basic_message(true), kTestMaximumPayloadBytes, encoded),
+      Status::OK);
   encoded[24U] ^= 0xffU;
 
   DecodedMessage decoded;
   decoded.header.channel_id = 99U;
   std::size_t consumed      = 99U;
-  EXPECT_EQ(deserialize_message(encoded, decoded, consumed),
-            Status::CHECKSUM_MISMATCH);
+  EXPECT_EQ(
+      deserialize_message(encoded, kTestMaximumPayloadBytes, decoded, consumed),
+      Status::CHECKSUM_MISMATCH);
   EXPECT_EQ(decoded.header.channel_id, 0U);
   EXPECT_TRUE(decoded.payload.empty());
   EXPECT_EQ(consumed, 0U);

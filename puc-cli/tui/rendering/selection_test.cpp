@@ -26,6 +26,9 @@
 namespace puc::tui {
 namespace {
 
+/** Deliberate local-channel limit used by standalone Screen tests. */
+constexpr std::size_t kTestMaximumMessageBytes = 1024U * 1024U;
+
 /** Selectable or blocking Frame double with observable semantic operations. */
 class SelectionFrame final : public Frame {
  public:
@@ -210,7 +213,7 @@ TEST(SelectionStateMachineTest, SelectAllIsACompletedReplacementSelection) {
 
 TEST(ScreenSelectionTest, KeyboardSelectAllUsesTheSharedSelectionState) {
   multithreading::JobQueue workers;
-  Screen screen(-1, -1, workers);
+  Screen screen(-1, -1, workers, kTestMaximumMessageBytes);
   const auto document = std::make_shared<SelectionFrame>("document");
   document->text      = "only the focused frame";
 
@@ -338,7 +341,7 @@ TEST(SelectionStateMachineTest, ExtractsTextOnlyFromACompletedSelection) {
 
 TEST(ScreenSelectionTest, CapturedDragUsesSignedCoordinatesOnOriginalFrame) {
   multithreading::JobQueue workers;
-  Screen screen(-1, -1, workers);
+  Screen screen(-1, -1, workers, kTestMaximumMessageBytes);
   ZBuffer z_buffer;
   const auto document = std::make_shared<SelectionFrame>("document");
   const auto overlay  = std::make_shared<SelectionFrame>("overlay");
@@ -381,7 +384,7 @@ TEST(ScreenSelectionTest, CapturedDragUsesSignedCoordinatesOnOriginalFrame) {
 
 TEST(ScreenSelectionTest, ReleaseMovementSynthesizesACompleteDrag) {
   multithreading::JobQueue workers;
-  Screen screen(-1, -1, workers);
+  Screen screen(-1, -1, workers, kTestMaximumMessageBytes);
   ZBuffer z_buffer;
   const auto document = std::make_shared<SelectionFrame>("document");
   ASSERT_EQ(z_buffer.add("document", document), Status::OK);
@@ -406,7 +409,7 @@ TEST(ScreenSelectionTest, ReleaseMovementSynthesizesACompleteDrag) {
 
 TEST(ScreenSelectionTest, DoubleClickSelectsWordAndTripleClickSelectsLine) {
   multithreading::JobQueue workers;
-  Screen screen(-1, -1, workers);
+  Screen screen(-1, -1, workers, kTestMaximumMessageBytes);
   ZBuffer z_buffer;
   const auto document = std::make_shared<SelectionFrame>("document");
   ASSERT_EQ(z_buffer.add("document", document), Status::OK);
@@ -433,7 +436,7 @@ TEST(ScreenSelectionTest, DoubleClickSelectsWordAndTripleClickSelectsLine) {
 
 TEST(ScreenSelectionTest, SingleClickAfterSelectionClearsIt) {
   multithreading::JobQueue workers;
-  Screen screen(-1, -1, workers);
+  Screen screen(-1, -1, workers, kTestMaximumMessageBytes);
   ZBuffer z_buffer;
   const auto document = std::make_shared<SelectionFrame>("document");
   ASSERT_EQ(z_buffer.add("document", document), Status::OK);
@@ -458,7 +461,7 @@ TEST(ScreenSelectionTest, SingleClickAfterSelectionClearsIt) {
 
 TEST(ScreenSelectionTest, StaleClickTimeoutCannotBreakANewerClickChain) {
   multithreading::JobQueue workers;
-  Screen screen(-1, -1, workers);
+  Screen screen(-1, -1, workers, kTestMaximumMessageBytes);
   ZBuffer z_buffer;
   const auto document = std::make_shared<SelectionFrame>("document");
   ASSERT_EQ(z_buffer.add("document", document), Status::OK);
@@ -486,7 +489,7 @@ TEST(ScreenSelectionTest, StaleClickTimeoutCannotBreakANewerClickChain) {
 
 TEST(ScreenSelectionTest, FrontmostNonselectableFrameBlocksSelectionThroughIt) {
   multithreading::JobQueue workers;
-  Screen screen(-1, -1, workers);
+  Screen screen(-1, -1, workers, kTestMaximumMessageBytes);
   ZBuffer z_buffer;
   const auto document   = std::make_shared<SelectionFrame>("document");
   const auto decoration = std::make_shared<SelectionFrame>("decoration", false);
@@ -508,7 +511,7 @@ TEST(ScreenSelectionTest, FrontmostNonselectableFrameBlocksSelectionThroughIt) {
 
 TEST(ScreenSelectionTest, FrontmostSelectableFrameWinsOverOverlappingFrame) {
   multithreading::JobQueue workers;
-  Screen screen(-1, -1, workers);
+  Screen screen(-1, -1, workers, kTestMaximumMessageBytes);
   ZBuffer z_buffer;
   const auto back  = std::make_shared<SelectionFrame>("back");
   const auto front = std::make_shared<SelectionFrame>("front");
@@ -531,7 +534,7 @@ TEST(ScreenSelectionTest, FrontmostSelectableFrameWinsOverOverlappingFrame) {
 
 TEST(ScreenSelectionTest, DifferentCellsModifiersAndSlowClicksDoNotCombine) {
   multithreading::JobQueue workers;
-  Screen screen(-1, -1, workers);
+  Screen screen(-1, -1, workers, kTestMaximumMessageBytes);
   ZBuffer z_buffer;
   const auto document = std::make_shared<SelectionFrame>("document");
   ASSERT_EQ(z_buffer.add("document", document), Status::OK);
@@ -553,7 +556,7 @@ TEST(ScreenSelectionTest, DifferentCellsModifiersAndSlowClicksDoNotCombine) {
 
 TEST(ScreenSelectionTest, CompletedTextAndExplicitResetUseTheSelectedFrame) {
   multithreading::JobQueue workers;
-  Screen screen(-1, -1, workers);
+  Screen screen(-1, -1, workers, kTestMaximumMessageBytes);
   ZBuffer z_buffer;
   const auto document = std::make_shared<SelectionFrame>("document");
   document->text      = "logical text\nwithout padding";
@@ -575,7 +578,7 @@ TEST(ScreenSelectionTest, CompletedTextAndExplicitResetUseTheSelectedFrame) {
 
 TEST(ScreenSelectionTest, IrrelevantButtonsMotionAndReleaseAreNoOps) {
   multithreading::JobQueue workers;
-  Screen screen(-1, -1, workers);
+  Screen screen(-1, -1, workers, kTestMaximumMessageBytes);
   ZBuffer z_buffer;
   const auto document = std::make_shared<SelectionFrame>("document");
   ASSERT_EQ(z_buffer.add("document", document), Status::OK);

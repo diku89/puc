@@ -8,7 +8,7 @@ Named byte-message endpoint with immutable read-side subscription snapshots.
 
 With no `channel_max_depth`, delivery is synchronous, retains no payload, and performs no subscriber-list allocation. Configuring a depth makes delivery asynchronous after [Directory](classpuc_1_1ipc_1_1_directory.md) registration. The channel then owns at most the newest N pending payload copies and invokes subscribers FIFO on the caller-owned worker pool borrowed by [Directory](classpuc_1_1ipc_1_1_directory.md). The message currently being delivered is not pending and is never evicted.
 
-[Source](../../utils/ipc/channel.hpp#L127)
+[Source](../../utils/ipc/channel.hpp#L124)
 
 ## Related symbols
 
@@ -27,7 +27,7 @@ using puc::ipc::Channel::Bytes = std::span<const std::uint8_t>
 
 Byte view delivered to and from channel transports.
 
-[Source](../../utils/ipc/channel.hpp#L130)
+[Source](../../utils/ipc/channel.hpp#L127)
 
 ## Friends
 
@@ -39,7 +39,7 @@ Byte view delivered to and from channel transports.
 friend class Directory
 ```
 
-[Source](../../utils/ipc/channel.hpp#L277)
+[Source](../../utils/ipc/channel.hpp#L274)
 
 ## Private data members
 
@@ -53,7 +53,7 @@ std::shared_ptr<Impl> puc::ipc::Channel::impl_
 
 Name, subscribers, and delivery state.
 
-[Source](../../utils/ipc/channel.hpp#L286)
+[Source](../../utils/ipc/channel.hpp#L283)
 
 ## Public functions
 
@@ -65,7 +65,7 @@ Name, subscribers, and delivery state.
 puc::ipc::Channel::Channel(const Channel &)=delete
 ```
 
-[Source](../../utils/ipc/channel.hpp#L222)
+[Source](../../utils/ipc/channel.hpp#L219)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1a046b38d1642d20f8c343939fdb7768a7"></a>
 
@@ -75,7 +75,7 @@ puc::ipc::Channel::Channel(const Channel &)=delete
 Channel & puc::ipc::Channel::operator=(const Channel &)=delete
 ```
 
-[Source](../../utils/ipc/channel.hpp#L223)
+[Source](../../utils/ipc/channel.hpp#L220)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1abb547d49d9f99610108a4cb9a1131e94"></a>
 
@@ -85,7 +85,7 @@ Channel & puc::ipc::Channel::operator=(const Channel &)=delete
 puc::ipc::Channel::Channel(Channel &&)=delete
 ```
 
-[Source](../../utils/ipc/channel.hpp#L224)
+[Source](../../utils/ipc/channel.hpp#L221)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1acf093dda7037dc4bd14c8f554c04286b"></a>
 
@@ -95,7 +95,7 @@ puc::ipc::Channel::Channel(Channel &&)=delete
 Channel & puc::ipc::Channel::operator=(Channel &&)=delete
 ```
 
-[Source](../../utils/ipc/channel.hpp#L225)
+[Source](../../utils/ipc/channel.hpp#L222)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1a94811ebe869115b3353c7bc4573d8459"></a>
 
@@ -107,7 +107,7 @@ puc::ipc::Channel::~Channel()
 
 Destroy subscriber state after a derived transport has stopped.
 
-[Source](../../utils/ipc/channel.hpp#L228)
+[Source](../../utils/ipc/channel.hpp#L225)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1abfc6d7f9af609469d6c07c669f85c236"></a>
 
@@ -121,7 +121,7 @@ Send one complete message through the concrete transport.
 
 A successful result reports exactly `data.size()` accepted payload bytes. [Message](structpuc_1_1ipc_1_1_message.md) boundaries must be preserved by every implementation.
 
-[Source](../../utils/ipc/channel.hpp#L236)
+[Source](../../utils/ipc/channel.hpp#L233)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1a19325811edb2aa905e87efa975cfcc45"></a>
 
@@ -135,7 +135,7 @@ Register one receive callback and replace `subscription` on success.
 
 Existing callbacks remain active. Replacing a populated output object disables only the callback it previously owned.
 
-[Source](../../utils/ipc/channel.hpp#L244)
+[Source](../../utils/ipc/channel.hpp#L241)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1a5318ce414195007a04ceb42268202832"></a>
 
@@ -147,7 +147,7 @@ const std::string & puc::ipc::Channel::name() const noexcept
 
 Return the canonical channel name.
 
-[Source](../../utils/ipc/channel.hpp#L247)
+[Source](../../utils/ipc/channel.hpp#L244)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1aad3af7dfc891864c2d61c7cfc97a4162"></a>
 
@@ -159,7 +159,7 @@ Status puc::ipc::Channel::status() const noexcept
 
 Return the channel's persistent initialization or transport status.
 
-[Source](../../utils/ipc/channel.hpp#L250)
+[Source](../../utils/ipc/channel.hpp#L247)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1a529a492d69e2c0a33ba757dbb3cf12ca"></a>
 
@@ -171,7 +171,7 @@ std::size_t puc::ipc::Channel::subscriber_count() const noexcept
 
 Return the number of callbacks that have not been disabled.
 
-[Source](../../utils/ipc/channel.hpp#L253)
+[Source](../../utils/ipc/channel.hpp#L250)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1a2756acd95be86183dd1ba7382a3713c6"></a>
 
@@ -183,7 +183,7 @@ std::optional< std::size_t > puc::ipc::Channel::channel_max_depth() const noexce
 
 Return the configured pending-message limit, or no value if synchronous.
 
-[Source](../../utils/ipc/channel.hpp#L257)
+[Source](../../utils/ipc/channel.hpp#L254)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1adbdcadaaaa4f0f7d3e346da8d6e6e9ee"></a>
 
@@ -195,7 +195,7 @@ std::size_t puc::ipc::Channel::pending_messages() const noexcept
 
 Return the number of retained messages awaiting callback delivery.
 
-[Source](../../utils/ipc/channel.hpp#L260)
+[Source](../../utils/ipc/channel.hpp#L257)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1a892b019f07a0702aa434054636a38d69"></a>
 
@@ -207,7 +207,7 @@ std::uint64_t puc::ipc::Channel::dropped_messages() const noexcept
 
 Return the lifetime count of oldest-pending messages evicted at capacity.
 
-[Source](../../utils/ipc/channel.hpp#L264)
+[Source](../../utils/ipc/channel.hpp#L261)
 
 ## Protected functions
 
@@ -221,7 +221,7 @@ puc::ipc::Channel::Channel(std::string name, ChannelOptions options={})
 
 Construct a channel and validate its immutable name.
 
-[Source](../../utils/ipc/channel.hpp#L268)
+[Source](../../utils/ipc/channel.hpp#L265)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1a43e6fc66f0c3d0bc4caca8125f5d80c7"></a>
 
@@ -233,7 +233,7 @@ Status puc::ipc::Channel::deliver(Bytes data) noexcept
 
 Deliver synchronously or enqueue under the configured bounded policy.
 
-[Source](../../utils/ipc/channel.hpp#L271)
+[Source](../../utils/ipc/channel.hpp#L268)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1a7ef387535b003dee478c0e8898f9d68d"></a>
 
@@ -245,7 +245,7 @@ void puc::ipc::Channel::set_status(Status status) noexcept
 
 Record a persistent channel failure, or restore [Status::OK](namespacepuc_1_1ipc.md#symbol-namespacepuc_1_1ipc_1a2d9525a8274577936e23d73e7264f5e4ae0aa021e21dddbd6d8cecec71e9cf564).
 
-[Source](../../utils/ipc/channel.hpp#L274)
+[Source](../../utils/ipc/channel.hpp#L271)
 
 ## Private functions
 
@@ -259,7 +259,7 @@ Status puc::ipc::Channel::attach_delivery_queue(multithreading::JobQueue &worker
 
 Attach bounded delivery to one caller-owned worker pool.
 
-[Source](../../utils/ipc/channel.hpp#L280)
+[Source](../../utils/ipc/channel.hpp#L277)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1a796d7a0afb6c524e53bb539a0c7b37ea"></a>
 
@@ -271,4 +271,4 @@ void puc::ipc::Channel::detach_delivery_queue() noexcept
 
 Stop and discard bounded pending delivery before [Directory](classpuc_1_1ipc_1_1_directory.md) removal.
 
-[Source](../../utils/ipc/channel.hpp#L283)
+[Source](../../utils/ipc/channel.hpp#L280)

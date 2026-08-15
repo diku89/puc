@@ -30,6 +30,8 @@ namespace {
 
 using namespace std::chrono_literals;
 
+constexpr std::size_t kTestMaximumMessageBytes = 1024U;
+
 /** Mutable test command recording dispatch while exposing fixed metadata. */
 class RecordingCommand final : public CommandApp {
  public:
@@ -87,8 +89,7 @@ class RegisteringCommand final : public CommandApp {
 std::shared_ptr<ipc::Channel> open_notification_channel(
     ipc::Directory& directory) {
   auto channel = std::make_shared<ipc::SmemChannel>(
-      std::string{msg::kCmdFrameNotifyChannel},
-      ipc::kDefaultMaximumMessageBytes,
+      std::string{msg::kCmdFrameNotifyChannel}, kTestMaximumMessageBytes,
       ipc::ChannelOptions{.channel_max_depth = 1U});
   ipc::ChannelId channel_id = 0U;
   return ipc::is_ok(directory.open_channel(channel, channel_id))

@@ -51,7 +51,7 @@ Globally registered payload schema identifiers.
 #### Values
 - <a id="symbol-namespacepuc_1_1msg_1a24b154890bf81939005e112918c3813fabba60353fe62a4eed8c486b71c20f573"></a>`NULL_MESSAGE` — Empty payload represented as an empty JSON object.
 
-**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000003):**
+**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000008):**
 
 **Kind:** Message ID  
 **ID:** `0`  
@@ -61,7 +61,7 @@ Globally registered payload schema identifiers.
 **Consumers:** Generic dispatch and components expecting an explicit no-data payload.
 - <a id="symbol-namespacepuc_1_1msg_1a24b154890bf81939005e112918c3813fa2762e0ac6a7a8de6eb1160ffeaa14043"></a>`SCREEN_COMMAND` — One-way command from Screen to TerminalSession.
 
-**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000004):**
+**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000009):**
 
 **Kind:** Message ID  
 **ID:** `1`  
@@ -71,7 +71,7 @@ Globally registered payload schema identifiers.
 **Consumers:** [TerminalSession](classpuc_1_1terminal_1_1_terminal_session.md).
 - <a id="symbol-namespacepuc_1_1msg_1a24b154890bf81939005e112918c3813fac6358684a996df7bd22732e2db736db5"></a>`SCREEN_RESIZE_EVENT` — Observed terminal geometry publication.
 
-**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000005):**
+**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000010):**
 
 **Kind:** Message ID  
 **ID:** `2`  
@@ -81,7 +81,7 @@ Globally registered payload schema identifiers.
 **Consumers:** [Screen](classpuc_1_1tui_1_1_screen.md) and subscribed geometry observers.
 - <a id="symbol-namespacepuc_1_1msg_1a24b154890bf81939005e112918c3813fa927a4a1b4940c5412075641ddb1120b5"></a>`CMD_FRAME_NOTIFICATION` — Command-mode notification text.
 
-**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000006):**
+**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000011):**
 
 **Kind:** Message ID  
 **ID:** `3`  
@@ -91,7 +91,7 @@ Globally registered payload schema identifiers.
 **Consumers:** The command-mode controller presenting [CmdFrame](classpuc_1_1tui_1_1_cmd_frame.md).
 - <a id="symbol-namespacepuc_1_1msg_1a24b154890bf81939005e112918c3813fa0dc388ed7715695dc47c7fd9a7e0cef2"></a>`TERMINAL_INPUT_EVENT` — Normalized terminal input event.
 
-**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000007):**
+**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000012):**
 
 **Kind:** Message ID  
 **ID:** `4`  
@@ -153,7 +153,7 @@ std::string_view puc::msg::kCmdFrameNotifyChannel
 
 Channel publishing the newest notification from an executing command.
 
-**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000001):**
+**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000006):**
 
 **Kind:** Channel  
 **Name:** `//cmdframe/notify`  
@@ -173,7 +173,7 @@ std::string_view puc::msg::kScreenCommandChannel
 
 Channel carrying commands from TUI presentation to terminal mechanism.
 
-**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000009):**
+**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000014):**
 
 **Kind:** Channel  
 **Name:** `//screen/commands`  
@@ -193,7 +193,7 @@ std::string_view puc::msg::kScreenResizeEventChannel
 
 Channel publishing terminal geometry whenever the observation changes.
 
-**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000010):**
+**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000015):**
 
 **Kind:** Channel  
 **Name:** `//screen/resize_events`  
@@ -213,7 +213,7 @@ std::string_view puc::msg::kTerminalInputEventChannel
 
 Channel publishing normalized terminal input and protocol responses.
 
-**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000013):**
+**[Protocol Contract](puc_protocol_contracts.md#symbol-puc_protocol_contracts_1_puc_protocol_contracts000018):**
 
 **Kind:** Channel  
 **Name:** `//terminal/input_events`  

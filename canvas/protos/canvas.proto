@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package puc.canvas.proto;
+
+import "canvas/protos/actor.proto";
+import "canvas/protos/presentation.proto";
+import "canvas/protos/turn.proto";
+
+// Aggregate root for one durable conversational workspace.
+message Canvas {
+  optional bytes canvas_uuid = 1;
+  optional string title = 2;
+  optional string one_line_description = 3;
+  optional bytes turn_trie_uuid = 4;
+  optional bytes turn_trie_root_hash = 5;
+  optional bytes presentation_uuid = 6;
+  optional bytes presentation_root_hash = 7;
+  repeated Actor actors = 8;
+  repeated Turn turns = 9;
+  optional Presentation presentation = 10;
+}

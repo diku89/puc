@@ -4,7 +4,7 @@
 
 Position of one independently transported part of a logical message.
 
-[Source](../../utils/ipc/msg.hpp#L82)
+[Source](../../utils/ipc/msg.hpp#L79)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::uint32_t puc::ipc::MultipartHeader::total_parts
 
 Total number of parts, at least one.
 
-[Source](../../utils/ipc/msg.hpp#L83)
+[Source](../../utils/ipc/msg.hpp#L80)
 
 <a id="symbol-structpuc_1_1ipc_1_1_multipart_header_1a7bcfddc712d7a853f5d4dbba1b00e56d"></a>
 
@@ -30,7 +30,7 @@ std::uint32_t puc::ipc::MultipartHeader::part_index
 
 Zero-based index below total\_parts.
 
-[Source](../../utils/ipc/msg.hpp#L84)
+[Source](../../utils/ipc/msg.hpp#L81)
 
 ## Public functions
 
@@ -44,4 +44,4 @@ bool puc::ipc::MultipartHeader::operator==(const MultipartHeader &) const noexce
 
 Compare multipart metadata.
 
-[Source](../../utils/ipc/msg.hpp#L87)
+[Source](../../utils/ipc/msg.hpp#L84)

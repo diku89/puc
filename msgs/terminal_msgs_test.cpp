@@ -15,6 +15,9 @@
 namespace puc::msg {
 namespace {
 
+/** Deliberate IPC envelope limit used by registration tests. */
+constexpr std::size_t kTestMaximumPayloadBytes = 1024U;
+
 TEST(TerminalMessagesTest, RoundTripsEveryEventAlternative) {
   const std::array<TerminalInputEvent, 10U> events{{
       TerminalInputEvent{.data = TerminalKeyEvent{.named           = false,
@@ -73,7 +76,7 @@ TEST(TerminalMessagesTest, RejectsMalformedAndOutOfRangeValues) {
 }
 
 TEST(TerminalMessagesTest, RegistersCanonicalMessageIdentifier) {
-  MessageCodecCollection codecs;
+  MessageCodecCollection codecs{kTestMaximumPayloadBytes};
   ASSERT_EQ(register_terminal_codecs(codecs), Status::OK);
   EXPECT_EQ(codecs.size(), 2U);
   const TerminalInputEvent event{.data = TerminalCommandEvent{.command = 1U}};

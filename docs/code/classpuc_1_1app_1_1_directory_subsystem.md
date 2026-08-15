@@ -6,7 +6,7 @@ Own the process-local channel Directory above [WorkerSubsystem](classpuc_1_1app_
 
 Each start creates a Directory borrowing that lifecycle generation's live worker pool. Each stop destroys the Directory first, detaching and draining every registered channel while its delivery workers still accept work.
 
-[Source](../../utils/ipc/directory_subsystem.hpp#L25)
+[Source](../../utils/ipc/directory_subsystem.hpp#L26)
 
 ## Private data members
 
@@ -20,7 +20,19 @@ std::unique_ptr<ipc::Directory> puc::app::DirectorySubsystem::directory_
 
 Registry present only while this adapter is started.
 
-[Source](../../utils/ipc/directory_subsystem.hpp#L53)
+[Source](../../utils/ipc/directory_subsystem.hpp#L59)
+
+<a id="symbol-classpuc_1_1app_1_1_directory_subsystem_1a910e7e5bda537da0c1f86d4344265036"></a>
+
+### `maximum_message_bytes_`
+
+```cpp
+std::size_t puc::app::DirectorySubsystem::maximum_message_bytes_
+```
+
+Property-backed limit retained across stop/start cycles.
+
+[Source](../../utils/ipc/directory_subsystem.hpp#L60)
 
 ## Public functions
 
@@ -32,9 +44,9 @@ Registry present only while this adapter is started.
 puc::app::DirectorySubsystem::DirectorySubsystem()
 ```
 
-Declare the worker-pool dependency used for channel delivery.
+Declare configuration and worker-pool lifecycle dependencies.
 
-[Source](../../utils/ipc/directory_subsystem.hpp#L28)
+[Source](../../utils/ipc/directory_subsystem.hpp#L29)
 
 <a id="symbol-classpuc_1_1app_1_1_directory_subsystem_1a4bb4767f269fe335ebe63aafcac8e905"></a>
 
@@ -46,7 +58,7 @@ puc::app::DirectorySubsystem::~DirectorySubsystem() override
 
 Destroy a released channel directory.
 
-[Source](../../utils/ipc/directory_subsystem.hpp#L31)
+[Source](../../utils/ipc/directory_subsystem.hpp#L32)
 
 <a id="symbol-classpuc_1_1app_1_1_directory_subsystem_1af326c74fa1a56de273202d632dc6267f"></a>
 
@@ -56,9 +68,9 @@ Destroy a released channel directory.
 Status puc::app::DirectorySubsystem::initialize(AppState &app) override
 ```
 
-Validate that the registered [WorkerSubsystem](classpuc_1_1app_1_1_worker_subsystem.md) can be resolved.
+Load the configured message limit and validate dependencies.
 
-[Source](../../utils/ipc/directory_subsystem.hpp#L34)
+[Source](../../utils/ipc/directory_subsystem.hpp#L35)
 
 <a id="symbol-classpuc_1_1app_1_1_directory_subsystem_1a1dba32bcd6bbdc89f87a94502a5c340f"></a>
 
@@ -70,7 +82,7 @@ Status puc::app::DirectorySubsystem::start(AppState &app) override
 
 Construct a Directory over the currently running worker pool.
 
-[Source](../../utils/ipc/directory_subsystem.hpp#L37)
+[Source](../../utils/ipc/directory_subsystem.hpp#L38)
 
 <a id="symbol-classpuc_1_1app_1_1_directory_subsystem_1a9f632c8e4a4d842de3dcd7f7f85c2eda"></a>
 
@@ -82,7 +94,7 @@ Status puc::app::DirectorySubsystem::stop(AppState &app) noexcept override
 
 Detach all channels and release the Directory.
 
-[Source](../../utils/ipc/directory_subsystem.hpp#L40)
+[Source](../../utils/ipc/directory_subsystem.hpp#L41)
 
 <a id="symbol-classpuc_1_1app_1_1_directory_subsystem_1a8937b7ed0a19c7526013840f156d333f"></a>
 
@@ -94,7 +106,7 @@ Status puc::app::DirectorySubsystem::terminate(AppState &app) noexcept override
 
 Release any Directory retained after partial lifecycle progress.
 
-[Source](../../utils/ipc/directory_subsystem.hpp#L43)
+[Source](../../utils/ipc/directory_subsystem.hpp#L44)
 
 <a id="symbol-classpuc_1_1app_1_1_directory_subsystem_1a0efc4019e8b28b2cf56babf7c00a5ac2"></a>
 
@@ -106,7 +118,7 @@ ipc::Directory * puc::app::DirectorySubsystem::directory() noexcept
 
 Return the live Directory, or nullptr outside the running phase.
 
-[Source](../../utils/ipc/directory_subsystem.hpp#L46)
+[Source](../../utils/ipc/directory_subsystem.hpp#L47)
 
 <a id="symbol-classpuc_1_1app_1_1_directory_subsystem_1a4b3c8d33decf3a52ba56d601c4058a38"></a>
 
@@ -118,4 +130,16 @@ const ipc::Directory * puc::app::DirectorySubsystem::directory() const noexcept
 
 Return the live Directory, or nullptr outside the running phase.
 
-[Source](../../utils/ipc/directory_subsystem.hpp#L49)
+[Source](../../utils/ipc/directory_subsystem.hpp#L50)
+
+<a id="symbol-classpuc_1_1app_1_1_directory_subsystem_1a24e5b3444ee249034007a80760149efb"></a>
+
+### `maximum_message_bytes`
+
+```cpp
+std::size_t puc::app::DirectorySubsystem::maximum_message_bytes() const noexcept
+```
+
+Return the initialized general IPC payload limit.
+
+[Source](../../utils/ipc/directory_subsystem.hpp#L53)

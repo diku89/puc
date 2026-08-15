@@ -2,15 +2,17 @@
 
 # Namespace `puc`
 
-[Source](../../commands/builtin_command_subsystem.cpp#L18)
+[Source](../../canvas/canvas_id.cpp#L12)
 
 ## Related symbols
 
 - [puc::app](namespacepuc_1_1app.md)
+- [puc::canvas](namespacepuc_1_1canvas.md)
 - [puc::command](namespacepuc_1_1command.md)
 - [puc::config](namespacepuc_1_1config.md)
 - [puc::containers](namespacepuc_1_1containers.md)
 - [puc::execution\_graph](namespacepuc_1_1execution__graph.md)
+- [puc::hashing](namespacepuc_1_1hashing.md)
 - [puc::ipc](namespacepuc_1_1ipc.md)
 - [puc::logger](namespacepuc_1_1logger.md)
 - [puc::metronome](namespacepuc_1_1metronome.md)

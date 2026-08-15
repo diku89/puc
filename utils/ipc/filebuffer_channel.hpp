@@ -37,11 +37,10 @@ class FileBufferChannel final : public Channel {
    * Inspect `status()` before use. Construction does not wait for the peer and
    * never creates, truncates, or removes either filesystem entry.
    */
-  FileBufferChannel(
-      std::string name, std::filesystem::path read_path,
-      std::filesystem::path write_path,
-      std::size_t maximum_message_bytes = kDefaultMaximumMessageBytes,
-      ChannelOptions options            = {});
+  FileBufferChannel(std::string name, std::filesystem::path read_path,
+                    std::filesystem::path write_path,
+                    std::size_t maximum_message_bytes,
+                    ChannelOptions options = {});
 
   /** Stop the reader and close descriptors without removing either FIFO. */
   ~FileBufferChannel() override;

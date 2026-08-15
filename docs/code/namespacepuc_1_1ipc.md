@@ -20,7 +20,9 @@ Include this header when an application needs several IPC components. Small cons
 - [puc::ipc::MessageHeader](structpuc_1_1ipc_1_1_message_header.md)
 - [puc::ipc::MetaChannel](classpuc_1_1ipc_1_1_meta_channel.md)
 - [puc::ipc::MultipartHeader](structpuc_1_1ipc_1_1_multipart_header.md)
+- [puc::ipc::RelativeChannelPath](classpuc_1_1ipc_1_1_relative_channel_path.md)
 - [puc::ipc::SessionId](structpuc_1_1ipc_1_1_session_id.md)
+- [puc::ipc::Settings](structpuc_1_1ipc_1_1_settings.md)
 - [puc::ipc::SmemChannel](classpuc_1_1ipc_1_1_smem_channel.md)
 - [puc::ipc::SocketChannel](classpuc_1_1ipc_1_1_socket_channel.md)
 - [puc::ipc::Subscription](classpuc_1_1ipc_1_1_subscription.md)
@@ -90,7 +92,7 @@ using puc::ipc::ChannelId = std::uint32_t
 
 Numeric channel identifier used by [Directory](classpuc_1_1ipc_1_1_directory.md) and the IPC wire format.
 
-[Source](../../utils/ipc/channel.hpp#L53)
+[Source](../../utils/ipc/channel.hpp#L50)
 
 ## Variables
 
@@ -105,18 +107,6 @@ std::size_t puc::ipc::kMaximumChannelNameBytes
 Maximum byte length accepted for one ASCII canonical channel name.
 
 [Source](../../utils/ipc/channel.hpp#L34)
-
-<a id="symbol-namespacepuc_1_1ipc_1aacb87fdac4b579b26974f72d14f32a5b"></a>
-
-### `kDefaultMaximumMessageBytes`
-
-```cpp
-std::size_t puc::ipc::kDefaultMaximumMessageBytes
-```
-
-Default payload limit used by IPC channels and the wire codec.
-
-[Source](../../utils/ipc/channel.hpp#L37)
 
 <a id="symbol-namespacepuc_1_1ipc_1a409806d9cc5f3c8b9b310892ea2da023"></a>
 
@@ -154,18 +144,6 @@ Number of bytes in the SHA-256 integrity checksum.
 
 [Source](../../utils/ipc/msg.hpp#L33)
 
-<a id="symbol-namespacepuc_1_1ipc_1a642ee55ca0eda1a7c5732b856c3b71f5"></a>
-
-### `kMaximumPayloadBytes`
-
-```cpp
-std::size_t puc::ipc::kMaximumPayloadBytes
-```
-
-Maximum payload accepted by the version-zero message codec.
-
-[Source](../../utils/ipc/msg.hpp#L36)
-
 ## Functions
 
 <a id="symbol-namespacepuc_1_1ipc_1a4d27024948ee5095406c398013ffcda8"></a>
@@ -182,37 +160,62 @@ Names begin with `//` and contain one or more slash-separated ASCII segments. Se
 
 [Source](../../utils/ipc/channel.cpp#L58)
 
-<a id="symbol-namespacepuc_1_1ipc_1ab36229bf7b43affe973b28d3595405f6"></a>
+<a id="symbol-namespacepuc_1_1ipc_1a75c5ef1b5e7c703b1822bae67ee9c4ec"></a>
 
 ### `serialize_message`
 
 ```cpp
-Status puc::ipc::serialize_message(const Message &message, std::vector< std::uint8_t > &output)
+Status puc::ipc::serialize_message(const Message &message, std::size_t maximum_payload_bytes, std::vector< std::uint8_t > &output)
 ```
 
 Serialize one semantic message into an owned byte vector.
 
 Output is cleared before validation and remains empty on failure. Multibyte integers are encoded in network byte order; no C++ object layout is copied into the wire representation.
 
+**Parameters**
+
+- `message` — Semantic message and non-owning payload view.
+- `maximum_payload_bytes` — Configured upper bound for payload bytes.
+- `output` — Destination replaced with one complete encoded message.
+
 **Returns:** [Status::OK](#symbol-namespacepuc_1_1ipc_1a2d9525a8274577936e23d73e7264f5e4ae0aa021e21dddbd6d8cecec71e9cf564), [Status::INVALID\_ARGUMENT](#symbol-namespacepuc_1_1ipc_1a2d9525a8274577936e23d73e7264f5e4af295a0c3e37c94f078e1c5476479132d) for inconsistent metadata, or [Status::MESSAGE\_TOO\_LARGE](#symbol-namespacepuc_1_1ipc_1a2d9525a8274577936e23d73e7264f5e4ae337ca1c290ecd699b696338c3310d6b) when a configured wire limit is exceeded.
 
-[Source](../../utils/ipc/msg.cpp#L201)
+[Source](../../utils/ipc/msg.cpp#L72)
 
-<a id="symbol-namespacepuc_1_1ipc_1aa60e90f232dde90ffa679f8ed566cc18"></a>
+<a id="symbol-namespacepuc_1_1ipc_1aa375a8cb2b75fd84cd4b3dad69d022b2"></a>
 
 ### `deserialize_message`
 
 ```cpp
-Status puc::ipc::deserialize_message(std::span< const std::uint8_t > data, DecodedMessage &output, std::size_t &consumed_bytes) noexcept
+Status puc::ipc::deserialize_message(std::span< const std::uint8_t > data, std::size_t maximum_payload_bytes, DecodedMessage &output, std::size_t &consumed_bytes) noexcept
 ```
 
 Parse and validate the first complete message in `data`.
 
 Trailing bytes are permitted so callers can decode concatenated messages; `consumed_bytes` reports exactly how much input belonged to the first one. Output and consumed\_bytes are reset before parsing and remain reset on any failure.
 
+**Parameters**
+
+- `data` — Input which may contain one message followed by more bytes.
+- `maximum_payload_bytes` — Configured upper bound for payload bytes.
+- `output` — Decoded non-owning views into `data` on success.
+- `consumed_bytes` — Number of bytes consumed on success; zero on failure.
+
 **Returns:** [Status::OK](#symbol-namespacepuc_1_1ipc_1a2d9525a8274577936e23d73e7264f5e4ae0aa021e21dddbd6d8cecec71e9cf564) or a precise non-throwing wire error status.
 
-[Source](../../utils/ipc/msg.cpp#L278)
+[Source](../../utils/ipc/msg.cpp#L150)
+
+<a id="symbol-namespacepuc_1_1ipc_1ae0cfe093ba0a6ff3f3479e1803029b82"></a>
+
+### `load_settings`
+
+```cpp
+bool puc::ipc::load_settings(properties::Properties &properties, Settings &settings)
+```
+
+Load and validate the system default and optional user override.
+
+[Source](../../utils/ipc/settings.cpp#L16)
 
 <a id="symbol-namespacepuc_1_1ipc_1af673ccdb590afbc386ed2e51b0dcceed"></a>
 

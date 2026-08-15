@@ -2,9 +2,49 @@
 
 # PUC Protocol Contracts
 
+## Member [puc::app::CanvasSubsystem::kChannelsAnnounceChannel](classpuc_1_1app_1_1_canvas_subsystem.md#symbol-classpuc_1_1app_1_1_canvas_subsystem_1acfff323b39fc68149b1de61678b5551a)
+
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000001"></a> **Kind:** Channel  
+**Name:** `//canvas/channels_announce`  
+**Purpose:** Broadcasts OPENED and CLOSING lifecycle events containing a [Canvas](classpuc_1_1app_1_1_canvas.md) UUID, its absolute channel root, and the channel protocol version.  
+**Producers:** [CanvasSubsystem](classpuc_1_1app_1_1_canvas_subsystem.md) instances.  
+**Consumers:** [Canvas](classpuc_1_1app_1_1_canvas.md) discovery clients that subscribe before querying current state.
+
+## Member [puc::app::CanvasSubsystem::kChannelsQueryChannel](classpuc_1_1app_1_1_canvas_subsystem.md#symbol-classpuc_1_1app_1_1_canvas_subsystem_1acd361ac545c6c73e513a5b3143ce34fd)
+
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000002"></a> **Kind:** Channel  
+**Name:** `//canvas/channels_query`  
+**Purpose:** Requests that every running [Canvas](classpuc_1_1app_1_1_canvas.md), or one selected [Canvas](classpuc_1_1app_1_1_canvas.md) UUID, publish its current OPENED announcement.  
+**Producers:** Late [Canvas](classpuc_1_1app_1_1_canvas.md) discovery clients after subscribing to //canvas/channels\_announce.  
+**Consumers:** Running [CanvasSubsystem](classpuc_1_1app_1_1_canvas_subsystem.md) instances.
+
+## Member [puc::app::CanvasSubsystem::kCommittedPresentationPath](classpuc_1_1app_1_1_canvas_subsystem.md#symbol-classpuc_1_1app_1_1_canvas_subsystem_1a9b35ed0f8181bf9dd80c31df3296e6ec)
+
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000005"></a> **Kind:** Channel  
+**Name:** `//canvas/CANVAS_UUID/presentation/committed`  
+**Purpose:** Broadcasts the previous and new Presentation roots plus the inserted Turn ID only after the Presentation commit is durable.  
+**Producers:** [OrchestrationSubsystem](classpuc_1_1app_1_1_orchestration_subsystem.md).  
+**Consumers:** TUI presentation consumers and Presentation-tree replicas.
+
+## Member [puc::app::CanvasSubsystem::kCommittedTurnPath](classpuc_1_1app_1_1_canvas_subsystem.md#symbol-classpuc_1_1app_1_1_canvas_subsystem_1a057677d98805ceb40c7c885c5b7003d4)
+
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000004"></a> **Kind:** Channel  
+**Name:** `//canvas/CANVAS_UUID/turns/committed`  
+**Purpose:** Broadcasts a Turn only after its immutable human address is assigned, its payload is persisted, and the materialized Turn Trie is updated.  
+**Producers:** [CanvasSubsystem](classpuc_1_1app_1_1_canvas_subsystem.md).  
+**Consumers:** Turn Trie replicas, reverse indexes, search builders, and other committed-Turn observers.
+
+## Member [puc::app::CanvasSubsystem::kTurnSubmissionPath](classpuc_1_1app_1_1_canvas_subsystem.md#symbol-classpuc_1_1app_1_1_canvas_subsystem_1a3b94e2be405fd2c7eda4088dc4d2aea7)
+
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000003"></a> **Kind:** Channel  
+**Name:** `//canvas/CANVAS_UUID/turns/submit`  
+**Purpose:** Carries serialized Turn protobufs that have not yet received their stable human address; CANVAS\_UUID is the owning [Canvas](classpuc_1_1app_1_1_canvas.md) UUID rendered as 32 hexadecimal digits.  
+**Producers:** Human, model, and tool input adapters.  
+**Consumers:** [CanvasSubsystem](classpuc_1_1app_1_1_canvas_subsystem.md), which atomically numbers and persists each accepted Turn.
+
 ## Member [puc::metronome::kOneHertzChannel](namespacepuc_1_1metronome.md#symbol-metronome_8hpp_1ad712d1722112c3e9598cb3e96ee87db6)
 
-<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000015"></a> **Kind:** Channel  
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000020"></a> **Kind:** Channel  
 **Name:** `//metronome/1hz`  
 **Purpose:** Publishes a process-local one-hertz heartbeat as [puc.msg.NullMessage](structpuc_1_1msg_1_1_null_message.md). Only the newest pending heartbeat is retained, so a delayed consumer never receives a burst of stale clock ticks.  
 **Producers:** [puc.metronome.Metronome](classpuc_1_1metronome_1_1_metronome.md).  
@@ -12,7 +52,7 @@
 
 ## Member [puc::msg::CMD\_FRAME\_NOTIFICATION](namespacepuc_1_1msg.md#symbol-namespacepuc_1_1msg_1a24b154890bf81939005e112918c3813fa927a4a1b4940c5412075641ddb1120b5)
 
-<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000006"></a> **Kind:** Message ID  
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000011"></a> **Kind:** Message ID  
 **ID:** `3`  
 **Message:** [puc::msg::CmdFrameNotification](structpuc_1_1msg_1_1_cmd_frame_notification.md)  
 **Purpose:** Selects the UTF-8 command notification schema published on //cmdframe/notify.  
@@ -21,7 +61,7 @@
 
 ## Struct [puc::msg::CmdFrameNotification](structpuc_1_1msg_1_1_cmd_frame_notification.md)
 
-<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000002"></a> **Kind:** Message  
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000007"></a> **Kind:** Message  
 **Type:** [puc::msg::CmdFrameNotification](structpuc_1_1msg_1_1_cmd_frame_notification.md)  
 **Purpose:** Carries one complete UTF-8 status or result string emitted by a command.  
 **Producers:** [Command notification producers](namespacepuc_1_1command.md#symbol-command_8cpp_1aae6bb7ab5476027600e831b5731b57ea).  
@@ -29,7 +69,7 @@
 
 ## Member [puc::msg::kCmdFrameNotifyChannel](namespacepuc_1_1msg.md#symbol-namespacepuc_1_1msg_1a2750e4faa0d4b6bedda2b4809e89a08a)
 
-<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000001"></a> **Kind:** Channel  
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000006"></a> **Kind:** Channel  
 **Name:** `//cmdframe/notify`  
 **Purpose:** Publishes the newest UTF-8 command notification for display beneath the command editor. Pending stale notifications may be replaced before delivery.  
 **Producers:** [Command notification producers](namespacepuc_1_1command.md#symbol-command_8cpp_1aae6bb7ab5476027600e831b5731b57ea).  
@@ -37,7 +77,7 @@
 
 ## Member [puc::msg::kScreenCommandChannel](namespacepuc_1_1msg.md#symbol-namespacepuc_1_1msg_1ab3c15431e3548f48110d613240af05d9)
 
-<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000009"></a> **Kind:** Channel  
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000014"></a> **Kind:** Channel  
 **Name:** `//screen/commands`  
 **Purpose:** Carries ordered, one-way terminal ownership and presentation operations without a result path.  
 **Producers:** [Screen](classpuc_1_1tui_1_1_screen.md).  
@@ -45,7 +85,7 @@
 
 ## Member [puc::msg::kScreenResizeEventChannel](namespacepuc_1_1msg.md#symbol-namespacepuc_1_1msg_1aac82f776baf22130dde29f2cb56284dd)
 
-<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000010"></a> **Kind:** Channel  
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000015"></a> **Kind:** Channel  
 **Name:** `//screen/resize_events`  
 **Purpose:** Publishes the newest observed character and optional pixel geometry as convergent state.  
 **Producers:** [TerminalSession](classpuc_1_1terminal_1_1_terminal_session.md).  
@@ -53,7 +93,7 @@
 
 ## Member [puc::msg::kTerminalInputEventChannel](namespacepuc_1_1msg.md#symbol-namespacepuc_1_1msg_1a03288ead64679521f461fcc1f83b2262)
 
-<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000013"></a> **Kind:** Channel  
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000018"></a> **Kind:** Channel  
 **Name:** `//terminal/input_events`  
 **Purpose:** Publishes ordered, terminal-independent keyboard, text, pointer, paste, focus, clipboard, command, protocol-response, and diagnostic events after the terminal Decoder has applied its input Trie.  
 **Producers:** The lifecycle-owned terminal input producer.  
@@ -61,7 +101,7 @@
 
 ## Member [puc::msg::NULL\_MESSAGE](namespacepuc_1_1msg.md#symbol-namespacepuc_1_1msg_1a24b154890bf81939005e112918c3813fabba60353fe62a4eed8c486b71c20f573)
 
-<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000003"></a> **Kind:** Message ID  
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000008"></a> **Kind:** Message ID  
 **ID:** `0`  
 **Message:** [puc::msg::NullMessage](structpuc_1_1msg_1_1_null_message.md)  
 **Purpose:** Reserves the zero schema identifier for an explicitly empty typed payload.  
@@ -70,7 +110,7 @@
 
 ## Struct [puc::msg::NullMessage](structpuc_1_1msg_1_1_null_message.md)
 
-<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000008"></a> **Kind:** Message  
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000013"></a> **Kind:** Message  
 **Type:** [puc::msg::NullMessage](structpuc_1_1msg_1_1_null_message.md)  
 **Purpose:** Represents an explicit typed no-data payload and gives generic dispatch a valid schema at message ID zero.  
 **Producers:** Components that need a typed no-data envelope.  
@@ -78,7 +118,7 @@
 
 ## Member [puc::msg::SCREEN\_COMMAND](namespacepuc_1_1msg.md#symbol-namespacepuc_1_1msg_1a24b154890bf81939005e112918c3813fa2762e0ac6a7a8de6eb1160ffeaa14043)
 
-<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000004"></a> **Kind:** Message ID  
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000009"></a> **Kind:** Message ID  
 **ID:** `1`  
 **Message:** [puc::msg::ScreenCommand](structpuc_1_1msg_1_1_screen_command.md)  
 **Purpose:** Selects the portable schema for terminal ownership, presentation, and release commands.  
@@ -87,7 +127,7 @@
 
 ## Member [puc::msg::SCREEN\_RESIZE\_EVENT](namespacepuc_1_1msg.md#symbol-namespacepuc_1_1msg_1a24b154890bf81939005e112918c3813fac6358684a996df7bd22732e2db736db5)
 
-<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000005"></a> **Kind:** Message ID  
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000010"></a> **Kind:** Message ID  
 **ID:** `2`  
 **Message:** [puc::msg::ScreenResizeEvent](structpuc_1_1msg_1_1_screen_resize_event.md)  
 **Purpose:** Selects the fixed-width schema for the newest observed terminal geometry.  
@@ -96,7 +136,7 @@
 
 ## Struct [puc::msg::ScreenCommand](structpuc_1_1msg_1_1_screen_command.md)
 
-<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000011"></a> **Kind:** Message  
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000016"></a> **Kind:** Message  
 **Type:** [puc::msg::ScreenCommand](structpuc_1_1msg_1_1_screen_command.md)  
 **Purpose:** Carries one fire-and-forget terminal take, presentation, clipboard-write, or release operation.  
 **Producers:** [Screen](classpuc_1_1tui_1_1_screen.md).  
@@ -104,7 +144,7 @@
 
 ## Struct [puc::msg::ScreenResizeEvent](structpuc_1_1msg_1_1_screen_resize_event.md)
 
-<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000012"></a> **Kind:** Message  
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000017"></a> **Kind:** Message  
 **Type:** [puc::msg::ScreenResizeEvent](structpuc_1_1msg_1_1_screen_resize_event.md)  
 **Purpose:** Publishes changed terminal geometry as latest-value state rather than as a command reply.  
 **Producers:** [TerminalSession](classpuc_1_1terminal_1_1_terminal_session.md).  
@@ -112,7 +152,7 @@
 
 ## Member [puc::msg::TERMINAL\_INPUT\_EVENT](namespacepuc_1_1msg.md#symbol-namespacepuc_1_1msg_1a24b154890bf81939005e112918c3813fa0dc388ed7715695dc47c7fd9a7e0cef2)
 
-<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000007"></a> **Kind:** Message ID  
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000012"></a> **Kind:** Message ID  
 **ID:** `4`  
 **Message:** [puc::msg::TerminalInputEvent](structpuc_1_1msg_1_1_terminal_input_event.md)  
 **Purpose:** Selects the portable tagged terminal-event schema published on //terminal/input\_events.  
@@ -121,7 +161,7 @@
 
 ## Struct [puc::msg::TerminalInputEvent](structpuc_1_1msg_1_1_terminal_input_event.md)
 
-<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000014"></a> **Kind:** Message  
+<a id="symbol-puc_protocol_contracts_1_puc_protocol_contracts000019"></a> **Kind:** Message  
 **Type:** [puc::msg::TerminalInputEvent](structpuc_1_1msg_1_1_terminal_input_event.md)  
 **Purpose:** Carries one portable normalized terminal input event or protocol response.  
 **Producers:** The lifecycle-owned terminal input producer.  

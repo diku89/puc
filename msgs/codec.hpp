@@ -221,8 +221,11 @@ class Codec : public CodecBase {
  */
 class MessageCodecCollection {
  public:
-  /** Construct a collection containing the built-in null-message codec. */
-  MessageCodecCollection();
+  /**
+   * Construct the built-in collection with an explicit IPC payload limit.
+   * @param maximum_payload_bytes Maximum wire payload accepted by dispatch.
+   */
+  explicit MessageCodecCollection(std::size_t maximum_payload_bytes);
 
   /** Destroy every registered codec. */
   ~MessageCodecCollection() = default;
@@ -315,6 +318,8 @@ class MessageCodecCollection {
   }
 
   mutable std::shared_mutex mutex_; /**< Synchronizes registry access. */
+  std::size_t maximum_payload_bytes_ =
+      0U; /**< Maximum IPC envelope payload accepted during dispatch. */
   std::unordered_map<MessageId, std::unique_ptr<CodecBase>>
       codecs_; /**< Message-id index and codec ownership. */
 };

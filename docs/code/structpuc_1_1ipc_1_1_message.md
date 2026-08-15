@@ -6,7 +6,7 @@ Semantic message supplied to `serialize_message()`.
 
 Optional metadata is encoded in a fixed order. `payload` and `extension` are borrowed only for the duration of serialization. Setting `include_checksum` appends a SHA-256 digest covering every preceding byte, including the preamble and payload.
 
-[Source](../../utils/ipc/msg.hpp#L116)
+[Source](../../utils/ipc/msg.hpp#L113)
 
 ## Public data members
 
@@ -20,7 +20,7 @@ MessageHeader puc::ipc::Message::header
 
 Routing fields; payload\_length is ignored.
 
-[Source](../../utils/ipc/msg.hpp#L117)
+[Source](../../utils/ipc/msg.hpp#L114)
 
 <a id="symbol-structpuc_1_1ipc_1_1_message_1a6fb1f58de77ef2c5950dbba206181173"></a>
 
@@ -32,7 +32,7 @@ std::optional<SessionId> puc::ipc::Message::session_id
 
 Optional sender session.
 
-[Source](../../utils/ipc/msg.hpp#L118)
+[Source](../../utils/ipc/msg.hpp#L115)
 
 <a id="symbol-structpuc_1_1ipc_1_1_message_1a6a52b190a83d87f19331ac9fc08082eb"></a>
 
@@ -44,7 +44,7 @@ std::optional<Timestamp> puc::ipc::Message::timestamp
 
 Optional creation time.
 
-[Source](../../utils/ipc/msg.hpp#L119)
+[Source](../../utils/ipc/msg.hpp#L116)
 
 <a id="symbol-structpuc_1_1ipc_1_1_message_1a9d6241de64f4c223062485484ec6d711"></a>
 
@@ -56,7 +56,7 @@ std::optional<MultipartHeader> puc::ipc::Message::multipart
 
 Optional part position.
 
-[Source](../../utils/ipc/msg.hpp#L120)
+[Source](../../utils/ipc/msg.hpp#L117)
 
 <a id="symbol-structpuc_1_1ipc_1_1_message_1a4c373150365a89703d470b27ec098457"></a>
 
@@ -68,7 +68,7 @@ std::span<const std::uint8_t> puc::ipc::Message::extension
 
 Opaque future header bytes.
 
-[Source](../../utils/ipc/msg.hpp#L121)
+[Source](../../utils/ipc/msg.hpp#L118)
 
 <a id="symbol-structpuc_1_1ipc_1_1_message_1af12ea7d2640b0ffd09501714daa1c9bf"></a>
 
@@ -80,7 +80,7 @@ std::span<const std::uint8_t> puc::ipc::Message::payload
 
 Borrowed payload bytes.
 
-[Source](../../utils/ipc/msg.hpp#L122)
+[Source](../../utils/ipc/msg.hpp#L119)
 
 <a id="symbol-structpuc_1_1ipc_1_1_message_1a02ef4d2ad699ac0ff89f218776071c35"></a>
 
@@ -92,4 +92,4 @@ bool puc::ipc::Message::include_checksum
 
 Whether to append integrity metadata.
 
-[Source](../../utils/ipc/msg.hpp#L123)
+[Source](../../utils/ipc/msg.hpp#L120)

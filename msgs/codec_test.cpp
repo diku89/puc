@@ -49,6 +49,9 @@ namespace {
 
 constexpr MessageId kPointMessageId = static_cast<MessageId>(41U);
 
+/** Deliberate IPC envelope limit used by collection tests. */
+constexpr std::size_t kTestMaximumPayloadBytes = 1024U;
+
 class PointCodec final : public Codec<test::Point> {
  public:
   explicit constexpr PointCodec(MessageId message_id = kPointMessageId) noexcept
@@ -85,13 +88,14 @@ std::vector<std::uint8_t> wire_message(MessageId message_id,
                                        std::span<const std::uint8_t> payload,
                                        bool include_checksum = false) {
   const ipc::Message message{
-      .header           = ipc::MessageHeader{.channel_id = 7U,
-                                             .message_id = to_wire_id(message_id)},
-      .payload          = payload,
+      .header  = ipc::MessageHeader{.channel_id = 7U,
+                                    .message_id = to_wire_id(message_id)},
+      .payload = payload,
       .include_checksum = include_checksum,
   };
   std::vector<std::uint8_t> encoded;
-  if (!ipc::is_ok(ipc::serialize_message(message, encoded))) {
+  if (!ipc::is_ok(
+          ipc::serialize_message(message, kTestMaximumPayloadBytes, encoded))) {
     return {};
   }
   return encoded;
@@ -153,7 +157,7 @@ TEST(NullMessageCodecTest, NonemptyPayloadIsMalformed) {
 }
 
 TEST(MessageCodecCollectionTest, StartsWithTheNullCodec) {
-  MessageCodecCollection codecs;
+  MessageCodecCollection codecs{kTestMaximumPayloadBytes};
   EXPECT_EQ(codecs.size(), 1U);
 
   NullMessage decoded;
@@ -163,7 +167,7 @@ TEST(MessageCodecCollectionTest, StartsWithTheNullCodec) {
 }
 
 TEST(MessageCodecCollectionTest, RejectsNullAndDuplicateRegistrations) {
-  MessageCodecCollection codecs;
+  MessageCodecCollection codecs{kTestMaximumPayloadBytes};
   EXPECT_EQ(codecs.register_codec(nullptr), Status::INVALID_ARGUMENT);
   EXPECT_EQ(codecs.register_codec(std::make_unique<NullMessageCodec>()),
             Status::DUPLICATE_MESSAGE_ID);
@@ -171,7 +175,7 @@ TEST(MessageCodecCollectionTest, RejectsNullAndDuplicateRegistrations) {
 }
 
 TEST(MessageCodecCollectionTest, DispatchesTypedPortablePayloads) {
-  MessageCodecCollection codecs;
+  MessageCodecCollection codecs{kTestMaximumPayloadBytes};
   ASSERT_EQ(codecs.register_codec(std::make_unique<PointCodec>()), Status::OK);
 
   constexpr test::Point point{.x = 0x1234U, .y = 0xabcdU};
@@ -193,7 +197,7 @@ TEST(MessageCodecCollectionTest, DispatchesTypedPortablePayloads) {
 }
 
 TEST(MessageCodecCollectionTest, ReportsUnknownIdsAndTypeMismatches) {
-  MessageCodecCollection codecs;
+  MessageCodecCollection codecs{kTestMaximumPayloadBytes};
   ASSERT_EQ(codecs.register_codec(std::make_unique<PointCodec>()), Status::OK);
 
   std::vector<std::uint8_t> encoded = {9U};
@@ -209,7 +213,7 @@ TEST(MessageCodecCollectionTest, ReportsUnknownIdsAndTypeMismatches) {
 }
 
 TEST(MessageCodecCollectionTest, FacadeClearsPartialCodecOutputsOnFailure) {
-  MessageCodecCollection codecs;
+  MessageCodecCollection codecs{kTestMaximumPayloadBytes};
   ASSERT_EQ(codecs.register_codec(std::make_unique<PointCodec>()), Status::OK);
 
   std::vector<std::uint8_t> encoded = {9U};
@@ -227,7 +231,7 @@ TEST(MessageCodecCollectionTest, FacadeClearsPartialCodecOutputsOnFailure) {
 }
 
 TEST(MessageCodecCollectionTest, DecodesAndConsumesOneIpcMessageAtATime) {
-  MessageCodecCollection codecs;
+  MessageCodecCollection codecs{kTestMaximumPayloadBytes};
   ASSERT_EQ(codecs.register_codec(std::make_unique<PointCodec>()), Status::OK);
 
   constexpr test::Point point{.x = 7U, .y = 9U};
@@ -255,7 +259,7 @@ TEST(MessageCodecCollectionTest, DecodesAndConsumesOneIpcMessageAtATime) {
 }
 
 TEST(MessageCodecCollectionTest, InvalidIpcMessageDoesNotConsumeInput) {
-  MessageCodecCollection codecs;
+  MessageCodecCollection codecs{kTestMaximumPayloadBytes};
   std::vector<std::uint8_t> encoded =
       wire_message(MessageId::NULL_MESSAGE, {}, true);
   ASSERT_FALSE(encoded.empty());
@@ -273,7 +277,7 @@ TEST(MessageCodecCollectionTest, InvalidIpcMessageDoesNotConsumeInput) {
 }
 
 TEST(MessageCodecCollectionTest, IncompleteIpcMessageCanWaitForMoreInput) {
-  MessageCodecCollection codecs;
+  MessageCodecCollection codecs{kTestMaximumPayloadBytes};
   const std::vector<std::uint8_t> encoded =
       wire_message(MessageId::NULL_MESSAGE, {});
   ASSERT_GT(encoded.size(), 5U);
@@ -290,7 +294,7 @@ TEST(MessageCodecCollectionTest, IncompleteIpcMessageCanWaitForMoreInput) {
 }
 
 TEST(MessageCodecCollectionTest, PayloadFailureDoesNotConsumeIpcMessage) {
-  MessageCodecCollection codecs;
+  MessageCodecCollection codecs{kTestMaximumPayloadBytes};
   ASSERT_EQ(codecs.register_codec(std::make_unique<PointCodec>()), Status::OK);
   constexpr std::array malformed = {std::uint8_t{1U}};
   const std::vector<std::uint8_t> encoded =
@@ -306,7 +310,7 @@ TEST(MessageCodecCollectionTest, PayloadFailureDoesNotConsumeIpcMessage) {
 }
 
 TEST(MessageCodecCollectionTest, UnknownIpcMessageIdDoesNotConsumeInput) {
-  MessageCodecCollection codecs;
+  MessageCodecCollection codecs{kTestMaximumPayloadBytes};
   const std::vector<std::uint8_t> encoded =
       wire_message(static_cast<MessageId>(999U), {});
   ASSERT_FALSE(encoded.empty());
@@ -319,7 +323,7 @@ TEST(MessageCodecCollectionTest, UnknownIpcMessageIdDoesNotConsumeInput) {
 }
 
 TEST(MessageCodecCollectionTest, RegistrationAndConstDispatchAreConcurrent) {
-  MessageCodecCollection codecs;
+  MessageCodecCollection codecs{kTestMaximumPayloadBytes};
   ASSERT_EQ(codecs.register_codec(std::make_unique<PointCodec>()), Status::OK);
   constexpr std::array payload = {std::uint8_t{0U}, std::uint8_t{7U},
                                   std::uint8_t{0U}, std::uint8_t{9U}};

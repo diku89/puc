@@ -4,7 +4,7 @@
 
 Concrete callback holder.
 
-[Source](../../utils/ipc/channel.hpp#L205)
+[Source](../../utils/ipc/channel.hpp#L202)
 
 ## Private data members
 
@@ -18,7 +18,7 @@ Callback puc::ipc::Channel::ReceiveCallback::Model< Callback >::callback_
 
 Owned concrete callable.
 
-[Source](../../utils/ipc/channel.hpp#L216)
+[Source](../../utils/ipc/channel.hpp#L213)
 
 ## Public functions
 
@@ -32,7 +32,7 @@ puc::ipc::Channel::ReceiveCallback::Model< Callback >::Model(ConfiguredCallback 
 
 Perfect-forward one callback into the holder.
 
-[Source](../../utils/ipc/channel.hpp#L209)
+[Source](../../utils/ipc/channel.hpp#L206)
 
 <a id="symbol-classpuc_1_1ipc_1_1_channel_1_1_receive_callback_1_1_model_1a09d503bbf1dcfc69eb31e307eb96123b"></a>
 
@@ -44,4 +44,4 @@ void puc::ipc::Channel::ReceiveCallback::Model< Callback >::invoke(Bytes bytes) 
 
 Invoke the held callback.
 
-[Source](../../utils/ipc/channel.hpp#L213)
+[Source](../../utils/ipc/channel.hpp#L210)

@@ -2,7 +2,7 @@
 
 # Namespace `puc::properties`
 
-[Source](../../commands/command.hpp#L26)
+[Source](../../canvas/settings.hpp#L10)
 
 ## Related symbols
 

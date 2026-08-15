@@ -12,6 +12,7 @@
  */
 
 #include "utils/ipc/channel.hpp"
+#include "utils/ipc/channel_path.hpp"
 #include "utils/ipc/directory.hpp"
 #include "utils/ipc/filebuffer_channel.hpp"
 #include "utils/ipc/metachannel.hpp"

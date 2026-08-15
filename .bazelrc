@@ -10,6 +10,8 @@ test --test_output=errors
 build --cxxopt=-std=c++23
 build --copt=-Wall
 build --copt=-Werror
+# Protobuf 33.4 intentionally exercises APIs it deprecates for consumers.
+build --per_file_copt=external/protobuf.*@-Wno-error=deprecated-declarations
 
 # Production is the default build mode. The named config makes it explicit in
 # CI and on developer command lines.

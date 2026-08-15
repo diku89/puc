@@ -1,13 +1,30 @@
 load("@rules_cc//cc:cc_library.bzl", "cc_library")
 load("@rules_cc//cc:cc_test.bzl", "cc_test")
 load("//docs:code_sources.bzl", "code_docs_sources")
+load("//utils/config:puc_config.bzl", "puc_config")
 
 code_docs_sources()
+
+puc_config(
+    name = "ipc_config",
+    src = "ipc.toml",
+    install_path = "ipc.toml",
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "settings",
+    srcs = ["settings.cpp"],
+    hdrs = ["settings.hpp"],
+    visibility = ["//visibility:public"],
+    deps = ["//properties"],
+)
 
 cc_library(
     name = "ipc",
     srcs = [
         "channel.cpp",
+        "channel_path.cpp",
         "directory.cpp",
         "filebuffer_channel.cpp",
         "framed_io.cpp",
@@ -19,6 +36,7 @@ cc_library(
     ],
     hdrs = [
         "channel.hpp",
+        "channel_path.hpp",
         "directory.hpp",
         "filebuffer_channel.hpp",
         "ipc.hpp",
@@ -30,6 +48,7 @@ cc_library(
     ],
     visibility = ["//visibility:public"],
     deps = [
+        "//utils/hash",
         "//utils/logger",
         "//utils/multithreading",
         "//utils/timer",
@@ -49,10 +68,24 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":ipc",
+        ":settings",
         "//msgs",
+        "//properties:properties_subsystem",
         "//state",
         "//utils/multithreading",
         "//utils/multithreading:worker_subsystem",
+    ],
+)
+
+cc_test(
+    name = "settings_test",
+    size = "small",
+    srcs = ["settings_test.cpp"],
+    deps = [
+        ":settings",
+        "//properties",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
     ],
 )
 

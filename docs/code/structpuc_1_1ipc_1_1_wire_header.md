@@ -4,7 +4,7 @@
 
 Decoded fixed preamble fields and optional-section presence flags.
 
-[Source](../../utils/ipc/msg.hpp#L39)
+[Source](../../utils/ipc/msg.hpp#L36)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::uint8_t puc::ipc::WireHeader::version
 
 Wire-format version.
 
-[Source](../../utils/ipc/msg.hpp#L40)
+[Source](../../utils/ipc/msg.hpp#L37)
 
 <a id="symbol-structpuc_1_1ipc_1_1_wire_header_1a9e3bdf93676bd0416062bbf252bf6c33"></a>
 
@@ -30,7 +30,7 @@ std::uint16_t puc::ipc::WireHeader::header_bytes
 
 Preamble and all optional headers.
 
-[Source](../../utils/ipc/msg.hpp#L41)
+[Source](../../utils/ipc/msg.hpp#L38)
 
 <a id="symbol-structpuc_1_1ipc_1_1_wire_header_1aa0b190ef51da895e688ee02542902378"></a>
 
@@ -42,7 +42,7 @@ bool puc::ipc::WireHeader::has_session_id
 
 A [SessionId](structpuc_1_1ipc_1_1_session_id.md) follows the base header.
 
-[Source](../../utils/ipc/msg.hpp#L42)
+[Source](../../utils/ipc/msg.hpp#L39)
 
 <a id="symbol-structpuc_1_1ipc_1_1_wire_header_1aca97fb313b551fef47b766722f376647"></a>
 
@@ -54,7 +54,7 @@ bool puc::ipc::WireHeader::has_timestamp
 
 A [Timestamp](structpuc_1_1ipc_1_1_timestamp.md) follows any session id.
 
-[Source](../../utils/ipc/msg.hpp#L43)
+[Source](../../utils/ipc/msg.hpp#L40)
 
 <a id="symbol-structpuc_1_1ipc_1_1_wire_header_1a724e26dbb4c9d57d9eef4e49503aec6c"></a>
 
@@ -66,7 +66,7 @@ bool puc::ipc::WireHeader::is_multipart
 
 A [MultipartHeader](structpuc_1_1ipc_1_1_multipart_header.md) is present.
 
-[Source](../../utils/ipc/msg.hpp#L44)
+[Source](../../utils/ipc/msg.hpp#L41)
 
 <a id="symbol-structpuc_1_1ipc_1_1_wire_header_1af466621f5cb88f41069a0f32b69547f5"></a>
 
@@ -78,7 +78,7 @@ bool puc::ipc::WireHeader::has_checksum
 
 A SHA-256 digest follows the payload.
 
-[Source](../../utils/ipc/msg.hpp#L45)
+[Source](../../utils/ipc/msg.hpp#L42)
 
 <a id="symbol-structpuc_1_1ipc_1_1_wire_header_1a43b74bf269fb9e9dad40e8fd96bf6478"></a>
 
@@ -90,7 +90,7 @@ bool puc::ipc::WireHeader::has_extension
 
 Opaque extension header bytes exist.
 
-[Source](../../utils/ipc/msg.hpp#L46)
+[Source](../../utils/ipc/msg.hpp#L43)
 
 ## Public functions
 
@@ -104,4 +104,4 @@ bool puc::ipc::WireHeader::operator==(const WireHeader &) const noexcept=default
 
 Compare decoded wire metadata.
 
-[Source](../../utils/ipc/msg.hpp#L49)
+[Source](../../utils/ipc/msg.hpp#L46)

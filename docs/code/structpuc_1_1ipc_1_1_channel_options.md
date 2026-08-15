@@ -4,7 +4,7 @@
 
 Optional delivery policy shared by every concrete [Channel](classpuc_1_1ipc_1_1_channel.md).
 
-[Source](../../utils/ipc/channel.hpp#L40)
+[Source](../../utils/ipc/channel.hpp#L37)
 
 ## Public data members
 
@@ -20,4 +20,4 @@ Maximum number of not-yet-delivered messages retained by the channel.
 
 When absent, delivery remains synchronous and borrow-only. When present, the channel copies messages into a bounded asynchronous queue after it is registered with a [Directory](classpuc_1_1ipc_1_1_directory.md). A full queue evicts its oldest pending message before retaining the newest one. Zero is invalid.
 
-[Source](../../utils/ipc/channel.hpp#L49)
+[Source](../../utils/ipc/channel.hpp#L46)

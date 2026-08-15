@@ -7,6 +7,8 @@
 #include <csignal>
 #include <cstddef>
 #include <cstdint>
+#include <filesystem>
+#include <fstream>
 #include <memory>
 #include <optional>
 #include <span>
@@ -16,6 +18,9 @@
 #include <variant>
 #include <vector>
 
+#include "canvas/canvas_subsystem.hpp"
+#include "canvas/datastore_subsystem.hpp"
+#include "canvas/session/orchestration_subsystem.hpp"
 #include "commands/builtin_command_subsystem.hpp"
 #include "commands/command.hpp"
 #include "commands/command_mode_subsystem.hpp"
@@ -58,6 +63,46 @@ namespace puc::app {
 namespace {
 
 using namespace std::chrono_literals;
+
+constexpr std::size_t kExpectedConfiguredMessageBytes = 1073741824U;
+
+/** Isolated on-disk configuration for canonical Canvas bootstrap coverage. */
+class TemporaryCanvasConfiguration final {
+ public:
+  TemporaryCanvasConfiguration() {
+    root_ = std::filesystem::temp_directory_path() /
+            ("puc-application-subsystem-test-" +
+             std::to_string(
+                 std::chrono::steady_clock::now().time_since_epoch().count()));
+    std::filesystem::create_directories(root_);
+    database_ = root_ / "sessions.db";
+    std::ofstream config{root_ / "canvas.toml"};
+    config << "[database]\npath = \"" << database_.string() << "\"\n";
+  }
+
+  ~TemporaryCanvasConfiguration() { std::filesystem::remove_all(root_); }
+
+  /** Return property roots that resolve the isolated Canvas configuration. */
+  PropertiesSubsystemOptions properties() const {
+    return PropertiesSubsystemOptions{
+        .primary_root        = {},
+        .user_overrides_root = root_,
+    };
+  }
+
+  /** Return the database path expected to be created during initialization. */
+  const std::filesystem::path& database() const noexcept { return database_; }
+
+  /** Point SQLite at a directory so the canonical datastore cannot open it. */
+  void make_database_unopenable() const {
+    std::ofstream config{root_ / "canvas.toml", std::ios::trunc};
+    config << "[database]\npath = \"" << root_.string() << "\"\n";
+  }
+
+ private:
+  std::filesystem::path root_;     /**< Isolated configuration directory. */
+  std::filesystem::path database_; /**< Isolated SQLite database path. */
+};
 
 /** Minimal registered command used to verify registry lifetime. */
 class AdapterCommand final : public command::CommandApp {
@@ -106,12 +151,16 @@ TEST(CoreAdaptersTest, CreatesStopsAndRestartsDirectoryAboveWorkers) {
   // controls lifecycle execution.
   ASSERT_EQ(app.register_subsystem(std::move(directory)), Status::OK);
   ASSERT_EQ(app.register_subsystem(std::move(workers)), Status::OK);
+  ASSERT_EQ(app.register_subsystem(std::make_unique<PropertiesSubsystem>()),
+            Status::OK);
   ASSERT_EQ(app.register_subsystem(std::move(logger)), Status::OK);
   ASSERT_EQ(app.initialize(OperatingMode::TEST), Status::OK);
   ASSERT_NE(logger_adapter->logger(), nullptr);
   EXPECT_EQ(logger::get_logger(), logger_adapter->logger());
   EXPECT_EQ(worker_adapter->workers(), nullptr);
   EXPECT_EQ(directory_adapter->directory(), nullptr);
+  EXPECT_EQ(directory_adapter->maximum_message_bytes(),
+            kExpectedConfiguredMessageBytes);
 
   ASSERT_EQ(app.start(), Status::OK);
   ASSERT_NE(worker_adapter->workers(), nullptr);
@@ -121,7 +170,7 @@ TEST(CoreAdaptersTest, CreatesStopsAndRestartsDirectoryAboveWorkers) {
   EXPECT_EQ(directory_adapter->directory()->delivery_worker_count(), 2U);
 
   auto channel = std::make_shared<ipc::SmemChannel>(
-      "//test/adapters", ipc::kDefaultMaximumMessageBytes);
+      "//test/adapters", directory_adapter->maximum_message_bytes());
   ipc::ChannelId channel_id = 0U;
   EXPECT_EQ(directory_adapter->directory()->open_channel(channel, channel_id),
             ipc::Status::OK);
@@ -186,6 +235,10 @@ TEST(CoreAdaptersTest, DirectoryRequiresARegisteredWorkerAdapter) {
   AppState app;
   ASSERT_EQ(app.register_subsystem(std::make_unique<DirectorySubsystem>()),
             Status::OK);
+  ASSERT_EQ(app.register_subsystem(std::make_unique<PropertiesSubsystem>()),
+            Status::OK);
+  ASSERT_EQ(app.register_subsystem(std::make_unique<LoggerSubsystem>()),
+            Status::OK);
 
   EXPECT_EQ(app.initialize(OperatingMode::TEST), Status::MISSING_DEPENDENCY);
   EXPECT_EQ(app.lifecycle_state(), LifecycleState::CRASHED);
@@ -210,6 +263,8 @@ TEST(ChannelAdaptersTest, OwnCanonicalRoutesForEachRunningGeneration) {
             Status::OK);
   ASSERT_EQ(app.register_subsystem(std::move(directory)), Status::OK);
   ASSERT_EQ(app.register_subsystem(std::make_unique<WorkerSubsystem>(2U)),
+            Status::OK);
+  ASSERT_EQ(app.register_subsystem(std::make_unique<PropertiesSubsystem>()),
             Status::OK);
   ASSERT_EQ(app.register_subsystem(std::make_unique<LoggerSubsystem>()),
             Status::OK);
@@ -502,6 +557,7 @@ TEST(CommandModeAdapterTest,
   AppState app;
   ApplicationSubsystemOptions options;
   options.worker_count                = 2U;
+  options.selection.canvas            = false;
   options.selection.metronome         = false;
   options.selection.embedded_terminal = false;
   ASSERT_EQ(register_application_subsystems(app, std::move(options)),
@@ -612,12 +668,13 @@ TEST(EmbeddedTerminalAdapterTest, ReapsAndRecreatesItsChildAcrossRunCycles) {
   options.worker_count            = 2U;
   options.embedded_terminal.shell = "/bin/sh";
   options.selection               = ApplicationSubsystemSelection{
-                    .metronome         = false,
-                    .presentation      = false,
-                    .commands          = false,
-                    .input             = true,
-                    .command_mode      = false,
-                    .embedded_terminal = true,
+      .canvas            = false,
+      .metronome         = false,
+      .presentation      = false,
+      .commands          = false,
+      .input             = true,
+      .command_mode      = false,
+      .embedded_terminal = true,
   };
   ASSERT_EQ(register_application_subsystems(app, std::move(options)),
             Status::OK);
@@ -651,9 +708,11 @@ TEST(EmbeddedTerminalAdapterTest, ReapsAndRecreatesItsChildAcrossRunCycles) {
 }
 
 TEST(AdapterBootstrapTest, RegistersAndRunsTheCompleteCanonicalGraph) {
+  TemporaryCanvasConfiguration configuration;
   AppState app;
   ApplicationSubsystemOptions options;
   options.worker_count = 2U;
+  options.properties   = configuration.properties();
   ASSERT_EQ(register_application_subsystems(app, std::move(options)),
             Status::OK);
   EXPECT_EQ(app.size(), kApplicationSubsystemCount);
@@ -662,6 +721,9 @@ TEST(AdapterBootstrapTest, RegistersAndRunsTheCompleteCanonicalGraph) {
   EXPECT_NE(app.get_subsystem<LoggerSubsystem>(), nullptr);
   EXPECT_NE(app.get_subsystem<ApplicationControlSubsystem>(), nullptr);
   EXPECT_NE(app.get_subsystem<PropertiesSubsystem>(), nullptr);
+  EXPECT_NE(app.get_subsystem<DatastoreSubsystem>(), nullptr);
+  EXPECT_NE(app.get_subsystem<CanvasSubsystem>(), nullptr);
+  EXPECT_NE(app.get_subsystem<OrchestrationSubsystem>(), nullptr);
   EXPECT_NE(app.get_subsystem<WorkerSubsystem>(), nullptr);
   EXPECT_NE(app.get_subsystem<TimerSubsystem>(), nullptr);
   EXPECT_NE(app.get_subsystem<ThemeSubsystem>(), nullptr);
@@ -680,6 +742,7 @@ TEST(AdapterBootstrapTest, RegistersAndRunsTheCompleteCanonicalGraph) {
   EXPECT_NE(app.get_subsystem<EmbeddedTerminalSubsystem>(), nullptr);
 
   ASSERT_EQ(app.initialize(OperatingMode::TEST), Status::OK);
+  EXPECT_TRUE(std::filesystem::is_regular_file(configuration.database()));
   ApplicationControlSubsystem* control =
       app.get_subsystem<ApplicationControlSubsystem>();
   CommandSubsystem* commands = app.get_subsystem<CommandSubsystem>();
@@ -701,9 +764,26 @@ TEST(AdapterBootstrapTest, RegistersAndRunsTheCompleteCanonicalGraph) {
       properties_adapter->properties();
   ASSERT_EQ(app.start(), Status::OK);
   const DirectorySubsystem* directory = app.get_subsystem<DirectorySubsystem>();
+  const CanvasSubsystem* canvas       = app.get_subsystem<CanvasSubsystem>();
   ASSERT_NE(directory, nullptr);
   ASSERT_NE(directory->directory(), nullptr);
-  EXPECT_EQ(directory->directory()->size(), 5U);
+  ASSERT_NE(canvas, nullptr);
+  EXPECT_EQ(directory->directory()->size(), 10U);
+  EXPECT_NE(directory->directory()->get_channel(
+                CanvasSubsystem::kChannelsAnnounceChannel),
+            nullptr);
+  EXPECT_NE(directory->directory()->get_channel(
+                CanvasSubsystem::kChannelsQueryChannel),
+            nullptr);
+  EXPECT_NE(directory->directory()->get_channel(
+                canvas->turn_submission_channel_name()),
+            nullptr);
+  EXPECT_NE(directory->directory()->get_channel(
+                canvas->committed_turn_channel_name()),
+            nullptr);
+  EXPECT_NE(directory->directory()->get_channel(
+                canvas->committed_presentation_channel_name()),
+            nullptr);
   EXPECT_TRUE(
       app.get_subsystem<InputSubsystem>()->notification_consumer_active());
   EXPECT_NE(app.get_subsystem<TimerSubsystem>()->scheduler(), nullptr);
@@ -738,6 +818,7 @@ TEST(AdapterBootstrapTest, RegistersAndRunsTheCompleteCanonicalGraph) {
   EXPECT_EQ(app.terminate(), Status::OK);
   EXPECT_EQ(control->control(), nullptr);
   EXPECT_EQ(properties_adapter->properties(), nullptr);
+  EXPECT_EQ(app.get_subsystem<DatastoreSubsystem>()->database(), nullptr);
   EXPECT_EQ(app.lifecycle_state(), LifecycleState::TERMINATED);
 }
 
@@ -746,12 +827,13 @@ TEST(AdapterBootstrapTest, RegistersExecutableSpecificLeafProfiles) {
   ApplicationSubsystemOptions options;
   options.worker_count = 2U;
   options.selection    = ApplicationSubsystemSelection{
-         .metronome         = false,
-         .presentation      = true,
-         .commands          = false,
-         .input             = false,
-         .command_mode      = false,
-         .embedded_terminal = false,
+      .canvas            = false,
+      .metronome         = false,
+      .presentation      = true,
+      .commands          = false,
+      .input             = false,
+      .command_mode      = false,
+      .embedded_terminal = false,
   };
   const std::size_t expected = application_subsystem_count(options.selection);
   ASSERT_EQ(register_application_subsystems(app, std::move(options)),
@@ -765,9 +847,24 @@ TEST(AdapterBootstrapTest, RegistersExecutableSpecificLeafProfiles) {
   EXPECT_EQ(app.get_subsystem<InputSubsystem>(), nullptr);
   EXPECT_EQ(app.get_subsystem<CommandModeSubsystem>(), nullptr);
   EXPECT_EQ(app.get_subsystem<EmbeddedTerminalSubsystem>(), nullptr);
+  EXPECT_EQ(app.get_subsystem<DatastoreSubsystem>(), nullptr);
   ASSERT_EQ(app.initialize(OperatingMode::TEST), Status::OK);
   ASSERT_EQ(app.start(), Status::OK);
   EXPECT_EQ(app.terminate(), Status::OK);
+}
+
+TEST(AdapterBootstrapTest, DatastoreFailureAbortsCanonicalInitialization) {
+  TemporaryCanvasConfiguration configuration;
+  configuration.make_database_unopenable();
+  AppState app;
+  ApplicationSubsystemOptions options;
+  options.properties = configuration.properties();
+
+  ASSERT_EQ(register_application_subsystems(app, std::move(options)),
+            Status::OK);
+  EXPECT_EQ(app.initialize(OperatingMode::TEST), Status::SUBSYSTEM_FAILURE);
+  EXPECT_EQ(app.lifecycle_state(), LifecycleState::CRASHED);
+  EXPECT_EQ(app.get_subsystem<DatastoreSubsystem>()->database(), nullptr);
 }
 
 TEST(AdapterBootstrapTest, RejectsProfilesWithMissingLeafDependencies) {

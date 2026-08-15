@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package puc.canvas.proto;
+
+import "canvas/protos/turn.proto";
+
+// One committed version of the Canvas presentation order.
+message Presentation {
+  optional bytes presentation_uuid = 1;
+  optional bytes canvas_uuid = 2;
+  optional bytes previous_root_hash = 3;
+  optional bytes root_hash = 4;
+  optional TurnId committed_turn_id = 5;
+}
