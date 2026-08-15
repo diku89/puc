@@ -557,8 +557,8 @@ Status Decoder::handle_timeout(TimeoutInput input, std::vector<Event>& events) {
     if (trie_cursor_.last_match != InputTrie::kInvalidNode) {
       const bool matched_all = trie_cursor_.last_match_size == bytes.size();
       ParseResult result     = ParseResult::NEED_MORE;
-      status = execute_action(trie_cursor_.last_match,
-                              trie_cursor_.last_match_size, events, result);
+      status                 = execute_action(trie_cursor_.last_match,
+                                              trie_cursor_.last_match_size, events, result);
       if (is_ok(status) && matched_all &&
           active_action_node_ != InputTrie::kInvalidNode) {
         status = resolve_timed_out_active_action(events);

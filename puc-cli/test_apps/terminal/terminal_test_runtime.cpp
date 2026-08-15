@@ -150,7 +150,7 @@ EnvironmentInfo collect_environment() {
           printable_ascii(puc::terminal::environment_value("COLORTERM")),
       .operating_system = "<unknown>",
   };
-  struct utsname identity{};
+  struct utsname identity {};
   if (::uname(&identity) == 0) {
     info.operating_system = printable_ascii(std::format(
         "{} {} {}", identity.sysname, identity.release, identity.machine));

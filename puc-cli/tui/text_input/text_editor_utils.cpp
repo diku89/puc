@@ -593,8 +593,8 @@ class TextEditor::Impl {
     }
     const VisualRow& row = rows[target];
     cursor               = {
-        .line   = row.line,
-        .column = row.first + std::min(desired_column, row.length),
+                      .line   = row.line,
+                      .column = row.first + std::min(desired_column, row.length),
     };
     finish_navigation(old_cursor, extend);
     ensure_cursor_visible();
@@ -608,8 +608,8 @@ class TextEditor::Impl {
     if (!rows.empty()) {
       const VisualRow& row = rows[visual_cursor(rows, width).first];
       cursor               = {
-          .line   = row.line,
-          .column = end ? row.first + row.length : row.first,
+                        .line   = row.line,
+                        .column = end ? row.first + row.length : row.first,
       };
     }
     has_desired_column = false;
@@ -620,10 +620,10 @@ class TextEditor::Impl {
   /** Move to the first or final caret in the buffer. */
   void move_buffer_boundary(bool end, bool extend) {
     const TextCursor old_cursor = cursor;
-    cursor             = end ? TextCursor{.line   = lines.size() - 1U,
-                                          .column = lines.back().size()}
-                             : TextCursor{};
-    has_desired_column = false;
+    cursor                      = end ? TextCursor{.line   = lines.size() - 1U,
+                                                   .column = lines.back().size()}
+                                      : TextCursor{};
+    has_desired_column          = false;
     finish_navigation(old_cursor, extend);
     ensure_cursor_visible();
   }

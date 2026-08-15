@@ -88,9 +88,9 @@ std::vector<std::uint8_t> wire_message(MessageId message_id,
                                        std::span<const std::uint8_t> payload,
                                        bool include_checksum = false) {
   const ipc::Message message{
-      .header  = ipc::MessageHeader{.channel_id = 7U,
-                                    .message_id = to_wire_id(message_id)},
-      .payload = payload,
+      .header           = ipc::MessageHeader{.channel_id = 7U,
+                                             .message_id = to_wire_id(message_id)},
+      .payload          = payload,
       .include_checksum = include_checksum,
   };
   std::vector<std::uint8_t> encoded;

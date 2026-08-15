@@ -59,7 +59,7 @@ std::string configured_user_shell() {
       configured_size > 0 ? static_cast<std::size_t>(configured_size)
                           : kFallbackPasswordBuffer;
   std::vector<char> buffer(buffer_size);
-  struct passwd account{};
+  struct passwd account {};
   struct passwd* result = nullptr;
   if (::getpwuid_r(::getuid(), &account, buffer.data(), buffer.size(),
                    &result) == 0 &&
@@ -294,7 +294,7 @@ class EmbeddedTerminalSubsystem::Impl {
     stop();
     pending_input_ = std::move(pending_input);
 
-    struct winsize size{};
+    struct winsize size {};
     size.ws_col = static_cast<unsigned short>(std::min<std::size_t>(
         columns, std::numeric_limits<unsigned short>::max()));
     size.ws_row = static_cast<unsigned short>(std::min<std::size_t>(
@@ -336,7 +336,7 @@ class EmbeddedTerminalSubsystem::Impl {
     if (!running()) {
       return true;
     }
-    struct winsize size{};
+    struct winsize size {};
     size.ws_col = static_cast<unsigned short>(std::min<std::size_t>(
         columns, std::numeric_limits<unsigned short>::max()));
     size.ws_row = static_cast<unsigned short>(std::min<std::size_t>(

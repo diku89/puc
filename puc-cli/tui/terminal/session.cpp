@@ -190,7 +190,7 @@ Status TerminalSession::read(Decoder& decoder, std::vector<Event>& events,
 
 Status TerminalSession::get_size(TerminalSize& size) const noexcept {
   size = {};
-  struct winsize dimensions{};
+  struct winsize dimensions {};
   if (::ioctl(output_fd_, TIOCGWINSZ, &dimensions) != 0 &&
       (input_fd_ == output_fd_ ||
        ::ioctl(input_fd_, TIOCGWINSZ, &dimensions) != 0)) {

@@ -29,8 +29,8 @@ constexpr std::uint8_t kMultipartFlag         = 1U << 2U;
 constexpr std::uint8_t kChecksumFlag          = 1U << 3U;
 constexpr std::uint8_t kExtensionFlag         = 1U << 4U;
 constexpr std::uint8_t kKnownFlags            = kSessionFlag | kTimestampFlag |
-                                                kMultipartFlag | kChecksumFlag |
-                                                kExtensionFlag;
+                                     kMultipartFlag | kChecksumFlag |
+                                     kExtensionFlag;
 
 /** Append an unsigned integer in network byte order. */
 template <std::unsigned_integral Integer>

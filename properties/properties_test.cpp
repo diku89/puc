@@ -27,8 +27,8 @@ class PropertiesTest : public ::testing::Test {
         ::testing::UnitTest::GetInstance()->current_test_info();
     ASSERT_NE(test_info, nullptr);
 
-    root_    = std::filesystem::path{test_tmpdir} /
-               (std::string{"properties_test_"} + test_info->name());
+    root_ = std::filesystem::path{test_tmpdir} /
+            (std::string{"properties_test_"} + test_info->name());
     primary_ = root_ / "primary";
     user_    = root_ / "user";
     std::error_code error;

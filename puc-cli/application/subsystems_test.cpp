@@ -668,13 +668,13 @@ TEST(EmbeddedTerminalAdapterTest, ReapsAndRecreatesItsChildAcrossRunCycles) {
   options.worker_count            = 2U;
   options.embedded_terminal.shell = "/bin/sh";
   options.selection               = ApplicationSubsystemSelection{
-      .canvas            = false,
-      .metronome         = false,
-      .presentation      = false,
-      .commands          = false,
-      .input             = true,
-      .command_mode      = false,
-      .embedded_terminal = true,
+                    .canvas            = false,
+                    .metronome         = false,
+                    .presentation      = false,
+                    .commands          = false,
+                    .input             = true,
+                    .command_mode      = false,
+                    .embedded_terminal = true,
   };
   ASSERT_EQ(register_application_subsystems(app, std::move(options)),
             Status::OK);
@@ -827,13 +827,13 @@ TEST(AdapterBootstrapTest, RegistersExecutableSpecificLeafProfiles) {
   ApplicationSubsystemOptions options;
   options.worker_count = 2U;
   options.selection    = ApplicationSubsystemSelection{
-      .canvas            = false,
-      .metronome         = false,
-      .presentation      = true,
-      .commands          = false,
-      .input             = false,
-      .command_mode      = false,
-      .embedded_terminal = false,
+         .canvas            = false,
+         .metronome         = false,
+         .presentation      = true,
+         .commands          = false,
+         .input             = false,
+         .command_mode      = false,
+         .embedded_terminal = false,
   };
   const std::size_t expected = application_subsystem_count(options.selection);
   ASSERT_EQ(register_application_subsystems(app, std::move(options)),

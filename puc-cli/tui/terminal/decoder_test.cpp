@@ -1049,8 +1049,8 @@ TEST(TerminalDecoderTest, Osc52MayExceedTheGenericSequenceLimit) {
             Status::OK);
 
   Decoder decoder                 = configured_decoder(DecoderLimits{
-      .maximum_sequence_bytes  = 32U,
-      .maximum_clipboard_bytes = 6000U,
+                      .maximum_sequence_bytes  = 32U,
+                      .maximum_clipboard_bytes = 6000U,
   });
   const std::vector<Event> events = decode(decoder, sequence);
   ASSERT_EQ(events.size(), 1U);
