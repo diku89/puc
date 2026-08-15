@@ -21,6 +21,16 @@
 namespace puc::canvas {
 namespace {
 
+/** Shared state retained until a synchronous process() callback returns. */
+struct ProcessCompletion final {
+  std::mutex mutex;                /**< Protects all completion state. */
+  std::condition_variable changed; /**< Signals callback completion. */
+  bool complete = false;           /**< Whether the callback published. */
+  datastore::Status result =
+      datastore::Status::INVALID_STATE; /**< Published pipeline status. */
+  proto::Turn turn;                     /**< Published committed Turn. */
+};
+
 /** Adapt one registered callback to one run-local worker Job. */
 class HandlerJob final : public multithreading::Job {
  public:
@@ -284,27 +294,26 @@ datastore::Status TurnPipeline::process(const proto::Turn& submitted,
     }
   }
 
-  std::mutex mutex;
-  std::condition_variable changed;
-  bool complete            = false;
-  datastore::Status result = datastore::Status::INVALID_STATE;
-  const execution_graph::Status submitted_status =
-      submit(submitted, [&](datastore::Status status, proto::Turn turn) {
+  auto completion = std::make_shared<ProcessCompletion>();
+  const execution_graph::Status submitted_status = submit(
+      submitted, [completion](datastore::Status status, proto::Turn turn) {
         {
-          const std::lock_guard lock(mutex);
-          result         = status;
-          committed_turn = std::move(turn);
-          complete       = true;
+          const std::lock_guard lock(completion->mutex);
+          completion->result   = status;
+          completion->turn     = std::move(turn);
+          completion->complete = true;
         }
-        changed.notify_all();
+        completion->changed.notify_all();
       });
   if (!execution_graph::is_ok(submitted_status)) {
-    return result;
+    return completion->result;
   }
 
-  std::unique_lock lock(mutex);
-  changed.wait(lock, [&complete] { return complete; });
-  return result;
+  std::unique_lock lock(completion->mutex);
+  completion->changed.wait(lock,
+                           [&completion] { return completion->complete; });
+  committed_turn = std::move(completion->turn);
+  return completion->result;
 }
 
 std::size_t TurnPipeline::size() const noexcept {

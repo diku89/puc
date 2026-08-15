@@ -4,7 +4,7 @@
 
 One registered node independent of an individual graph run.
 
-[Source](../../canvas/session/turn_pipeline.cpp#L54)
+[Source](../../canvas/session/turn_pipeline.cpp#L64)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ NodeId puc::canvas::TurnPipeline::Impl::Registration::node
 
 Stable graph identity.
 
-[Source](../../canvas/session/turn_pipeline.cpp#L55)
+[Source](../../canvas/session/turn_pipeline.cpp#L65)
 
 <a id="symbol-structpuc_1_1canvas_1_1_turn_pipeline_1_1_impl_1_1_registration_1afbf524ea5a72a4ee52735c0d1162b8a6"></a>
 
@@ -30,7 +30,7 @@ Handler puc::canvas::TurnPipeline::Impl::Registration::handler
 
 Work invoked for each Turn.
 
-[Source](../../canvas/session/turn_pipeline.cpp#L56)
+[Source](../../canvas/session/turn_pipeline.cpp#L66)
 
 <a id="symbol-structpuc_1_1canvas_1_1_turn_pipeline_1_1_impl_1_1_registration_1a8fc3428005b60a57c69fd2979eda16de"></a>
 
@@ -42,4 +42,4 @@ std::vector<NodeId> puc::canvas::TurnPipeline::Impl::Registration::dependencies
 
 Required predecessor nodes.
 
-[Source](../../canvas/session/turn_pipeline.cpp#L57)
+[Source](../../canvas/session/turn_pipeline.cpp#L67)

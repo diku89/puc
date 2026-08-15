@@ -4,7 +4,7 @@
 
 Immutable callbacks and validated topology retained by accepted runs.
 
-[Source](../../canvas/session/turn_pipeline.cpp#L61)
+[Source](../../canvas/session/turn_pipeline.cpp#L71)
 
 ## Public data members
 
@@ -18,7 +18,7 @@ std::vector<Registration> puc::canvas::TurnPipeline::Impl::CompiledPlan::registr
 
 Stable job ordering.
 
-[Source](../../canvas/session/turn_pipeline.cpp#L62)
+[Source](../../canvas/session/turn_pipeline.cpp#L72)
 
 <a id="symbol-structpuc_1_1canvas_1_1_turn_pipeline_1_1_impl_1_1_compiled_plan_1aee6d6b20b088f7964b0130163d0be5f6"></a>
 
@@ -30,4 +30,4 @@ execution_graph::ExecutionPlan<NodeId> puc::canvas::TurnPipeline::Impl::Compiled
 
 Shared topology.
 
-[Source](../../canvas/session/turn_pipeline.cpp#L63)
+[Source](../../canvas/session/turn_pipeline.cpp#L73)

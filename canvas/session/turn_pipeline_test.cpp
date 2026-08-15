@@ -168,6 +168,30 @@ TEST(TurnPipelineTest, OverlapsRunsAndSnapshotsTopologyPerSubmission) {
   workers.wait();
 }
 
+TEST(TurnPipelineTest, SynchronousProcessRetainsCompletionUntilCallbackReturn) {
+  multithreading::JobQueue workers{4U};
+  TurnPipeline pipeline;
+  ASSERT_EQ(pipeline.register_node(
+                "complete",
+                [](TurnContext& context) {
+                  context.turn() = context.submitted();
+                  context.turn().mutable_id()->set_human_address("1");
+                }),
+            execution_graph::Status::OK);
+  ASSERT_EQ(pipeline.attach(workers), execution_graph::Status::OK);
+
+  const std::vector<std::uint8_t> canvas_uuid = uuid(1U);
+  for (std::size_t iteration = 0U; iteration < 256U; ++iteration) {
+    proto::Turn committed;
+    ASSERT_EQ(pipeline.process(submitted(canvas_uuid, "text"), committed),
+              datastore::Status::OK);
+    ASSERT_EQ(committed.id().human_address(), "1");
+  }
+
+  pipeline.detach();
+  workers.wait();
+}
+
 TEST(TurnPipelineTest, RegisteredNodesPersistAndOrderLateReplies) {
   const std::filesystem::path path = database_path();
   std::filesystem::remove(path);
